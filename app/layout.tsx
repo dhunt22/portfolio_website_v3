@@ -8,6 +8,7 @@ import { Inter } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Metadata } from 'next';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -47,6 +48,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Add base tag to handle GitHub Pages subdirectory */}
+        <base href="/portfolio_website_v3/" />
+        {/* This script ensures proper loading of Next.js assets */}
+        <Script id="correct-base-path" strategy="beforeInteractive">
+          {`
+            (function() {
+              // Handle base path for GitHub Pages deployment
+              const path = '/portfolio_website_v3';
+              if (window.location.pathname.startsWith(path) && 
+                  !window.__NEXT_DATA__.buildId) {
+                window.__NEXT_ROUTER_BASEPATH = path;
+              }
+            })();
+          `}
+        </Script>
+      </head>
       <body className={inter.className}>
         <div className="min-h-screen flex flex-col">
           <Header />

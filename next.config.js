@@ -5,26 +5,23 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Set the base path to match your GitHub Pages repository name
+  basePath: '/portfolio_website_v3',
+
+  // For static export (required for GitHub Pages)
+  output: 'export',
+  
+  // Disable image optimization for static export
   images: {
+    unoptimized: true,
     domains: ['placeholder.com'], // Add any external image domains here
   },
+  
   // Enable strict mode for better development experience
   reactStrictMode: true,
   
-  // For development, let's not use static export yet
-  // When deploying, you can choose either i18n or static export
-  
-  // Option 1: For development with i18n
-  // i18n: {
-  //   locales: ['en'],
-  //   defaultLocale: 'en',
-  // },
-  
-  // Option 2: For static export (uncomment when ready to build for production)
-  output: 'export',
-  images: {
-    unoptimized: true,
-  },
+  // GitHub Pages doesn't support trailing slashes
+  trailingSlash: false,
   
   // Enable transpilePackages if needed
   transpilePackages: ['maplibre-gl'],
