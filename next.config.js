@@ -5,29 +5,46 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable static export for Netlify
+  output: 'export',
+  
+  // Disable image optimization for static export
   images: {
+    unoptimized: true,
     domains: ['placeholder.com'], // Add any external image domains here
   },
+  
   // Enable strict mode for better development experience
   reactStrictMode: true,
   
-  // For development, let's not use static export yet
-  // When deploying, you can choose either i18n or static export
-  
-  // Option 1: For development with i18n
-  // i18n: {
-  //   locales: ['en'],
-  //   defaultLocale: 'en',
-  // },
-  
-  // Option 2: For static export (uncomment when ready to build for production)
-  output: 'export',
-  images: {
-    unoptimized: true,
-  },
+  // Netlify handles trailing slashes correctly
+  trailingSlash: false,
   
   // Enable transpilePackages if needed
   transpilePackages: ['maplibre-gl'],
+  
+  // Add cross-origin resource sharing for Netlify
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+          },
+        ],
+      },
+    ];
+  },
 }
 
 module.exports = nextConfig

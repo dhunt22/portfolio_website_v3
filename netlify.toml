@@ -1,0 +1,23 @@
+[build]
+  command = "npm run netlify-build"
+  publish = "out"
+  functions = "netlify/functions"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Handle SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Set custom headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.netlify.com; style-src 'self' 'unsafe-inline' https://*.openstreetmap.org https://*.openfreemap.org; img-src 'self' data: blob: https://*.openstreetmap.org https://*.openfreemap.org; font-src 'self'; connect-src 'self' https://app.netlify.com https://*.openstreetmap.org https://*.openfreemap.org; frame-src 'self' https://app.netlify.com; worker-src 'self' blob:; manifest-src 'self'"
