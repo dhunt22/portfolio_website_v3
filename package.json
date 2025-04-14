@@ -8,10 +8,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "export": "next build && next export",
+    "export": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "netlify-build": "next build && node netlify.js"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.0.3",

@@ -5,10 +5,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Set the base path to match your GitHub Pages repository name
-  basePath: '/portfolio_website_v3',
-
-  // For static export (required for GitHub Pages)
+  // Enable static export for Netlify
   output: 'export',
   
   // Disable image optimization for static export
@@ -20,7 +17,7 @@ const nextConfig = {
   // Enable strict mode for better development experience
   reactStrictMode: true,
   
-  // GitHub Pages doesn't support trailing slashes
+  // Netlify handles trailing slashes correctly
   trailingSlash: false,
   
   // Enable transpilePackages if needed
