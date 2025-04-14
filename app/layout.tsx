@@ -52,15 +52,17 @@ export default function RootLayout({
         <meta httpEquiv="Content-Security-Policy" content="
           default-src 'self'; 
           script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.netlify.com; 
-          style-src 'self' 'unsafe-inline'; 
-          img-src 'self' data: blob:; 
+          style-src 'self' 'unsafe-inline' https://*.openstreetmap.org https://*.openfreemap.org; 
+          img-src 'self' data: blob: https://*.openstreetmap.org https://*.openfreemap.org; 
           font-src 'self'; 
-          connect-src 'self' https://app.netlify.com; 
+          connect-src 'self' https://app.netlify.com https://*.openstreetmap.org https://*.openfreemap.org; 
           frame-src 'self' https://app.netlify.com; 
           worker-src 'self' blob:; 
           manifest-src 'self';
         " />
         <Script src="/netlify-config.js" strategy="beforeInteractive" />
+        <Script src="/map-proxy.js" strategy="beforeInteractive" />
+        <Script src="/map-library-helper.js" strategy="afterInteractive" />
       </head>
       <body className={inter.className}>
         <div className="min-h-screen flex flex-col">
