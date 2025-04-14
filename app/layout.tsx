@@ -8,6 +8,7 @@ import { Inter } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Metadata } from 'next';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -47,6 +48,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta httpEquiv="Content-Security-Policy" content="
+          default-src 'self'; 
+          script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.netlify.com; 
+          style-src 'self' 'unsafe-inline'; 
+          img-src 'self' data: blob:; 
+          font-src 'self'; 
+          connect-src 'self' https://app.netlify.com; 
+          frame-src 'self' https://app.netlify.com; 
+          worker-src 'self' blob:; 
+          manifest-src 'self';
+        " />
+        <Script src="/netlify-config.js" strategy="beforeInteractive" />
+      </head>
       <body className={inter.className}>
         <div className="min-h-screen flex flex-col">
           <Header />
