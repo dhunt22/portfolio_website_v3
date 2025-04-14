@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="streams-pattern" patternUnits="userSpaceOnUse" width="300" height="300" patternTransform="rotate(15)">
+      <path d="M0,150 C50,130 80,180 150,150 S250,130 300,150" fill="none" stroke="rgba(14, 165, 233, 0.15)" stroke-width="1.5" />
+      <path d="M0,200 C70,170 120,240 200,200 S280,170 300,190" fill="none" stroke="rgba(14, 165, 233, 0.1)" stroke-width="1" />
+      <path d="M0,100 C70,80 120,140 200,100 S280,70 300,90" fill="none" stroke="rgba(14, 165, 233, 0.08)" stroke-width="0.8" />
+    </pattern>
+    
+    <pattern id="mountain-pattern" patternUnits="userSpaceOnUse" width="400" height="400" patternTransform="rotate(0)">
+      <path d="M100,400 L200,200 L300,400" fill="none" stroke="rgba(120, 53, 15, 0.1)" stroke-width="1" />
+      <path d="M0,400 L100,100 L200,400" fill="none" stroke="rgba(120, 53, 15, 0.1)" stroke-width="1" />
+      <path d="M250,400 L350,150 L450,400" fill="none" stroke="rgba(120, 53, 15, 0.1)" stroke-width="1" />
+    </pattern>
+  </defs>
+  
+  <rect width="1000" height="1000" fill="url(#streams-pattern)" />
+  <rect width="1000" height="1000" fill="url(#mountain-pattern)" />
+</svg>

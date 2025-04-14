@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="topo-pattern" patternUnits="userSpaceOnUse" width="200" height="200" patternTransform="rotate(5)">
+      <path d="M0,20 Q50,0 100,20 T200,20" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,40 Q50,20 100,40 T200,40" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,60 Q50,40 100,60 T200,60" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,80 Q50,60 100,80 T200,80" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,100 Q50,80 100,100 T200,100" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,120 Q50,100 100,120 T200,120" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,140 Q50,120 100,140 T200,140" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,160 Q50,140 100,160 T200,160" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,180 Q50,160 100,180 T200,180" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+      <path d="M0,200 Q50,180 100,200 T200,200" fill="none" stroke="rgba(87, 147, 92, 0.1)" stroke-width="1" />
+    </pattern>
+  </defs>
+  <rect width="1000" height="1000" fill="#f9fafb" />
+  <rect width="1000" height="1000" fill="url(#topo-pattern)" />
+</svg>

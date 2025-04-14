@@ -1,0 +1,13 @@
+debug.js
+debug-build.js
+enhancements.md
+processed_cv_projects.md
+SUMMARY.md
+cv_processing_to_website.txt
+/node_modules/
+/.next/
+
+# Exclude icon demo files
+/app/icons-demo/
+/components/ui/icons/IconsDemo.tsx
+/components/ui/icons/README.md
