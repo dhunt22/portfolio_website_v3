@@ -71,6 +71,84 @@ const PROJECT_MAPS: Record<string, any> = {
       outlineColor: '#000000',
       opacity: 0.4
     }
+  },
+  'seasonal-population': {
+    center: [-121.520, 39.120], // California
+    zoom: 5,
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    geojsonPath: '/data/yuba_subbasins.geojson',
+    dataLayer: {
+      id: 'recharge-suitability',
+      type: 'fill',
+      color: '#7a8082',
+      outlineColor: '#000000',
+      opacity: 0.4
+    }
+  },
+  'harvest-water': {
+    center: [-121.520, 39.120], // Stockton, CA
+    zoom: 5,
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    geojsonPath: '/data/yuba_subbasins.geojson',
+    dataLayer: {
+      id: 'recharge-suitability',
+      type: 'fill',
+      color: '#7a8082',
+      outlineColor: '#000000',
+      opacity: 0.4
+    }
+  },
+  'modesto-infiltration': {
+    center: [-121.520, 39.120], // Modesto, CA
+    zoom: 7,
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    geojsonPath: '/data/yuba_subbasins.geojson',
+    dataLayer: {
+      id: 'recharge-suitability',
+      type: 'fill',
+      color: '#7a8082',
+      outlineColor: '#000000',
+      opacity: 0.4
+    }
+  },
+  'antelope-wells': {
+    center: [-121.520, 39.120], // Antelope Valley, CA
+    zoom: 6,
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    geojsonPath: '/data/yuba_subbasins.geojson',
+    dataLayer: {
+      id: 'recharge-suitability',
+      type: 'fill',
+      color: '#7a8082',
+      outlineColor: '#000000',
+      opacity: 0.4
+    }
+  },
+  'watershed-hub': {
+    center: [-121.520, 39.120], // California
+    zoom: 3,
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    geojsonPath: '/data/yuba_subbasins.geojson',
+    dataLayer: {
+      id: 'recharge-suitability',
+      type: 'fill',
+      color: '#7a8082',
+      outlineColor: '#000000',
+      opacity: 0.4
+    }
+  },
+  'sanitary-district': {
+    center: [-121.520, 39.120], // California
+    zoom: 8.5,
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    geojsonPath: '/data/yuba_subbasins.geojson',
+    dataLayer: {
+      id: 'recharge-suitability',
+      type: 'fill',
+      color: '#7a8082',
+      outlineColor: '#000000',
+      opacity: 0.4
+    }
   }
 };
 

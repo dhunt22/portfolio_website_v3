@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { icons } from '@/components/ui/icons'
+import { GitHubIcon, BookIcon } from '@/components/ui/icons'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import ProjectMap from '@/components/portfolio/ProjectMap';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -46,17 +46,13 @@ const PROJECTS: Project[] = [
       {
         href: 'https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1',
         label: 'GitHub Repository',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-          </svg>
-        )
+        icon: <GitHubIcon className="mr-2" />
       }
     ]
   },
   {
     id: 'cuyama-basin',
-    title: 'Cuyama Valley Groundwater Basin (2023 - 2025)',
+    title: 'Cuyama Valley Groundwater Basin (2023 - Present)',
     description: 'Groundwater Sustainability, Cartography',
     categories: ['all', 'water'],
     content: [
@@ -68,11 +64,7 @@ const PROJECTS: Project[] = [
       {
         href: 'https://sgma.water.ca.gov/portal/gsppe/update/29F7AB43D49C0C73E06350C29E0AC15F',
         label: '2025 GSP',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-          </svg>
-        )
+        icon: <BookIcon className="mr-2" />
       }
     ]
   },
@@ -95,6 +87,56 @@ const PROJECTS: Project[] = [
     content: [
       'Programmed a script to calculate Seasonal populations from Advanced Metering Infrastructure (AMI) data. This analysis helped clients comply with California requirements for Urban Water Use Objectives (UWUO).',
       'R-language script wrangled, cleand, and processed >8 million records from 21,000 households. Algorithms within script adhered to Methods for Estimating Seasonal Populations with Water and Energy Data (DWR, 2022).'
+    ]
+  },
+  {
+    id: 'harvest-water',
+    title: 'Harvest Water Program (2024)',
+    description: 'Geospatial Management, Contract Support',
+    categories: ['all', 'water', 'geospatial'],
+    content: [
+      'Updated project figures and managed geospatial data for the Sacramento Sewer District\'s Harvest Water Program.',
+      'Created advanced plots for legal OFCA supply contracts, supporting implementation of Title 22 water delivery to local farmers within the study area.'
+    ]
+  },
+  {
+    id: 'modesto-infiltration',
+    title: 'Infiltration Feasibility Study (2024)',
+    description: 'Soil Analysis, Field Testing',
+    categories: ['all', 'water', 'geospatial'],
+    content: [
+      'Conducted initial identification of existing drainage basins for percolation field tests, including spatial analysis of soil profiles and infiltration scores using SAGBI and SSURGO data.',
+      'Oversaw borehole drilling and percolation tests, documenting soil characteristics at 5-foot intervals across three boreholes to identify layers preventing deep percolation.'
+    ]
+  },
+  {
+    id: 'antelope-wells',
+    title: 'Antelope Valley Well Resilience Study (2024 - Present)',
+    description: 'Suitability Analysis, Water Infrastructure',
+    categories: ['all', 'water', 'geospatial'],
+    content: [
+      'Led geospatial analysis to create suitability scores for new well sites in Antelope Valley, combining land use, water quality, hydrogeologic, and infrastructure data.',
+      'Systematically weighted and binned over ten separate datasets to produce composite parcel-level scores. Created figure templates and documented data sources and analytical reasoning in technical memorandum supporting final site recommendations.'
+    ]
+  },
+  {
+    id: 'watershed-hub',
+    title: 'Watershed Hub Dashboard (2024 - Present)',
+    description: 'Data Processing, Dashboard Development',
+    categories: ['all', 'water', 'geospatial'],
+    content: [
+      'Performed exploratory analyses on multiple metrics for the California Department of Resources Watershed Hub dashboard project.',
+      'Fetched data from available APIs, then cleaned and processed results for upload to ArcGIS Online. Enhanced metric processing scripts with AI-assisted loggers, error-tracking, and summary reporting features.'
+    ]
+  },
+  {
+    id: 'sanitary-district',
+    title: 'Quarterly Groundwater Conditions Reports (2024 - Present)',
+    description: 'Water Quality Monitoring, Regulatory Compliance',
+    categories: ['all', 'water'],
+    content: [
+      'Produce quarterly National Pollutant Discharge Elimination System (NPDES) groundwater conditions reports from client-collected monitoring data across six wells.',
+      'Analyze depth to water measurements to estimate groundwater elevation and horizontal gradient. Use data interpolation and visualization techniques to provide comprehensive descriptions of water characteristics and constituent distributions.'
     ]
   }
 ];
