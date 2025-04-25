@@ -217,40 +217,51 @@ export default function PortfolioPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-forest-800 mb-6">Portfolio</h1>
+      <h1 className="text-4xl font-bold text-forest-800 mb-4">Portfolio</h1>
       
       <Tabs defaultValue="all" className="mb-8">
-        <TabsList className="bg-white/80 backdrop-blur-sm">
-          <TabsTrigger value="all">All Projects</TabsTrigger>
-          <TabsTrigger value="water">Water Resources</TabsTrigger>
-          <TabsTrigger value="geospatial">Geospatial Analysis</TabsTrigger>
-          <TabsTrigger value="research">Research</TabsTrigger>
-        </TabsList>
+        <div className="relative z-10 mb-8">
+          <TabsList className="flex flex-wrap gap-2 mb-6 justify-center sm:justify-start bg-transparent">
+            <TabsTrigger value="all" className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20">
+              All Projects
+            </TabsTrigger>
+            <TabsTrigger value="water" className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20">
+              Water Resources
+            </TabsTrigger>
+            <TabsTrigger value="geospatial" className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20">
+              Geospatial Analysis
+            </TabsTrigger>
+            <TabsTrigger value="research" className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20">
+              Research
+            </TabsTrigger>
+          </TabsList>
+        </div>
+        <div className="h-8"></div>
         
         {/* All Projects Tab */}
-        <TabsContent value="all" className="mt-6">
-          <div className="grid grid-cols-1 gap-8">
+        <TabsContent value="all" className="mt-0 relative z-0">
+          <div className="grid grid-cols-1 gap-8 pt-2">
             {getProjectsByCategory('all').map(renderProjectCard)}
           </div>
         </TabsContent>
         
         {/* Water Resources Tab */}
-        <TabsContent value="water" className="mt-6">
-          <div className="grid grid-cols-1 gap-8">
+        <TabsContent value="water" className="mt-0 relative z-0">
+          <div className="grid grid-cols-1 gap-8 pt-2">
             {getProjectsByCategory('water').map(renderProjectCard)}
           </div>
         </TabsContent>
         
         {/* Geospatial Analysis Tab */}
-        <TabsContent value="geospatial" className="mt-6">
-          <div className="grid grid-cols-1 gap-8">
+        <TabsContent value="geospatial" className="mt-0 relative z-0">
+          <div className="grid grid-cols-1 gap-8 pt-2">
             {getProjectsByCategory('geospatial').map(renderProjectCard)}
           </div>
         </TabsContent>
         
         {/* Research Tab */}
-        <TabsContent value="research" className="mt-6">
-          <div className="grid grid-cols-1 gap-8">
+        <TabsContent value="research" className="mt-0 relative z-0">
+          <div className="grid grid-cols-1 gap-8 pt-2">
             {getProjectsByCategory('research').map(renderProjectCard)}
           </div>
         </TabsContent>
