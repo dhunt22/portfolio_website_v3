@@ -157,8 +157,8 @@ const getAttributeLabel = (attr: string) => {
   switch(attr) {
     case "fnl_rs_": return "Overall Risk Score";
     case "clmt_sc": return "Climate Risk";
-    case "expsr_s": return "Exposure Risk";
     case "effcts_": return "Effects Risk";
+    case "expsr_s": return "Exposure Risk";
     default: return "Risk Score";
   }
 };
@@ -689,8 +689,8 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
           >
             <option value="fnl_rs_">Overall Risk Score</option>
             <option value="clmt_sc">Climate Risk</option>
-            <option value="expsr_s">Exposure Risk</option>
             <option value="effcts_">Effects Risk</option>
+            <option value="expsr_s">Exposure Risk</option>
           </select>
           <div className="mt-2">
             <div className="flex items-center justify-between text-sm">
