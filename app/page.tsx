@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { MapIcon, FishIcon } from '@/components/ui/icons/common-icons';
 
 /**
  * Home page component displaying introduction and highlights
@@ -17,40 +18,43 @@ export default function Home() {
     <div className="container mx-auto px-4 py-12">
       <section className="mb-16">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="md:w-1/2">
-            <h1 className="text-5xl font-bold text-forest-800 mb-4">
+          <div className="w-full md:w-1/2">
+            <h1 className="text-4xl md:text-5xl font-bold text-forest-800 mb-4">
               Devin Hunt
             </h1>
-            <h2 className="text-2xl text-forest-600 mb-6">
+            <h2 className="text-xl md:text-2xl text-forest-600 mb-6">
               Water Resources Engineer & Explorer
             </h2>
-            <p className="text-lg mb-6">
+            <p className="text-base md:text-lg mb-6">
               Passionate about understanding and solving water resource challenges in California 
               through data-driven approaches. Skilled in leveraging open-source data, spatial 
               analysis, and groundwater modeling to support sustainable water management.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/resume">
-                <Button className="bg-river-600 hover:bg-river-700">View Resume</Button>
+                <Button className="bg-river-600 hover:bg-river-700 w-full sm:w-auto">View Resume</Button>
               </Link>
               <Link href="/portfolio">
-                <Button variant="outline" className="border-forest-600 text-forest-600 hover:bg-forest-50">
+                <Button variant="outline" className="border-forest-600 text-forest-600 hover:bg-forest-50 w-full sm:w-auto">
                   Explore Portfolio
                 </Button>
               </Link>
             </div>
           </div>
-          <div className="md:w-1/2 relative">
-            <div className="rounded-lg overflow-hidden shadow-lg relative w-full h-[350px]">
+          <div className="w-full md:w-1/2 relative">
+            <div className="rounded-lg overflow-hidden shadow-lg relative w-full h-[280px] sm:h-[320px] md:h-[350px]">
               <Image
                 src="/images/profile.jpg"
-                alt="Devin Hunt in nature"
+                alt="Devin Hunt exploring nature - a water resources engineer in his element"
                 className="object-cover"
                 fill
                 priority
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 50vw"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                <p className="text-white text-sm italic">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 sm:p-4">
+                <p className="text-white text-xs sm:text-sm italic">
                   "The world is big, and I want to have a good look at it before it gets dark." – John Muir
                 </p>
               </div>
@@ -104,12 +108,10 @@ export default function Home() {
         <h2 className="text-3xl font-semibold text-forest-700 mb-6">Personal Passions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Link href="/interests#exploration" className="group">
-            <Card className="bg-white/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md">
+            <Card className="bg-white/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md group-hover:scale-105">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-earth-600">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
+                  <MapIcon className="text-earth-600 w-6 h-6" aria-hidden="true" />
                   Exploration
                 </CardTitle>
                 <CardDescription>Discovering remote natural places</CardDescription>
@@ -124,12 +126,10 @@ export default function Home() {
           </Link>
 
           <Link href="/interests#fishing" className="group">
-            <Card className="bg-white/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md">
+            <Card className="bg-white/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md group-hover:scale-105">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-river-600">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                  </svg>
+                  <FishIcon className="text-river-600 w-6 h-6" aria-hidden="true" />
                   Fishing
                 </CardTitle>
                 <CardDescription>Learning about streams from within</CardDescription>

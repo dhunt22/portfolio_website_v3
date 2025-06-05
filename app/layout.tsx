@@ -7,6 +7,7 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Metadata } from 'next';
 import Script from 'next/script';
 
@@ -65,13 +66,15 @@ export default function RootLayout({
         <Script src="/map-library-helper.js" strategy="afterInteractive" />
       </head>
       <body className={inter.className}>
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <ErrorBoundary>
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </ErrorBoundary>
       </body>
     </html>
   );

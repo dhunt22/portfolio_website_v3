@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import ResumeSection from '@/components/resume/ResumeSection';
 import ExperienceItem from '@/components/resume/ExperienceItem';
 import SkillsList from '@/components/resume/SkillsList';
+import { DownloadIcon } from '@/components/ui/icons/common-icons';
 
 /**
  * Resume page component showing professional experience, education, and skills
@@ -45,12 +46,8 @@ export default function ResumePage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold text-forest-800">Resume</h1>
         <Button className="bg-river-600 hover:bg-river-700">
-          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
+          <a href="/data/devin_hunt_resume_june2025.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+            <DownloadIcon aria-hidden="true" />
             Download PDF
           </a>
         </Button>
@@ -62,19 +59,19 @@ export default function ResumePage() {
           <h3 className="text-xl text-forest-600 mb-4 print:text-lg">Water Resources Engineer</h3>
           <div className="mb-4">
             <p className="italic">
-              Hydrologist passionate about understanding and solving water resource challenges in California through data-driven approaches. Skilled in leveraging open-source data, spatial analysis, and modeling to support sustainable water management. Committed to applying technical expertise to develop innovative solutions for complex hydrological issues.
+              Hydrologist passionate about understanding and solving water resource challenges in California through data-driven approaches. Skilled in leveraging open-source data, spatial analysis, and modeling to support sustainable water management. Committed to applying technical expertise to develop innovative solutions for complex hydrologic issues.
             </p>
           </div>
         </section>
 
         <ResumeSection title="Professional Experience">
           <ExperienceItem 
-            title="Water Resources Engineer"
+            title="Water Resources Engineer II"
             company="Woodard & Curran"
             period="June 2023 - Present"
             responsibilities={[
               "Engineer 2 involved in the development of CA SGMA Groundwater Sustainability Plans (GSPs), groundwater budgets through CA IWFM modeling, and recharge and extraction optimization through geospatial analyses.",
-              "Developed new figures, basemap, and layout templates for the Cuyama 2025 GSP using ESRI ArcGIS Pro",
+              "Developed new figures, basemap, and layout templates for the Cuyama 2025 GSP using Esri ArcGIS Pro",
               "Performed annual updates for the CoSANA Model and Cuyama Basin Water Resources Model (CBWRM)",
               "Utilized python, arcpy, and open-source geospatial libraries to automate large dataset processing",
               "Computed Recharge Suitability Index (RSI) scores using open-source geospatial data for the Yuba Subbasins",
@@ -104,7 +101,7 @@ export default function ResumePage() {
             period="January 2022 - October 2022"
             responsibilities={[
               "Field researcher and data analyst supporting a PhD Dissertation on stream metabolism. Study area was Fraser Experimental Forest, CO across four catchment basins. (Project Lead Lauren Kremer in Watershed Analysis Group)",
-              "Constructed Campbell Scientific stream gages and planned on-site solar panel locations",
+              "Constructed Campbell Scientific stream gauges and planned on-site solar panel locations",
               "Installed Campbell Scientific, HOBO, and other in-situ sensors",
               "Collected stream geomorphology, velocity-area, and groundwater level measurements",
               "Read data and maintained sensors",
@@ -124,11 +121,23 @@ export default function ResumePage() {
             </p>
             <div className="mt-3">
               <h5 className="font-medium text-forest-700">Relevant coursework:</h5>
-              <ul className="list-disc list-inside mt-1 ml-2">
-                <li>Hydraulics and Groundwater flow; Hydrogeology, Soil Physics, Physics I & II</li>
-                <li>Data Science; Programming for GIS I & II, Watershed Analysis for Env. Data Science, Watershed Problem Analysis</li>
-                <li>Remote Sensing; Geodetic and Near-surface Geophysical Methods, Remote Sensing and Image Interpretation</li>
-                <li>Niche Subjects; Snow Hydrology, Field Measurements in Snow Hydrology</li>
+              <ul className="space-y-1 mt-1 ml-2">
+                <li className="flex items-start">
+                  <span className="text-forest-600 mr-2 mt-1">•</span>
+                  <span className="text-forest-800">Hydraulics and Groundwater flow; Hydrogeology, Soil Physics, Physics I & II</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-forest-600 mr-2 mt-1">•</span>
+                  <span className="text-forest-800">Data Science; Programming for GIS I & II, Watershed Analysis for Env. Data Science, Watershed Problem Analysis</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-forest-600 mr-2 mt-1">•</span>
+                  <span className="text-forest-800">Remote Sensing; Geodetic and Near-surface Geophysical Methods, Remote Sensing and Image Interpretation</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-forest-600 mr-2 mt-1">•</span>
+                  <span className="text-forest-800">Niche Subjects; Snow Hydrology, Field Measurements in Snow Hydrology</span>
+                </li>
               </ul>
             </div>
           </div>

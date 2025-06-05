@@ -73,10 +73,10 @@ const PROJECT_MAPS: Record<string, any> = {
     }
   },
   'seasonal-population': {
-    center: [-121.520, 39.120], // California
-    zoom: 5,
+    center: [-117.5525, 33.7596], // Southern California
+    zoom: 8,
     style: 'https://tiles.openfreemap.org/styles/liberty',
-    geojsonPath: '/data/yuba_subbasins.geojson',
+    geojsonPath: '/data/i03_WaterDistricts_seasonality.geojson',
     dataLayer: {
       id: 'recharge-suitability',
       type: 'fill',

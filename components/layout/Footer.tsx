@@ -5,7 +5,7 @@
 
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
-import { GitHubIcon } from '../ui/icons';
+import { GitHubIcon, LinkedInIcon, EmailIcon } from '@/components/ui/icons/common-icons';
 
 /**
  * Footer component with contact information and site links
@@ -53,29 +53,29 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-semibold mb-4 text-white">Contact</h3>
             <p className="flex items-center text-forest-100 mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
+              <EmailIcon className="mr-2 w-5 h-5" aria-hidden="true" />
               <a href="mailto:contact@devinhunt.com" className="hover:underline">
                 contact@devinhunt.com
               </a>
             </p>
-            <div className="flex space-x-4 mt-4">
-              <a href="https://github.com/dhunt22" target="_blank" rel="noopener noreferrer" className="text-forest-100 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <GitHubIcon className="mr-2" />
-                </svg>
-              {/* <p className='flex items-center text-forest-100 mb-2'>
-                dhunt22
-              </p> */}
+            <div className="flex space-x-5 mt-5">
+              <a 
+                href="https://github.com/dhunt22" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-forest-100 hover:text-white transition-colors"
+                aria-label="GitHub Profile"
+              >
+                <GitHubIcon className="w-5 h-5" />
               </a>
-              <a href="https://www.linkedin.com/in/devinthunt" target="_blank" rel="noopener noreferrer" className="text-forest-100 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                  <rect x="2" y="9" width="4" height="12"></rect>
-                  <circle cx="4" cy="4" r="2"></circle>
-                </svg>
+              <a 
+                href="https://www.linkedin.com/in/devinthunt" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-forest-100 hover:text-white transition-colors"
+                aria-label="LinkedIn Profile"
+              >
+                <LinkedInIcon className="w-5 h-5" />
               </a>
             </div>
           </div>

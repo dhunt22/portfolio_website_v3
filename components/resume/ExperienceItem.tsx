@@ -38,10 +38,11 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
         <span className="text-forest-600 text-sm italic">{period}</span>
       </div>
       <p className="text-forest-700 font-medium mb-2">{company}</p>
-      <ul className="list-disc list-outside ml-5 space-y-1">
+      <ul className="space-y-2 ml-2">
         {responsibilities.map((responsibility, index) => (
-          <li key={index} className="text-forest-800">
-            {responsibility}
+          <li key={index} className="flex items-start">
+            <span className="text-forest-600 mr-2 mt-1">•</span>
+            <span className="text-forest-800">{responsibility}</span>
           </li>
         ))}
       </ul>

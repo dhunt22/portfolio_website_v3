@@ -5,192 +5,96 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Icon } from '@/components/ui/icons'
+import { Icon } from '@/components/ui/icons';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import ProjectMap from '@/components/portfolio/ProjectMap';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PROJECTS, Project, getProjectsByCategory } from '@/lib/portfolio-data';
+import { ExternalLinkIcon, GitHubIcon, DownloadIcon } from '@/components/ui/icons/common-icons';
 
 /**
- * Interface for portfolio project data
+ * Get icon component based on icon type
+ * @param iconType - Type of icon to render
+ * @returns Icon component
  */
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  categories: string[];
-  content: string[];
-  links?: {
-    href: string;
-    label: string;
-    icon?: React.ReactNode;
-  }[];
+function getIconByType(iconType?: string) {
+  switch (iconType) {
+    case 'github':
+      return <GitHubIcon className="w-4 h-4" />;
+    case 'document':
+    case 'external':
+    case 'website':
+      return <ExternalLinkIcon className="w-4 h-4" />;
+    case 'download':
+      return <DownloadIcon className="w-4 h-4" />;
+    default:
+      return <ExternalLinkIcon className="w-4 h-4" />;
+  }
 }
 
 /**
- * Project data array
+ * ProjectCard component for rendering individual project cards
+ * @param project - Project data
+ * @param isActive - Whether this project is currently active
+ * @param onClick - Click handler
+ * @returns Rendered project card
  */
-const PROJECTS: Project[] = [
-  {
-    id: 'prison-ej',
-    title: 'Environmental Justice For Prisons',
-    description: 'Geospatial Analysis, NASA Grant Project',
-    categories: ['all', 'geospatial', 'research'],
-    content: [
-      'At the Geospatial Centroid, I worked alongside Caitlin Mothes to choose and process open source datasets and calculate percentile scores in three separate categories: climate, effects, and exposure.',
-      'Each prison was then assigned a vulnerability score which combined all risk factors. This project taught me about managing a repository and working with large data.'
-    ],
-    links: [
-      {
-        href: 'https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1',
-        label: 'GitHub Repository',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-          </svg>
-        )
-      }
-    ]
-  },
-  {
-    id: 'cuyama-basin',
-    title: 'Cuyama Valley Groundwater Basin (2023 - Present)',
-    description: 'Groundwater Sustainability, Cartography',
-    categories: ['all', 'water'],
-    content: [
-      'Served as the geospatial technician, water resource model support, and project data manager for all tasks for the reports.',
-      'Geospatial: developed layout template, basemap, and new figures for the Cuyama 2024 Annual Report (AR), 2025 Groundwater Sustainability Plan (GSP), and Groundwater Conditions reports using ArcGIS Pro and QGIS. To see my work, open the 2025 GSP document and look in the lower left corner for "dhunt".',
-      'Modeling: Utilized python and QGIS to incorporate yearly land use, ET, and other water usage parameters to the IWFM model, CBWRM.'
-    ],
-    links: [
-      {
-        href: 'https://sgma.water.ca.gov/portal/gsppe/update/29F7AB43D49C0C73E06350C29E0AC15F',
-        label: '2025 GSP',
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-            <rect x="2" y="2" width="2" height="20"></rect>
-            <line x1="8" y1="6" x2="16" y2="6"></line>
-            <line x1="8" y1="10" x2="16" y2="10"></line>
-            <line x1="8" y1="14" x2="16" y2="14"></line>
-          </svg>
-        )
-      }
-    ]
-  },
-  {
-    id: 'yuba-recharge',
-    title: 'Yuba Subbasins Recharge Analysis (2023)',
-    description: 'Groundwater Management, Spatial Analysis',
-    categories: ['all', 'water', 'geospatial'],
-    content: [
-      'Computed Recharge Suitability Index (RSI) scores using open-source geospatial data for the Yuba Subbasins. This analysis identified optimal locations for groundwater recharge projects.',
-      'By combining soil permeability data, slope analysis, land use classifications, and proximity to water sources, I created a comprehensive index score and suite of figures that guides decision-making for water management authorities.',
-      'Yuba Water. (2023b, December). Recharge Suitability Index: Development and Results.'
-    ]
-  },
-  {
-    id: 'seasonal-population',
-    title: 'Urban Water Use Objective Reporting (circa 2024)',
-    description: 'Groundwater Management, Large-data Analysis',
-    categories: ['all', 'water'],
-    content: [
-      'Programmed a script to calculate Seasonal populations from Advanced Metering Infrastructure (AMI) data. This analysis helped clients comply with California requirements for Urban Water Use Objectives (UWUO).',
-      'R-language script wrangled, cleand, and processed >8 million records from 21,000 households. Algorithms within script adhered to Methods for Estimating Seasonal Populations with Water and Energy Data (DWR, 2022).'
-    ]
-  },
-  {
-    id: 'harvest-water',
-    title: 'Harvest Water Program (2024)',
-    description: 'Geospatial Management, Contract Support',
-    categories: ['all', 'water', 'geospatial'],
-    content: [
-      'Updated project figures and managed geospatial data for the Sacramento Sewer District\'s Harvest Water Program.',
-      'Created advanced plots for legal OFCA supply contracts, supporting implementation of Title 22 water delivery to local farmers within the study area.'
-    ]
-  },
-  {
-    id: 'modesto-infiltration',
-    title: 'Infiltration Feasibility Study (2024)',
-    description: 'Soil Analysis, Field Testing',
-    categories: ['all', 'water', 'geospatial'],
-    content: [
-      'Conducted initial identification of existing drainage basins for percolation field tests, including spatial analysis of soil profiles and infiltration scores using SAGBI and SSURGO data.',
-      'Oversaw borehole drilling and percolation tests, documenting soil characteristics at 5-foot intervals across three boreholes to identify layers preventing deep percolation.'
-    ]
-  },
-  {
-    id: 'antelope-wells',
-    title: 'Antelope Valley Well Resilience Study (2024 - Present)',
-    description: 'Suitability Analysis, Water Infrastructure',
-    categories: ['all', 'water', 'geospatial'],
-    content: [
-      'Led geospatial analysis to create suitability scores for new well sites in Antelope Valley, combining land use, water quality, hydrogeologic, and infrastructure data.',
-      'Systematically weighted and binned over ten separate datasets to produce composite parcel-level scores. Created figure templates and documented data sources and analytical reasoning in technical memorandum supporting final site recommendations.'
-    ]
-  },
-  {
-    id: 'watershed-hub',
-    title: 'Watershed Hub Dashboard (2024 - Present)',
-    description: 'Data Processing, Dashboard Development',
-    categories: ['all', 'water', 'geospatial'],
-    content: [
-      'Performed exploratory analyses on multiple metrics for the California Department of Resources Watershed Hub dashboard project.',
-      'Fetched data from available APIs, then cleaned and processed results for upload to ArcGIS Online. Enhanced metric processing scripts with AI-assisted loggers, error-tracking, and summary reporting features.'
-    ]
-  },
-  {
-    id: 'sanitary-district',
-    title: 'Quarterly Groundwater Conditions Reports (2024 - Present)',
-    description: 'Water Quality Monitoring, Regulatory Compliance',
-    categories: ['all', 'water'],
-    content: [
-      'Produce quarterly National Pollutant Discharge Elimination System (NPDES) groundwater conditions reports from client-collected monitoring data across six wells.',
-      'Analyze depth to water measurements to estimate groundwater elevation and horizontal gradient. Use data interpolation and visualization techniques to provide comprehensive descriptions of water characteristics and constituent distributions.'
-    ]
-  }
-];
-
-/**
- * Portfolio page component displaying various professional projects
- * @returns {React.JSX.Element} The rendered portfolio page
- */
-export default function PortfolioPage() {
-  const [activeProject, setActiveProject] = useState('prison-ej');
-
-  /**
-   * Renders a project card component
-   * @param {Project} project - Project data to render
-   * @returns {React.JSX.Element} - Rendered project card
-   */
-  const renderProjectCard = (project: Project) => (
+function ProjectCard({ project, isActive, onClick }: {
+  project: Project;
+  isActive: boolean;
+  onClick: () => void;
+}) {
+  return (
     <Card 
-      key={project.id}
-      id={project.id} 
-      className={`bg-white/90 backdrop-blur-sm transition-all duration-300 ${activeProject === project.id ? 'border-river-500 shadow-md' : ''}`}
-      onClick={() => setActiveProject(project.id)}
+      id={project.id}
+      className={`bg-white/90 backdrop-blur-sm transition-all duration-300 cursor-pointer ${
+        isActive ? 'border-river-500 shadow-md' : 'hover:shadow-sm'
+      }`}
+      onClick={onClick}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6">
           <CardHeader className="p-0 pb-4">
-            <CardTitle className="text-2xl text-forest-700">{project.title}</CardTitle>
+            <div className="flex justify-between items-start mb-2">
+              <CardTitle className="text-2xl text-forest-700">{project.title}</CardTitle>
+              {project.year && (
+                <span className="text-sm text-forest-500 bg-forest-50 px-2 py-1 rounded">
+                  {project.year}
+                </span>
+              )}
+            </div>
             <CardDescription className="text-forest-500">{project.description}</CardDescription>
+            {project.technologies && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {project.technologies.map((tech, idx) => (
+                  <span key={idx} className="text-xs bg-river-100 text-river-700 px-2 py-1 rounded-full">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            )}
           </CardHeader>
           
           <CardContent className="p-0 pb-4">
             {project.content.map((paragraph, idx) => (
-              <p key={idx} className="mb-4">{paragraph}</p>
+              <p key={idx} className="mb-4 text-sm leading-relaxed">{paragraph}</p>
             ))}
             
             {project.links && project.links.length > 0 && (
-              <div className="mt-4">
+              <div className="mt-4 flex flex-wrap gap-2">
                 {project.links.map((link, idx) => (
-                  <Link key={idx} href={link.href} target="_blank">
-                    <Button variant="outline" className="border-forest-600 text-forest-600 hover:bg-forest-50">
-                      {link.icon}
+                  <Link key={idx} href={link.href} target="_blank" rel="noopener noreferrer">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="border-forest-600 text-forest-600 hover:bg-forest-50"
+                    >
+                      {getIconByType(link.iconType)}
                       {link.label}
+                      <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden="true" />
                     </Button>
                   </Link>
                 ))}
@@ -205,66 +109,101 @@ export default function PortfolioPage() {
       </div>
     </Card>
   );
+}
 
-  /**
-   * Filters projects by category
-   * @param {string} category - Category to filter by
-   * @returns {Project[]} - Filtered projects
-   */
-  const getProjectsByCategory = (category: string) => {
-    return PROJECTS.filter(project => project.categories.includes(category));
-  };
+/**
+ * Portfolio page component displaying various professional projects
+ * @returns {React.JSX.Element} The rendered portfolio page
+ */
+export default function PortfolioPage() {
+  const [activeProject, setActiveProject] = useState('prison-ej');
+
+  // Memoize filtered projects for better performance
+  const projectsByCategory = useMemo(() => {
+    const categories = {
+      all: getProjectsByCategory('all') || [],
+      water: getProjectsByCategory('water') || [],
+      geospatial: getProjectsByCategory('geospatial') || [],
+      research: getProjectsByCategory('research') || []
+    };
+    
+    // Ensure all arrays are valid and have length property
+    Object.keys(categories).forEach(key => {
+      const categoryKey = key as keyof typeof categories;
+      if (!Array.isArray(categories[categoryKey])) {
+        categories[categoryKey] = [];
+      }
+    });
+    
+    return categories;
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-forest-800 mb-4">Portfolio</h1>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-forest-800 mb-4">Portfolio</h1>
+        <p className="text-lg text-forest-600 mb-6">
+          A collection of water resources and geospatial projects showcasing data-driven solutions 
+          for sustainable water management across California.
+        </p>
+      </div>
       
       <Tabs defaultValue="all" className="mb-8">
         <div className="relative z-10 mb-8">
-          <TabsList className="flex flex-wrap gap-2 mb-6 justify-center sm:justify-start bg-transparent">
-            <TabsTrigger value="all" className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20">
-              All Projects
+          <TabsList className="flex flex-wrap gap-2 mb-6 justify-center sm:justify-start bg-transparent" role="tablist" aria-label="Portfolio project categories">
+            <TabsTrigger 
+              value="all" 
+              id="tab-all"
+              className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20"
+            >
+              All Projects ({projectsByCategory.all?.length ?? 0})
             </TabsTrigger>
-            <TabsTrigger value="water" className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20">
-              Water Resources
+            <TabsTrigger 
+              value="water" 
+              id="tab-water"
+              className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20"
+            >
+              Water Resources ({projectsByCategory.water?.length ?? 0})
             </TabsTrigger>
-            <TabsTrigger value="geospatial" className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20">
-              Geospatial Analysis
+            <TabsTrigger 
+              value="geospatial" 
+              id="tab-geospatial"
+              className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20"
+            >
+              Geospatial Analysis ({projectsByCategory.geospatial?.length ?? 0})
             </TabsTrigger>
-            <TabsTrigger value="research" className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20">
-              Research
+            <TabsTrigger 
+              value="research" 
+              id="tab-research"
+              className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20"
+            >
+              Research ({projectsByCategory.research?.length ?? 0})
             </TabsTrigger>
           </TabsList>
         </div>
-        <div className="h-8"></div>
         
-        {/* All Projects Tab */}
-        <TabsContent value="all" className="mt-0 relative z-0">
-          <div className="grid grid-cols-1 gap-8 pt-2">
-            {getProjectsByCategory('all').map(renderProjectCard)}
-          </div>
-        </TabsContent>
-        
-        {/* Water Resources Tab */}
-        <TabsContent value="water" className="mt-0 relative z-0">
-          <div className="grid grid-cols-1 gap-8 pt-2">
-            {getProjectsByCategory('water').map(renderProjectCard)}
-          </div>
-        </TabsContent>
-        
-        {/* Geospatial Analysis Tab */}
-        <TabsContent value="geospatial" className="mt-0 relative z-0">
-          <div className="grid grid-cols-1 gap-8 pt-2">
-            {getProjectsByCategory('geospatial').map(renderProjectCard)}
-          </div>
-        </TabsContent>
-        
-        {/* Research Tab */}
-        <TabsContent value="research" className="mt-0 relative z-0">
-          <div className="grid grid-cols-1 gap-8 pt-2">
-            {getProjectsByCategory('research').map(renderProjectCard)}
-          </div>
-        </TabsContent>
+        {/* Tab Contents */}
+        {Object.entries(projectsByCategory).map(([category, projects]) => (
+          <TabsContent 
+            key={category} 
+            value={category} 
+            id={`panel-${category}`}
+            className="mt-0 relative z-0"
+            role="tabpanel"
+            aria-labelledby={`tab-${category}`}
+          >
+            <div className="grid grid-cols-1 gap-8 pt-2">
+              {(projects || []).map(project => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  isActive={activeProject === project.id}
+                  onClick={() => setActiveProject(project.id)}
+                />
+              ))}
+            </div>
+          </TabsContent>
+        ))}
       </Tabs>
     </div>
   );
