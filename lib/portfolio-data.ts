@@ -43,6 +43,11 @@ export const PROJECTS: Project[] = [
         href: 'https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1',
         label: 'GitHub Repository',
         iconType: 'github'
+      },
+      {
+        href: '/portfolio/environmental-justice-prisons',
+        label: 'Detailed Project Page',
+        iconType: 'external'
       }
     ]
   },

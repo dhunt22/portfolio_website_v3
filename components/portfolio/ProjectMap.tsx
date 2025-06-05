@@ -194,6 +194,63 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
   const map = useRef<maplibregl.Map | null>(null);
   const popup = useRef<maplibregl.Popup | null>(null);
   const [selectedAttribute, setSelectedAttribute] = useState<string>("fnl_rs_");
+  const [topNFilter, setTopNFilter] = useState<number>(10);
+  const [allPrisonData, setAllPrisonData] = useState<any[]>([]);
+  const [showCategoryPanel, setShowCategoryPanel] = useState<boolean>(false);
+  const [showFilterPanel, setShowFilterPanel] = useState<boolean>(false);
+  
+  // Function to apply top N filter to the map
+  const applyTopNFilter = (n: number) => {
+    if (!map.current || !allPrisonData.length || projectId !== 'prison-ej') return;
+    
+    // Sort prisons by selected attribute in descending order and get top N
+    const sortedPrisons = [...allPrisonData]
+      .sort((a, b) => (b.properties[selectedAttribute] || 0) - (a.properties[selectedAttribute] || 0))
+      .slice(0, n);
+    
+    // Get the IDs of top N prisons
+    const topPrisonIds = sortedPrisons.map(prison => prison.id || prison.properties.OBJECTID);
+    
+    // Create filter expression for MapLibre
+    const filterExpression = ['in', ['get', 'OBJECTID'], ['literal', topPrisonIds]];
+    
+    // Apply filter to all prison layers
+    try {
+      if (map.current.getLayer('prison-polygons')) {
+        map.current.setFilter('prison-polygons', filterExpression);
+      }
+      if (map.current.getLayer('prison-outlines')) {
+        map.current.setFilter('prison-outlines', filterExpression);
+      }
+      if (map.current.getLayer('prison-polygons-highlight')) {
+        map.current.setFilter('prison-polygons-highlight', filterExpression);
+      }
+      if (map.current.getLayer('prison-centroids')) {
+        map.current.setFilter('prison-centroids', filterExpression);
+      }
+      if (map.current.getLayer('prison-symbol-layer')) {
+        map.current.setFilter('prison-symbol-layer', filterExpression);
+      }
+    } catch (error) {
+      console.error('Error applying filter:', error);
+    }
+  };
+  
+  // Function to clear all filters
+  const clearFilters = () => {
+    if (!map.current || projectId !== 'prison-ej') return;
+    
+    try {
+      const layers = ['prison-polygons', 'prison-outlines', 'prison-polygons-highlight', 'prison-centroids', 'prison-symbol-layer'];
+      layers.forEach(layerId => {
+        if (map.current?.getLayer(layerId)) {
+          map.current.setFilter(layerId, null);
+        }
+      });
+    } catch (error) {
+      console.error('Error clearing filters:', error);
+    }
+  };
   
   // Shared function to set up popup handlers for prison map
   const setupPrisonPopupHandlers = () => {
@@ -297,6 +354,14 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
         // Only add source if it doesn't exist
         if (!map.current.getSource("prisons")) {
           try {
+            // Fetch and store prison data for filtering
+            fetch(mapConfig.geojsonPath)
+              .then(response => response.json())
+              .then(data => {
+                setAllPrisonData(data.features || []);
+              })
+              .catch(error => console.error('Error loading prison data:', error));
+
             // Add polygon source
             map.current.addSource("prisons", {
               type: "geojson",
@@ -674,30 +739,116 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
     }
   }, [selectedAttribute, projectId]);
   
+  // Apply filter when topNFilter or selectedAttribute changes
+  useEffect(() => {
+    if (allPrisonData.length > 0 && projectId === 'prison-ej') {
+      if (topNFilter === 0) {
+        clearFilters();
+      } else {
+        applyTopNFilter(topNFilter);
+      }
+    }
+  }, [topNFilter, selectedAttribute, allPrisonData, projectId]);
+  
+  // Close panels when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.control-panel')) {
+        setShowCategoryPanel(false);
+        setShowFilterPanel(false);
+      }
+    };
+
+    if (showCategoryPanel || showFilterPanel) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showCategoryPanel, showFilterPanel]);
+  
   return (
     <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden">
       <div ref={mapContainer} className="w-full h-full" />
       
-      {/* Legend for prison-ej project */}
+      {/* Compact Controls for prison-ej project */}
       {projectId === 'prison-ej' && (
-        <div className="absolute right-10 top-2.5 z-10 rounded-lg bg-white p-3 shadow-lg">
-          {/* <h4 className="mb-2 text-forest-700">Risk Factors</h4> */}
-          <select
-            className="w-full rounded border p-1"
-            value={selectedAttribute}
-            onChange={(e) => setSelectedAttribute(e.target.value)}
-          >
-            <option value="fnl_rs_">Overall Risk Score</option>
-            <option value="clmt_sc">Climate Risk</option>
-            <option value="effcts_">Effects Risk</option>
-            <option value="expsr_s">Exposure Risk</option>
-          </select>
-          <div className="mt-2">
-            <div className="flex items-center justify-between text-sm">
-              <span>Low Risk</span>
-              <span>High Risk</span>
-            </div>
-            <div className="h-2 w-full rounded bg-gradient-to-r from-[#2ecc71] via-[#f1c40f] to-[#e74c3c]" />
+        <div className="absolute top-4 right-16 z-10 flex flex-col gap-2 control-panel">
+          {/* Category Button */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setShowCategoryPanel(!showCategoryPanel);
+                setShowFilterPanel(false);
+              }}
+              className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md p-2 shadow-sm transition-colors"
+              title="Risk Category"
+            >
+              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </button>
+            
+            {showCategoryPanel && (
+              <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-3 w-48">
+                <label className="block text-xs font-medium text-forest-700 mb-2">
+                  Risk Category
+                </label>
+                <select
+                  className="w-full rounded border border-forest-300 p-2 text-sm"
+                  value={selectedAttribute}
+                  onChange={(e) => setSelectedAttribute(e.target.value)}
+                >
+                  <option value="fnl_rs_">Overall Risk Score</option>
+                  <option value="clmt_sc">Climate Risk</option>
+                  <option value="effcts_">Effects Risk</option>
+                  <option value="expsr_s">Exposure Risk</option>
+                </select>
+                <div className="mt-2">
+                  <div className="flex items-center justify-between text-xs text-forest-600">
+                    <span>Low Risk</span>
+                    <span>High Risk</span>
+                  </div>
+                  <div className="h-2 w-full rounded bg-gradient-to-r from-[#2ecc71] via-[#f1c40f] to-[#e74c3c]" />
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Filter Button */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setShowFilterPanel(!showFilterPanel);
+                setShowCategoryPanel(false);
+              }}
+              className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md p-2 shadow-sm transition-colors"
+              title="Filter Prisons"
+            >
+              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+            </button>
+            
+            {showFilterPanel && (
+              <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-3 w-48">
+                <label className="block text-xs font-medium text-forest-700 mb-2">
+                  Filter Prisons
+                </label>
+                <select
+                  className="w-full rounded border border-forest-300 p-2 text-sm"
+                  value={topNFilter}
+                  onChange={(e) => setTopNFilter(Number(e.target.value))}
+                >
+                  <option value={0}>All Prisons</option>
+                  <option value={10}>Top 10 Highest Risk</option>
+                </select>
+                {topNFilter > 0 && (
+                  <p className="text-xs text-forest-600 mt-2">
+                    Showing top {topNFilter} facilities
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
