@@ -188,13 +188,55 @@ export function applyFilterToLayers(map: maplibregl.Map, layerIds: string[], fil
   });
 }
 
+// Enhanced layer update function that ensures immediate visual updates
+export function updateLayerPaintPropertiesBatch(
+  map: maplibregl.Map, 
+  updates: Array<{layerId: string; property: string; value: any}>,
+  forceRepaint: boolean = true
+): void {
+  // Apply all paint property updates first
+  updates.forEach(update => {
+    updateLayerPaintProperty(map, update.layerId, update.property, update.value);
+  });
+  
+  if (forceRepaint) {
+    // Force immediate repaint with multiple strategies
+    map.triggerRepaint();
+    
+    // Additional repaint strategies for stubborn cases
+    setTimeout(() => {
+      if (map.isStyleLoaded()) {
+        map.triggerRepaint();
+      }
+    }, 0);
+    
+    requestAnimationFrame(() => {
+      if (map.isStyleLoaded()) {
+        map.triggerRepaint();
+      }
+    });
+  }
+}
+
 export function updateLayerPaintProperty(map: maplibregl.Map, layerId: string, property: string, value: any): void {
   if (map.getLayer(layerId)) {
     try {
+      console.log(`Updating ${layerId} ${property}`);
       map.setPaintProperty(layerId, property, value);
+      
+      // Verify the property was actually set
+      const updatedValue = map.getPaintProperty(layerId, property);
+      if (JSON.stringify(updatedValue) !== JSON.stringify(value)) {
+        console.warn(`Paint property update may have failed for ${layerId}:`, {
+          expected: value,
+          actual: updatedValue
+        });
+      }
     } catch (error) {
       console.error(`Error updating paint property for layer ${layerId}:`, error);
     }
+  } else {
+    console.warn(`Layer ${layerId} not found when trying to update ${property}`);
   }
 }
 

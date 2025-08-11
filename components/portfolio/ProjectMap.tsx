@@ -111,7 +111,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
     };
   }, [projectId]);
   
-  // Update prison map colors when selectedAttribute changes
+  // Update prison map colors when selectedAttribute changes - with immediate effect
   useEffect(() => {
     if (projectId === 'prison-ej' && map.current?.isStyleLoaded()) {
       console.log(`Updating colors for attribute change: ${selectedAttribute}`);
@@ -123,7 +123,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
         setMapError(`Failed to update colors: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
-  }, [selectedAttribute, projectId, updatePrisonColors, setupPopupHandlers]);
+  }, [selectedAttribute, projectId]); // Removed updatePrisonColors and setupPopupHandlers from deps to avoid cycles
   
   // Close panels when clicking outside (only for category panel when minimized)
   useEffect(() => {

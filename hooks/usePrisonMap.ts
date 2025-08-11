@@ -11,6 +11,7 @@ import {
   sortPrisonsByRisk,
   applyFilterToLayers,
   updateLayerPaintProperty,
+  updateLayerPaintPropertiesBatch,
   getPrisonId,
   determineIdField
 } from '@/lib/maps/mapUtils';
@@ -73,18 +74,52 @@ export const usePrisonMap = (map: React.MutableRefObject<maplibregl.Map | null>,
   const updatePrisonColors = () => {
     if (!map.current || !map.current.isStyleLoaded() || projectId !== 'prison-ej') return;
 
-    console.log(`Updating prison colors for attribute: ${selectedAttribute}`);
+    console.log(`Updating prison colors for attribute: ${selectedAttribute}, showAll: ${showAllPrisons}`);
     const colorScale = createRiskColorScale(selectedAttribute);
     
-    updateLayerPaintProperty(map.current, "prison-polygons", "fill-color", colorScale);
-    updateLayerPaintProperty(map.current, "prison-centroids", "circle-color", colorScale);
-    updateLayerPaintProperty(map.current, "prison-symbol-layer", "icon-color", colorScale);
+    // Use batch update for better consistency
+    const updates = [
+      { layerId: "prison-polygons", property: "fill-color", value: colorScale },
+      { layerId: "prison-centroids", property: "circle-color", value: colorScale },
+      { layerId: "prison-symbol-layer", property: "icon-color", value: colorScale }
+    ];
+    
+    if (showAllPrisons) {
+      // When showing all prisons, use enhanced repaint strategy
+      console.log('Applying enhanced repaint strategy for all prisons mode');
+      updateLayerPaintPropertiesBatch(map.current, updates, true);
+      
+      // Additional aggressive repaint for stubborn all-prisons mode
+      setTimeout(() => {
+        if (map.current && map.current.isStyleLoaded()) {
+          try {
+            // Force style recalculation by briefly toggling a benign property
+            const currentOpacity = map.current.getPaintProperty('prison-polygons', 'fill-opacity');
+            map.current.setPaintProperty('prison-polygons', 'fill-opacity', currentOpacity);
+            map.current.triggerRepaint();
+          } catch (error) {
+            console.warn('Additional repaint strategy failed:', error);
+          }
+        }
+      }, 10); // Small delay to ensure all updates are processed
+    } else {
+      // Filtered mode - standard update with single repaint
+      console.log('Applying standard repaint strategy for filtered mode');
+      updates.forEach(update => {
+        updateLayerPaintProperty(map.current!, update.layerId, update.property, update.value);
+      });
+      map.current.triggerRepaint();
+    }
   };
 
   // Apply filter when showAllPrisons or selectedAttribute changes
   useEffect(() => {
     if (allPrisonData.length > 0 && projectId === 'prison-ej') {
       applyTopNFilter(showAllPrisons);
+      // Ensure colors are updated after filter changes
+      setTimeout(() => {
+        updatePrisonColors();
+      }, 50); // Small delay to ensure filter is fully applied
     }
   }, [showAllPrisons, selectedAttribute, allPrisonData, projectId]);
 

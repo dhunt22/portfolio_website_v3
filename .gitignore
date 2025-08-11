@@ -1,11 +1,9 @@
 debug.js
 debug-build.js
-enhancements.md
-processed_cv_projects.md
-SUMMARY.md
 cv_processing_to_website.txt
 /node_modules/
 /.next/
+*.md
 
 # Exclude icon demo files
 /app/icons-demo/

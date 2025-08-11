@@ -44,7 +44,11 @@ export const BASE_CONFIGS = {
   CUYAMA_VALLEY: {
     center: [-119.630, 34.9220] as [number, number],
     zoom: 8,
-  }
+  },
+  CV_FOOTHILL_SA: {
+    center: [-120.7414, 38.1044] as [number, number],
+    zoom: 12,
+  },
 };
 
 // Standard layer configurations
@@ -62,17 +66,25 @@ export const LAYER_CONFIGS: Record<string, MapLayerConfig> = {
     color: '#7a8082',
     outlineColor: '#000000',
     opacity: 0.4
+  },
+  WATERSHED: {
+    id: 'watershed-hub',
+    type: 'fill',
+    color: '#3fbffb',
+    outlineColor: '#000000',
+    opacity: 0.3
   }
 };
 
-// Default style URL
+// Styles URL
 export const DEFAULT_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
+export const GRAY_STYLE = 'https://tiles.openfreemap.org/styles/positron';
 
 // Project-specific configurations
 export const PROJECT_CONFIGS: Record<string, MapConfig> = {
   'prison-ej': {
     ...BASE_CONFIGS.US_NATIONAL,
-    style: DEFAULT_STYLE,
+    style: GRAY_STYLE,
     geojsonPath: '/data/final_df_2023-08-31.geojson',
     pointsPath: '/data/centroids_2023-08-31.geojson',
   },
@@ -127,11 +139,11 @@ export const PROJECT_CONFIGS: Record<string, MapConfig> = {
     ...BASE_CONFIGS.CALIFORNIA_CENTRAL,
     zoom: 3,
     style: DEFAULT_STYLE,
-    geojsonPath: '/data/yuba_subbasins.geojson',
-    dataLayer: LAYER_CONFIGS.RECHARGE_SUITABILITY
+    geojsonPath: '/data/HUC8_CA_simple.geojson',
+    dataLayer: LAYER_CONFIGS.WATERSHED
   },
   'sanitary-district': {
-    ...BASE_CONFIGS.CALIFORNIA_CENTRAL,
+    ...BASE_CONFIGS.CV_FOOTHILL_SA,
     zoom: 8.5,
     style: DEFAULT_STYLE,
     geojsonPath: '/data/yuba_subbasins.geojson',
