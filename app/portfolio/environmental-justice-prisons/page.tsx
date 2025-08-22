@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { GitHubIcon, ExternalLinkIcon } from '@/components/ui/icons/common-icons';
-import ProjectMap from '@/components/portfolio/ProjectMap';
+import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 
 /**
  * Environmental Justice For Prisons - Dedicated Project Page
@@ -105,7 +105,7 @@ export default function EnvironmentalJusticePrisonsPage() {
             <Card className="mb-8">
               <CardContent className="p-6">
                 <div className="h-[500px] rounded-lg overflow-hidden mb-4">
-                  <ProjectMap projectId="prison-ej" />
+                  <LazyProjectMap projectId="prison-ej" />
                 </div>
                 
                 {/* Map Description */}
@@ -216,7 +216,7 @@ export default function EnvironmentalJusticePrisonsPage() {
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="h-[400px] rounded-lg overflow-hidden">
-                      <ProjectMap projectId="prison-ej" />
+                      <LazyProjectMap projectId="prison-ej" />
                     </div>
                     <div className="mt-3 p-3 bg-orange-50 rounded text-sm">
                       <p className="text-orange-800">
@@ -251,7 +251,7 @@ export default function EnvironmentalJusticePrisonsPage() {
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="h-[400px] rounded-lg overflow-hidden">
-                      <ProjectMap projectId="prison-ej" />
+                      <LazyProjectMap projectId="prison-ej" />
                     </div>
                     <div className="mt-3 p-3 bg-purple-50 rounded text-sm">
                       <p className="text-purple-800">
@@ -364,7 +364,7 @@ export default function EnvironmentalJusticePrisonsPage() {
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="h-[400px] rounded-lg overflow-hidden">
-                      <ProjectMap projectId="prison-ej" />
+                      <LazyProjectMap projectId="prison-ej" />
                     </div>
                     <div className="mt-3 p-3 bg-red-50 rounded text-sm">
                       <p className="text-red-800">

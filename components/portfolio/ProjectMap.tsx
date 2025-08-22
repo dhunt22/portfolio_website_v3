@@ -143,14 +143,30 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
     return (
       <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden bg-red-50 border border-red-200 flex items-center justify-center">
         <div className="text-center p-4">
-          <h3 className="text-red-800 font-semibold mb-2">Map Error</h3>
-          <p className="text-red-600 text-sm">{mapError}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-          >
-            Reload Page
-          </button>
+          <div className="text-red-600 mb-3">
+            <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h3 className="text-red-800 font-semibold mb-2">Map Loading Error</h3>
+          <p className="text-red-600 text-sm mb-4">{mapError}</p>
+          <div className="flex gap-2 justify-center">
+            <button 
+              onClick={() => {
+                setMapError(null);
+                window.location.reload();
+              }}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
+            >
+              Retry
+            </button>
+            <button 
+              onClick={() => setMapError(null)}
+              className="px-4 py-2 border border-red-300 text-red-700 rounded hover:bg-red-100 transition-colors text-sm"
+            >
+              Dismiss
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -158,7 +174,17 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
   
   return (
     <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden">
-      <div ref={mapContainer} className="w-full h-full" />
+      <div 
+        ref={mapContainer} 
+        className="w-full h-full"
+        role="application"
+        aria-label={`Interactive map for ${projectId} project`}
+        aria-describedby={`${projectId}-map-description`}
+        tabIndex={0}
+      />
+      <div id={`${projectId}-map-description`} className="sr-only">
+        Interactive geospatial map showing data for the {projectId} project. Use the controls below to filter and explore the data. Map supports zooming and panning with mouse or keyboard.
+      </div>
       
       <MapControls
         projectId={projectId}

@@ -7,6 +7,7 @@ import maplibregl from 'maplibre-gl';
 import { 
   PrisonFeature,
   createRiskColorScale,
+  createDynamicPaintProperties,
   createTopNFilter,
   sortPrisonsByRisk,
   applyFilterToLayers,
@@ -76,12 +77,17 @@ export const usePrisonMap = (map: React.MutableRefObject<maplibregl.Map | null>,
 
     console.log(`Updating prison colors for attribute: ${selectedAttribute}, showAll: ${showAllPrisons}`);
     const colorScale = createRiskColorScale(selectedAttribute);
+    const dynamicProperties = createDynamicPaintProperties(selectedAttribute);
     
     // Use batch update for better consistency
     const updates = [
       { layerId: "prison-polygons", property: "fill-color", value: colorScale },
+      { layerId: "prison-polygons-highlight", property: "fill-color", value: colorScale },
       { layerId: "prison-centroids", property: "circle-color", value: colorScale },
-      { layerId: "prison-symbol-layer", property: "icon-color", value: colorScale }
+      { layerId: "prison-symbol-layer", property: "circle-color", value: colorScale },
+      { layerId: "prison-symbol-layer", property: "circle-radius", value: dynamicProperties["circle-radius"] },
+      { layerId: "prison-symbol-layer", property: "circle-stroke-width", value: dynamicProperties["circle-stroke-width"] },
+      { layerId: "prison-symbol-layer", property: "circle-opacity", value: dynamicProperties["circle-opacity"] }
     ];
     
     if (showAllPrisons) {

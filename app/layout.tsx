@@ -50,6 +50,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
         <meta httpEquiv="Content-Security-Policy" content="
           default-src 'self'; 
           script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.netlify.com; 

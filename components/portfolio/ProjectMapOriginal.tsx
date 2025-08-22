@@ -485,25 +485,21 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
             // Set up initial popup handlers
             setupPrisonPopupHandlers();
             
-            // Add a symbol layer to make points even more visible
+            // Add an enhanced circle layer to make points even more visible
             map.current.addLayer({
               id: "prison-symbol-layer",
-              type: "symbol",
+              type: "circle",
               source: "centroids",
-              layout: {
-                "icon-image": "circle-11",
-                "icon-size": [
+              paint: {
+                "circle-radius": [
                   "interpolate",
                   ["linear"],
                   ["zoom"],
-                  3, 0.8,
-                  6, 1.2
+                  3, 4,
+                  6, 8,
+                  10, 12
                 ],
-                "icon-allow-overlap": true,
-                "icon-ignore-placement": true
-              },
-              paint: {
-                "icon-color": [
+                "circle-color": [
                   "interpolate",
                   ["linear"],
                   ["get", selectedAttribute],
@@ -514,8 +510,10 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
                   100,
                   "#e74c3c"
                 ],
-                "icon-halo-width": 0.4,
-                "icon-halo-color": "#000000"
+                "circle-stroke-width": 2,
+                "circle-stroke-color": "#000000",
+                "circle-stroke-opacity": 0.8,
+                "circle-opacity": 0.9
               }
             });
           } catch (error) {

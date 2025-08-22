@@ -4,7 +4,7 @@
 
 import maplibregl from 'maplibre-gl';
 import { MapConfig } from './mapConfigurations';
-import { createRiskColorScale, ZOOM_OPACITY_CONFIG, fitMapToGeoJSON } from './mapUtils';
+import { createRiskColorScale, createDynamicPaintProperties, ZOOM_OPACITY_CONFIG, fitMapToGeoJSON } from './mapUtils';
 
 // Define RiskAttribute locally to avoid circular imports
 type RiskAttribute = 'fnl_rs_' | 'clmt_sc' | 'effcts_' | 'expsr_s';
@@ -72,6 +72,7 @@ export const setupPrisonLayers = (
   });
 
   const colorScale = createRiskColorScale(selectedAttribute);
+  const dynamicProperties = createDynamicPaintProperties(selectedAttribute);
 
   // Add fill layer for polygons
   map.addLayer({
@@ -122,27 +123,16 @@ export const setupPrisonLayers = (
     }
   });
 
-  // Add symbol layer for enhanced visibility
+  // Add enhanced circle layer with dynamic sizing based on risk values
   map.addLayer({
     id: "prison-symbol-layer",
-    type: "symbol",
+    type: "circle",
     source: "centroids",
-    layout: {
-      "icon-image": "circle-11",
-      "icon-size": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        3, 0.8,
-        6, 1.2
-      ],
-      "icon-allow-overlap": true,
-      "icon-ignore-placement": true
-    },
     paint: {
-      "icon-color": colorScale,
-      "icon-halo-width": 0.4,
-      "icon-halo-color": "#000000"
+      ...dynamicProperties,
+      "circle-color": colorScale,
+      "circle-stroke-color": "#000000",
+      "circle-stroke-opacity": 0.8
     }
   });
 

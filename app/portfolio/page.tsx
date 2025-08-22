@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icons';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import ProjectMap from '@/components/portfolio/ProjectMap';
+import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PROJECTS, Project, getProjectsByCategory } from '@/lib/portfolio-data';
 import { ExternalLinkIcon, GitHubIcon, DownloadIcon } from '@/components/ui/icons/common-icons';
@@ -104,7 +104,7 @@ function ProjectCard({ project, isActive, onClick }: {
         </div>
         
         <div className="relative h-[300px] md:h-auto">
-          <ProjectMap projectId={project.id} />
+          <LazyProjectMap projectId={project.id} />
         </div>
       </div>
     </Card>

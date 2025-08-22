@@ -52,6 +52,36 @@ export function createRiskColorScale(attribute: RiskAttribute): any[] {
   ];
 }
 
+// Create dynamic paint properties based on selected attribute
+export function createDynamicPaintProperties(attribute: RiskAttribute) {
+  return {
+    "circle-radius": [
+      "interpolate",
+      ["linear"],
+      ["get", attribute],
+      0, ["interpolate", ["linear"], ["zoom"], 3, 3, 6, 6, 10, 9],
+      50, ["interpolate", ["linear"], ["zoom"], 3, 5, 6, 9, 10, 13],
+      100, ["interpolate", ["linear"], ["zoom"], 3, 7, 6, 12, 10, 16]
+    ],
+    "circle-stroke-width": [
+      "interpolate",
+      ["linear"],
+      ["get", attribute],
+      0, 1,
+      50, 1.5,
+      100, 2
+    ],
+    "circle-opacity": [
+      "interpolate",
+      ["linear"],
+      ["get", attribute],
+      0, 0.7,
+      50, 0.85,
+      100, 0.95
+    ]
+  };
+}
+
 // Fixed filter utilities with proper type handling
 export function createTopNFilter(topPrisonIds: (string | number)[], idField: string = 'OBJECTID'): any[] {
   // Ensure all IDs are strings for consistency

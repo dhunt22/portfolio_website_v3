@@ -21,6 +21,13 @@ export const useMapPopup = (
 ) => {
   const popup = useRef<maplibregl.Popup | null>(null);
 
+  // Re-setup popup handlers when selectedAttribute changes
+  useEffect(() => {
+    if (map.current && selectedAttribute && projectId === 'prison-ej') {
+      setupPrisonPopupHandlers();
+    }
+  }, [selectedAttribute]);
+
   const setupPrisonPopupHandlers = () => {
     if (!map.current) return;
 
@@ -44,10 +51,25 @@ export const useMapPopup = (
 
     // Handler function for both polygons and points
     const handleMouseEnter = (e: MapMouseEvent & { features?: MapGeoJSONFeature[] }, isPoint: boolean) => {
-      if (!map.current || !popup.current || !e.features?.[0] || !selectedAttribute) return;
+      if (!map.current || !popup.current || !e.features?.[0] || !selectedAttribute) {
+        console.log('Popup handler early return:', {
+          mapExists: !!map.current,
+          popupExists: !!popup.current,
+          hasFeatures: !!e.features?.[0],
+          selectedAttribute
+        });
+        return;
+      }
 
       const feature = e.features[0];
       const properties = feature.properties as PrisonFeatureProperties;
+      
+      console.log('Creating popup for:', {
+        name: properties.NAME,
+        isPoint,
+        selectedAttribute,
+        attributeValue: properties[selectedAttribute]
+      });
       
       let popupLngLat;
       if (isPoint) {
