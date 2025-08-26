@@ -7,6 +7,7 @@ import maplibregl from 'maplibre-gl';
 import { 
   PrisonFeature,
   createRiskColorScale,
+  createEnhancedColorScale,
   createDynamicPaintProperties,
   createTopNFilter,
   sortPrisonsByRisk,
@@ -17,14 +18,14 @@ import {
   determineIdField
 } from '@/lib/maps/mapUtils';
 
-// Define RiskAttribute locally to avoid circular imports
-type RiskAttribute = 'fnl_rs_' | 'clmt_sc' | 'effcts_' | 'expsr_s';
+// Define RiskAttribute locally to avoid circular imports (using actual geojson column names)
+type RiskAttribute = 'fnl_r__' | 'clmt_sc' | 'effcts_' | 'expsr_s';
 
 export const usePrisonMap = (map: React.MutableRefObject<maplibregl.Map | null>, projectId: string) => {
-  const [selectedAttribute, setSelectedAttribute] = useState<RiskAttribute>("fnl_rs_");
+  const [selectedAttribute, setSelectedAttribute] = useState<RiskAttribute>("fnl_r__");
   const [showAllPrisons, setShowAllPrisons] = useState<boolean>(true);
   const [allPrisonData, setAllPrisonData] = useState<PrisonFeature[]>([]);
-  const [idField, setIdField] = useState<string>('OBJECTID');
+  const [idField, setIdField] = useState<string>('FACILIT');
 
   const PRISON_LAYERS = ['prison-polygons', 'prison-outlines', 'prison-polygons-highlight', 'prison-centroids', 'prison-symbol-layer'];
 
@@ -72,11 +73,13 @@ export const usePrisonMap = (map: React.MutableRefObject<maplibregl.Map | null>,
     applyFilterToLayers(map.current, PRISON_LAYERS, null);
   };
 
-  const updatePrisonColors = () => {
+  const updatePrisonColors = (componentId?: string, componentColor?: string) => {
     if (!map.current || !map.current.isStyleLoaded() || projectId !== 'prison-ej') return;
 
-    console.log(`Updating prison colors for attribute: ${selectedAttribute}, showAll: ${showAllPrisons}`);
-    const colorScale = createRiskColorScale(selectedAttribute);
+    console.log(`Updating prison colors for attribute: ${selectedAttribute}, showAll: ${showAllPrisons}, component: ${componentId}`);
+    const colorScale = componentId && componentColor ? 
+      createEnhancedColorScale(componentId, componentColor) : 
+      createRiskColorScale(selectedAttribute);
     const dynamicProperties = createDynamicPaintProperties(selectedAttribute);
     
     // Use batch update for better consistency

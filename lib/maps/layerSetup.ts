@@ -4,16 +4,18 @@
 
 import maplibregl from 'maplibre-gl';
 import { MapConfig } from './mapConfigurations';
-import { createRiskColorScale, createDynamicPaintProperties, ZOOM_OPACITY_CONFIG, fitMapToGeoJSON } from './mapUtils';
+import { createRiskColorScale, createEnhancedColorScale, createDynamicPaintProperties, ZOOM_OPACITY_CONFIG, fitMapToGeoJSON } from './mapUtils';
 
-// Define RiskAttribute locally to avoid circular imports
-type RiskAttribute = 'fnl_rs_' | 'clmt_sc' | 'effcts_' | 'expsr_s';
+// Define RiskAttribute locally to avoid circular imports (using actual geojson column names)
+type RiskAttribute = 'fnl_r__' | 'clmt_sc' | 'effcts_' | 'expsr_s';
 
 export const setupPrisonLayers = (
   map: maplibregl.Map, 
   config: MapConfig, 
   selectedAttribute: RiskAttribute,
-  onDataLoad?: (data: any[]) => void
+  onDataLoad?: (data: any[]) => void,
+  componentId?: string,
+  componentColor?: string
 ) => {
   if (!config.geojsonPath || !config.pointsPath) return;
 
@@ -71,7 +73,7 @@ export const setupPrisonLayers = (
     generateId: true
   });
 
-  const colorScale = createRiskColorScale(selectedAttribute);
+  const colorScale = createEnhancedColorScale(componentId, componentColor);
   const dynamicProperties = createDynamicPaintProperties(selectedAttribute);
 
   // Add fill layer for polygons

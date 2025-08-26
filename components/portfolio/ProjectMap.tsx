@@ -16,9 +16,29 @@ import MapControls from '@/components/maps/MapControls';
 
 interface ProjectMapProps {
   projectId: string;
+  selectedComponent?: string;
+  componentColor?: string;
 }
 
-const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
+// Helper function to get component display name
+const getCurrentComponentName = (componentId: string): string => {
+  const componentNames: Record<string, string> = {
+    'heat': 'Heat Index',
+    'canopy': 'Canopy Cover', 
+    'wildfire': 'Wildfire Risk',
+    'flood': 'Flood Hazard',
+    'ozone': 'Ozone Levels',
+    'pm25': 'PM 2.5 Particulates',
+    'pesticide': 'Pesticide Use',
+    'traffic': 'Traffic Density',
+    'superfund': 'Superfund Sites',
+    'rmp': 'Risk Management Plan Facilities',
+    'hazwaste': 'Hazardous Waste Sites'
+  };
+  return componentNames[componentId] || componentId;
+};
+
+const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, componentColor }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [showCategoryPanel, setShowCategoryPanel] = useState(true); // Default to open
@@ -66,7 +86,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
             setupPrisonLayers(map.current, mapConfig, selectedAttribute, (data) => {
               console.log('Prison data loaded for filtering:', data.length, 'features');
               setAllPrisonData(data);
-            });
+            }, selectedComponent, componentColor);
           } else if (projectId === 'cuyama-basin' || projectId === 'yuba-recharge') {
             console.log('Setting up subbasin layers...');
             setupSubbasinLayers(map.current, mapConfig);
@@ -116,14 +136,14 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
     if (projectId === 'prison-ej' && map.current?.isStyleLoaded()) {
       console.log(`Updating colors for attribute change: ${selectedAttribute}`);
       try {
-        updatePrisonColors();
+        updatePrisonColors(selectedComponent, componentColor);
         setupPopupHandlers();
       } catch (error) {
         console.error('Error updating prison colors:', error);
         setMapError(`Failed to update colors: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
-  }, [selectedAttribute, projectId]); // Removed updatePrisonColors and setupPopupHandlers from deps to avoid cycles
+  }, [selectedAttribute, selectedComponent, componentColor, projectId]); // Removed updatePrisonColors and setupPopupHandlers from deps to avoid cycles
   
   // Close panels when clicking outside (only for category panel when minimized)
   useEffect(() => {
@@ -194,6 +214,9 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
         setShowAllPrisons={setShowAllPrisons}
         showCategoryPanel={showCategoryPanel}
         setShowCategoryPanel={setShowCategoryPanel}
+        hideRiskSelector={!!selectedComponent && selectedComponent !== 'overall'}
+        componentName={selectedComponent && selectedComponent !== 'overall' ? getCurrentComponentName(selectedComponent) : undefined}
+        componentColor={selectedComponent && selectedComponent !== 'overall' ? componentColor : undefined}
       />
     </div>
   );

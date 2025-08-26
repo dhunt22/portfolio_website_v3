@@ -11,6 +11,8 @@ const ProjectMap = lazy(() => import('./ProjectMap'));
 
 interface LazyProjectMapProps {
   projectId: string;
+  selectedComponent?: string;
+  componentColor?: string;
 }
 
 // Loading fallback component
@@ -64,11 +66,11 @@ class MapErrorBoundary extends React.Component<
   }
 }
 
-const LazyProjectMap: React.FC<LazyProjectMapProps> = ({ projectId }) => {
+const LazyProjectMap: React.FC<LazyProjectMapProps> = ({ projectId, selectedComponent, componentColor }) => {
   return (
     <MapErrorBoundary>
       <Suspense fallback={<MapLoadingFallback />}>
-        <ProjectMap projectId={projectId} />
+        <ProjectMap projectId={projectId} selectedComponent={selectedComponent} componentColor={componentColor} />
       </Suspense>
     </MapErrorBoundary>
   );

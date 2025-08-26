@@ -85,8 +85,8 @@ export const PROJECT_CONFIGS: Record<string, MapConfig> = {
   'prison-ej': {
     ...BASE_CONFIGS.US_NATIONAL,
     style: GRAY_STYLE,
-    geojsonPath: '/data/final_df_2023-08-31.geojson',
-    pointsPath: '/data/centroids_2023-08-31.geojson',
+    geojsonPath: '/data/nasa_eej_prisons_poly_refactored.geojson',
+    pointsPath: '/data/nasa_eej_prisons_pt_refactored.geojson',
   },
   'cuyama-basin': {
     ...BASE_CONFIGS.CUYAMA_VALLEY,

@@ -6,13 +6,24 @@ import maplibregl, { MapMouseEvent, MapGeoJSONFeature } from 'maplibre-gl';
 
 export interface PrisonFeatureProperties {
   NAME: string;
-  CITY: string;
-  STATE: string;
-  fnl_rs_: number;
-  clmt_sc: number;
-  expsr_s: number;
-  effcts_: number;
-  OBJECTID: string | number;
+  // Actual shortened column names from geojson
+  fnl_r__: number;     // final_risk_score_pcntl
+  clmt_sc: number;     // climate_score
+  expsr_s: number;     // exposure_score
+  effcts_: number;     // effects_score
+  // Individual component properties (shortened names)
+  lst_vg_: number;     // lst_avg_pcntl
+  prcn___: number;     // percent_tree_cover_pcntl
+  wldfr__: number;     // wildfire_risk_pcntl
+  fld_rs_: number;     // flood_risk_pcntl
+  mn_zn_p: number;     // mean_ozone_pcntl
+  avg_25_: number;     // avg_pm25_pcntl
+  pstcds_: number;     // pesticides_pcntl
+  trffcP_: number;     // trafficProx_pcntl
+  npl_pr_: number;     // npl_prox_pcntl
+  rmp_pr_: number;     // rmp_prox_pcntl
+  hz_prx_: number;     // haz_prox_pcntl
+  FACILIT: string | number;  // FACILITYID
   [key: string]: any;
 }
 
@@ -26,30 +37,93 @@ export interface PrisonFeature {
   id?: string | number;
 }
 
-// Risk attribute labels
+// Risk attribute labels (using actual geojson column names)
 export const RISK_ATTRIBUTES = {
-  "fnl_rs_": "Overall Risk Score",
-  "clmt_sc": "Climate Risk",
-  "effcts_": "Effects Risk",
-  "expsr_s": "Exposure Risk"
+  "fnl_r__": "Overall Risk Score",    // final_risk_score_pcntl
+  "clmt_sc": "Climate Risk",          // climate_score  
+  "effcts_": "Effects Risk",          // effects_score
+  "expsr_s": "Exposure Risk"          // exposure_score
 } as const;
 
 export type RiskAttribute = keyof typeof RISK_ATTRIBUTES;
+
+// Individual component mappings (using actual geojson column names)
+export const COMPONENT_COLUMNS = {
+  'overall': 'fnl_r__',        // final_risk_score_pcntl
+  'heat': 'lst_vg_',           // lst_avg_pcntl
+  'canopy': 'prcn___',         // percent_tree_cover_pcntl
+  'wildfire': 'wldfr__',       // wildfire_risk_pcntl
+  'flood': 'fld_rs_',          // flood_risk_pcntl
+  'ozone': 'mn_zn_p',          // mean_ozone_pcntl
+  'pm25': 'avg_25_',           // avg_pm25_pcntl
+  'pesticide': 'pstcds_',      // pesticides_pcntl
+  'traffic': 'trffcP_',        // trafficProx_pcntl
+  'superfund': 'npl_pr_',      // npl_prox_pcntl
+  'rmp': 'rmp_pr_',            // rmp_prox_pcntl
+  'hazwaste': 'hz_prx_'        // haz_prox_pcntl
+} as const;
 
 export function getAttributeLabel(attr: RiskAttribute): string {
   return RISK_ATTRIBUTES[attr] || "Risk Score";
 }
 
-// Color scale for risk visualization
+// Color scale for risk visualization (legacy function)
 export function createRiskColorScale(attribute: RiskAttribute): any[] {
   return [
-    "interpolate",
-    ["linear"],
-    ["get", attribute],
-    0, "#2ecc71",   // Green for low risk
-    50, "#f1c40f",  // Yellow for medium risk
-    100, "#e74c3c"  // Red for high risk
+    "case",
+    ["==", ["get", attribute], null], "#cccccc", // Gray for null values
+    [
+      "interpolate",
+      ["linear"],
+      ["coalesce", ["get", attribute], 0], // Use 0 if null
+      0, "#2ecc71",   // Green for low risk
+      50, "#f1c40f",  // Yellow for medium risk
+      100, "#e74c3c"  // Red for high risk
+    ]
   ];
+}
+
+// Helper function to convert hex to rgba
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Component-specific gradient color scale
+export function createComponentColorScale(componentId: string, componentColor: string): any[] {
+  const column = COMPONENT_COLUMNS[componentId as keyof typeof COMPONENT_COLUMNS];
+  if (!column) {
+    // Fallback to overall risk
+    return createRiskColorScale('fnl_r__');
+  }
+
+  // Create white to component color gradient with null value handling
+  return [
+    "case",
+    ["==", ["get", column], null], "#cccccc", // Gray for null values
+    [
+      "interpolate",
+      ["linear"],
+      ["coalesce", ["get", column], 0], // Use 0 if null
+      0, "#ffffff",                          // White for no risk
+      25, hexToRgba(componentColor, 0.25),   // Light component color for low risk
+      50, hexToRgba(componentColor, 0.5),    // Medium component color for medium risk
+      75, hexToRgba(componentColor, 0.75),   // Strong component color for high risk
+      100, componentColor                    // Full component color for maximum risk
+    ]
+  ];
+}
+
+// Enhanced color scale function that uses component color when available
+export function createEnhancedColorScale(componentId?: string, componentColor?: string): any[] {
+  if (componentId && componentColor && componentId !== 'overall') {
+    return createComponentColorScale(componentId, componentColor);
+  }
+  
+  // For overall or when no component specified, use overall risk scale
+  return createRiskColorScale('fnl_r__');
 }
 
 // Create dynamic paint properties based on selected attribute
