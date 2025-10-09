@@ -1,18 +1,40 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Link from 'next/link';
+import { useState, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GitHubIcon, ExternalLinkIcon } from '@/components/ui/icons/common-icons';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 /**
  * Environmental Justice For Prisons - Dedicated Project Page
  * A comprehensive overview of the NASA-funded research project
  */
+
 // Individual component types
 type ComponentType = 'overall' | 'heat' | 'canopy' | 'wildfire' | 'flood' | 'ozone' | 'pm25' | 'pesticide' | 'traffic' | 'superfund' | 'rmp' | 'hazwaste';
+type TabType = 'overall' | 'climate' | 'exposure' | 'effects';
 
 interface ComponentConfig {
   id: ComponentType;
@@ -20,40 +42,200 @@ interface ComponentConfig {
   description: string;
   column: string;
   color: string;
-  category: 'climate' | 'exposure' | 'effects' | 'overall';
+  category: TabType;
 }
 
 const COMPONENT_CONFIGS: ComponentConfig[] = [
   // Overall Risk
   { id: 'overall', name: 'Overall Risk Score', description: 'Combined environmental vulnerability index across all indicators', column: 'fnl_r__', color: '#dc2626', category: 'overall' },
-  
-  // Climate Risk Components  
+
+  // Climate Risk Components
   { id: 'heat', name: 'Heat Index', description: 'Extreme temperature conditions creating dangerous indoor environments', column: 'lst_vg_', color: '#ea580c', category: 'climate' },
   { id: 'canopy', name: 'Canopy Cover', description: 'Natural cooling provided by tree coverage around facilities', column: 'prcn___', color: '#16a34a', category: 'climate' },
   { id: 'wildfire', name: 'Wildfire Risk', description: 'Proximity to wildfire-prone areas affecting air quality', column: 'wldfr__', color: '#dc2626', category: 'climate' },
   { id: 'flood', name: 'Flood Hazard', description: 'Flood risk considering limited mobility during emergencies', column: 'fld_rs_', color: '#2563eb', category: 'climate' },
-  
+
   // Environmental Exposure Components
   { id: 'ozone', name: 'Ozone Levels', description: 'Ground-level ozone concentrations from satellite data', column: 'mn_zn_p', color: '#7c3aed', category: 'exposure' },
   { id: 'pm25', name: 'PM 2.5 Particulates', description: 'Fine particulate matter concentrations affecting respiratory health', column: 'avg_25_', color: '#6b7280', category: 'exposure' },
   { id: 'pesticide', name: 'Pesticide Use', description: 'Agricultural pesticide application intensity in surrounding areas', column: 'pstcds_', color: '#eab308', category: 'exposure' },
   { id: 'traffic', name: 'Traffic Density', description: 'Vehicle traffic volume contributing to local air pollution', column: 'trffcP_', color: '#374151', category: 'exposure' },
-  
-  // Environmental Effects Components
+
+  // Environmental Effects Components (Proximity-Based)
   { id: 'superfund', name: 'Superfund Sites', description: 'Distance to EPA Superfund sites with hazardous waste contamination', column: 'npl_pr_', color: '#dc2626', category: 'effects' },
   { id: 'rmp', name: 'Risk Management Plan Facilities', description: 'Proximity to industrial facilities handling hazardous chemicals', column: 'rmp_pr_', color: '#ea580c', category: 'effects' },
   { id: 'hazwaste', name: 'Hazardous Waste Sites', description: 'Distance to facilities treating or storing hazardous waste', column: 'hz_prx_', color: '#92400e', category: 'effects' }
 ];
 
+// Map Instructions Popup Component
+function MapInstructionsPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="absolute top-4 left-4 z-50 max-w-sm">
+      <Card className="bg-white shadow-xl border-2 border-forest-500">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-semibold text-forest-800">Map Instructions</CardTitle>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Close instructions"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <ul className="text-xs text-forest-600 space-y-2">
+            <li className="flex items-start">
+              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span>Select a tab to view indicators for that category</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span>Click any indicator to view it on the map</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span>Toggle between All Prisons and Top 10 highest risk</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span>Hover over facilities for detailed information</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span>Zoom and pan to explore specific regions</span>
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Histogram Component
+function PercentileHistogram({ color, indicatorName }: { color: string; indicatorName: string }) {
+  // Sample data - replace with actual prison data distribution
+  // This represents the count of prisons in each percentile bin
+  const sampleData = [120, 135, 150, 165, 185, 195, 180, 170, 145, 120];
+
+  const data = {
+    labels: ['', '', '', '', '', '', '', '', '', ''],
+    datasets: [
+      {
+        label: 'Number of Prisons',
+        data: sampleData,
+        backgroundColor: color,
+        borderColor: color,
+        borderWidth: 0,
+        barThickness: 'flex' as const,
+      },
+    ],
+  };
+
+  const maxValue = Math.max(...sampleData);
+  const roundedMax = Math.ceil(maxValue / 10) * 10;
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        callbacks: {
+          title: (context: any) => {
+            const index = context[0].dataIndex;
+            const ranges = ['0-10', '10-20', '20-30', '30-40', '40-50', '50-60', '60-70', '70-80', '80-90', '90-100'];
+            return `Percentile ${ranges[index]}`;
+          },
+          label: (context: any) => {
+            return `Prisons: ${context.parsed.y}`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        display: true,
+        grid: {
+          display: false,
+          drawBorder: true,
+          borderColor: '#000000',
+          borderWidth: 2,
+        },
+        ticks: {
+          display: true,
+          callback: function(value: any, index: number) {
+            if (index === 0) return '0';
+            if (index === 9) return '100';
+            return '';
+          },
+          color: '#000000',
+          font: {
+            size: 11,
+            weight: 'bold' as const,
+          },
+        },
+      },
+      y: {
+        display: true,
+        beginAtZero: true,
+        max: roundedMax,
+        grid: {
+          display: false,
+          drawBorder: false,
+        },
+        ticks: {
+          display: true,
+          stepSize: Math.ceil(roundedMax / 4 / 10) * 10,
+          color: '#6b7280',
+          font: {
+            size: 10,
+          },
+          callback: function(value: any) {
+            return Math.round(value / 10) * 10;
+          },
+        },
+        position: 'left' as const,
+      },
+    },
+  };
+
+  return (
+    <div className="h-28 w-full px-4 pb-2">
+      <Bar data={data} options={options} />
+    </div>
+  );
+}
+
 export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
   const [selectedComponent, setSelectedComponent] = useState<ComponentType>('overall');
+  const [activeTab, setActiveTab] = useState<TabType>('overall');
+  const [showInstructions, setShowInstructions] = useState(true);
 
   // Get the current component configuration
   const currentComponent: ComponentConfig = COMPONENT_CONFIGS.find(c => c.id === selectedComponent) || COMPONENT_CONFIGS[0];
 
-  // Handler for component selection using useCallback
+  // Get indicators for the active tab
+  const tabIndicators = useMemo(() => {
+    return COMPONENT_CONFIGS.filter(c => c.category === activeTab);
+  }, [activeTab]);
+
+  // Handler for component selection
   const handleComponentClick = useCallback((componentId: ComponentType) => {
     setSelectedComponent(componentId);
+  }, []);
+
+  // Handler for tab change - only changes the visible tab, doesn't change map
+  const handleTabChange = useCallback((value: string) => {
+    setActiveTab(value as TabType);
+    // Don't auto-select indicator - let user keep viewing current selection
   }, []);
 
   return (
@@ -77,7 +259,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               >
                 <Button
                   variant="outline"
-                  className="border-forest-600 text-forest-600 hover:bg-forest-50"
+                  className="border-white text-white hover:bg-white hover:text-forest-900"
                 >
                   <GitHubIcon className="w-4 h-4" aria-hidden="true" />
                   View Repository
@@ -92,7 +274,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               >
                 <Button
                   variant="outline"
-                  className="border-forest-600 text-forest-600 hover:bg-forest-50"
+                  className="border-white text-white hover:bg-white hover:text-forest-900"
                 >
                   <ExternalLinkIcon className="w-4 h-4" aria-hidden="true" />
                   NASA Project Page
@@ -104,7 +286,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </div>
       </section>
 
-      {/* Introduction Section */}
+      {/* Project Overview Section */}
       <section className="py-16" aria-labelledby="overview-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
@@ -119,7 +301,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 <p className="text-forest-800 leading-relaxed mb-6">
                   Despite the numerous cases of environmental injustices documented in U.S. prisons by researchers, activists, journalists, and federal government, the examination of prisons as sites of environmental injustice is still understudied. However, prisons are by definition EJ communities, as they are highly overrepresented by people of color, indigenous persons, and low-income individuals, and have no choice but to endure any adverse environmental health threats.
                 </p>
-                
+
                 <p className="text-forest-800 leading-relaxed mb-6">
                   This research addresses this vital environmental justice research gap by leveraging NASA's Earth science data—including satellite, land cover, climate, and air quality datasets—in a novel way to characterize the environmental harms faced by incarcerated people across the U.S. in all state- and federally-operated prisons.
                 </p>
@@ -151,102 +333,77 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </div>
       </section>
 
-      {/* Overall Risk Score Map Section */}
+      {/* Interactive Map Visualization Section */}
       <section className="py-16 bg-white/50" aria-labelledby="map-visualization-heading">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <h2 id="map-visualization-heading" className="text-3xl font-bold text-forest-800 mb-8 text-center">
-              {currentComponent.name} Visualization
+              Environmental Risk Indicators
             </h2>
 
-            {/* Large Map Window */}
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <div
-                  className="mb-4 p-4 bg-gradient-to-r from-white to-opacity-10 rounded-lg border-l-4"
-                  style={{ borderLeftColor: currentComponent.color, backgroundColor: `${currentComponent.color}10` }}
-                  role="region"
-                  aria-label={`${currentComponent.name} indicator information`}
+            {/* Tabs Navigation */}
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+              <TabsList className="grid w-full grid-cols-4 mb-0 bg-white p-1 rounded-b-none shadow-sm">
+                <TabsTrigger
+                  value="overall"
+                  className="relative data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all"
                 >
-                  <h3 className="text-lg font-semibold mb-2" style={{ color: currentComponent.color }}>
-                    {currentComponent.name}
-                  </h3>
-                  <p className="text-sm text-gray-700">
-                    Currently viewing: {currentComponent.description}
-                  </p>
-                </div>
-                <div className="h-[500px] rounded-lg overflow-hidden mb-4" role="application" aria-label="Interactive prison environmental justice map">
-                  <LazyProjectMap 
-                    projectId="prison-ej" 
-                    selectedComponent={selectedComponent}
-                    componentColor={currentComponent.color}
-                  />
-                </div>
-                
-                {/* Map Description */}
-                <div className="mt-4 p-4 bg-forest-50 rounded-lg" role="complementary" aria-label="Map usage instructions">
-                  <p className="text-sm text-forest-700 mb-2">
-                    <strong>Interactive Map Instructions:</strong>
-                  </p>
-                  <ul className="text-sm text-forest-600 space-y-1">
-                    <li className="flex items-start">
-                      <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
-                      <span>Use the <strong>Risk Category</strong> dropdown to switch between risk types</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-forest-500 mr-2">•</span>
-                      <span>Filter to show <strong>All Prisons</strong> or just the <strong>Top 10 highest risk</strong> facilities</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-forest-500 mr-2">•</span>
-                      <span>Hover over any prison facility to see detailed information</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-forest-500 mr-2">•</span>
-                      <span>Zoom in to see individual prison boundaries and locations</span>
-                    </li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
+                  Overall
+                  {currentComponent.category === 'overall' && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="climate"
+                  className="relative data-[state=active]:bg-forest-600 data-[state=active]:text-white transition-all"
+                >
+                  Climate Risk
+                  {currentComponent.category === 'climate' && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="exposure"
+                  className="relative data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all"
+                >
+                  Exposure
+                  {currentComponent.category === 'exposure' && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="effects"
+                  className="relative data-[state=active]:bg-orange-600 data-[state=active]:text-white transition-all"
+                >
+                  Proximity-Based
+                  {currentComponent.category === 'effects' && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
 
-            {/* Description Text */}
-            <Card className="bg-white/90 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <p className="text-forest-800 leading-relaxed">
-                  The overall environmental vulnerability index combines all 11 environmental indicators into a comprehensive 
-                  risk assessment for each prison facility. In some of these prisons, summer heat waves can create indoor heat indexes of more than 150 degrees. Others experience poor air quality due to nearby wildfires, and potential contamination due to environmental risks like nearby landfills. This 
-                  standardized metric enables direct comparison of environmental risks across all 1,865 facilities, 
-                  revealing stark disparities in the environmental conditions faced by incarcerated populations.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Climate Risk Section */}
-      <section className="py-16" aria-labelledby="climate-risk-heading">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h2 id="climate-risk-heading" className="text-3xl font-bold text-forest-800 mb-8 text-center">
-              Climate Risk Assessment
-            </h2>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div>
-                <Card className="bg-white/90 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-forest-700">Climate Risk Indicators</CardTitle>
+            {/* Split Layout - Outside Tabs to prevent map remounting */}
+            <div className="grid grid-cols-1 lg:grid-cols-10 gap-0">
+              {/* Left Side - Indicators List (30%) */}
+              <div className="lg:col-span-3">
+                <Card className="bg-white/90 backdrop-blur-sm rounded-t-none rounded-r-none border-r-0 flex flex-col" style={{ height: '650px' }}>
+                  <CardHeader className="pb-4 flex-shrink-0">
+                    <CardTitle className="text-xl text-forest-700">
+                      {activeTab === 'overall' && 'Overall Risk'}
+                      {activeTab === 'climate' && 'Climate Risk Indicators'}
+                      {activeTab === 'exposure' && 'Exposure Indicators'}
+                      {activeTab === 'effects' && 'Proximity-Based Indicators'}
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4" role="list" aria-label="Climate risk indicators">
-                      {COMPONENT_CONFIGS.filter(c => c.category === 'climate').map((component) => (
+                  <CardContent className="flex-grow overflow-y-auto">
+                    <div className="space-y-3" role="list" aria-label={`${activeTab} indicators`}>
+                      {tabIndicators.map((component) => (
                         <div
                           key={component.id}
                           role="button"
                           tabIndex={0}
-                          className={`border-l-4 pl-4 cursor-pointer transition-all duration-200 hover:bg-gray-50 p-3 rounded-r-lg ${
+                          className={`border-l-4 pl-3 pr-2 py-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 rounded-r-lg ${
                             selectedComponent === component.id ? 'bg-blue-50 shadow-md' : ''
                           }`}
                           style={{ borderLeftColor: component.color }}
@@ -260,238 +417,90 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                           aria-label={`View ${component.name} on map`}
                           aria-pressed={selectedComponent === component.id}
                         >
-                          <h4 className="font-semibold text-forest-800 flex items-center justify-between">
-                            {component.name}
+                          <div className="flex items-start justify-between mb-1">
+                            <h4 className="font-semibold text-sm text-forest-800">{component.name}</h4>
                             {selectedComponent === component.id && (
-                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full whitespace-nowrap ml-2">
                                 Active
                               </span>
                             )}
-                          </h4>
-                          <p className="text-sm text-forest-600 mt-1">
+                          </div>
+                          <p className="text-xs text-forest-600 leading-relaxed">
                             {component.description}
                           </p>
                         </div>
                       ))}
                     </div>
                   </CardContent>
+                  {/* Histogram at bottom */}
+                  <div className="flex-shrink-0 border-t border-gray-200">
+                    <PercentileHistogram
+                      color={currentComponent.color}
+                      indicatorName={currentComponent.name}
+                    />
+                  </div>
                 </Card>
               </div>
-              
-              <div>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg text-forest-700">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'climate' 
-                        ? `${currentComponent.name} Visualization` 
-                        : 'Climate Risk Visualization'}
-                    </CardTitle>
-                    <CardDescription className="text-sm text-forest-600">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'climate'
-                        ? currentComponent.description
-                        : 'Interactive map showing climate-related environmental risks at prison facilities'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    <div className="h-[400px] rounded-lg overflow-hidden">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'climate' ? (
-                        <LazyProjectMap 
-                          projectId="prison-ej" 
-                          selectedComponent={selectedComponent}
-                          componentColor={currentComponent.color}
-                        />
-                      ) : (
-                        <LazyProjectMap 
-                          projectId="prison-ej" 
-                          selectedComponent="overall"
-                          componentColor="#dc2626"
-                        />
-                      )}
-                    </div>
-                    <div className="mt-3 p-3 bg-orange-50 rounded text-sm">
-                      <p className="text-orange-800">
-                        <strong>Tip:</strong> Click on any component above to view its specific data on the map. 
-                        Higher intensity colors indicate greater risk levels.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Environmental Exposures Section */}
-      <section className="py-16 bg-white/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-forest-800 mb-8 text-center">
-              Environmental Exposures
-            </h2>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg text-forest-700">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'exposure'
-                        ? `${currentComponent.name} Visualization`
-                        : 'Environmental Exposures Map'}
-                    </CardTitle>
-                    <CardDescription className="text-sm text-forest-600">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'exposure'
-                        ? currentComponent.description
-                        : 'Air quality and pollution exposure analysis across U.S. prison facilities'}
-                    </CardDescription>
-                  </CardHeader>
+              {/* Right Side - Map (70%) - Stays mounted */}
+              <div className="lg:col-span-7">
+                <Card className="bg-white shadow-lg rounded-t-none">
                   <CardContent className="p-4">
-                    <div className="h-[400px] rounded-lg overflow-hidden">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'exposure' ? (
-                        <LazyProjectMap 
-                          projectId="prison-ej" 
+                    <div className="relative">
+                      {/* Map Container with fixed height */}
+                      <div
+                        className="h-[600px] rounded-lg overflow-hidden"
+                        role="application"
+                        aria-label="Interactive prison environmental justice map"
+                      >
+                        <LazyProjectMap
+                          projectId="prison-ej"
                           selectedComponent={selectedComponent}
                           componentColor={currentComponent.color}
                         />
-                      ) : (
-                        <LazyProjectMap 
-                          projectId="prison-ej" 
-                          selectedComponent="overall"
-                          componentColor="#dc2626"
-                        />
-                      )}
-                    </div>
-                    <div className="mt-3 p-3 bg-purple-50 rounded text-sm">
-                      <p className="text-purple-800">
-                        <strong>Explore:</strong> Click on any environmental exposure component to view 
-                        its specific pollution data on the map.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <div>
-                <Card className="bg-white/90 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-forest-700">Exposure Indicators</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {COMPONENT_CONFIGS.filter(c => c.category === 'exposure').map((component) => (
-                        <div 
-                          key={component.id}
-                          className={`border-l-4 pl-4 cursor-pointer transition-all duration-200 hover:bg-gray-50 p-3 rounded-r-lg ${
-                            selectedComponent === component.id ? 'bg-blue-50 shadow-md' : ''
-                          }`}
-                          style={{ borderLeftColor: component.color }}
-                          onClick={() => handleComponentClick(component.id)}
-                        >
-                          <h4 className="font-semibold text-forest-800 flex items-center justify-between">
-                            {component.name}
-                            {selectedComponent === component.id && (
-                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                                Active
-                              </span>
-                            )}
-                          </h4>
-                          <p className="text-sm text-forest-600 mt-1">
-                            {component.description}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Environmental Effects Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-forest-800 mb-8 text-center">
-              Environmental Effects
-            </h2>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div>
-                <Card className="bg-white/90 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-forest-700">Proximity-Based Risk Factors</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {COMPONENT_CONFIGS.filter(c => c.category === 'effects').map((component) => (
-                        <div 
-                          key={component.id}
-                          className={`border-l-4 pl-4 cursor-pointer transition-all duration-200 hover:bg-gray-50 p-3 rounded-r-lg ${
-                            selectedComponent === component.id ? 'bg-blue-50 shadow-md' : ''
-                          }`}
-                          style={{ borderLeftColor: component.color }}
-                          onClick={() => handleComponentClick(component.id)}
+                        {/* Info Button */}
+                        <button
+                          onClick={() => setShowInstructions(!showInstructions)}
+                          className="absolute bottom-4 left-4 z-40 bg-white border border-gray-300 rounded-full w-8 h-8 shadow-md opacity-50 hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-forest-500 flex items-center justify-center"
+                          aria-label="Toggle map instructions"
                         >
-                          <h4 className="font-semibold text-forest-800 flex items-center justify-between">
-                            {component.name}
-                            {selectedComponent === component.id && (
-                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                                Active
-                              </span>
-                            )}
-                          </h4>
-                          <p className="text-sm text-forest-600 mt-1">
-                            {component.description}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <div>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg text-forest-700">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'effects'
-                        ? `${currentComponent.name} Visualization`
-                        : 'Environmental Effects Visualization'}
-                    </CardTitle>
-                    <CardDescription className="text-sm text-forest-600">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'effects'
-                        ? currentComponent.description
-                        : 'Hazardous site proximity and environmental contamination risk analysis'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    <div className="h-[400px] rounded-lg overflow-hidden">
-                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'effects' ? (
-                        <LazyProjectMap 
-                          projectId="prison-ej" 
-                          selectedComponent={selectedComponent}
-                          componentColor={currentComponent.color}
+                          <span className="text-forest-700 font-bold text-lg">?</span>
+                        </button>
+
+                        {/* Instructions Popup */}
+                        <MapInstructionsPopup
+                          isOpen={showInstructions}
+                          onClose={() => setShowInstructions(false)}
                         />
-                      ) : (
-                        <LazyProjectMap 
-                          projectId="prison-ej" 
-                          selectedComponent="overall"
-                          componentColor="#dc2626"
-                        />
-                      )}
-                    </div>
-                    <div className="mt-3 p-3 bg-red-50 rounded text-sm">
-                      <p className="text-red-800">
-                        <strong>Analysis:</strong> Click on any environmental effects component to visualize 
-                        proximity-based risks around prison facilities.
-                      </p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               </div>
             </div>
+
+            {/* Indicator Details Section */}
+            <Card className="mt-8 bg-white/90 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-2xl text-forest-800">
+                  {currentComponent.name}
+                </CardTitle>
+                <CardDescription className="text-base text-forest-600">
+                  {currentComponent.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="prose max-w-none">
+                  <p className="text-forest-800 leading-relaxed mb-4">
+                    <strong>Detailed Description:</strong> [User to provide 4-sentence description for {currentComponent.name}]
+                  </p>
+                  <p className="text-sm text-forest-600">
+                    <strong>Data Source:</strong> [User to provide data source link for {currentComponent.name}]
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -503,7 +512,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             <h2 className="text-3xl font-bold text-center mb-12">
               Project Team & My Contribution
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               <Card className="bg-white/10 backdrop-blur-sm border-forest-700">
                 <CardHeader>
@@ -537,7 +546,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 <CardContent>
                   <div className="space-y-3 text-forest-100">
                     <p className="text-sm leading-relaxed">
-                      As a Geospatial Analyst and Programmer at the Geospatial Centroid, I worked closely with 
+                      As a Geospatial Analyst and Programmer at the Geospatial Centroid, I worked closely with
                       Caitlin Mothes to develop R-spatial scripts for data processing and analysis.
                     </p>
                     <div className="space-y-2">
@@ -572,16 +581,16 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                   <p className="text-forest-100 leading-relaxed mb-6">
                     The main deliverables of our project are 1) an open-access geospatial dataset with calculated values for each environmental indicator and a final environmental vulnerability index for 1,865 U.S. prisons and 2) an open-access, reproducible code base for every step of our analysis to promote the application of these assessments to other institutions and make our data and methods transparent.
                   </p>
-                  
+
                   <p className="text-forest-100 leading-relaxed mb-8">
-                    This groundbreaking research has provided critical data for activists, researchers, policy makers, 
-                    and government agencies to understand and address environmental injustices in the prison system. 
+                    This groundbreaking research has provided critical data for activists, researchers, policy makers,
+                    and government agencies to understand and address environmental injustices in the prison system.
                     The work represents a significant contribution to both environmental justice and geospatial science.
                   </p>
 
                   <div className="text-center">
                     <p className="text-forest-200 italic">
-                      "This project taught me about managing a repository and working with large data, while contributing 
+                      "This project taught me about managing a repository and working with large data, while contributing
                       to vital environmental justice research that highlights the intersection of incarceration and environmental harm."
                     </p>
                     <p className="text-forest-300 text-sm mt-2">— Devin Hunt, Project Contributor</p>
@@ -592,7 +601,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
             <div className="text-center mt-8">
               <p className="text-forest-200 text-sm">
-                Special thanks to the Geospatial Centroid at Colorado State University and NASA's Equity and Environmental Justice Grant program 
+                Special thanks to the Geospatial Centroid at Colorado State University and NASA's Equity and Environmental Justice Grant program
                 for making this critical research possible.
               </p>
             </div>
@@ -610,17 +619,21 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             Access the open-source code, data, and methodology that powers this environmental justice research.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1" target="_blank">
+            <a
+              href="https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button className="bg-forest-600 hover:bg-forest-700">
                 <GitHubIcon className="w-4 h-4 mr-2" />
                 Access Repository
               </Button>
-            </Link>
-            <Link href="/portfolio">
+            </a>
+            <a href="/portfolio">
               <Button variant="outline" className="border-forest-600 text-forest-600 hover:bg-forest-50">
                 Back to Portfolio
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
