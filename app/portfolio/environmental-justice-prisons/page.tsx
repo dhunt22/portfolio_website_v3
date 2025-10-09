@@ -1,11 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { GitHubIcon, ExternalLinkIcon } from '@/components/ui/icons/common-icons';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 
@@ -47,55 +45,72 @@ const COMPONENT_CONFIGS: ComponentConfig[] = [
   { id: 'hazwaste', name: 'Hazardous Waste Sites', description: 'Distance to facilities treating or storing hazardous waste', column: 'hz_prx_', color: '#92400e', category: 'effects' }
 ];
 
-export default function EnvironmentalJusticePrisonsPage() {
-  const [mapFilter, setMapFilter] = useState(10); // Default to top 10 prisons
+export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
   const [selectedComponent, setSelectedComponent] = useState<ComponentType>('overall');
-  
+
   // Get the current component configuration
-  const currentComponent = COMPONENT_CONFIGS.find(c => c.id === selectedComponent) || COMPONENT_CONFIGS[0];
-  
-  // Handler for component selection
-  const handleComponentClick = (componentId: ComponentType) => {
+  const currentComponent: ComponentConfig = COMPONENT_CONFIGS.find(c => c.id === selectedComponent) || COMPONENT_CONFIGS[0];
+
+  // Handler for component selection using useCallback
+  const handleComponentClick = useCallback((componentId: ComponentType) => {
     setSelectedComponent(componentId);
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-forest-50 to-river-50">
       {/* Hero Section */}
-      <section className="bg-forest-900 text-white py-16">
+      <section className="bg-forest-900 text-white py-16" aria-labelledby="hero-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            <h1 id="hero-heading" className="text-4xl md:text-5xl font-bold mb-6">
               Environmental Justice For Prisons
             </h1>
             <h2 className="text-xl md:text-2xl text-forest-100 mb-8">
               Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons
             </h2>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1" target="_blank">
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-forest-900">
-                  <GitHubIcon className="w-4 h-4 mr-2" />
+              <a
+                href="https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View GitHub repository for NASA Prison Environmental Justice project"
+              >
+                <Button
+                  variant="outline"
+                  className="border-forest-600 text-forest-600 hover:bg-forest-50"
+                >
+                  <GitHubIcon className="w-4 h-4" aria-hidden="true" />
                   View Repository
+                  <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden="true" />
                 </Button>
-              </Link>
-              <Link href="https://appliedsciences.nasa.gov/what-we-do/projects/leveraging-earth-science-data-heighten-awareness-environmental-injustices" target="_blank">
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-forest-900">
-                  <ExternalLinkIcon className="w-4 h-4 mr-2" />
+              </a>
+              <a
+                href="https://appliedsciences.nasa.gov/what-we-do/projects/leveraging-earth-science-data-heighten-awareness-environmental-injustices"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Visit NASA Applied Sciences project page"
+              >
+                <Button
+                  variant="outline"
+                  className="border-forest-600 text-forest-600 hover:bg-forest-50"
+                >
+                  <ExternalLinkIcon className="w-4 h-4" aria-hidden="true" />
                   NASA Project Page
+                  <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden="true" />
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
       </section>
 
       {/* Introduction Section */}
-      <section className="py-16">
+      <section className="py-16" aria-labelledby="overview-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <Card className="bg-white/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-3xl text-forest-800">Project Overview</CardTitle>
+                <CardTitle id="overview-heading" className="text-3xl text-forest-800">Project Overview</CardTitle>
                 <CardDescription className="text-lg text-forest-600">
                   A groundbreaking research initiative funded by NASA's $100,000 Equity and Environmental Justice Grant
                 </CardDescription>
@@ -137,18 +152,22 @@ export default function EnvironmentalJusticePrisonsPage() {
       </section>
 
       {/* Overall Risk Score Map Section */}
-      <section className="py-16 bg-white/50">
+      <section className="py-16 bg-white/50" aria-labelledby="map-visualization-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-forest-800 mb-8 text-center">
+            <h2 id="map-visualization-heading" className="text-3xl font-bold text-forest-800 mb-8 text-center">
               {currentComponent.name} Visualization
             </h2>
-            
+
             {/* Large Map Window */}
             <Card className="mb-8">
               <CardContent className="p-6">
-                <div className="mb-4 p-4 bg-gradient-to-r from-white to-opacity-10 rounded-lg border-l-4" 
-                     style={{ borderLeftColor: currentComponent.color, backgroundColor: `${currentComponent.color}10` }}>
+                <div
+                  className="mb-4 p-4 bg-gradient-to-r from-white to-opacity-10 rounded-lg border-l-4"
+                  style={{ borderLeftColor: currentComponent.color, backgroundColor: `${currentComponent.color}10` }}
+                  role="region"
+                  aria-label={`${currentComponent.name} indicator information`}
+                >
                   <h3 className="text-lg font-semibold mb-2" style={{ color: currentComponent.color }}>
                     {currentComponent.name}
                   </h3>
@@ -156,7 +175,7 @@ export default function EnvironmentalJusticePrisonsPage() {
                     Currently viewing: {currentComponent.description}
                   </p>
                 </div>
-                <div className="h-[500px] rounded-lg overflow-hidden mb-4">
+                <div className="h-[500px] rounded-lg overflow-hidden mb-4" role="application" aria-label="Interactive prison environmental justice map">
                   <LazyProjectMap 
                     projectId="prison-ej" 
                     selectedComponent={selectedComponent}
@@ -165,13 +184,13 @@ export default function EnvironmentalJusticePrisonsPage() {
                 </div>
                 
                 {/* Map Description */}
-                <div className="mt-4 p-4 bg-forest-50 rounded-lg">
+                <div className="mt-4 p-4 bg-forest-50 rounded-lg" role="complementary" aria-label="Map usage instructions">
                   <p className="text-sm text-forest-700 mb-2">
                     <strong>Interactive Map Instructions:</strong>
                   </p>
                   <ul className="text-sm text-forest-600 space-y-1">
                     <li className="flex items-start">
-                      <span className="text-forest-500 mr-2">•</span>
+                      <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
                       <span>Use the <strong>Risk Category</strong> dropdown to switch between risk types</span>
                     </li>
                     <li className="flex items-start">
@@ -185,10 +204,6 @@ export default function EnvironmentalJusticePrisonsPage() {
                     <li className="flex items-start">
                       <span className="text-forest-500 mr-2">•</span>
                       <span>Zoom in to see individual prison boundaries and locations</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-forest-500 mr-2">•</span>
-                      <span>Green = Lower Risk, Yellow = Medium Risk, Red = Higher Risk</span>
                     </li>
                   </ul>
                 </div>
@@ -211,13 +226,13 @@ export default function EnvironmentalJusticePrisonsPage() {
       </section>
 
       {/* Climate Risk Section */}
-      <section className="py-16">
+      <section className="py-16" aria-labelledby="climate-risk-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-forest-800 mb-8 text-center">
+            <h2 id="climate-risk-heading" className="text-3xl font-bold text-forest-800 mb-8 text-center">
               Climate Risk Assessment
             </h2>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div>
                 <Card className="bg-white/90 backdrop-blur-sm">
@@ -225,15 +240,25 @@ export default function EnvironmentalJusticePrisonsPage() {
                     <CardTitle className="text-2xl text-forest-700">Climate Risk Indicators</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
+                    <div className="space-y-4" role="list" aria-label="Climate risk indicators">
                       {COMPONENT_CONFIGS.filter(c => c.category === 'climate').map((component) => (
-                        <div 
+                        <div
                           key={component.id}
+                          role="button"
+                          tabIndex={0}
                           className={`border-l-4 pl-4 cursor-pointer transition-all duration-200 hover:bg-gray-50 p-3 rounded-r-lg ${
                             selectedComponent === component.id ? 'bg-blue-50 shadow-md' : ''
                           }`}
                           style={{ borderLeftColor: component.color }}
                           onClick={() => handleComponentClick(component.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleComponentClick(component.id);
+                            }
+                          }}
+                          aria-label={`View ${component.name} on map`}
+                          aria-pressed={selectedComponent === component.id}
                         >
                           <h4 className="font-semibold text-forest-800 flex items-center justify-between">
                             {component.name}
@@ -269,11 +294,19 @@ export default function EnvironmentalJusticePrisonsPage() {
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="h-[400px] rounded-lg overflow-hidden">
-                      <LazyProjectMap 
-                        projectId="prison-ej" 
-                        selectedComponent={selectedComponent}
-                        componentColor={currentComponent.color}
-                      />
+                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'climate' ? (
+                        <LazyProjectMap 
+                          projectId="prison-ej" 
+                          selectedComponent={selectedComponent}
+                          componentColor={currentComponent.color}
+                        />
+                      ) : (
+                        <LazyProjectMap 
+                          projectId="prison-ej" 
+                          selectedComponent="overall"
+                          componentColor="#dc2626"
+                        />
+                      )}
                     </div>
                     <div className="mt-3 p-3 bg-orange-50 rounded text-sm">
                       <p className="text-orange-800">
@@ -314,11 +347,19 @@ export default function EnvironmentalJusticePrisonsPage() {
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="h-[400px] rounded-lg overflow-hidden">
-                      <LazyProjectMap 
-                        projectId="prison-ej" 
-                        selectedComponent={selectedComponent}
-                        componentColor={currentComponent.color}
-                      />
+                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'exposure' ? (
+                        <LazyProjectMap 
+                          projectId="prison-ej" 
+                          selectedComponent={selectedComponent}
+                          componentColor={currentComponent.color}
+                        />
+                      ) : (
+                        <LazyProjectMap 
+                          projectId="prison-ej" 
+                          selectedComponent="overall"
+                          componentColor="#dc2626"
+                        />
+                      )}
                     </div>
                     <div className="mt-3 p-3 bg-purple-50 rounded text-sm">
                       <p className="text-purple-800">
@@ -427,11 +468,19 @@ export default function EnvironmentalJusticePrisonsPage() {
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="h-[400px] rounded-lg overflow-hidden">
-                      <LazyProjectMap 
-                        projectId="prison-ej" 
-                        selectedComponent={selectedComponent}
-                        componentColor={currentComponent.color}
-                      />
+                      {selectedComponent && COMPONENT_CONFIGS.find(c => c.id === selectedComponent)?.category === 'effects' ? (
+                        <LazyProjectMap 
+                          projectId="prison-ej" 
+                          selectedComponent={selectedComponent}
+                          componentColor={currentComponent.color}
+                        />
+                      ) : (
+                        <LazyProjectMap 
+                          projectId="prison-ej" 
+                          selectedComponent="overall"
+                          componentColor="#dc2626"
+                        />
+                      )}
                     </div>
                     <div className="mt-3 p-3 bg-red-50 rounded text-sm">
                       <p className="text-red-800">

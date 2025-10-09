@@ -3,10 +3,12 @@ debug-build.js
 cv_processing_to_website.txt
 /node_modules/
 /.claude/
+/.playwright-mcp/
 /context/
 /.next/
 *.md
 .env
+
 
 # Exclude icon demo files
 /app/icons-demo/

@@ -15,9 +15,14 @@ export const setupPrisonLayers = (
   selectedAttribute: RiskAttribute,
   onDataLoad?: (data: any[]) => void,
   componentId?: string,
-  componentColor?: string
+  componentColor?: string,
+  instanceId?: string
 ) => {
   if (!config.geojsonPath || !config.pointsPath) return;
+
+  // Create unique IDs for this map instance
+  const sourceId = instanceId ? `prisons-${instanceId}` : 'prisons';
+  const layerPrefix = instanceId ? `prison-${instanceId}` : 'prison';
 
   // Fetch and store prison data for filtering
   fetch(config.geojsonPath)
@@ -60,14 +65,14 @@ export const setupPrisonLayers = (
     .catch(error => console.error('Error loading prison data:', error));
 
   // Add polygon source
-  map.addSource("prisons", {
+  map.addSource(sourceId, {
     type: "geojson",
     data: config.geojsonPath,
     generateId: true
   });
 
   // Add points source
-  map.addSource("centroids", {
+  map.addSource(`${layerPrefix}-centroids`, {
     type: "geojson",
     data: config.pointsPath,
     generateId: true
@@ -78,9 +83,9 @@ export const setupPrisonLayers = (
 
   // Add fill layer for polygons
   map.addLayer({
-    id: "prison-polygons",
+    id: `${layerPrefix}-polygons`,
     type: "fill",
-    source: "prisons",
+    source: sourceId,
     paint: {
       "fill-color": colorScale,
       "fill-opacity": 0.5
@@ -89,9 +94,9 @@ export const setupPrisonLayers = (
 
   // Add outline layer
   map.addLayer({
-    id: "prison-outlines",
+    id: `${layerPrefix}-outlines`,
     type: "line",
-    source: "prisons",
+    source: sourceId,
     paint: {
       "line-color": "#ffffff",
       "line-width": 1
@@ -100,9 +105,9 @@ export const setupPrisonLayers = (
 
   // Add highlight layer for higher zoom levels
   map.addLayer({
-    id: "prison-polygons-highlight",
+    id: `${layerPrefix}-polygons-highlight`,
     type: "fill",
-    source: "prisons",
+    source: sourceId,
     paint: {
       "fill-color": colorScale,
       "fill-opacity": 0.2
@@ -112,9 +117,9 @@ export const setupPrisonLayers = (
   
   // Add circle layer for points with zoom-based opacity
   map.addLayer({
-    id: "prison-centroids",
+    id: `${layerPrefix}-centroids`,
     type: "circle",
-    source: "centroids",
+    source: `${layerPrefix}-centroids`,
     paint: {
       "circle-radius": ZOOM_OPACITY_CONFIG.radius,
       "circle-color": colorScale,
@@ -122,19 +127,6 @@ export const setupPrisonLayers = (
       "circle-stroke-width": 0.4,
       "circle-stroke-color": "#000000",
       "circle-stroke-opacity": ZOOM_OPACITY_CONFIG.circle.strokeOpacity,
-    }
-  });
-
-  // Add enhanced circle layer with dynamic sizing based on risk values
-  map.addLayer({
-    id: "prison-symbol-layer",
-    type: "circle",
-    source: "centroids",
-    paint: {
-      ...dynamicProperties,
-      "circle-color": colorScale,
-      "circle-stroke-color": "#000000",
-      "circle-stroke-opacity": 0.8
     }
   });
 

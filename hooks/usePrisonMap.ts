@@ -21,13 +21,21 @@ import {
 // Define RiskAttribute locally to avoid circular imports (using actual geojson column names)
 type RiskAttribute = 'fnl_r__' | 'clmt_sc' | 'effcts_' | 'expsr_s';
 
-export const usePrisonMap = (map: React.MutableRefObject<maplibregl.Map | null>, projectId: string) => {
+export const usePrisonMap = (
+  map: React.MutableRefObject<maplibregl.Map | null>, 
+  projectId: string, 
+  selectedComponent?: string, 
+  componentColor?: string,
+  instanceId?: string
+) => {
   const [selectedAttribute, setSelectedAttribute] = useState<RiskAttribute>("fnl_r__");
   const [showAllPrisons, setShowAllPrisons] = useState<boolean>(true);
   const [allPrisonData, setAllPrisonData] = useState<PrisonFeature[]>([]);
   const [idField, setIdField] = useState<string>('FACILIT');
 
-  const PRISON_LAYERS = ['prison-polygons', 'prison-outlines', 'prison-polygons-highlight', 'prison-centroids', 'prison-symbol-layer'];
+  // Create unique layer names for this instance
+  const layerPrefix = instanceId ? `prison-${instanceId}` : 'prison';
+  const PRISON_LAYERS = [`${layerPrefix}-polygons`, `${layerPrefix}-outlines`, `${layerPrefix}-polygons-highlight`, `${layerPrefix}-centroids`];
 
   // Update ID field when data changes
   useEffect(() => {
@@ -82,15 +90,11 @@ export const usePrisonMap = (map: React.MutableRefObject<maplibregl.Map | null>,
       createRiskColorScale(selectedAttribute);
     const dynamicProperties = createDynamicPaintProperties(selectedAttribute);
     
-    // Use batch update for better consistency
+    // Use batch update for better consistency (removed symbol-layer references)
     const updates = [
-      { layerId: "prison-polygons", property: "fill-color", value: colorScale },
-      { layerId: "prison-polygons-highlight", property: "fill-color", value: colorScale },
-      { layerId: "prison-centroids", property: "circle-color", value: colorScale },
-      { layerId: "prison-symbol-layer", property: "circle-color", value: colorScale },
-      { layerId: "prison-symbol-layer", property: "circle-radius", value: dynamicProperties["circle-radius"] },
-      { layerId: "prison-symbol-layer", property: "circle-stroke-width", value: dynamicProperties["circle-stroke-width"] },
-      { layerId: "prison-symbol-layer", property: "circle-opacity", value: dynamicProperties["circle-opacity"] }
+      { layerId: `${layerPrefix}-polygons`, property: "fill-color", value: colorScale },
+      { layerId: `${layerPrefix}-polygons-highlight`, property: "fill-color", value: colorScale },
+      { layerId: `${layerPrefix}-centroids`, property: "circle-color", value: colorScale }
     ];
     
     if (showAllPrisons) {
@@ -103,8 +107,8 @@ export const usePrisonMap = (map: React.MutableRefObject<maplibregl.Map | null>,
         if (map.current && map.current.isStyleLoaded()) {
           try {
             // Force style recalculation by briefly toggling a benign property
-            const currentOpacity = map.current.getPaintProperty('prison-polygons', 'fill-opacity');
-            map.current.setPaintProperty('prison-polygons', 'fill-opacity', currentOpacity);
+            const currentOpacity = map.current.getPaintProperty(`${layerPrefix}-polygons`, 'fill-opacity');
+            map.current.setPaintProperty(`${layerPrefix}-polygons`, 'fill-opacity', currentOpacity);
             map.current.triggerRepaint();
           } catch (error) {
             console.warn('Additional repaint strategy failed:', error);
@@ -125,12 +129,12 @@ export const usePrisonMap = (map: React.MutableRefObject<maplibregl.Map | null>,
   useEffect(() => {
     if (allPrisonData.length > 0 && projectId === 'prison-ej') {
       applyTopNFilter(showAllPrisons);
-      // Ensure colors are updated after filter changes
+      // Ensure colors are updated after filter changes with current component selection
       setTimeout(() => {
-        updatePrisonColors();
+        updatePrisonColors(selectedComponent, componentColor);
       }, 50); // Small delay to ensure filter is fully applied
     }
-  }, [showAllPrisons, selectedAttribute, allPrisonData, projectId]);
+  }, [showAllPrisons, selectedAttribute, allPrisonData, projectId, selectedComponent, componentColor]);
 
   return {
     selectedAttribute,
