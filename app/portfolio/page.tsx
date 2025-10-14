@@ -7,7 +7,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Icon } from '@/components/ui/icons';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -171,15 +170,44 @@ export default function PortfolioPage() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header Section */}
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold text-forest-800 mb-4">Portfolio</h1>
-        <p className="text-lg text-forest-600 mb-6 max-w-3xl">
-          A collection of water resources and geospatial projects showcasing data-driven solutions
-          for sustainable water management across California.
-        </p>
-      </header>
+    <div className="relative min-h-screen">
+      {/* Background SVG */}
+      <div className="absolute -inset-[200px] -z-10 overflow-hidden">
+        {/* Normal orientation - single instance from top */}
+        <div
+          className="w-full opacity-10 absolute top-0 left-0 right-0"
+          style={{
+            backgroundImage: 'url(/images/upper_folsom_contour_bwn.svg)',
+            backgroundSize: '100% auto',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
+            height: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
+          }}
+        />
+        {/* Flipped SVG positioned where first instance ends */}
+        <div
+          className="w-full opacity-10 absolute left-0 right-0"
+          style={{
+            top: '56.25%', // Start where first SVG ends
+            backgroundImage: 'url(/images/upper_folsom_contour_bwn.svg)',
+            backgroundSize: '100% auto',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'repeat-y',
+            transform: 'scaleY(-1)',
+            height: 'calc(100% - 56.25%)',
+          }}
+        />
+      </div>
+
+      <div className="container mx-auto px-4 py-8 relative z-10">
+        {/* Header Section */}
+        <header className="mb-8">
+          <h1 className="text-4xl font-bold text-forest-800 mb-4">Portfolio</h1>
+          <p className="text-lg text-forest-600 mb-6 max-w-3xl">
+            A collection of water resources and geospatial projects showcasing data-driven solutions
+            for sustainable water management across California.
+          </p>
+        </header>
 
       {/* Projects Section */}
       <Tabs defaultValue="all" className="mb-8">
@@ -253,6 +281,7 @@ export default function PortfolioPage() {
           </TabsContent>
         ))}
       </Tabs>
+      </div>
     </div>
   );
 }

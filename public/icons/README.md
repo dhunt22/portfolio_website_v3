@@ -18,14 +18,14 @@ This directory contains SVG icons used throughout the portfolio website. All ico
 - `linkedin.svg` - LinkedIn professional icon
 
 ### Thematic Icons
-- `fishing-pole.svg` - Custom fishing pole icon representing Devin's passion for fishing
+- `fishing-pole-svgrepo.svg` - Fishing pole icon representing Devin's passion for fishing
 - `map.svg` - Map/exploration icon representing travel and discovery
 
 ## Usage
 
 ### As Static Assets
 ```html
-<img src="/icons/fishing-pole.svg" alt="Fishing" width="24" height="24" />
+<img src="/icons/fishing-pole-svgrepo.svg" alt="Fishing" width="24" height="24" />
 ```
 
 ### As React Components
@@ -64,10 +64,9 @@ All icons should be used with appropriate:
 ## Custom Icons
 
 ### Fishing Pole Icon
-A custom-designed fishing pole icon that represents Devin's passion for understanding water ecosystems through fishing. The icon includes:
-- Fishing rod (diagonal line)
-- Reel (circle at handle)
-- Fishing line (curved line)
-- Hook (small curved element)
+A fishing pole icon from SVG Repo that represents Devin's passion for understanding water ecosystems through fishing. The detailed icon includes:
+- Fishing rod with reel mechanism
+- Fishing line extending from the rod
+- Hook at the end
 
-This icon is specifically designed to match the portfolio's water resources theme while being immediately recognizable as a fishing pole.
+This icon matches the portfolio's water resources theme while being immediately recognizable as a fishing pole.
