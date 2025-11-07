@@ -6,14 +6,14 @@
 
 import React from 'react';
 
-// Define types locally to avoid import issues (using actual geojson column names)
-type RiskAttribute = 'fnl_r__' | 'clmt_sc' | 'effcts_' | 'expsr_s';
+// Define types locally to avoid import issues (using new geojson column names)
+type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
 
 const RISK_ATTRIBUTES: Record<RiskAttribute, string> = {
-  "fnl_r__": "Overall Risk Score",    // final_risk_score_pcntl
-  "clmt_sc": "Climate Risk",          // climate_score  
-  "effcts_": "Effects Risk",          // effects_score
-  "expsr_s": "Exposure Risk"          // exposure_score
+  "final_risk_score_pcntl": "Overall Risk Score",
+  "climate_score": "Climate Risk",
+  "effects_score": "Effects Risk",
+  "exposure_score": "Exposure Risk"
 };
 
 interface MapControlsProps {
@@ -44,7 +44,7 @@ const MapControls: React.FC<MapControlsProps> = ({
   if (projectId !== 'prison-ej') return null;
 
   return (
-    <div className="absolute top-4 right-16 z-[1000] flex flex-col gap-2 control-panel">
+    <div className="absolute top-4 right-16 z-40 flex flex-col gap-2 control-panel">
       {/* Legend Panel - Always show simplified gradient */}
       {showCategoryPanel && (
         <div className="relative">
@@ -119,43 +119,17 @@ const MapControls: React.FC<MapControlsProps> = ({
         </button>
       )}
       
-      {/* Filter Toggle Button - Hide for individual components */}
-      {!(hideRiskSelector && componentName && componentColor) && (
-        <>
-          <button
-            onClick={() => setShowAllPrisons(!showAllPrisons)}
-            className={`bg-white hover:bg-gray-50 border border-gray-300 rounded-md p-2 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 ${
-              !showAllPrisons ? 'bg-forest-100 border-forest-400 ring-1 ring-forest-200' : ''
-            }`}
-            title={showAllPrisons ? 'Show top 10 highest risk' : 'Show all prisons'}
-            aria-label={showAllPrisons ? 'Filter to top 10 highest risk prisons' : 'Show all prisons'}
-          >
-            {showAllPrisons ? (
-              // All prisons icon - grid/list view
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-            ) : (
-              // Top 10 icon - filter with number badge
-              <div className="relative">
-                <svg className="w-4 h-4 text-forest-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                <span className="absolute -top-1 -right-1 bg-forest-600 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center text-[8px] font-bold leading-none">
-                  10
-                </span>
-                </div>
-            )}
-          </button>
-          
-          {/* Status indicator */}
-          <div className="bg-white rounded-md px-2 py-1 shadow-sm border border-gray-200">
-            <span className="text-xs text-forest-600 font-medium">
-              {showAllPrisons ? 'All Prisons' : 'Top 10'}
-            </span>
-          </div>
-        </>
-      )}
+      {/* Filter Toggle Button - Always show for prison maps */}
+      <button
+        onClick={() => setShowAllPrisons(!showAllPrisons)}
+        className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-3 py-2 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 min-w-[48px] flex items-center justify-center"
+        title={showAllPrisons ? 'Show top 10 highest risk' : 'Show all prisons'}
+        aria-label={showAllPrisons ? 'Filter to top 10 highest risk prisons' : 'Show all prisons'}
+      >
+        <span className="text-sm font-medium text-black">
+          {showAllPrisons ? 'All' : '10'}
+        </span>
+      </button>
     </div>
   );
 };

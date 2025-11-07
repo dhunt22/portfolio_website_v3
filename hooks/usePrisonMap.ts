@@ -18,17 +18,17 @@ import {
   determineIdField
 } from '@/lib/maps/mapUtils';
 
-// Define RiskAttribute locally to avoid circular imports (using actual geojson column names)
-type RiskAttribute = 'fnl_r__' | 'clmt_sc' | 'effcts_' | 'expsr_s';
+// Define RiskAttribute locally to avoid circular imports (using new geojson column names)
+type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
 
 export const usePrisonMap = (
-  map: React.MutableRefObject<maplibregl.Map | null>, 
-  projectId: string, 
-  selectedComponent?: string, 
+  map: React.MutableRefObject<maplibregl.Map | null>,
+  projectId: string,
+  selectedComponent?: string,
   componentColor?: string,
   instanceId?: string
 ) => {
-  const [selectedAttribute, setSelectedAttribute] = useState<RiskAttribute>("fnl_r__");
+  const [selectedAttribute, setSelectedAttribute] = useState<RiskAttribute>("final_risk_score_pcntl");
   const [showAllPrisons, setShowAllPrisons] = useState<boolean>(true);
   const [allPrisonData, setAllPrisonData] = useState<PrisonFeature[]>([]);
   const [idField, setIdField] = useState<string>('FACILIT');

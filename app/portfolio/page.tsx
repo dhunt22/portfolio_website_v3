@@ -44,25 +44,12 @@ interface ProjectCardProps {
 }
 
 function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onClick();
-    }
-  };
-
   return (
     <Card
       id={project.id}
-      className={`bg-white/90 backdrop-blur-sm transition-all duration-300 cursor-pointer ${
+      className={`bg-white/90 backdrop-blur-sm transition-all duration-300 ${
         isActive ? 'border-river-500 shadow-md ring-2 ring-river-200' : 'hover:shadow-sm hover:border-river-300'
       }`}
-      onClick={onClick}
-      onKeyPress={handleKeyPress}
-      tabIndex={0}
-      role="button"
-      aria-pressed={isActive}
-      aria-label={`View ${project.title} project details`}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6">
@@ -129,8 +116,28 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
           </CardContent>
         </div>
 
-        <div className="relative h-[300px] md:h-auto min-h-[300px]">
-          <LazyProjectMap projectId={project.id} />
+        <div className="relative h-[300px] md:h-auto min-h-[300px] z-10" style={{ pointerEvents: 'auto' }}>
+          {project.displayType === 'image' ? (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+              {project.imagePath ? (
+                <img
+                  src={project.imagePath}
+                  alt={project.imageAlt || `${project.title} visualization`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-gray-400 p-8">
+                  <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p className="text-sm font-medium">Project Image Coming Soon</p>
+                  <p className="text-xs mt-1">{project.title}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <LazyProjectMap projectId={project.id} />
+          )}
         </div>
       </div>
     </Card>
@@ -172,7 +179,7 @@ export default function PortfolioPage() {
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <div className="absolute -inset-[200px] -z-10 overflow-hidden">
+      <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         {/* Normal orientation - single instance from top */}
         <div
           className="w-full opacity-10 absolute top-0 left-0 right-0"

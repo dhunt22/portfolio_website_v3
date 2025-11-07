@@ -1,29 +1,17 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/portfolio/LazyProjectMap.tsx
-// Lazy loaded wrapper for ProjectMap to improve performance
+// Error boundary wrapper for ProjectMap with immediate loading
 
 'use client';
 
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
+import ProjectMap from './ProjectMap';
 
-// Lazy load the ProjectMap component
-const ProjectMap = lazy(() => import('./ProjectMap'));
-
-interface LazyProjectMapProps {
+interface ProjectMapWrapperProps {
   projectId: string;
   selectedComponent?: string;
   componentColor?: string;
 }
-
-// Loading fallback component
-const MapLoadingFallback: React.FC = () => (
-  <div className="w-full h-full min-h-[300px] rounded-lg bg-gray-100 flex items-center justify-center">
-    <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-forest-600 mb-2"></div>
-      <p className="text-sm text-gray-600">Loading interactive map...</p>
-    </div>
-  </div>
-);
 
 // Error boundary for map loading errors
 class MapErrorBoundary extends React.Component<
@@ -66,12 +54,10 @@ class MapErrorBoundary extends React.Component<
   }
 }
 
-const LazyProjectMap: React.FC<LazyProjectMapProps> = ({ projectId, selectedComponent, componentColor }) => {
+const LazyProjectMap: React.FC<ProjectMapWrapperProps> = ({ projectId, selectedComponent, componentColor }) => {
   return (
     <MapErrorBoundary>
-      <Suspense fallback={<MapLoadingFallback />}>
-        <ProjectMap projectId={projectId} selectedComponent={selectedComponent} componentColor={componentColor} />
-      </Suspense>
+      <ProjectMap projectId={projectId} selectedComponent={selectedComponent} componentColor={componentColor} />
     </MapErrorBoundary>
   );
 };

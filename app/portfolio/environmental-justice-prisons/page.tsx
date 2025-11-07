@@ -47,24 +47,24 @@ interface ComponentConfig {
 
 const COMPONENT_CONFIGS: ComponentConfig[] = [
   // Overall Risk
-  { id: 'overall', name: 'Overall Risk Score', description: 'Combined environmental vulnerability index across all indicators', column: 'fnl_r__', color: '#dc2626', category: 'overall' },
+  { id: 'overall', name: 'Overall Risk Score', description: 'Combined environmental vulnerability index across all indicators', column: 'final_risk_score_pcntl', color: '#dc2626', category: 'overall' },
 
   // Climate Risk Components
-  { id: 'heat', name: 'Heat Index', description: 'Extreme temperature conditions creating dangerous indoor environments', column: 'lst_vg_', color: '#ea580c', category: 'climate' },
-  { id: 'canopy', name: 'Canopy Cover', description: 'Natural cooling provided by tree coverage around facilities', column: 'prcn___', color: '#16a34a', category: 'climate' },
-  { id: 'wildfire', name: 'Wildfire Risk', description: 'Proximity to wildfire-prone areas affecting air quality', column: 'wldfr__', color: '#dc2626', category: 'climate' },
-  { id: 'flood', name: 'Flood Hazard', description: 'Flood risk considering limited mobility during emergencies', column: 'fld_rs_', color: '#2563eb', category: 'climate' },
+  { id: 'heat', name: 'Heat Index', description: 'Extreme temperature conditions creating dangerous indoor environments', column: 'lst_avg_pcntl', color: '#ea580c', category: 'climate' },
+  { id: 'canopy', name: 'Canopy Cover', description: 'Natural cooling provided by tree coverage around facilities', column: 'percent_tree_cover_pcntl', color: '#16a34a', category: 'climate' },
+  { id: 'wildfire', name: 'Wildfire Risk', description: 'Proximity to wildfire-prone areas affecting air quality', column: 'wildfire_risk_pcntl', color: '#dc2626', category: 'climate' },
+  { id: 'flood', name: 'Flood Hazard', description: 'Flood risk considering limited mobility during emergencies', column: 'flood_risk_pcntl', color: '#2563eb', category: 'climate' },
 
   // Environmental Exposure Components
-  { id: 'ozone', name: 'Ozone Levels', description: 'Ground-level ozone concentrations from satellite data', column: 'mn_zn_p', color: '#7c3aed', category: 'exposure' },
-  { id: 'pm25', name: 'PM 2.5 Particulates', description: 'Fine particulate matter concentrations affecting respiratory health', column: 'avg_25_', color: '#6b7280', category: 'exposure' },
-  { id: 'pesticide', name: 'Pesticide Use', description: 'Agricultural pesticide application intensity in surrounding areas', column: 'pstcds_', color: '#eab308', category: 'exposure' },
-  { id: 'traffic', name: 'Traffic Density', description: 'Vehicle traffic volume contributing to local air pollution', column: 'trffcP_', color: '#374151', category: 'exposure' },
+  { id: 'ozone', name: 'Ozone Levels', description: 'Ground-level ozone concentrations from satellite data', column: 'mean_ozone_pcntl', color: '#7c3aed', category: 'exposure' },
+  { id: 'pm25', name: 'PM 2.5 Particulates', description: 'Fine particulate matter concentrations affecting respiratory health', column: 'avg_pm25_pcntl', color: '#6b7280', category: 'exposure' },
+  { id: 'pesticide', name: 'Pesticide Use', description: 'Agricultural pesticide application intensity in surrounding areas', column: 'pesticides_pcntl', color: '#eab308', category: 'exposure' },
+  { id: 'traffic', name: 'Traffic Density', description: 'Vehicle traffic volume contributing to local air pollution', column: 'trafficProx_pcntl', color: '#374151', category: 'exposure' },
 
   // Environmental Effects Components (Proximity-Based)
-  { id: 'superfund', name: 'Superfund Sites', description: 'Distance to EPA Superfund sites with hazardous waste contamination', column: 'npl_pr_', color: '#dc2626', category: 'effects' },
-  { id: 'rmp', name: 'Risk Management Plan Facilities', description: 'Proximity to industrial facilities handling hazardous chemicals', column: 'rmp_pr_', color: '#ea580c', category: 'effects' },
-  { id: 'hazwaste', name: 'Hazardous Waste Sites', description: 'Distance to facilities treating or storing hazardous waste', column: 'hz_prx_', color: '#92400e', category: 'effects' }
+  { id: 'superfund', name: 'Superfund Sites', description: 'Distance to EPA Superfund sites with hazardous waste contamination', column: 'npl_prox_pcntl', color: '#dc2626', category: 'effects' },
+  { id: 'rmp', name: 'Risk Management Plan Facilities', description: 'Proximity to industrial facilities handling hazardous chemicals', column: 'rmp_prox_pcntl', color: '#ea580c', category: 'effects' },
+  { id: 'hazwaste', name: 'Hazardous Waste Sites', description: 'Distance to facilities treating or storing hazardous waste', column: 'haz_prox_pcntl', color: '#92400e', category: 'effects' }
 ];
 
 // Map Instructions Popup Component
@@ -259,7 +259,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               >
                 <Button
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-forest-900"
+                  className="border-forest-200 bg-white text-forest-700 hover:bg-forest-50 hover:border-forest-300"
                 >
                   <GitHubIcon className="w-4 h-4" aria-hidden="true" />
                   View Repository
@@ -274,7 +274,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               >
                 <Button
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-forest-900"
+                  className="border-forest-200 bg-white text-forest-700 hover:bg-forest-50 hover:border-forest-300"
                 >
                   <ExternalLinkIcon className="w-4 h-4" aria-hidden="true" />
                   NASA Project Page
@@ -343,10 +343,10 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
             {/* Tabs Navigation */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-0 bg-white p-1 rounded-b-none shadow-sm">
+              <TabsList className="grid w-full grid-cols-4 mb-0 bg-transparent p-0 gap-1 relative" style={{ marginBottom: '-1px' }}>
                 <TabsTrigger
                   value="overall"
-                  className="relative data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all"
+                  className="relative border border-gray-100 border-b-0 bg-red-50/30 text-red-900 rounded-t-lg rounded-b-none data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:border-red-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Overall
                   {currentComponent.category === 'overall' && (
@@ -355,7 +355,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="climate"
-                  className="relative data-[state=active]:bg-forest-600 data-[state=active]:text-white transition-all"
+                  className="relative border border-gray-100 border-b-0 bg-forest-50/30 text-forest-900 rounded-t-lg rounded-b-none data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Climate Risk
                   {currentComponent.category === 'climate' && (
@@ -364,7 +364,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="exposure"
-                  className="relative data-[state=active]:bg-purple-600 data-[state=active]:text-white transition-all"
+                  className="relative border border-gray-100 border-b-0 bg-purple-50/30 text-purple-900 rounded-t-lg rounded-b-none data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Exposure
                   {currentComponent.category === 'exposure' && (
@@ -373,7 +373,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="effects"
-                  className="relative data-[state=active]:bg-orange-600 data-[state=active]:text-white transition-all"
+                  className="relative border border-gray-100 border-b-0 bg-orange-50/30 text-orange-900 rounded-t-lg rounded-b-none data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Proximity-Based
                   {currentComponent.category === 'effects' && (
@@ -383,11 +383,11 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               </TabsList>
             </Tabs>
 
-            {/* Split Layout - Outside Tabs to prevent map remounting */}
-            <div className="grid grid-cols-1 lg:grid-cols-10 gap-0">
-              {/* Left Side - Indicators List (30%) */}
-              <div className="lg:col-span-3">
-                <Card className="bg-white/90 backdrop-blur-sm rounded-t-none rounded-r-none border-r-0 flex flex-col" style={{ height: '650px' }}>
+            {/* Combined Card - Single card containing both indicators and map */}
+            <Card className="bg-white/90 backdrop-blur-sm shadow-lg border-t border-gray-200">
+              <div className="grid grid-cols-1 lg:grid-cols-10 gap-0">
+                {/* Left Side - Indicators List (30%) */}
+                <div className="lg:col-span-3 flex flex-col border-r border-gray-200" style={{ height: '635px' }}>
                   <CardHeader className="pb-4 flex-shrink-0">
                     <CardTitle className="text-xl text-forest-700">
                       {activeTab === 'overall' && 'Overall Risk'}
@@ -403,8 +403,8 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                           key={component.id}
                           role="button"
                           tabIndex={0}
-                          className={`border-l-4 pl-3 pr-2 py-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 rounded-r-lg ${
-                            selectedComponent === component.id ? 'bg-blue-50 shadow-md' : ''
+                          className={`border-l-4 border border-gray-200 pl-3 pr-2 py-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 rounded-lg ${
+                            selectedComponent === component.id ? 'bg-blue-50 shadow-md border-blue-200' : ''
                           }`}
                           style={{ borderLeftColor: component.color }}
                           onClick={() => handleComponentClick(component.id)}
@@ -439,12 +439,10 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                       indicatorName={currentComponent.name}
                     />
                   </div>
-                </Card>
-              </div>
+                </div>
 
-              {/* Right Side - Map (70%) - Stays mounted */}
-              <div className="lg:col-span-7">
-                <Card className="bg-white shadow-lg rounded-t-none">
+                {/* Right Side - Map (70%) - Stays mounted */}
+                <div className="lg:col-span-7">
                   <CardContent className="p-4">
                     <div className="relative">
                       {/* Map Container with fixed height */}
@@ -476,9 +474,9 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </div>
               </div>
-            </div>
+            </Card>
 
             {/* Indicator Details Section */}
             <Card className="mt-8 bg-white/90 backdrop-blur-sm">

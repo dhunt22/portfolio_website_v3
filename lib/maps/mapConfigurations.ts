@@ -18,6 +18,7 @@ export interface MapConfig {
   zoom: number;
   style: string;
   maxBounds?: maplibregl.LngLatBoundsLike;
+  initialBounds?: maplibregl.LngLatBoundsLike;
   geojsonPath?: string;
   pointsPath?: string;
   dataLayer?: MapLayerConfig;
@@ -72,7 +73,8 @@ export const LAYER_CONFIGS: Record<string, MapLayerConfig> = {
     type: 'fill',
     color: '#3fbffb',
     outlineColor: '#000000',
-    opacity: 0.3
+    opacity: 0.3,
+    strokeWidth: 0.5
   }
 };
 
@@ -85,8 +87,8 @@ export const PROJECT_CONFIGS: Record<string, MapConfig> = {
   'prison-ej': {
     ...BASE_CONFIGS.US_NATIONAL,
     style: GRAY_STYLE,
-    geojsonPath: '/data/nasa_eej_prisons_poly_refactored.geojson',
-    pointsPath: '/data/nasa_eej_prisons_pt_refactored.geojson',
+    geojsonPath: '/data/nasa_eej_prisons_poly_pctl_simple.geojson',
+    pointsPath: '/data/nasa_eej_prisons_pts_pctl_simple.geojson',
   },
   'cuyama-basin': {
     ...BASE_CONFIGS.CUYAMA_VALLEY,
@@ -119,7 +121,11 @@ export const PROJECT_CONFIGS: Record<string, MapConfig> = {
     zoom: 5,
     style: DEFAULT_STYLE,
     geojsonPath: '/data/yuba_subbasins.geojson',
-    dataLayer: LAYER_CONFIGS.RECHARGE_SUITABILITY
+    dataLayer: LAYER_CONFIGS.RECHARGE_SUITABILITY,
+    initialBounds: [
+      [-121.521356060, 38.260703024],   // Southwest corner [EPSG:4326]
+      [-121.334589241, 38.411929286]    // Northeast corner [EPSG:4326]
+    ] as maplibregl.LngLatBoundsLike
   },
   'modesto-infiltration': {
     ...BASE_CONFIGS.CALIFORNIA_CENTRAL,
@@ -129,18 +135,26 @@ export const PROJECT_CONFIGS: Record<string, MapConfig> = {
     dataLayer: LAYER_CONFIGS.RECHARGE_SUITABILITY
   },
   'antelope-wells': {
-    ...BASE_CONFIGS.CALIFORNIA_CENTRAL,
-    zoom: 6,
+    center: [-118.087, 34.828] as [number, number],
+    zoom: 10,
     style: DEFAULT_STYLE,
     geojsonPath: '/data/yuba_subbasins.geojson',
-    dataLayer: LAYER_CONFIGS.RECHARGE_SUITABILITY
+    dataLayer: LAYER_CONFIGS.RECHARGE_SUITABILITY,
+    initialBounds: [
+      [-118.656123182, 34.367559273],   // Southwest corner [EPSG:4326]
+      [-117.517736778, 35.289317868]    // Northeast corner [EPSG:4326]
+    ] as maplibregl.LngLatBoundsLike
   },
   'watershed-hub': {
-    ...BASE_CONFIGS.CALIFORNIA_CENTRAL,
-    zoom: 3,
+    center: [-119.956, 37.424] as [number, number],
+    zoom: 5.5,
     style: DEFAULT_STYLE,
     geojsonPath: '/data/HUC8_CA_simple.geojson',
-    dataLayer: LAYER_CONFIGS.WATERSHED
+    dataLayer: LAYER_CONFIGS.WATERSHED,
+    initialBounds: [
+      [-126.363547557, 32.235563893],   // Southwest corner [EPSG:4326]
+      [-113.548955642, 42.611619160]    // Northeast corner [EPSG:4326]
+    ] as maplibregl.LngLatBoundsLike
   },
   'sanitary-district': {
     ...BASE_CONFIGS.CV_FOOTHILL_SA,

@@ -6,23 +6,23 @@ import maplibregl, { MapMouseEvent, MapGeoJSONFeature } from 'maplibre-gl';
 
 export interface PrisonFeatureProperties {
   NAME: string;
-  // Actual shortened column names from geojson
-  fnl_r__: number;     // final_risk_score_pcntl
-  clmt_sc: number;     // climate_score
-  expsr_s: number;     // exposure_score
-  effcts_: number;     // effects_score
-  // Individual component properties (shortened names)
-  lst_vg_: number;     // lst_avg_pcntl
-  prcn___: number;     // percent_tree_cover_pcntl
-  wldfr__: number;     // wildfire_risk_pcntl
-  fld_rs_: number;     // flood_risk_pcntl
-  mn_zn_p: number;     // mean_ozone_pcntl
-  avg_25_: number;     // avg_pm25_pcntl
-  pstcds_: number;     // pesticides_pcntl
-  trffcP_: number;     // trafficProx_pcntl
-  npl_pr_: number;     // npl_prox_pcntl
-  rmp_pr_: number;     // rmp_prox_pcntl
-  hz_prx_: number;     // haz_prox_pcntl
+  // Updated column names from new geojson files
+  final_risk_score_pcntl: number;
+  climate_score: number;
+  exposure_score: number;
+  effects_score: number;
+  // Individual component properties
+  lst_avg_pcntl: number;
+  percent_tree_cover_pcntl: number;
+  wildfire_risk_pcntl: number;
+  flood_risk_pcntl: number;
+  mean_ozone_pcntl: number;
+  avg_pm25_pcntl: number;
+  pesticides_pcntl: number;
+  trafficProx_pcntl: number;
+  npl_prox_pcntl: number;
+  rmp_prox_pcntl: number;
+  haz_prox_pcntl: number;
   FACILIT: string | number;  // FACILITYID
   [key: string]: any;
 }
@@ -37,37 +37,56 @@ export interface PrisonFeature {
   id?: string | number;
 }
 
-// Risk attribute labels (using actual geojson column names)
+// Risk attribute labels (using new geojson column names)
 export const RISK_ATTRIBUTES = {
-  "fnl_r__": "Overall Risk Score",    // final_risk_score_pcntl
-  "clmt_sc": "Climate Risk",          // climate_score  
-  "effcts_": "Effects Risk",          // effects_score
-  "expsr_s": "Exposure Risk"          // exposure_score
+  "final_risk_score_pcntl": "Overall Risk Score",
+  "climate_score": "Climate Risk",
+  "effects_score": "Effects Risk",
+  "exposure_score": "Exposure Risk"
 } as const;
 
 export type RiskAttribute = keyof typeof RISK_ATTRIBUTES;
 
-// Individual component mappings (using actual geojson column names)
+// Individual component mappings (using new geojson column names)
 export const COMPONENT_COLUMNS = {
-  'overall': 'fnl_r__',        // final_risk_score_pcntl
-  'heat': 'lst_vg_',           // lst_avg_pcntl
-  'canopy': 'prcn___',         // percent_tree_cover_pcntl
-  'wildfire': 'wldfr__',       // wildfire_risk_pcntl
-  'flood': 'fld_rs_',          // flood_risk_pcntl
-  'ozone': 'mn_zn_p',          // mean_ozone_pcntl
-  'pm25': 'avg_25_',           // avg_pm25_pcntl
-  'pesticide': 'pstcds_',      // pesticides_pcntl
-  'traffic': 'trffcP_',        // trafficProx_pcntl
-  'superfund': 'npl_pr_',      // npl_prox_pcntl
-  'rmp': 'rmp_pr_',            // rmp_prox_pcntl
-  'hazwaste': 'hz_prx_'        // haz_prox_pcntl
+  'overall': 'final_risk_score_pcntl',
+  'heat': 'lst_avg_pcntl',
+  'canopy': 'percent_tree_cover_pcntl',
+  'wildfire': 'wildfire_risk_pcntl',
+  'flood': 'flood_risk_pcntl',
+  'ozone': 'mean_ozone_pcntl',
+  'pm25': 'avg_pm25_pcntl',
+  'pesticide': 'pesticides_pcntl',
+  'traffic': 'trafficProx_pcntl',
+  'superfund': 'npl_prox_pcntl',
+  'rmp': 'rmp_prox_pcntl',
+  'hazwaste': 'haz_prox_pcntl'
 } as const;
 
 export function getAttributeLabel(attr: RiskAttribute): string {
   return RISK_ATTRIBUTES[attr] || "Risk Score";
 }
 
-// Color scale for risk visualization (legacy function)
+// Get human-readable label for component indicators
+export function getComponentLabel(componentId: string): string {
+  const COMPONENT_LABELS: Record<string, string> = {
+    'overall': 'Overall Risk Score',
+    'heat': 'Heat Index',
+    'canopy': 'Canopy Cover',
+    'wildfire': 'Wildfire Risk',
+    'flood': 'Flood Hazard',
+    'ozone': 'Ozone Levels',
+    'pm25': 'PM 2.5 Particulates',
+    'pesticide': 'Pesticide Use',
+    'traffic': 'Traffic Density',
+    'superfund': 'Superfund Sites',
+    'rmp': 'Risk Management Plan Facilities',
+    'hazwaste': 'Hazardous Waste Sites'
+  };
+  return COMPONENT_LABELS[componentId] || componentId;
+}
+
+// Color scale for risk visualization
 export function createRiskColorScale(attribute: RiskAttribute): any[] {
   return [
     "case",
@@ -96,7 +115,7 @@ export function createComponentColorScale(componentId: string, componentColor: s
   const column = COMPONENT_COLUMNS[componentId as keyof typeof COMPONENT_COLUMNS];
   if (!column) {
     // Fallback to overall risk
-    return createRiskColorScale('fnl_r__');
+    return createRiskColorScale('final_risk_score_pcntl');
   }
 
   // Create white to component color gradient with null value handling
@@ -121,9 +140,9 @@ export function createEnhancedColorScale(componentId?: string, componentColor?: 
   if (componentId && componentColor && componentId !== 'overall') {
     return createComponentColorScale(componentId, componentColor);
   }
-  
+
   // For overall or when no component specified, use overall risk scale
-  return createRiskColorScale('fnl_r__');
+  return createRiskColorScale('final_risk_score_pcntl');
 }
 
 // Create dynamic paint properties based on selected attribute
@@ -253,15 +272,47 @@ export function getPrisonId(prison: PrisonFeature): string | number {
 (getPrisonId as any).hasLogged = false;
 
 // Popup content generators
-export function createPrisonPopupContent(properties: PrisonFeatureProperties, attribute: RiskAttribute): string {
+export function createPrisonPopupContent(
+  properties: PrisonFeatureProperties,
+  attribute: RiskAttribute,
+  componentId?: string
+): string {
+  // If componentId is provided, use it to get the specific indicator column and label
+  let column: string;
+  let label: string;
+  let value: number;
+
+  if (componentId && componentId !== 'overall') {
+    column = COMPONENT_COLUMNS[componentId as keyof typeof COMPONENT_COLUMNS];
+    label = getComponentLabel(componentId);
+    value = properties[column] || 0;
+  } else {
+    // Default to the selected attribute (overall risk)
+    column = attribute;
+    label = getAttributeLabel(attribute);
+    value = properties[attribute] || 0;
+  }
+
   return `
-    <strong>${properties.NAME}</strong><br/>
-    ${properties.CITY}, ${properties.STATE}<br/>
-    ${getAttributeLabel(attribute)}: ${Math.round(properties[attribute] || 0)}
+    <div style="padding: 4px;">
+      <strong style="font-size: 14px;">${properties.NAME}</strong><br/>
+      <span style="font-size: 12px; color: #6b7280;">${properties.CITY}, ${properties.STATE}</span><br/>
+      <div style="margin-top: 8px; font-weight: 600; font-size: 12px; color: #374151;">${label}</div>
+      <div style="font-size: 16px; font-weight: 700; color: #1f2937;">${Math.round(value)} percentile</div>
+    </div>
   `;
 }
 
-export function createSubbasinPopupContent(properties: any): string {
+export function createSubbasinPopupContent(properties: any, projectId?: string): string {
+  // Handle watershed-hub project with different properties
+  if (projectId === 'watershed-hub') {
+    return `
+      <strong>${properties.Name}</strong><br/>
+      ${properties.HUC8}
+    `;
+  }
+
+  // Default for other subbasin projects
   return `
     <strong>${properties.Basin_Subbasin_Name}</strong><br/>
     Basin Code: ${properties.Basin_Subbasin_Number}<br/>

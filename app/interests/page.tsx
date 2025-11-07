@@ -14,7 +14,7 @@ export default function InterestsPage() {
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <div className="absolute -inset-[200px] -z-10 overflow-hidden">
+      <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         <div
           className="w-full h-full bg-repeat-y bg-center opacity-10"
           style={{
@@ -50,15 +50,20 @@ export default function InterestsPage() {
               </div>
               
               <div className="relative h-[300px] md:h-auto">
-                <Image 
-                  src="/images/exploration.jpg" 
+                <Image
+                  src="/images/exploration.jpg"
                   alt="A silver Tundra covered in orange Moab mud after driving Shafer Trail in Canyonlands National Park"
-                  className="object-cover"
+                  className="object-cover object-bottom"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                  <p className="text-white text-xs italic">
+                    A silver Tundra covered in orange Moab mud after driving Shafer Trail in Canyonlands National Park
+                  </p>
+                </div>
               </div>
             </div>
           </Card>
@@ -68,15 +73,20 @@ export default function InterestsPage() {
           <Card className="bg-white/90 backdrop-blur-sm overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative h-[300px] md:h-auto order-last md:order-first">
-                <Image 
-                  src="/images/fishing.jpg" 
-                  alt="A calm alpine lake at dusk near Winter Park, Colorado" 
-                  className="object-cover"
+                <Image
+                  src="/images/fishing.jpg"
+                  alt="A calm alpine lake at dusk near Winter Park, Colorado"
+                  className="object-cover object-center"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                  <p className="text-white text-xs italic">
+                    A calm alpine lake at dusk near Winter Park, Colorado
+                  </p>
+                </div>
               </div>
               
               <div className="p-6">
@@ -120,19 +130,23 @@ export default function InterestsPage() {
                 </p>
                 
                 <p>
-                  I do not have access to my Survey123 data from my time at CSU, but keep track using Organic Maps. 
-                  I am still amazed that I come across species that are not documented in my field books. I am working 
-                  on updating more records to the Mushroom Observer for identification.
+                  I am working on a better field documentation workflow utilizing QField, currently I keep track using Organic Maps. 
+                  My Mushroom Observer account needs updating, as I have found species that I have not been able to identify using guidebooks.
                 </p>
               </div>
               
               <div className="relative h-[300px] md:h-auto">
-                <Image 
-                  src="/images/mycology.jpg" 
-                  alt="Mushroom in the forest" 
-                  className="object-cover"
+                <Image
+                  src="/images/mycology.jpg"
+                  alt="Unidentified mushroom in Fraser Experimental Forest"
+                  className="object-cover object-bottom"
                   fill
                 />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                  <p className="text-white text-xs italic">
+                    Unidentified mushroom in Fraser Experimental Forest
+                  </p>
+                </div>
               </div>
             </div>
           </Card>
@@ -142,12 +156,17 @@ export default function InterestsPage() {
           <Card className="bg-white/90 backdrop-blur-sm overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative h-[300px] md:h-auto order-last md:order-first">
-                <Image 
-                  src="/images/photography.jpg" 
-                  alt="Wood texture captured during a hike" 
-                  className="object-cover"
+                <Image
+                  src="/images/photography.jpg"
+                  alt="Wood texture captured during a hike"
+                  className="object-cover object-bottom"
                   fill
                 />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                  <p className="text-white text-xs italic">
+                    Wood texture captured during a hike
+                  </p>
+                </div>
               </div>
               
               <div className="p-6">
@@ -160,7 +179,7 @@ export default function InterestsPage() {
                 
                 <p>
                   Nowadays I use my Sony a6300 for macro shots of fungi and textures of nature. All photos on this 
-                  site are self-captured. Above is a wood texture I saw on a hike.
+                  site are self-captured. The homepage features a wood texture I saw on a hike.
                 </p>
               </div>
             </div>
@@ -174,33 +193,39 @@ export default function InterestsPage() {
                 <h2 className="text-3xl font-semibold text-forest-700 mb-4">Bicycles</h2>
 
                 <blockquote className="mb-6 text-lg italic">
-                  "Life is like riding a bicycle. To keep your balance, you must keep moving."
-                  <footer className="text-forest-600 mt-1">— Albert Einstein</footer>
+                  "It's all mechanical, you can mend it with a hammer."
+                  <footer className="text-forest-600 mt-1">— Richard Hammond</footer>
                 </blockquote>
 
                 <p className="mb-4">
-                  Cycling offers a unique perspective on the landscape - moving fast enough to cover ground,
-                  yet slow enough to truly observe the environment. Whether it's mountain trails or urban paths,
-                  bicycles provide an intimate connection with the terrain.
+                  While the quote references Jeremy's BMW, I find working on bicycles to be a purely mechanical pursuit that I genuinely enjoy. 
+                  I love building and riding bikes, and my current fleet consists of a 2009 Fuji Cross Pro and a Cannondale CX3 — these two bikes 
+                  account for about 90% of my travel.
+
                 </p>
 
                 <p>
-                  From technical single-track to long-distance touring, cycling combines physical challenge
-                  with environmental awareness, making it a perfect complement to my interests in exploration
-                  and natural systems.
+                  Some notable rides include the Sacramento to Davis Causeway, Lake Tahoe (Tour De Tahoe Route), and the American River Trail from 
+                  Midtown to Folsom Lake.
+
                 </p>
               </div>
 
               <div className="relative h-[300px] md:h-auto">
                 <Image
-                  src="/images/placeholder-bicycle.jpg"
-                  alt="Bicycle and outdoor adventures"
-                  className="object-cover"
+                  src="/images/bicycle_kitchen.jpg"
+                  alt="A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen"
+                  className="object-cover object-bottom"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                  <p className="text-white text-xs italic">
+                    A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen
+                  </p>
+                </div>
               </div>
             </div>
           </Card>
@@ -213,21 +238,21 @@ export default function InterestsPage() {
                 <Image
                   src="/images/placeholder-community.jpg"
                   alt="Community engagement and collaboration"
-                  className="object-cover"
+                  className="object-cover object-bottom"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                  <p className="text-white text-xs italic">
+                    Community engagement and collaboration
+                  </p>
+                </div>
               </div>
 
               <div className="p-6">
                 <h2 className="text-3xl font-semibold text-forest-700 mb-4">Community</h2>
-
-                <blockquote className="mb-6 text-lg italic">
-                  "Alone we can do so little; together we can do so much."
-                  <footer className="text-forest-600 mt-1">— Unnamed</footer>
-                </blockquote>
 
                 <p className="mb-4">
                   Building connections within local and professional communities enriches both personal growth

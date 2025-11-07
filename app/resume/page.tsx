@@ -43,7 +43,7 @@ export default function ResumePage() {
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <div className="absolute -inset-[200px] -z-10 overflow-hidden">
+      <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         <div
           className="w-full h-full bg-repeat-y bg-center opacity-10"
           style={{

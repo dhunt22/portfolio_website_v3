@@ -44,6 +44,10 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
   const [showCategoryPanel, setShowCategoryPanel] = useState(true); // Default to open
   const [mapError, setMapError] = useState<string | null>(null);
   
+  // Generate unique ID for this map instance to avoid conflicts
+  const mapInstanceId = useRef<string>(`map-${Math.random().toString(36).substring(2, 11)}`);
+  const instanceId = mapInstanceId.current;
+  
   // Use custom hooks for prison map functionality
   const {
     selectedAttribute,
@@ -52,10 +56,10 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
     setShowAllPrisons,
     setAllPrisonData,
     updatePrisonColors
-  } = usePrisonMap(map, projectId);
+  } = usePrisonMap(map, projectId, selectedComponent, componentColor, instanceId);
 
   // Use custom hook for popup management
-  const { setupPopupHandlers } = useMapPopup(map, projectId, selectedAttribute);
+  const { setupPopupHandlers } = useMapPopup(map, projectId, selectedAttribute, selectedComponent, instanceId);
 
   // Initialize map
   useEffect(() => {
@@ -73,6 +77,15 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         attributionControl: false,
         maxBounds: mapConfig.maxBounds || undefined
       });
+
+      // If initialBounds is provided, fit to those bounds after map loads
+      if (mapConfig.initialBounds) {
+        map.current.once('load', () => {
+          if (map.current && mapConfig.initialBounds) {
+            map.current.fitBounds(mapConfig.initialBounds, { padding: 20 });
+          }
+        });
+      }
       
       addMapControls(map.current);
       
@@ -86,8 +99,8 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
             setupPrisonLayers(map.current, mapConfig, selectedAttribute, (data) => {
               console.log('Prison data loaded for filtering:', data.length, 'features');
               setAllPrisonData(data);
-            }, selectedComponent, componentColor);
-          } else if (projectId === 'cuyama-basin' || projectId === 'yuba-recharge') {
+            }, selectedComponent, componentColor, instanceId);
+          } else if (projectId === 'cuyama-basin' || projectId === 'yuba-recharge' || projectId === 'watershed-hub') {
             console.log('Setting up subbasin layers...');
             setupSubbasinLayers(map.current, mapConfig);
           }
@@ -113,8 +126,16 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
       });
 
       map.current.on('data', (e) => {
-        if (e.dataType === 'source' && e.sourceId === 'prisons') {
-          console.log('Prison source data loaded');
+        if (e.dataType === 'source') {
+          const sourceId = (e as any).sourceId;
+          console.log(`Source data loaded: ${sourceId}`);
+
+          // Re-setup popup handlers when source data is loaded to ensure layers exist
+          if (sourceId === 'prisons' || sourceId === 'subbasin-source') {
+            setTimeout(() => {
+              setupPopupHandlers();
+            }, 100);
+          }
         }
       });
 
@@ -144,6 +165,20 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
       }
     }
   }, [selectedAttribute, selectedComponent, componentColor, projectId]); // Removed updatePrisonColors and setupPopupHandlers from deps to avoid cycles
+  
+  // Handle immediate component selection changes
+  useEffect(() => {
+    if (projectId === 'prison-ej' && map.current?.isStyleLoaded() && selectedComponent && componentColor) {
+      console.log(`Updating colors for component selection change: ${selectedComponent}`);
+      try {
+        updatePrisonColors(selectedComponent, componentColor);
+        setupPopupHandlers();
+      } catch (error) {
+        console.error('Error updating colors for component selection:', error);
+        setMapError(`Failed to update colors: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    }
+  }, [selectedComponent, componentColor, projectId]);
   
   // Close panels when clicking outside (only for category panel when minimized)
   useEffect(() => {
@@ -193,10 +228,11 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
   }
   
   return (
-    <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden">
-      <div 
-        ref={mapContainer} 
+    <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden" style={{ pointerEvents: 'auto' }}>
+      <div
+        ref={mapContainer}
         className="w-full h-full"
+        style={{ pointerEvents: 'auto' }}
         role="application"
         aria-label={`Interactive map for ${projectId} project`}
         aria-describedby={`${projectId}-map-description`}
