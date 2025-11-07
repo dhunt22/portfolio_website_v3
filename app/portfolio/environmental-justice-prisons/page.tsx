@@ -50,10 +50,50 @@ const COMPONENT_CONFIGS: ComponentConfig[] = [
   { id: 'overall', name: 'Overall Risk Score', description: 'Combined environmental vulnerability index across all indicators', column: 'final_risk_score_pcntl', color: '#dc2626', category: 'overall' },
 
   // Climate Risk Components
-  { id: 'heat', name: 'Heat Index', description: 'Extreme temperature conditions creating dangerous indoor environments', column: 'lst_avg_pcntl', color: '#ea580c', category: 'climate' },
-  { id: 'canopy', name: 'Canopy Cover', description: 'Natural cooling provided by tree coverage around facilities', column: 'percent_tree_cover_pcntl', color: '#16a34a', category: 'climate' },
-  { id: 'wildfire', name: 'Wildfire Risk', description: 'Proximity to wildfire-prone areas affecting air quality', column: 'wildfire_risk_pcntl', color: '#dc2626', category: 'climate' },
-  { id: 'flood', name: 'Flood Hazard', description: 'Flood risk considering limited mobility during emergencies', column: 'flood_risk_pcntl', color: '#2563eb', category: 'climate' },
+  {
+    id: 'heat',
+    name: 'Heat Index',
+    description: 'Extreme temperature conditions creating dangerous indoor environments',
+    column: 'lst_avg_pcntl',
+    color: '#ea580c',
+    category: 'climate',
+    detailedDescription: 'The MODIS (Moderate Resolution Imaging Spectroradiometer) daily land surface temperature dataset (MYD11A1, version 061) provides thermal infrared measurements of Earth\'s surface temperature captured by NASA\'s Aqua satellite. This dataset offers global coverage with daily temporal resolution, making it suitable for long-term temperature trend analysis.',
+    methodology: 'Mean daily land surface temperature (LST) values were calculated for summer months (June through August) spanning a 10-year period from 2012 to 2022, with values averaged within prison boundary polygons.',
+    dataSourceLink: 'https://developers.google.com/earth-engine/datasets/catalog/MODIS_061_MYD11A1#description'
+  },
+  {
+    id: 'canopy',
+    name: 'Canopy Cover',
+    description: 'Natural cooling provided by tree coverage around facilities',
+    column: 'percent_tree_cover_pcntl',
+    color: '#16a34a',
+    category: 'climate',
+    detailedDescription: 'The USGS National Land Cover Database (NLCD) 2016 release provides comprehensive land cover classification and canopy cover data for the conterminous United States. The dataset includes percent tree canopy cover derived from Landsat imagery and other ancillary data sources.',
+    methodology: 'Average percent canopy cover was calculated within prison boundaries plus a 1-kilometer buffer zone to capture surrounding vegetation conditions.',
+    dataSourceLink: 'https://developers.google.com/earth-engine/datasets/catalog/USGS_NLCD_RELEASES_2016_REL'
+  },
+  {
+    id: 'wildfire',
+    name: 'Wildfire Risk',
+    description: 'Proximity to wildfire-prone areas affecting air quality',
+    column: 'wildfire_risk_pcntl',
+    color: '#dc2626',
+    category: 'climate',
+    detailedDescription: 'The USDA Forest Service\'s Wildfire Hazard Potential dataset provides a nationwide assessment of wildfire likelihood and potential intensity across the United States. This product integrates wildland fuel characteristics, topography, and historical fire occurrence data to estimate relative wildfire risk.',
+    methodology: 'Mean wildfire hazard potential values were extracted within prison boundaries plus a 1-kilometer buffer to account for surrounding landscape fire risk.',
+    dataSourceLink: 'https://www.fs.usda.gov/rds/archive/catalog/RDS-2015-0047-3'
+  },
+  {
+    id: 'flood',
+    name: 'Flood Hazard',
+    description: 'Flood risk considering limited mobility during emergencies',
+    column: 'flood_risk_pcntl',
+    color: '#2563eb',
+    category: 'climate',
+    detailedDescription: 'FEMA\'s National Flood Hazard Layer (NFHL) is the official digital flood map database for the United States, delineating Special Flood Hazard Areas and flood risk zones. The dataset incorporates detailed hydraulic and hydrologic modeling to identify areas with varying flood probabilities.',
+    methodology: 'The percentage of each prison boundary plus 1-kilometer buffer that falls within high-risk flood zones (Zones A and V, representing areas with at least a 1% annual chance of flooding) was calculated.',
+    dataSourceLink: 'https://www.fema.gov/flood-maps/national-flood-hazard-layer'
+  },
 
   // Environmental Exposure Components
   { id: 'ozone', name: 'Ozone Levels', description: 'Ground-level ozone concentrations from satellite data', column: 'mean_ozone_pcntl', color: '#7c3aed', category: 'exposure' },

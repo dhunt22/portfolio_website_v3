@@ -73,11 +73,10 @@ export const useMapPopup = (
       }
     });
 
-    // Create hover popup (reusable)
+    // Create hover popup (reusable) - no anchor specified allows automatic positioning
     popup.current = new maplibregl.Popup({
       closeButton: false,
       closeOnClick: false,
-      anchor: 'bottom' as const,
       offset: 10
     });
 
@@ -93,9 +92,11 @@ export const useMapPopup = (
       let coordinates: [number, number];
       if (feature.geometry.type === 'Point') {
         coordinates = (feature.geometry.coordinates as number[]).slice() as [number, number];
-      } else {
+      } else if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
         const centroid = calculatePolygonCentroid(feature.geometry.coordinates as number[][][]);
         coordinates = centroid;
+      } else {
+        return; // Skip unsupported geometry types
       }
 
       // Handle world wrapping for zoomed out maps
@@ -147,9 +148,11 @@ export const useMapPopup = (
       let coordinates: [number, number];
       if (feature.geometry.type === 'Point') {
         coordinates = (feature.geometry.coordinates as number[]).slice() as [number, number];
-      } else {
+      } else if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
         const centroid = calculatePolygonCentroid(feature.geometry.coordinates as number[][][]);
         coordinates = centroid;
+      } else {
+        return; // Skip unsupported geometry types
       }
 
       // Handle world wrapping for zoomed out maps
@@ -157,12 +160,11 @@ export const useMapPopup = (
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
 
-      // Create new click popup with close button
+      // Create new click popup with close button - no anchor specified allows automatic positioning
       clickPopup.current = new maplibregl.Popup({
         closeButton: true,
         closeOnClick: true,
         className: 'custom-popup',
-        anchor: 'bottom' as const,
         offset: 10,
         maxWidth: '300px'
       });
@@ -199,11 +201,10 @@ export const useMapPopup = (
   const setupSubbasinPopupHandlers = () => {
     if (!map.current) return;
 
-    // Create hover popup with consistent styling
+    // Create hover popup with automatic positioning
     popup.current = new maplibregl.Popup({
       closeButton: false,
       closeOnClick: false,
-      anchor: 'bottom' as const,
       offset: 10
     });
 
