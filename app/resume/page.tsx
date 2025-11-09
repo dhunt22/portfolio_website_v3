@@ -2,6 +2,9 @@
 // app/resume/page.tsx
 // A resume as flowing as a river - hopefully it doesn't run dry during interviews!
 
+'use client';
+
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ResumeSection from '@/components/resume/ResumeSection';
@@ -14,6 +17,11 @@ import { DownloadIcon } from '@/components/ui/icons/common-icons';
  * @returns {React.JSX.Element} The rendered resume page
  */
 export default function ResumePage() {
+  const { theme } = useTheme();
+  const backgroundImage = theme === 'dark'
+    ? 'url(/images/american_river_contour_dark.svg)'
+    : 'url(/images/american_river_contour_bwn.svg)';
+
   // Professional skills data
   const professionalSkills = [
     "Teamwork",
@@ -45,35 +53,35 @@ export default function ResumePage() {
       {/* Background SVG */}
       <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         <div
-          className="w-full h-full bg-repeat-y bg-center opacity-10"
+          className="w-full h-full bg-repeat-y bg-center opacity-10 dark:opacity-5"
           style={{
-            backgroundImage: 'url(/images/american_river_homepage_contour_bwn.svg)',
-            backgroundSize: 'contain',
+            backgroundImage,
+            backgroundSize: '100% auto',
           }}
         />
       </div>
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-forest-800">Resume</h1>
+          <h1 className="text-4xl font-bold text-forest-800 dark:text-forest-200">Resume</h1>
           <Button className="bg-river-600 hover:bg-river-700">
             <a
               href="/data/devin_hunt_resume_june2025.pdf"
               download="devin_hunt_resume_june2025.pdf"
               className="flex items-center gap-2"
             >
-              <DownloadIcon aria-hidden="true" />
+              <DownloadIcon aria-hidden={true} />
               Download PDF
             </a>
           </Button>
         </div>
 
-      <Card className="p-6 mb-8 bg-white/95 print:shadow-none">
+      <Card className="p-6 mb-8 bg-white/80 dark:bg-[#404040]/80 backdrop-blur-sm print:shadow-none">
         <section className="mb-6 print:mb-4">
-          <h2 className="text-3xl font-semibold text-forest-700 mb-2 print:text-2xl">Devin Hunt</h2>
-          <h3 className="text-xl text-forest-600 mb-4 print:text-lg">Water Resources Engineer</h3>
+          <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-200 mb-2 print:text-2xl">Devin Hunt</h2>
+          <h3 className="text-xl text-forest-600 dark:text-forest-300 mb-4 print:text-lg">Water Resources Engineer</h3>
           <div className="mb-4">
-            <p className="italic">
+            <p className="italic dark:text-white">
               Hydrologist passionate about understanding and solving water resource challenges in California through data-driven approaches. Skilled in leveraging open-source data, spatial analysis, and modeling to support sustainable water management. Committed to applying technical expertise to develop innovative solutions for complex hydrologic issues.
             </p>
           </div>
@@ -128,30 +136,30 @@ export default function ResumePage() {
 
         <ResumeSection title="Education">
           <div className="mb-4">
-            <h4 className="text-lg font-semibold text-forest-700">Colorado State University</h4>
-            <p className="text-forest-600 italic">BS in Watershed Science, Hydrology and Water Resources Science</p>
-            <p className="text-forest-600 italic">Minor in Geospatial Information Systems (GIS)</p>
-            <p className="mt-2">
+            <h4 className="text-lg font-semibold text-forest-700 dark:text-forest-300">Colorado State University</h4>
+            <p className="text-forest-600 dark:text-white italic">BS in Watershed Science, Hydrology and Water Resources Science</p>
+            <p className="text-forest-600 dark:text-white italic">Minor in Geospatial Information Systems (GIS)</p>
+            <p className="mt-2 dark:text-white">
               A multi-disciplinary education that enabled me to remotely sense and quantify my favorite natural resource: water.
             </p>
             <div className="mt-3">
-              <h5 className="font-medium text-forest-700">Relevant coursework:</h5>
+              <h5 className="font-medium text-forest-700 dark:text-forest-300">Relevant coursework:</h5>
               <ul className="space-y-1 mt-1 ml-2">
                 <li className="flex items-start">
-                  <span className="text-forest-600 mr-2 mt-1">•</span>
-                  <span className="text-forest-800">Hydraulics and Groundwater flow; Hydrogeology, Soil Physics, Physics I & II</span>
+                  <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
+                  <span className="text-forest-800 dark:text-white">Hydraulics and Groundwater flow; Hydrogeology, Soil Physics, Physics I & II</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-forest-600 mr-2 mt-1">•</span>
-                  <span className="text-forest-800">Data Science; Programming for GIS I & II, Watershed Analysis for Env. Data Science, Watershed Problem Analysis</span>
+                  <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
+                  <span className="text-forest-800 dark:text-white">Data Science; Programming for GIS I & II, Watershed Analysis for Env. Data Science, Watershed Problem Analysis</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-forest-600 mr-2 mt-1">•</span>
-                  <span className="text-forest-800">Remote Sensing; Geodetic and Near-surface Geophysical Methods, Remote Sensing and Image Interpretation</span>
+                  <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
+                  <span className="text-forest-800 dark:text-white">Remote Sensing; Geodetic and Near-surface Geophysical Methods, Remote Sensing and Image Interpretation</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-forest-600 mr-2 mt-1">•</span>
-                  <span className="text-forest-800">Niche Subjects; Snow Hydrology, Field Measurements in Snow Hydrology</span>
+                  <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
+                  <span className="text-forest-800 dark:text-white">Niche Subjects; Snow Hydrology, Field Measurements in Snow Hydrology</span>
                 </li>
               </ul>
             </div>

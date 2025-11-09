@@ -17,7 +17,7 @@ export default function NotFound() {
       <div className="text-center max-w-2xl">
         <div className="mb-8">
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-forest-100 mb-6">
-            <MapIcon className="w-12 h-12 text-forest-600" aria-hidden="true" />
+            <MapIcon className="w-12 h-12 text-forest-600" aria-hidden={true} />
           </div>
           
           <h1 className="text-6xl font-bold text-forest-800 mb-4">

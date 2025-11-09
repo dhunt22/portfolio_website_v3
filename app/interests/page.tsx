@@ -2,7 +2,10 @@
 // app/interests/page.tsx
 // Exploring personal interests like a river finds its path - always curious about where it leads!
 
+'use client';
+
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
@@ -11,32 +14,37 @@ import { Separator } from '@/components/ui/separator';
  * @returns {React.JSX.Element} The rendered interests page
  */
 export default function InterestsPage() {
+  const { theme } = useTheme();
+  const backgroundImage = theme === 'dark'
+    ? 'url(/images/american_river_contour_dark.svg)'
+    : 'url(/images/american_river_contour_bwn.svg)';
+
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
       <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         <div
-          className="w-full h-full bg-repeat-y bg-center opacity-10"
+          className="w-full h-full bg-repeat-y bg-center opacity-10 dark:opacity-5"
           style={{
-            backgroundImage: 'url(/images/american_river_homepage_contour_bwn.svg)',
+            backgroundImage,
             backgroundSize: 'contain',
           }}
         />
       </div>
 
       <div className="container mx-auto px-4 py-8 relative z-10">
-        <h1 className="text-4xl font-bold text-forest-800 mb-6">Personal Interests</h1>
+        <h1 className="text-4xl font-bold text-forest-800 dark:text-forest-200 mb-6">Personal Interests</h1>
 
         <div className="space-y-12">
         <section id="exploration" className="scroll-mt-16">
-          <Card className="bg-white/90 backdrop-blur-sm overflow-hidden">
+          <Card className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 mb-4">Exploration</h2>
-                
-                <blockquote className="mb-6 text-lg italic">
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Exploration</h2>
+
+                <blockquote className="mb-6 text-lg italic text-foreground">
                   "The world is big, and I want to have a good look at it before it gets dark."
-                  <footer className="text-forest-600 mt-1">— John Muir</footer>
+                  <footer className="text-forest-600 dark:text-forest-400 mt-1">— John Muir</footer>
                 </blockquote>
                 
                 <p className="mb-4">
@@ -60,7 +68,7 @@ export default function InterestsPage() {
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  <p className="text-white text-xs italic">
+                  <p className="text-white text-xs italic text-shadow-lg">
                     A silver Tundra covered in orange Moab mud after driving Shafer Trail in Canyonlands National Park
                   </p>
                 </div>
@@ -70,7 +78,7 @@ export default function InterestsPage() {
         </section>
         
         <section id="fishing" className="scroll-mt-16">
-          <Card className="bg-white/90 backdrop-blur-sm overflow-hidden">
+          <Card className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative h-[300px] md:h-auto order-last md:order-first">
                 <Image
@@ -83,30 +91,33 @@ export default function InterestsPage() {
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  <p className="text-white text-xs italic">
-                    A calm alpine lake at dusk near Winter Park, Colorado
+                  <p className="text-white text-xs italic text-shadow-lg">
+                    A calm alpine lake at dusk near Winter Park, Colorado, where I caught my first lake trout
                   </p>
                 </div>
               </div>
               
               <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 mb-4">Fishing</h2>
-                
-                <blockquote className="mb-6 text-lg italic">
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Fishing</h2>
+
+                <blockquote className="mb-6 text-lg italic text-foreground">
                   "What better way to learn about streams than within?"
-                  <footer className="text-forest-600 mt-1">— Devin Hunt</footer>
+                  <footer className="text-forest-600 dark:text-forest-400 mt-1">— Devin Hunt</footer>
                 </blockquote>
                 
                 <p className="mb-4">
-                  I have fished nearly all water features I reach (in obedience with regulations and reason 
-                  [i.e. not a puddle]). A fish can tell a story about the water quality, color, cover types, 
+                  I have fished nearly all water features I reach (in obedience with regulations). A fish can tell a story about the water quality, color, cover types, 
                   and food sources.
                 </p>
                 
-                <p>
+                <p className="mb-4">
                   Some of my favorite time in Colorado was spent hiking and driving out to remote water with 
                   no reviews on Fishbrain. I feel that it is best to experience the water as it is, therefore, 
                   I did not use waders to protect from the cold.
+                </p>
+
+                <p>
+                  I release all of the fish I catch.
                 </p>
               </div>
             </div>
@@ -114,14 +125,14 @@ export default function InterestsPage() {
         </section>
         
         <section id="mycology" className="scroll-mt-16">
-          <Card className="bg-white/90 backdrop-blur-sm overflow-hidden">
+          <Card className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 mb-4">Mycology</h2>
-                
-                <blockquote className="mb-6 text-lg italic">
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Mycology</h2>
+
+                <blockquote className="mb-6 text-lg italic text-foreground">
                   "Fungi are the interface organisms between life and death."
-                  <footer className="text-forest-600 mt-1">— Paul Stamets</footer>
+                  <footer className="text-forest-600 dark:text-forest-400 mt-1">— Paul Stamets</footer>
                 </blockquote>
                 
                 <p className="mb-4">
@@ -143,7 +154,7 @@ export default function InterestsPage() {
                   fill
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  <p className="text-white text-xs italic">
+                  <p className="text-white text-xs italic text-shadow-lg">
                     Unidentified mushroom in Fraser Experimental Forest
                   </p>
                 </div>
@@ -153,7 +164,7 @@ export default function InterestsPage() {
         </section>
         
         <section id="photography" className="scroll-mt-16">
-          <Card className="bg-white/90 backdrop-blur-sm overflow-hidden">
+          <Card className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative h-[300px] md:h-auto order-last md:order-first">
                 <Image
@@ -163,14 +174,14 @@ export default function InterestsPage() {
                   fill
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  <p className="text-white text-xs italic">
-                    Wood texture captured during a hike
+                  <p className="text-white text-xs italic text-shadow-lg">
+                    One of my first first long-exposure captures
                   </p>
                 </div>
               </div>
               
               <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 mb-4">Photography</h2>
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Photography</h2>
                 
                 <p className="mb-4">
                   My goal was to capture life from the perspective of someone who is curious, confident, and isolated. 
@@ -187,14 +198,14 @@ export default function InterestsPage() {
         </section>
 
         <section id="bicycles" className="scroll-mt-16">
-          <Card className="bg-white/90 backdrop-blur-sm overflow-hidden">
+          <Card className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 mb-4">Bicycles</h2>
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Bicycles</h2>
 
-                <blockquote className="mb-6 text-lg italic">
+                <blockquote className="mb-6 text-lg italic text-foreground">
                   "It's all mechanical, you can mend it with a hammer."
-                  <footer className="text-forest-600 mt-1">— Richard Hammond</footer>
+                  <footer className="text-forest-600 dark:text-forest-400 mt-1">— Richard Hammond</footer>
                 </blockquote>
 
                 <p className="mb-4">
@@ -222,7 +233,7 @@ export default function InterestsPage() {
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  <p className="text-white text-xs italic">
+                  <p className="text-white text-xs italic text-shadow-lg">
                     A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen
                   </p>
                 </div>
@@ -232,7 +243,7 @@ export default function InterestsPage() {
         </section>
 
         <section id="community" className="scroll-mt-16">
-          <Card className="bg-white/90 backdrop-blur-sm overflow-hidden">
+          <Card className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative h-[300px] md:h-auto order-last md:order-first">
                 <Image
@@ -245,19 +256,17 @@ export default function InterestsPage() {
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  <p className="text-white text-xs italic">
+                  <p className="text-white text-xs italic text-shadow-lg">
                     Community engagement and collaboration
                   </p>
                 </div>
               </div>
 
               <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 mb-4">Community</h2>
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Community</h2>
 
                 <p className="mb-4">
-                  Building connections within local and professional communities enriches both personal growth
-                  and collaborative problem-solving. Whether through mentorship, volunteer work, or shared projects,
-                  community engagement creates lasting positive impact.
+                  Sacramento is full of 
                 </p>
 
                 <p>

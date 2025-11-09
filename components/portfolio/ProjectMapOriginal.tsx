@@ -211,7 +211,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId }) => {
     const topPrisonIds = sortedPrisons.map(prison => prison.id || prison.properties.OBJECTID);
     
     // Create filter expression for MapLibre
-    const filterExpression = ['in', ['get', 'OBJECTID'], ['literal', topPrisonIds]];
+    const filterExpression: any = ['in', ['get', 'OBJECTID'], ['literal', topPrisonIds]];
     
     // Apply filter to all prison layers
     try {

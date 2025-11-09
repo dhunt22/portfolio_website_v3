@@ -23,8 +23,8 @@ const SkillsList: React.FC<SkillsListProps> = ({ skills }) => {
     <ul className="grid grid-cols-1 gap-2">
       {skills.map((skill, index) => (
         <li key={index} className="flex items-start">
-          <span className="text-forest-600 mr-2">•</span>
-          <span className="text-forest-800">{skill}</span>
+          <span className="text-forest-600 dark:text-forest-400 mr-2">•</span>
+          <span className="text-forest-800 dark:text-white">{skill}</span>
         </li>
       ))}
     </ul>

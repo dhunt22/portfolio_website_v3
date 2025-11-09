@@ -30,6 +30,14 @@ export const GitHubIcon = (props: Omit<IconProps, 'name'>) => (
   <Icon name="github" {...props} />
 );
 
+export const SunIcon = (props: Omit<IconProps, 'name'>) => (
+  <Icon name="sun" {...props} />
+);
+
+export const MoonIcon = (props: Omit<IconProps, 'name'>) => (
+  <Icon name="moon" {...props} />
+);
+
 // Export all icons as a collection for dynamic usage
 export const icons: Record<IconName, React.FC<Omit<IconProps, 'name'>>> = {
   book: BookIcon,
@@ -37,7 +45,9 @@ export const icons: Record<IconName, React.FC<Omit<IconProps, 'name'>>> = {
   lightbulb: LightbulbIcon,
   database: DatabaseIcon,
   geometry: GeometryIcon,
-  github: GitHubIcon
+  github: GitHubIcon,
+  sun: SunIcon,
+  moon: MoonIcon
 };
 
 export default icons;

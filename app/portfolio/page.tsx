@@ -6,6 +6,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
@@ -47,7 +48,7 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
   return (
     <Card
       id={project.id}
-      className={`bg-white/90 backdrop-blur-sm transition-all duration-300 ${
+      className={`bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm transition-all duration-300 ${
         isActive ? 'border-river-500 shadow-md ring-2 ring-river-200' : 'hover:shadow-sm hover:border-river-300'
       }`}
     >
@@ -55,23 +56,23 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
         <div className="p-6">
           <CardHeader className="p-0 pb-4">
             <div className="flex justify-between items-start mb-2">
-              <CardTitle className="text-2xl text-forest-700">{project.title}</CardTitle>
+              <CardTitle className="text-2xl text-forest-700 dark:text-forest-300">{project.title}</CardTitle>
               {project.year && (
                 <span
-                  className="text-sm text-forest-500 bg-forest-50 px-2 py-1 rounded"
+                  className="text-sm text-forest-500 dark:text-forest-400 bg-forest-50 dark:bg-forest-800 px-2 py-1 rounded"
                   aria-label={`Project year: ${project.year}`}
                 >
                   {project.year}
                 </span>
               )}
             </div>
-            <CardDescription className="text-forest-500">{project.description}</CardDescription>
+            <CardDescription className="text-forest-500 dark:text-forest-400">{project.description}</CardDescription>
             {project.technologies && project.technologies.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-2" role="list" aria-label="Technologies used">
                 {project.technologies.map((tech, idx) => (
                   <span
                     key={idx}
-                    className="text-xs bg-river-100 text-river-700 px-2 py-1 rounded-full"
+                    className="text-xs bg-river-100 dark:bg-river-900 text-river-700 dark:text-river-300 px-2 py-1 rounded-full"
                     role="listitem"
                   >
                     {tech}
@@ -83,7 +84,7 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
 
           <CardContent className="p-0 pb-4">
             {project.content.map((paragraph, idx) => (
-              <p key={idx} className="mb-4 text-sm leading-relaxed text-forest-800">{paragraph}</p>
+              <p key={idx} className="mb-4 text-sm leading-relaxed text-forest-800 dark:text-white">{paragraph}</p>
             ))}
 
             {project.links && project.links.length > 0 && (
@@ -101,12 +102,12 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-forest-600 text-forest-600 hover:bg-forest-50 transition-colors"
+                        className="border-forest-600 dark:border-forest-400 text-forest-600 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 transition-colors"
                         aria-label={`${link.label} - ${isInternal ? 'Navigate to' : 'Open in new tab'}`}
                       >
                         {getIconByType(link.iconType)}
                         <span className="ml-1">{link.label}</span>
-                        {!isInternal && <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden="true" />}
+                        {!isInternal && <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden={true} />}
                       </Button>
                     </LinkComponent>
                   );
@@ -118,7 +119,7 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
 
         <div className="relative h-[300px] md:h-auto min-h-[300px] z-10" style={{ pointerEvents: 'auto' }}>
           {project.displayType === 'image' ? (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
               {project.imagePath ? (
                 <img
                   src={project.imagePath}
@@ -126,7 +127,7 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="flex flex-col items-center justify-center text-gray-400 p-8">
+                <div className="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 p-8">
                   <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -149,7 +150,12 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
  * @returns {React.JSX.Element} The rendered portfolio page
  */
 export default function PortfolioPage() {
+  const { theme } = useTheme();
   const [activeProject, setActiveProject] = useState<string>('prison-ej');
+
+  const backgroundImage = theme === 'dark'
+    ? 'url(/images/upper_folsom_contour_dark.svg)'
+    : 'url(/images/upper_folsom_contour_bwn.svg)';
 
   // Memoize filtered projects for better performance
   const projectsByCategory = useMemo(() => {
@@ -182,9 +188,9 @@ export default function PortfolioPage() {
       <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         {/* Normal orientation - single instance from top */}
         <div
-          className="w-full opacity-10 absolute top-0 left-0 right-0"
+          className="w-full opacity-10 dark:opacity-5 absolute top-0 left-0 right-0"
           style={{
-            backgroundImage: 'url(/images/upper_folsom_contour_bwn.svg)',
+            backgroundImage,
             backgroundSize: '100% auto',
             backgroundPosition: 'center top',
             backgroundRepeat: 'no-repeat',
@@ -193,10 +199,10 @@ export default function PortfolioPage() {
         />
         {/* Flipped SVG positioned where first instance ends */}
         <div
-          className="w-full opacity-10 absolute left-0 right-0"
+          className="w-full opacity-10 dark:opacity-5 absolute left-0 right-0"
           style={{
             top: '56.25%', // Start where first SVG ends
-            backgroundImage: 'url(/images/upper_folsom_contour_bwn.svg)',
+            backgroundImage,
             backgroundSize: '100% auto',
             backgroundPosition: 'center top',
             backgroundRepeat: 'repeat-y',
@@ -209,8 +215,8 @@ export default function PortfolioPage() {
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header Section */}
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-forest-800 mb-4">Portfolio</h1>
-          <p className="text-lg text-forest-600 mb-6 max-w-3xl">
+          <h1 className="text-4xl font-bold text-forest-800 dark:text-forest-200 mb-4">Portfolio</h1>
+          <p className="text-lg text-forest-600 dark:text-forest-300 mb-6 max-w-3xl">
             A collection of water resources and geospatial projects showcasing data-driven solutions
             for sustainable water management across California.
           </p>
@@ -227,7 +233,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="all"
               id="tab-all"
-              className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
+              className="px-4 py-2 rounded-lg shadow-sm bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
               aria-label={`All projects (${projectsByCategory.all?.length ?? 0} items)`}
             >
               All Projects ({projectsByCategory.all?.length ?? 0})
@@ -235,7 +241,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="water"
               id="tab-water"
-              className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
+              className="px-4 py-2 rounded-lg shadow-sm bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
               aria-label={`Water resources projects (${projectsByCategory.water?.length ?? 0} items)`}
             >
               Water Resources ({projectsByCategory.water?.length ?? 0})
@@ -243,7 +249,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="geospatial"
               id="tab-geospatial"
-              className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
+              className="px-4 py-2 rounded-lg shadow-sm bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
               aria-label={`Geospatial analysis projects (${projectsByCategory.geospatial?.length ?? 0} items)`}
             >
               Geospatial Analysis ({projectsByCategory.geospatial?.length ?? 0})
@@ -251,7 +257,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="research"
               id="tab-research"
-              className="px-4 py-2 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 data-[state=active]:text-forest-700 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
+              className="px-4 py-2 rounded-lg shadow-sm bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
               aria-label={`Research projects (${projectsByCategory.research?.length ?? 0} items)`}
             >
               Research ({projectsByCategory.research?.length ?? 0})
@@ -281,7 +287,7 @@ export default function PortfolioPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 text-forest-600">
+              <div className="text-center py-12 text-forest-600 dark:text-forest-400">
                 <p>No projects found in this category.</p>
               </div>
             )}

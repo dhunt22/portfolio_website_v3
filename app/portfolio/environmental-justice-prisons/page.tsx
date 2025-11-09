@@ -43,11 +43,23 @@ interface ComponentConfig {
   column: string;
   color: string;
   category: TabType;
+   detailedDescription?: string;
+  methodology?: string;
+  dataSourceLink?: string;
 }
 
 const COMPONENT_CONFIGS: ComponentConfig[] = [
   // Overall Risk
-  { id: 'overall', name: 'Overall Risk Score', description: 'Combined environmental vulnerability index across all indicators', column: 'final_risk_score_pcntl', color: '#dc2626', category: 'overall' },
+  {
+    id: 'overall',
+    name: 'Overall Risk Score',
+    description: 'Combined environmental vulnerability index across all indicators',
+    column: 'final_risk_score_pcntl',
+    color: '#dc2626',
+    category: 'overall',
+    detailedDescription: 'The Overall Risk Score represents a comprehensive environmental vulnerability assessment that synthesizes data from all 11 environmental indicators into a single composite index. This score captures the cumulative burden of climate risks, environmental exposures, and proximity to hazardous facilities that incarcerated individuals face. Each indicator is weighted equally and combined to produce percentile rankings that identify which prison facilities experience the most severe environmental injustices.',
+    methodology: 'The overall risk score is calculated by combining percentile values from three main components: climate risk (heat index, canopy cover, wildfire risk, flood hazard), environmental exposure (ozone, PM 2.5, pesticides, traffic volume), and environmental effects (proximity to Superfund sites, RMP facilities, and hazardous waste sites). Each indicator is standardized to a percentile scale (0-100) before aggregation.'
+  },
 
   // Climate Risk Components
   {
@@ -96,15 +108,85 @@ const COMPONENT_CONFIGS: ComponentConfig[] = [
   },
 
   // Environmental Exposure Components
-  { id: 'ozone', name: 'Ozone Levels', description: 'Ground-level ozone concentrations from satellite data', column: 'mean_ozone_pcntl', color: '#7c3aed', category: 'exposure' },
-  { id: 'pm25', name: 'PM 2.5 Particulates', description: 'Fine particulate matter concentrations affecting respiratory health', column: 'avg_pm25_pcntl', color: '#6b7280', category: 'exposure' },
-  { id: 'pesticide', name: 'Pesticide Use', description: 'Agricultural pesticide application intensity in surrounding areas', column: 'pesticides_pcntl', color: '#eab308', category: 'exposure' },
-  { id: 'traffic', name: 'Traffic Density', description: 'Vehicle traffic volume contributing to local air pollution', column: 'trafficProx_pcntl', color: '#374151', category: 'exposure' },
+  {
+    id: 'ozone',
+    name: 'Ozone Levels',
+    description: 'Ground-level ozone concentrations from satellite data',
+    column: 'mean_ozone_pcntl',
+    color: '#7c3aed',
+    category: 'exposure',
+    detailedDescription: 'The SEDAC (Socioeconomic Data and Applications Center) Annual O3 Concentrations dataset provides estimated ground-level ozone concentrations across the contiguous United States at 1-kilometer resolution. These estimates are derived from EPA monitoring data combined with satellite observations and atmospheric modeling.',
+    methodology: 'Average annual ozone levels for 2015 and 2016 were calculated within prison boundaries plus a 1-kilometer buffer.',
+    dataSourceLink: 'https://sedac.ciesin.columbia.edu/data/set/aqdh-o3-concentrations-contiguous-us-1-km-2000-2016'
+  },
+  {
+    id: 'pm25',
+    name: 'PM 2.5 Particulates',
+    description: 'Fine particulate matter concentrations affecting respiratory health',
+    column: 'avg_pm25_pcntl',
+    color: '#6b7280',
+    category: 'exposure',
+    detailedDescription: 'The SEDAC Annual PM2.5 Concentrations dataset provides fine particulate matter (particles ≤2.5 micrometers in diameter) estimates for the contiguous United States at 1-kilometer resolution. The data combines ground monitoring stations with satellite-based aerosol optical depth measurements and chemical transport modeling.',
+    methodology: 'Average annual PM2.5 levels for 2015 and 2016 were calculated within prison boundaries plus a 1-kilometer buffer.',
+    dataSourceLink: 'https://sedac.ciesin.columbia.edu/data/set/aqdh-pm2-5-concentrations-contiguous-us-1-km-2000-2016'
+  },
+  {
+    id: 'pesticide',
+    name: 'Pesticide Use',
+    description: 'Agricultural pesticide application intensity in surrounding areas',
+    column: 'pesticides_pcntl',
+    color: '#eab308',
+    category: 'exposure',
+    detailedDescription: 'The SEDAC Global Pesticide Grids dataset provides estimates of agricultural pesticide application rates worldwide at approximately 10-kilometer resolution (5 arc-minute). This dataset combines national pesticide use statistics with agricultural land use data to spatially allocate pesticide application.',
+    methodology: 'Total pesticide application in kilograms per hectare per year from 2015 was averaged over prison boundaries plus a 1-kilometer buffer.',
+    dataSourceLink: 'https://sedac.ciesin.columbia.edu/data/set/ferman-v1-pest-chemgrids-v1-01'
+  },
+  {
+    id: 'traffic',
+    name: 'Traffic Density',
+    description: 'Vehicle traffic volume contributing to local air pollution',
+    column: 'trafficProx_pcntl',
+    color: '#374151',
+    category: 'exposure',
+    detailedDescription: 'The Federal Highway Administration\'s (FHWA) Annual Average Daily Traffic (AADT) dataset provides traffic count data from the Highway Performance Monitoring System (HPMS). This dataset includes vehicle counts on major roads and highways across the United States, collected through continuous count stations and periodic sampling.',
+    methodology: 'The count of vehicles (AADT) on major roads within 500 meters of prison boundaries was divided by the distance in meters to create a proximity-weighted traffic exposure metric.',
+    dataSourceLink: 'https://www.fhwa.dot.gov/policyinformation/hpms/shapefiles.cfm'
+  },
 
   // Environmental Effects Components (Proximity-Based)
-  { id: 'superfund', name: 'Superfund Sites', description: 'Distance to EPA Superfund sites with hazardous waste contamination', column: 'npl_prox_pcntl', color: '#dc2626', category: 'effects' },
-  { id: 'rmp', name: 'Risk Management Plan Facilities', description: 'Proximity to industrial facilities handling hazardous chemicals', column: 'rmp_prox_pcntl', color: '#ea580c', category: 'effects' },
-  { id: 'hazwaste', name: 'Hazardous Waste Sites', description: 'Distance to facilities treating or storing hazardous waste', column: 'haz_prox_pcntl', color: '#92400e', category: 'effects' }
+  {
+    id: 'superfund',
+    name: 'Superfund Sites',
+    description: 'Distance to EPA Superfund sites with hazardous waste contamination',
+    column: 'npl_prox_pcntl',
+    color: '#dc2626',
+    category: 'effects',
+    detailedDescription: 'The EPA\'s National Priorities List (NPL) database identifies the most serious hazardous waste sites in the United States eligible for long-term remedial action under the Superfund program. The database includes site locations, contamination status, and cleanup progress information.',
+    methodology: 'The count of proposed and listed NPL facilities within 5 kilometers (or the nearest facility beyond 5 kilometers if none exist within that radius) was calculated, with each facility count divided by its distance in kilometers to create a proximity-weighted exposure metric.',
+    dataSourceLink: 'https://cumulis.epa.gov/supercpad/CurSites/srchsites.cfm'
+  },
+  {
+    id: 'rmp',
+    name: 'Risk Management Plan Facilities',
+    description: 'Proximity to industrial facilities handling hazardous chemicals',
+    column: 'rmp_prox_pcntl',
+    color: '#ea580c',
+    category: 'effects',
+    detailedDescription: 'The HIFLD (Homeland Infrastructure Foundation-Level Data) EPA Emergency Response Risk Management Plan Facilities dataset identifies facilities that handle extremely hazardous substances in quantities that could pose chemical accident risks to surrounding communities. Facilities submit RMPs detailing potential accident scenarios and emergency response procedures.',
+    methodology: 'The count of RMP facilities within 5 kilometers (or the nearest facility beyond 5 kilometers) was calculated, with each count divided by distance in kilometers, following EPA\'s EJScreen methodology for proximity-based environmental indicators.',
+    dataSourceLink: 'https://hifld-geoplatform.opendata.arcgis.com/datasets/geoplatform::epa-emergency-response-er-risk-management-plan-rmp-facilities/explore?location=29.842034%2C-113.806709%2C3.92'
+  },
+  {
+    id: 'hazwaste',
+    name: 'Hazardous Waste Sites',
+    description: 'Distance to facilities treating or storing hazardous waste',
+    column: 'haz_prox_pcntl',
+    color: '#92400e',
+    category: 'effects',
+    detailedDescription: 'The EPA Facility Registry Service (FRS) geospatial database provides comprehensive location and identifying information for facilities subject to environmental regulation across multiple EPA program systems. The database includes facilities managing hazardous waste under RCRA (Resource Conservation and Recovery Act) and other environmental statutes.',
+    methodology: 'The count of hazardous waste facilities within 5 kilometers of prison boundaries (or the nearest facility beyond 5 kilometers) was calculated, with each count divided by distance in kilometers.',
+    dataSourceLink: 'https://www.epa.gov/frs/geospatial-data-download-service'
+  }
 ];
 
 // Map Instructions Popup Component
@@ -113,10 +195,10 @@ function MapInstructionsPopup({ isOpen, onClose }: { isOpen: boolean; onClose: (
 
   return (
     <div className="absolute top-4 left-4 z-50 max-w-sm">
-      <Card className="bg-white shadow-xl border-2 border-forest-500">
+      <Card className="bg-white dark:bg-[#404040] shadow-xl border-2 border-forest-500 dark:border-forest-600">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold text-forest-800">Map Instructions</CardTitle>
+            <CardTitle className="text-sm font-semibold text-forest-800 dark:text-forest-300">Map Instructions</CardTitle>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -129,25 +211,25 @@ function MapInstructionsPopup({ isOpen, onClose }: { isOpen: boolean; onClose: (
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          <ul className="text-xs text-forest-600 space-y-2">
+          <ul className="text-xs text-forest-600 dark:text-forest-400 space-y-2">
             <li className="flex items-start">
-              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span className="text-forest-500 dark:text-forest-400 mr-2" aria-hidden={true}>•</span>
               <span>Select a tab to view indicators for that category</span>
             </li>
             <li className="flex items-start">
-              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span className="text-forest-500 dark:text-forest-400 mr-2" aria-hidden={true}>•</span>
               <span>Click any indicator to view it on the map</span>
             </li>
             <li className="flex items-start">
-              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span className="text-forest-500 dark:text-forest-400 mr-2" aria-hidden={true}>•</span>
               <span>Toggle between All Prisons and Top 10 highest risk</span>
             </li>
             <li className="flex items-start">
-              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span className="text-forest-500 dark:text-forest-400 mr-2" aria-hidden={true}>•</span>
               <span>Hover over facilities for detailed information</span>
             </li>
             <li className="flex items-start">
-              <span className="text-forest-500 mr-2" aria-hidden="true">•</span>
+              <span className="text-forest-500 dark:text-forest-400 mr-2" aria-hidden={true}>•</span>
               <span>Zoom and pan to explore specific regions</span>
             </li>
           </ul>
@@ -287,7 +369,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             <h1 id="hero-heading" className="text-4xl md:text-5xl font-bold mb-6">
               Environmental Justice For Prisons
             </h1>
-            <h2 className="text-xl md:text-2xl text-forest-100 mb-8">
+            <h2 className="text-xl md:text-2xl text-forest-800 dark:text-forest-100 mb-8">
               Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons
             </h2>
             <div className="flex flex-wrap gap-4 justify-center">
@@ -299,11 +381,11 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               >
                 <Button
                   variant="outline"
-                  className="border-forest-200 bg-white text-forest-700 hover:bg-forest-50 hover:border-forest-300"
+                  className="border-forest-200 dark:border-forest-600 bg-white dark:bg-[#404040] text-forest-700 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 hover:border-forest-300 dark:hover:border-forest-500"
                 >
-                  <GitHubIcon className="w-4 h-4" aria-hidden="true" />
+                  <GitHubIcon className="w-4 h-4" aria-hidden={true} />
                   View Repository
-                  <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden="true" />
+                  <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden={true} />
                 </Button>
               </a>
               <a
@@ -314,11 +396,11 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               >
                 <Button
                   variant="outline"
-                  className="border-forest-200 bg-white text-forest-700 hover:bg-forest-50 hover:border-forest-300"
+                  className="border-forest-200 dark:border-forest-600 bg-white dark:bg-[#404040] text-forest-700 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 hover:border-forest-300 dark:hover:border-forest-500"
                 >
-                  <ExternalLinkIcon className="w-4 h-4" aria-hidden="true" />
+                  <ExternalLinkIcon className="w-4 h-4" aria-hidden={true} />
                   NASA Project Page
-                  <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden="true" />
+                  <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden={true} />
                 </Button>
               </a>
             </div>
@@ -330,25 +412,25 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       <section className="py-16" aria-labelledby="overview-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <Card className="bg-white/90 backdrop-blur-sm">
+            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle id="overview-heading" className="text-3xl text-forest-800">Project Overview</CardTitle>
-                <CardDescription className="text-lg text-forest-600">
+                <CardTitle id="overview-heading" className="text-3xl text-forest-800 dark:text-forest-200">Project Overview</CardTitle>
+                <CardDescription className="text-lg text-forest-600 dark:text-forest-300">
                   A groundbreaking research initiative funded by NASA's $100,000 Equity and Environmental Justice Grant
                 </CardDescription>
               </CardHeader>
               <CardContent className="prose prose-lg max-w-none">
-                <p className="text-forest-800 leading-relaxed mb-6">
+                <p className="text-forest-800 dark:text-forest-300 leading-relaxed mb-6">
                   Despite the numerous cases of environmental injustices documented in U.S. prisons by researchers, activists, journalists, and federal government, the examination of prisons as sites of environmental injustice is still understudied. However, prisons are by definition EJ communities, as they are highly overrepresented by people of color, indigenous persons, and low-income individuals, and have no choice but to endure any adverse environmental health threats.
                 </p>
 
-                <p className="text-forest-800 leading-relaxed mb-6">
+                <p className="text-forest-800 dark:text-forest-300 leading-relaxed mb-6">
                   This research addresses this vital environmental justice research gap by leveraging NASA's Earth science data—including satellite, land cover, climate, and air quality datasets—in a novel way to characterize the environmental harms faced by incarcerated people across the U.S. in all state- and federally-operated prisons.
                 </p>
 
                 <div className="bg-river-50 p-6 rounded-lg mb-6">
                   <h3 className="text-xl font-semibold text-river-800 mb-4">Key Project Objectives</h3>
-                  <ul className="space-y-2 text-forest-800">
+                  <ul className="space-y-2 text-forest-800 dark:text-forest-300">
                     <li className="flex items-start">
                       <span className="text-river-600 mr-2">•</span>
                       <span>Quantify environmental conditions at all 1,865 state and federal prisons in the U.S.</span>
@@ -364,7 +446,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                   </ul>
                 </div>
 
-                <p className="text-forest-800 leading-relaxed">
+                <p className="text-forest-800 dark:text-forest-300 leading-relaxed">
                   The method incorporates 11 environmental indicators grouped into three components, namely climate risk (heat index, canopy cover, wildfire risk and flood hazard), environmental exposures (Ozone, PM 2.5, pesticide use, and traffic density) and environmental effects (proximity to superfund sites, risk management plan facilities and hazardous waste sites).
                 </p>
               </CardContent>
@@ -374,10 +456,10 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       </section>
 
       {/* Interactive Map Visualization Section */}
-      <section className="py-16 bg-white/50" aria-labelledby="map-visualization-heading">
+      <section className="py-16" aria-labelledby="map-visualization-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
-            <h2 id="map-visualization-heading" className="text-3xl font-bold text-forest-800 mb-8 text-center">
+            <h2 id="map-visualization-heading" className="text-3xl font-bold text-forest-800 dark:text-forest-200 mb-8 text-center">
               Environmental Risk Indicators
             </h2>
 
@@ -386,7 +468,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               <TabsList className="grid w-full grid-cols-4 mb-0 bg-transparent p-0 gap-1 relative" style={{ marginBottom: '-1px' }}>
                 <TabsTrigger
                   value="overall"
-                  className="relative border border-gray-100 border-b-0 bg-red-50/30 text-red-900 rounded-t-lg rounded-b-none data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:border-red-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-red-50/30 dark:bg-red-900/30 text-red-900 dark:text-red-200 rounded-t-lg rounded-b-none data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:border-red-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Overall
                   {currentComponent.category === 'overall' && (
@@ -395,7 +477,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="climate"
-                  className="relative border border-gray-100 border-b-0 bg-forest-50/30 text-forest-900 rounded-t-lg rounded-b-none data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-forest-50/30 dark:bg-forest-900/30 text-forest-900 dark:text-forest-200 rounded-t-lg rounded-b-none data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Climate Risk
                   {currentComponent.category === 'climate' && (
@@ -404,7 +486,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="exposure"
-                  className="relative border border-gray-100 border-b-0 bg-purple-50/30 text-purple-900 rounded-t-lg rounded-b-none data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-purple-50/30 dark:bg-purple-900/30 text-purple-900 dark:text-purple-200 rounded-t-lg rounded-b-none data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Exposure
                   {currentComponent.category === 'exposure' && (
@@ -413,7 +495,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="effects"
-                  className="relative border border-gray-100 border-b-0 bg-orange-50/30 text-orange-900 rounded-t-lg rounded-b-none data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-orange-50/30 dark:bg-orange-900/30 text-orange-900 dark:text-orange-200 rounded-t-lg rounded-b-none data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Proximity-Based
                   {currentComponent.category === 'effects' && (
@@ -424,12 +506,12 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </Tabs>
 
             {/* Combined Card - Single card containing both indicators and map */}
-            <Card className="bg-white/90 backdrop-blur-sm shadow-lg border-t border-gray-200">
+            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm shadow-lg border-t border-gray-200 dark:border-forest-700">
               <div className="grid grid-cols-1 lg:grid-cols-10 gap-0">
                 {/* Left Side - Indicators List (30%) */}
-                <div className="lg:col-span-3 flex flex-col border-r border-gray-200" style={{ height: '635px' }}>
+                <div className="lg:col-span-3 flex flex-col border-r border-gray-200 dark:border-forest-700" style={{ height: '635px' }}>
                   <CardHeader className="pb-4 flex-shrink-0">
-                    <CardTitle className="text-xl text-forest-700">
+                    <CardTitle className="text-xl text-forest-700 dark:text-forest-300">
                       {activeTab === 'overall' && 'Overall Risk'}
                       {activeTab === 'climate' && 'Climate Risk Indicators'}
                       {activeTab === 'exposure' && 'Exposure Indicators'}
@@ -443,7 +525,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                           key={component.id}
                           role="button"
                           tabIndex={0}
-                          className={`border-l-4 border border-gray-200 pl-3 pr-2 py-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 rounded-lg ${
+                          className={`border-l-4 border border-gray-200 dark:border-forest-700 pl-3 pr-2 py-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 dark:hover:bg-forest-800 hover:border-gray-300 dark:hover:border-forest-600 rounded-lg ${
                             selectedComponent === component.id ? 'bg-blue-50 shadow-md border-blue-200' : ''
                           }`}
                           style={{ borderLeftColor: component.color }}
@@ -458,14 +540,14 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                           aria-pressed={selectedComponent === component.id}
                         >
                           <div className="flex items-start justify-between mb-1">
-                            <h4 className="font-semibold text-sm text-forest-800">{component.name}</h4>
+                            <h4 className="font-semibold text-sm text-forest-800 dark:text-forest-300">{component.name}</h4>
                             {selectedComponent === component.id && (
                               <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full whitespace-nowrap ml-2">
                                 Active
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-forest-600 leading-relaxed">
+                          <p className="text-xs text-forest-600 dark:text-forest-400 leading-relaxed">
                             {component.description}
                           </p>
                         </div>
@@ -473,7 +555,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                     </div>
                   </CardContent>
                   {/* Histogram at bottom */}
-                  <div className="flex-shrink-0 border-t border-gray-200">
+                  <div className="flex-shrink-0 border-t border-gray-200 dark:border-forest-700">
                     <PercentileHistogram
                       color={currentComponent.color}
                       indicatorName={currentComponent.name}
@@ -500,10 +582,10 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                         {/* Info Button */}
                         <button
                           onClick={() => setShowInstructions(!showInstructions)}
-                          className="absolute bottom-4 left-4 z-40 bg-white border border-gray-300 rounded-full w-8 h-8 shadow-md opacity-50 hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-forest-500 flex items-center justify-center"
+                          className="absolute bottom-4 left-4 z-40 bg-white dark:bg-[#404040] border border-gray-300 dark:border-forest-600 rounded-full w-8 h-8 shadow-md opacity-50 hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-forest-500 flex items-center justify-center"
                           aria-label="Toggle map instructions"
                         >
-                          <span className="text-forest-700 font-bold text-lg">?</span>
+                          <span className="text-forest-700 dark:text-forest-300 font-bold text-lg">?</span>
                         </button>
 
                         {/* Instructions Popup */}
@@ -521,21 +603,46 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             {/* Indicator Details Section */}
             <Card className="mt-8 bg-white/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-2xl text-forest-800">
+                <CardTitle className="text-2xl text-forest-800 dark:text-forest-200">
                   {currentComponent.name}
                 </CardTitle>
-                <CardDescription className="text-base text-forest-600">
+                <CardDescription className="text-base text-forest-600 dark:text-forest-400">
                   {currentComponent.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="prose max-w-none">
-                  <p className="text-forest-800 leading-relaxed mb-4">
-                    <strong>Detailed Description:</strong> [User to provide 4-sentence description for {currentComponent.name}]
-                  </p>
-                  <p className="text-sm text-forest-600">
-                    <strong>Data Source:</strong> [User to provide data source link for {currentComponent.name}]
-                  </p>
+                  {currentComponent.detailedDescription && (
+                    <div className="mb-6">
+                      <h4 className="text-lg font-semibold text-forest-800 dark:text-forest-300 mb-2">Data Source Description</h4>
+                      <p className="text-forest-800 dark:text-forest-300 leading-relaxed">
+                        {currentComponent.detailedDescription}
+                      </p>
+                    </div>
+                  )}
+
+                  {currentComponent.methodology && (
+                    <div className="mb-6">
+                      <h4 className="text-lg font-semibold text-forest-800 dark:text-forest-300 mb-2">Processing & Methodology</h4>
+                      <p className="text-forest-800 dark:text-forest-300 leading-relaxed">
+                        {currentComponent.methodology}
+                      </p>
+                    </div>
+                  )}
+
+                  {currentComponent.dataSourceLink && (
+                    <div className="bg-forest-50 p-4 rounded-lg border border-forest-200">
+                      <h4 className="text-sm font-semibold text-forest-800 dark:text-forest-300 mb-2">Data Source Link</h4>
+                      <a
+                        href={currentComponent.dataSourceLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-forest-600 dark:text-forest-400 hover:text-forest-800 dark:hover:text-forest-200 underline break-all"
+                      >
+                        {currentComponent.dataSourceLink}
+                      </a>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -552,12 +659,12 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              <Card className="bg-white/10 backdrop-blur-sm border-forest-700">
+              <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-sm border-forest-700 dark:border-forest-700">
                 <CardHeader>
                   <CardTitle className="text-white">Research Team</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3 text-forest-100">
+                  <div className="space-y-3 text-forest-800 dark:text-forest-100">
                     <div>
                       <p className="font-semibold">Dr. Caitlin Mothes</p>
                       <p className="text-sm">Principal Investigator, Research and Program Coordinator</p>
@@ -577,12 +684,12 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/10 backdrop-blur-sm border-forest-700">
+              <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-sm border-forest-700 dark:border-forest-700">
                 <CardHeader>
                   <CardTitle className="text-white">My Role & Contributions</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3 text-forest-100">
+                  <div className="space-y-3 text-forest-800 dark:text-forest-100">
                     <p className="text-sm leading-relaxed">
                       As a Geospatial Analyst and Programmer at the Geospatial Centroid, I worked closely with
                       Caitlin Mothes to develop R-spatial scripts for data processing and analysis.
@@ -610,35 +717,35 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               </Card>
             </div>
 
-            <Card className="bg-white/10 backdrop-blur-sm border-forest-700">
+            <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-sm border-forest-700 dark:border-forest-700">
               <CardHeader>
                 <CardTitle className="text-white text-center">Project Impact & Recognition</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
-                  <p className="text-forest-100 leading-relaxed mb-6">
+                  <p className="text-forest-800 dark:text-forest-100 leading-relaxed mb-6">
                     The main deliverables of our project are 1) an open-access geospatial dataset with calculated values for each environmental indicator and a final environmental vulnerability index for 1,865 U.S. prisons and 2) an open-access, reproducible code base for every step of our analysis to promote the application of these assessments to other institutions and make our data and methods transparent.
                   </p>
 
-                  <p className="text-forest-100 leading-relaxed mb-8">
-                    This groundbreaking research has provided critical data for activists, researchers, policy makers,
+                  <p className="text-forest-800 dark:text-forest-100 leading-relaxed mb-8">
+                    This research has provided critical data for activists, researchers, policy makers,
                     and government agencies to understand and address environmental injustices in the prison system.
                     The work represents a significant contribution to both environmental justice and geospatial science.
                   </p>
 
                   <div className="text-center">
-                    <p className="text-forest-200 italic">
-                      "This project taught me about managing a repository and working with large data, while contributing
-                      to vital environmental justice research that highlights the intersection of incarceration and environmental harm."
+                    <p className="text-forest-700 dark:text-forest-200 italic">
+                      "This project taught me about managing a repository and working with large data, and using multiple datasets to contribute to
+                       environmental justice research that highlights the intersection of incarceration and environmental harm."
                     </p>
-                    <p className="text-forest-300 text-sm mt-2">— Devin Hunt, Project Contributor</p>
+                    <p className="text-forest-600 dark:text-forest-300 text-sm mt-2">— Devin Hunt, Project Contributor</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <div className="text-center mt-8">
-              <p className="text-forest-200 text-sm">
+              <p className="text-forest-700 dark:text-forest-200 text-sm">
                 Special thanks to the Geospatial Centroid at Colorado State University and NASA's Equity and Environmental Justice Grant program
                 for making this critical research possible.
               </p>
@@ -648,13 +755,13 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       </section>
 
       {/* Call to Action */}
-      <section className="py-12 bg-white">
+      <section className="py-12">
         <div className="container mx-auto px-4 text-center">
-          <h3 className="text-2xl font-bold text-forest-800 mb-4">
+          <h3 className="text-2xl font-bold text-forest-800 dark:text-forest-200 mb-4">
             Explore the Research
           </h3>
-          <p className="text-forest-600 mb-6 max-w-2xl mx-auto">
-            Access the open-source code, data, and methodology that powers this environmental justice research.
+          <p className="text-forest-600 dark:text-forest-400 mb-6 max-w-2xl mx-auto">
+            Access the open-source code, data, and methodology of this environmental justice research.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <a

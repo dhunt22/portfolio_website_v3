@@ -248,7 +248,7 @@ export function getPrisonId(prison: PrisonFeature): string | number {
   }
   
   // Only log once for first failure to reduce console noise
-  if (!getPrisonId.hasLogged) {
+  if (!(getPrisonId as any).hasLogged) {
     console.log('Prison feature structure for debugging:', {
       properties: Object.keys(prison.properties),
       sampleName: prison.properties.NAME,
@@ -261,7 +261,7 @@ export function getPrisonId(prison: PrisonFeature): string | number {
         FID: prison.properties.FID
       }
     });
-    getPrisonId.hasLogged = true;
+    (getPrisonId as any).hasLogged = true;
   }
   
   console.warn('Prison feature missing all ID fields:', prison.properties.NAME);
@@ -335,7 +335,7 @@ export function applyFilterToLayers(map: maplibregl.Map, layerIds: string[], fil
     if (map.getLayer(layerId)) {
       try {
         console.log(`Applying filter to layer ${layerId}:`, filter);
-        map.setFilter(layerId, filter);
+        map.setFilter(layerId, filter as any);
       } catch (error) {
         console.error(`Error applying filter to layer ${layerId}:`, error);
       }

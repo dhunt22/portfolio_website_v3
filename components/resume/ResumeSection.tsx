@@ -23,7 +23,7 @@ interface ResumeSectionProps {
 const ResumeSection: React.FC<ResumeSectionProps> = ({ title, children }) => {
   return (
     <section className="mb-6 print:mb-4">
-      <h2 className="text-2xl font-semibold text-forest-700 mb-4 pb-2 border-b border-forest-200 print:text-xl">
+      <h2 className="text-2xl font-semibold text-forest-700 dark:text-forest-300 mb-4 pb-2 border-b border-forest-200 dark:border-forest-700 print:text-xl">
         {title}
       </h2>
       <div className="mt-4">{children}</div>

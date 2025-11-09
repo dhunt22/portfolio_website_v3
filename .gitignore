@@ -5,6 +5,7 @@ cv_processing_to_website.txt
 /.claude/
 /.playwright-mcp/
 /context/
+/.context/
 /.next/
 *.md
 .env
@@ -13,4 +14,4 @@ cv_processing_to_website.txt
 # Exclude icon demo files
 /app/icons-demo/
 /components/ui/icons/IconsDemo.tsx
-/components/ui/icons/README.md.env
+/components/ui/icons/README.md.envnul

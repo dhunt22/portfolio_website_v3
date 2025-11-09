@@ -7,7 +7,7 @@ import { MapConfig } from './mapConfigurations';
 import { createRiskColorScale, createEnhancedColorScale, createDynamicPaintProperties, ZOOM_OPACITY_CONFIG, fitMapToGeoJSON } from './mapUtils';
 
 // Define RiskAttribute locally to avoid circular imports (using actual geojson column names)
-type RiskAttribute = 'fnl_r__' | 'clmt_sc' | 'effcts_' | 'expsr_s';
+type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
 
 export const setupPrisonLayers = (
   map: maplibregl.Map, 
@@ -47,7 +47,7 @@ export const setupPrisonLayers = (
       // Debug: Log property names from first few features
       if (data.features && data.features.length > 0) {
         console.log('First 3 features property analysis:');
-        data.features.slice(0, 3).forEach((feature, index) => {
+        data.features.slice(0, 3).forEach((feature: any, index: number) => {
           console.log(`Feature ${index}:`, {
             properties: Object.keys(feature.properties),
             hasOBJECTID: 'OBJECTID' in feature.properties,
@@ -87,7 +87,7 @@ export const setupPrisonLayers = (
     type: "fill",
     source: sourceId,
     paint: {
-      "fill-color": colorScale,
+      "fill-color": colorScale as any,
       "fill-opacity": 0.5
     }
   });
@@ -109,7 +109,7 @@ export const setupPrisonLayers = (
     type: "fill",
     source: sourceId,
     paint: {
-      "fill-color": colorScale,
+      "fill-color": colorScale as any,
       "fill-opacity": 0.2
     },
     minzoom: 6
@@ -121,12 +121,12 @@ export const setupPrisonLayers = (
     type: "circle",
     source: `${layerPrefix}-centroids`,
     paint: {
-      "circle-radius": ZOOM_OPACITY_CONFIG.radius,
-      "circle-color": colorScale,
-      "circle-opacity": ZOOM_OPACITY_CONFIG.circle.opacity,
+      "circle-radius": ZOOM_OPACITY_CONFIG.radius as any,
+      "circle-color": colorScale as any,
+      "circle-opacity": ZOOM_OPACITY_CONFIG.circle.opacity as any,
       "circle-stroke-width": 0.4,
       "circle-stroke-color": "#000000",
-      "circle-stroke-opacity": ZOOM_OPACITY_CONFIG.circle.strokeOpacity,
+      "circle-stroke-opacity": ZOOM_OPACITY_CONFIG.circle.strokeOpacity as any,
     }
   });
 

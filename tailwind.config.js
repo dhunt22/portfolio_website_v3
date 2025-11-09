@@ -182,5 +182,29 @@ module.exports = {
       };
       addUtilities(surfaceUtilities);
     },
+    // Add custom plugin for text shadow utilities
+    function({ addUtilities }) {
+      const textShadowUtilities = {
+        '.text-shadow-sm': {
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+        },
+        '.text-shadow': {
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.7)',
+        },
+        '.text-shadow-md': {
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.7)',
+        },
+        '.text-shadow-lg': {
+          textShadow: '0 4px 8px rgba(0, 0, 0, 0.8)',
+        },
+        '.text-shadow-xl': {
+          textShadow: '0 8px 16px rgba(0, 0, 0, 0.9)',
+        },
+        '.text-shadow-none': {
+          textShadow: 'none',
+        },
+      };
+      addUtilities(textShadowUtilities);
+    },
   ],
 }

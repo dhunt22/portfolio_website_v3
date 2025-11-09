@@ -33,15 +33,15 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
   return (
     <div className="mb-6 last:mb-0">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
-        <h3 className="text-lg font-semibold text-forest-800">{title}</h3>
-        <span className="text-forest-600 text-sm italic">{period}</span>
+        <h3 className="text-lg font-semibold text-forest-800 dark:text-forest-300">{title}</h3>
+        <span className="text-forest-600 dark:text-forest-400 text-sm italic">{period}</span>
       </div>
-      <p className="text-forest-700 font-medium mb-2">{company}</p>
+      <p className="text-forest-700 dark:text-forest-300 font-medium mb-2">{company}</p>
       <ul className="space-y-2 ml-2">
         {responsibilities.map((responsibility, index) => (
           <li key={index} className="flex items-start">
-            <span className="text-forest-600 mr-2 mt-1">•</span>
-            <span className="text-forest-800">{responsibility}</span>
+            <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
+            <span className="text-forest-800 dark:text-white">{responsibility}</span>
           </li>
         ))}
       </ul>

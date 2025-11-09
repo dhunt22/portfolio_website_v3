@@ -179,22 +179,45 @@ html {
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 120 5% 26%;
+    --foreground: 120 30% 96%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 120 5% 28%;
+    --card-foreground: 120 30% 96%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 120 5% 27%;
+    --popover-foreground: 120 30% 96%;
 
-    --primary: 210 100% 45%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 120 30% 96%;
 
-    --secondary: 120 50% 30%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 120 40% 30%;
+    --secondary-foreground: 120 30% 96%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 120 5% 32%;
+    --muted-foreground: 120 20% 70%;
+
+    --accent: 35 91% 60%;
+    --accent-foreground: 120 5% 26%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 120 30% 96%;
+
+    --border: 120 5% 35%;
+    --input: 120 5% 35%;
+    --ring: 210 100% 50%;
   }
+}
+
+/* Dark theme scrollbar */
+.dark ::-webkit-scrollbar-track {
+  @apply bg-gray-900;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-gray-600;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
 }

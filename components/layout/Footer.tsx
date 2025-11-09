@@ -52,7 +52,7 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-semibold mb-4 text-white">Contact</h3>
             <p className="flex items-center text-forest-100 mb-2">
-              <EmailIcon className="mr-2 w-5 h-5" aria-hidden="true" />
+              <EmailIcon className="mr-2 w-5 h-5" aria-hidden={true} />
               <a href="mailto:contact@devinhunt.com" className="hover:underline">
                 contact@devinhunt.com
               </a>

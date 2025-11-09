@@ -2,8 +2,11 @@
 // app/page.tsx
 // The home page - where the watershed of information begins
 
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapIcon, FishIcon } from '@/components/ui/icons/common-icons';
@@ -13,14 +16,19 @@ import { MapIcon, FishIcon } from '@/components/ui/icons/common-icons';
  * @returns {React.JSX.Element} The rendered home page
  */
 export default function Home() {
+  const { theme } = useTheme();
+  const backgroundImage = theme === 'dark'
+    ? 'url(/images/american_river_contour_dark.svg)'
+    : 'url(/images/american_river_contour_bwn.svg)';
+
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
       <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         <div
-          className="w-full h-full bg-repeat-y bg-center opacity-10"
+          className="w-full h-full bg-repeat-y bg-center opacity-10 dark:opacity-5"
           style={{
-            backgroundImage: 'url(/images/american_river_homepage_contour_bwn.svg)',
+            backgroundImage,
             backgroundSize: '100% auto',
           }}
         />
@@ -30,10 +38,10 @@ export default function Home() {
         <section className="mb-16">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="w-full md:w-1/2">
-            <h1 className="text-4xl md:text-5xl font-bold text-forest-800 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-forest-800 dark:text-forest-200 mb-4">
               Devin Hunt
             </h1>
-            <h2 className="text-xl md:text-2xl text-forest-600 mb-6">
+            <h2 className="text-xl md:text-2xl text-forest-600 dark:text-forest-300 mb-6">
               Water Resources Engineer & Explorer
             </h2>
             <p className="text-base md:text-lg mb-6">
@@ -75,9 +83,9 @@ export default function Home() {
       </section>
 
       <section className="mb-16">
-        <h2 className="text-3xl font-semibold text-forest-700 mb-6">Professional Expertise</h2>
+        <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-6">Professional Expertise</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-white/90 backdrop-blur-sm">
+          <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Water Resources Engineering</CardTitle>
             </CardHeader>
@@ -89,7 +97,7 @@ export default function Home() {
             </CardContent>
           </Card>
           
-          <Card className="bg-white/90 backdrop-blur-sm">
+          <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Geospatial Analysis</CardTitle>
             </CardHeader>
@@ -101,7 +109,7 @@ export default function Home() {
             </CardContent>
           </Card>
           
-          <Card className="bg-white/90 backdrop-blur-sm">
+          <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Data-Driven Approaches</CardTitle>
             </CardHeader>
@@ -116,13 +124,13 @@ export default function Home() {
       </section>
 
       <section>
-        <h2 className="text-3xl font-semibold text-forest-700 mb-6">Personal Passions</h2>
+        <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-6">Personal Passions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Link href="/interests#exploration" className="group">
-            <Card className="bg-white/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md group-hover:scale-105">
+            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md group-hover:scale-105">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <MapIcon className="text-earth-600 w-6 h-6" aria-hidden="true" />
+                  <MapIcon className="text-earth-600 w-6 h-6" aria-hidden={true} />
                   Exploration
                 </CardTitle>
                 <CardDescription>Discovering remote natural places</CardDescription>
@@ -137,10 +145,10 @@ export default function Home() {
           </Link>
 
           <Link href="/interests#fishing" className="group">
-            <Card className="bg-white/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md group-hover:scale-105">
+            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md group-hover:scale-105">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FishIcon className="text-river-600 w-6 h-6" aria-hidden="true" />
+                  <FishIcon className="text-river-600 w-6 h-6" aria-hidden={true} />
                   Fishing
                 </CardTitle>
                 <CardDescription>Learning about streams from within</CardDescription>
