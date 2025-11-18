@@ -4,7 +4,7 @@
 
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
@@ -48,9 +48,7 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
   return (
     <Card
       id={project.id}
-      className={`bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm transition-all duration-300 ${
-        isActive ? 'border-river-500 shadow-md ring-2 ring-river-200' : 'hover:shadow-sm hover:border-river-300'
-      }`}
+      className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm transition-all duration-300 hover:shadow-sm hover:border-river-300"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6">
@@ -119,13 +117,29 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
 
         <div className="relative h-[300px] md:h-auto min-h-[300px] z-10" style={{ pointerEvents: 'auto' }}>
           {project.displayType === 'image' ? (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <div className="w-full h-full flex flex-col bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
               {project.imagePath ? (
-                <img
-                  src={project.imagePath}
-                  alt={project.imageAlt || `${project.title} visualization`}
-                  className="w-full h-full object-cover"
-                />
+                <>
+                  <img
+                    src={project.imagePath}
+                    alt={project.imageAlt || `${project.title} visualization`}
+                    className={`w-full flex-1 ${project.id === 'sanitary-district' ? 'object-contain' : 'object-cover'}`}
+                  />
+                  {(project.imageCaption || project.imageSecondaryText) && (
+                    <div className="bg-gray-200 dark:bg-gray-700 px-3 py-2">
+                      {project.imageCaption && (
+                        <p className="text-xs text-gray-700 dark:text-gray-300 font-medium">
+                          {project.imageCaption}
+                        </p>
+                      )}
+                      {project.imageSecondaryText && (
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 italic">
+                          {project.imageSecondaryText}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 p-8">
                   <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,10 +164,16 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
  * @returns {React.JSX.Element} The rendered portfolio page
  */
 export default function PortfolioPage() {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [activeProject, setActiveProject] = useState<string>('prison-ej');
+  const [mounted, setMounted] = useState(false);
 
-  const backgroundImage = theme === 'dark'
+  // Avoid hydration mismatch by only rendering theme-dependent content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const backgroundImage = mounted && resolvedTheme === 'dark'
     ? 'url(/images/upper_folsom_contour_dark.svg)'
     : 'url(/images/upper_folsom_contour_bwn.svg)';
 
@@ -188,7 +208,7 @@ export default function PortfolioPage() {
       <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         {/* Normal orientation - single instance from top */}
         <div
-          className="w-full opacity-10 dark:opacity-5 absolute top-0 left-0 right-0"
+          className="w-full opacity-10 dark:opacity-15 absolute top-0 left-0 right-0"
           style={{
             backgroundImage,
             backgroundSize: '100% auto',
@@ -199,7 +219,7 @@ export default function PortfolioPage() {
         />
         {/* Flipped SVG positioned where first instance ends */}
         <div
-          className="w-full opacity-10 dark:opacity-5 absolute left-0 right-0"
+          className="w-full opacity-10 dark:opacity-15 absolute left-0 right-0"
           style={{
             top: '56.25%', // Start where first SVG ends
             backgroundImage,

@@ -7,6 +7,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapIcon, FishIcon } from '@/components/ui/icons/common-icons';
@@ -16,8 +17,15 @@ import { MapIcon, FishIcon } from '@/components/ui/icons/common-icons';
  * @returns {React.JSX.Element} The rendered home page
  */
 export default function Home() {
-  const { theme } = useTheme();
-  const backgroundImage = theme === 'dark'
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch by only rendering theme-dependent content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const backgroundImage = mounted && resolvedTheme === 'dark'
     ? 'url(/images/american_river_contour_dark.svg)'
     : 'url(/images/american_river_contour_bwn.svg)';
 
@@ -26,10 +34,12 @@ export default function Home() {
       {/* Background SVG */}
       <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
         <div
-          className="w-full h-full bg-repeat-y bg-center opacity-10 dark:opacity-5"
+          className="w-full h-full opacity-10 dark:opacity-15"
           style={{
             backgroundImage,
             backgroundSize: '100% auto',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'repeat-y',
           }}
         />
       </div>
@@ -54,7 +64,8 @@ export default function Home() {
                 <Button className="bg-river-600 hover:bg-river-700 w-full sm:w-auto">View Resume</Button>
               </Link>
               <Link href="/portfolio">
-                <Button variant="outline" className="border-forest-600 text-forest-600 hover:bg-forest-50 w-full sm:w-auto">
+                <Button variant="outline" className="border-forest-600 text-forest-600 dark:border-forest-200
+                dark:text-forest-200 hover:bg-forest-900 hover:text-forest-600 hover:border-forest-600 w-full sm:w-auto">
                   Explore Portfolio
                 </Button>
               </Link>

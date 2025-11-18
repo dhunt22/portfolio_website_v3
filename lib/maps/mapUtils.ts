@@ -295,7 +295,7 @@ export function createPrisonPopupContent(
 
   return `
     <div style="padding: 4px;">
-      <strong style="font-size: 14px;">${properties.NAME}</strong><br/>
+      <strong style="font-size: 14px; color: #000000;">${properties.NAME}</strong><br/>
       <span style="font-size: 12px; color: #6b7280;">${properties.CITY}, ${properties.STATE}</span><br/>
       <div style="margin-top: 8px; font-weight: 600; font-size: 12px; color: #374151;">${label}</div>
       <div style="font-size: 16px; font-weight: 700; color: #1f2937;">${Math.round(value)} percentile</div>
@@ -307,14 +307,14 @@ export function createSubbasinPopupContent(properties: any, projectId?: string):
   // Handle watershed-hub project with different properties
   if (projectId === 'watershed-hub') {
     return `
-      <strong>${properties.Name}</strong><br/>
+      <strong style="color: #000000;">${properties.Name}</strong><br/>
       ${properties.HUC8}
     `;
   }
 
   // Default for other subbasin projects
   return `
-    <strong>${properties.Basin_Subbasin_Name}</strong><br/>
+    <strong style="color: #000000;">${properties.Basin_Subbasin_Name}</strong><br/>
     Basin Code: ${properties.Basin_Subbasin_Number}<br/>
     Area (acres): ${properties.Area_Acres}
   `;

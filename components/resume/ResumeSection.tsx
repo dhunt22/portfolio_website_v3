@@ -22,7 +22,11 @@ interface ResumeSectionProps {
  */
 const ResumeSection: React.FC<ResumeSectionProps> = ({ title, children }) => {
   return (
-    <section className="mb-6 print:mb-4">
+    <section
+      className="mb-6 print:mb-4 p-4 -m-4 rounded-lg transition-all duration-300 hover:bg-forest-50/50 dark:hover:bg-forest-900/20 focus-within:bg-forest-50/50 dark:focus-within:bg-forest-900/20 focus-within:outline-none focus-within:ring-2 focus-within:ring-river-300"
+      tabIndex={0}
+      aria-label={`${title} section`}
+    >
       <h2 className="text-2xl font-semibold text-forest-700 dark:text-forest-300 mb-4 pb-2 border-b border-forest-200 dark:border-forest-700 print:text-xl">
         {title}
       </h2>

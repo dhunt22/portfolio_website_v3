@@ -22,6 +22,8 @@ export interface Project {
   displayType?: 'map' | 'image'; // Type of visual display (defaults to 'map')
   imagePath?: string; // Path to image file if displayType is 'image'
   imageAlt?: string; // Alt text for image accessibility
+  imageCaption?: string; // Caption for the image (e.g., "NASA, 2001")
+  imageSecondaryText?: string; // Secondary descriptive text for the image
 }
 
 /**
@@ -62,8 +64,10 @@ export const PROJECTS: Project[] = [
     featured: true,
     technologies: ['ArcGIS Pro', 'QGIS', 'IWFM', 'Python'],
     displayType: 'image',
-    imagePath: '/images/projects/cuyama-basin-placeholder.jpg',
-    imageAlt: 'Cuyama Valley Groundwater Basin project visualization',
+    imagePath: '/images/cuyama_valley_nasa_srtm.jpg',
+    imageAlt: 'SRTM Perspective View with Landsat Overlay: Caliente Range and Cuyama Valley, California',
+    imageCaption: 'NASA, 2001',
+    imageSecondaryText: 'SRTM Perspective View with Landsat Overlay: Caliente Range and Cuyama Valley, California',
     content: [
       'Served as the geospatial technician, water resource model support, and project data manager for all tasks for the reports.',
       'Geospatial: developed layout template, basemap, and new figures for the Cuyama 2024 Annual Report (AR), 2025 Groundwater Sustainability Plan (GSP), and Groundwater Conditions reports using ArcGIS Pro and QGIS. To see my work, open the 2025 GSP document and look in the lower left corner of figures for "dhunt".',
@@ -85,12 +89,24 @@ export const PROJECTS: Project[] = [
     year: '2023',
     technologies: ['GIS', 'Spatial Analysis', 'Hydrology'],
     displayType: 'image',
-    imagePath: '/images/projects/yuba-recharge-placeholder.jpg',
+    imagePath: '/images/yuba_recharge_suitability_index_preview.png',
     imageAlt: 'Yuba Subbasins Recharge Analysis visualization',
     content: [
       'Computed Recharge Suitability Index (RSI) scores using open-source geospatial data for the Yuba Subbasins. This analysis identified optimal locations for groundwater recharge projects.',
       'By combining soil permeability data, slope analysis, land use classifications, and proximity to water sources, I created a comprehensive index score and suite of figures that guides decision-making for water management authorities.',
       'Yuba Water. (2023b, December). Recharge Suitability Index: Development and Results.'
+    ],
+    links: [
+      {
+        href: 'https://sgma.water.ca.gov/portal/service/gspdocument/download/10541',
+        label: 'Download Document',
+        iconType: 'document'
+      },
+      {
+        href: 'https://sgma.water.ca.gov/portal/gsp/periodiceval/preview/25',
+        label: 'SGMA Portal Source',
+        iconType: 'external'
+      }
     ]
   },
   {
@@ -101,7 +117,7 @@ export const PROJECTS: Project[] = [
     year: '2024',
     technologies: ['R', 'Data Processing', 'Statistical Analysis'],
     displayType: 'image',
-    imagePath: '/images/projects/seasonal-population-placeholder.jpg',
+    imagePath: '/images/sacramento_water_purveyors.png',
     imageAlt: 'Urban Water Use Objective Reporting visualization',
     content: [
       'Programmed a script to calculate Seasonal populations from Advanced Metering Infrastructure (AMI) data. This analysis helped clients comply with California requirements for Urban Water Use Objectives (UWUO).',
@@ -128,7 +144,7 @@ export const PROJECTS: Project[] = [
     year: '2024',
     technologies: ['Field Testing', 'Soil Analysis', 'GIS'],
     displayType: 'image',
-    imagePath: '/images/projects/modesto-infiltration-placeholder.jpg',
+    imagePath: '/images/modesto_infiltration_snyderWest.jpg',
     imageAlt: 'Infiltration Feasibility Study visualization',
     content: [
       'Conducted initial identification of existing drainage basins for percolation field tests, including spatial analysis of soil profiles and infiltration scores using SAGBI and SSURGO data.',
@@ -143,11 +159,19 @@ export const PROJECTS: Project[] = [
     year: '2024-Present',
     technologies: ['GIS', 'Suitability Analysis', 'Water Infrastructure'],
     displayType: 'image',
-    imagePath: '/images/projects/antelope-wells-placeholder.jpg',
+    imagePath: '/images/antelope_valley_LACPW_district40.png',
     imageAlt: 'Antelope Valley Well Resilience Study visualization',
+    imageSecondaryText: 'This is the westernmost portion of District 40, spanning Palmdale and Lancaster.',
     content: [
       'Led geospatial analysis to create suitability scores for new well sites in Antelope Valley, combining land use, water quality, hydrogeologic, and infrastructure data.',
       'Systematically weighted and binned over ten separate datasets to produce composite parcel-level scores. Created figure templates and documented data sources and analytical reasoning in technical memorandum supporting final site recommendations.'
+    ],
+    links: [
+      {
+        href: 'https://pw.lacounty.gov/core-service-areas/water-resources/waterworks-districts/district-overview/',
+        label: 'LA County District Overview',
+        iconType: 'external'
+      }
     ]
   },
   {
@@ -170,7 +194,7 @@ export const PROJECTS: Project[] = [
     year: '2024-Present',
     technologies: ['Water Quality Analysis', 'Regulatory Compliance', 'Data Visualization'],
     displayType: 'image',
-    imagePath: '/images/projects/sanitary-district-placeholder.jpg',
+    imagePath: '/images/npdes_logo_up.jpg',
     imageAlt: 'Quarterly Groundwater Conditions Reports visualization',
     content: [
       'Produce quarterly National Pollutant Discharge Elimination System (NPDES) groundwater conditions reports from client-collected monitoring data across six wells.',

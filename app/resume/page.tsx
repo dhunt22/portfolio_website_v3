@@ -5,6 +5,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ResumeSection from '@/components/resume/ResumeSection';
@@ -17,8 +18,15 @@ import { DownloadIcon } from '@/components/ui/icons/common-icons';
  * @returns {React.JSX.Element} The rendered resume page
  */
 export default function ResumePage() {
-  const { theme } = useTheme();
-  const backgroundImage = theme === 'dark'
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch by only rendering theme-dependent content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const backgroundImage = mounted && resolvedTheme === 'dark'
     ? 'url(/images/american_river_contour_dark.svg)'
     : 'url(/images/american_river_contour_bwn.svg)';
 
@@ -37,11 +45,10 @@ export default function ResumePage() {
   const technicalSkills = [
     "Integrated Water Flow Model (IWFM)",
     "ArcGIS Pro and Online",
-    "QGIS",
     "Python",
+    "QGIS",
     "R",
-    "RESTful APIs",
-    "SQL",
+    "SQL (Postgres & PostGIS)",
     "Groundwater Interpolation",
     "Excel LET and LAMBDA",
     "Field Documentation",
@@ -52,11 +59,28 @@ export default function ResumePage() {
     <div className="relative min-h-screen">
       {/* Background SVG */}
       <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
+        {/* Normal orientation - single instance from top */}
         <div
-          className="w-full h-full bg-repeat-y bg-center opacity-10 dark:opacity-5"
+          className="w-full opacity-10 dark:opacity-15 absolute top-0 left-0 right-0"
           style={{
             backgroundImage,
             backgroundSize: '100% auto',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
+            height: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
+          }}
+        />
+        {/* Flipped SVG positioned where first instance ends */}
+        <div
+          className="w-full opacity-10 dark:opacity-10 absolute left-0 right-0"
+          style={{
+            top: '56.25%', // Start where first SVG ends
+            backgroundImage,
+            backgroundSize: '100% auto',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'repeat-y',
+            transform: 'scaleY(-1)',
+            height: 'calc(100% - 56.25%)',
           }}
         />
       </div>
@@ -77,7 +101,11 @@ export default function ResumePage() {
         </div>
 
       <Card className="p-6 mb-8 bg-white/80 dark:bg-[#404040]/80 backdrop-blur-sm print:shadow-none">
-        <section className="mb-6 print:mb-4">
+        <section
+          className="mb-6 print:mb-4 p-4 -m-4 rounded-lg transition-all duration-300 hover:bg-forest-50/50 dark:hover:bg-forest-900/20 focus-within:bg-forest-50/50 dark:focus-within:bg-forest-900/20 focus-within:outline-none focus-within:ring-2 focus-within:ring-river-300"
+          tabIndex={0}
+          aria-label="Professional summary section"
+        >
           <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-200 mb-2 print:text-2xl">Devin Hunt</h2>
           <h3 className="text-xl text-forest-600 dark:text-forest-300 mb-4 print:text-lg">Water Resources Engineer</h3>
           <div className="mb-4">

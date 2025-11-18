@@ -179,13 +179,13 @@ html {
   }
 
   .dark {
-    --background: 120 5% 26%;
+    --background: 0 0% 25%;
     --foreground: 120 30% 96%;
 
-    --card: 120 5% 28%;
+    --card: 0 0% 27%;
     --card-foreground: 120 30% 96%;
 
-    --popover: 120 5% 27%;
+    --popover: 0 0% 26%;
     --popover-foreground: 120 30% 96%;
 
     --primary: 210 100% 50%;

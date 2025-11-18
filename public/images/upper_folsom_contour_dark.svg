@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<svg height="162.56mm" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" viewBox="0 0 1080 1920" width="91.44mm">
+<svg height="100%" baseProfile="tiny"
+xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+version="1.2" viewBox="0 0 1080 1920" width="100%" class="w-full h-full">
  <title>Qt SVG Document</title>
  <desc>Generated with Qt</desc>
  <defs/>
@@ -8,7 +10,7 @@
   <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(1,0,0,1,0,0)" font-size="32.5" stroke-linecap="square" stroke-opacity="1" stroke-width="1" stroke="#000000" stroke-linejoin="bevel" fill="none" font-style="normal"/>
   <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(11.811,0,0,11.811,0,0)" font-size="32.5" stroke-linecap="square" stroke-opacity="1" stroke-width="1" stroke="#000000" stroke-linejoin="bevel" fill="none" font-style="normal"/>
   <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(1,0,0,1,0,0)" font-size="32.5" stroke-linecap="square" stroke-opacity="1" stroke-width="1" stroke="#000000" stroke-linejoin="bevel" fill="none" font-style="normal"/>
-  <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(1,0,0,1,0,0)" font-size="32.5" fill-opacity="1" stroke="none" fill="#ffffff" font-style="normal">
+  <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(1,0,0,1,0,0)" font-size="32.5" fill-opacity="1" stroke="none" fill="none" font-style="normal">
    <path vector-effect="none" d="M-2,-2 L1082,-2 L1082,1922 L-2,1922 L-2,-2" fill-rule="evenodd"/>
   </g>
   <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(1,0,0,1,0,0)" font-size="32.5" stroke-linecap="square" stroke-opacity="1" stroke-width="1" stroke="#000000" stroke-linejoin="bevel" fill="none" font-style="normal"/>
@@ -17,7 +19,7 @@
   <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(11.811,0,0,11.811,0,0)" font-size="32.5" stroke-linecap="square" stroke-opacity="1" stroke-width="1" stroke="#000000" stroke-linejoin="bevel" fill="none" font-style="normal"/>
   <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(11.811,0,0,11.811,0,0)" font-size="32.5" stroke-linecap="square" stroke-opacity="1" stroke-width="1" stroke="#000000" stroke-linejoin="bevel" fill="none" font-style="normal"/>
   <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(11.811,0,0,11.811,0,0)" font-size="32.5" stroke-linecap="square" stroke-opacity="1" stroke-width="1" stroke="#000000" stroke-linejoin="bevel" fill="none" font-style="normal"/>
-  <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(11.811,0,0,11.811,0,0)" font-size="32.5" fill-opacity="1" stroke="none" fill="#ffffff" font-style="normal">
+  <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(11.811,0,0,11.811,0,0)" font-size="32.5" fill-opacity="1" stroke="none" fill="none" font-style="normal">
    <path vector-effect="none" d="M0,0 L91.44,0 L91.44,162.56 L0,162.56 L0,0" fill-rule="evenodd"/>
   </g>
   <g font-family="MS Shell Dlg 2" font-weight="400" transform="matrix(11.811,0,0,11.811,0,0)" font-size="32.5" stroke-linecap="square" stroke-opacity="1" stroke-width="1" stroke="#000000" stroke-linejoin="bevel" fill="none" font-style="normal"/>

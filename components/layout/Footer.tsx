@@ -4,7 +4,7 @@
 
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
-import { GitHubIcon, LinkedInIcon, EmailIcon } from '@/components/ui/icons/common-icons';
+import { GitHubIconWhite, LinkedInIcon, EmailIcon } from '@/components/ui/icons/common-icons';
 
 /**
  * Footer component with contact information and site links
@@ -25,7 +25,7 @@ export default function Footer() {
               outdoor exploration.
             </p>
             <p className="text-forest-100">
-              Based in California, working across multiple basins to address water resource challenges.
+              Based in California, working across multiple groundwater basins to address water resource challenges.
             </p>
           </div>
           
@@ -58,14 +58,14 @@ export default function Footer() {
               </a>
             </p>
             <div className="flex space-x-5 mt-5">
-              <a 
-                href="https://github.com/dhunt22" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://github.com/dhunt22"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-forest-100 hover:text-white transition-colors"
                 aria-label="GitHub Profile"
               >
-                <GitHubIcon className="w-5 h-5" />
+                <GitHubIconWhite className="w-5 h-5" />
               </a>
               <a 
                 href="https://www.linkedin.com/in/devinthunt" 
