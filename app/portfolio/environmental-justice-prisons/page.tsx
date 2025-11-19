@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -201,7 +202,7 @@ function MapInstructionsPopup({ isOpen, onClose }: { isOpen: boolean; onClose: (
             <CardTitle className="text-sm font-semibold text-forest-800 dark:text-forest-300">Map Instructions</CardTitle>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               aria-label="Close instructions"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -241,6 +242,14 @@ function MapInstructionsPopup({ isOpen, onClose }: { isOpen: boolean; onClose: (
 
 // Histogram Component
 function PercentileHistogram({ color, indicatorName }: { color: string; indicatorName: string }) {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Sample data - replace with actual prison data distribution
   // This represents the count of prisons in each percentile bin
   const sampleData = [120, 135, 150, 165, 185, 195, 180, 170, 145, 120];
@@ -261,6 +270,11 @@ function PercentileHistogram({ color, indicatorName }: { color: string; indicato
 
   const maxValue = Math.max(...sampleData);
   const roundedMax = Math.ceil(maxValue / 10) * 10;
+
+  // Determine theme colors dynamically
+  const isDark = mounted && resolvedTheme === 'dark';
+  const axisColor = isDark ? '#ffffff' : '#000000';
+  const yAxisColor = isDark ? '#d1d5db' : '#6b7280';
 
   const options = {
     responsive: true,
@@ -288,7 +302,7 @@ function PercentileHistogram({ color, indicatorName }: { color: string; indicato
         grid: {
           display: false,
           drawBorder: true,
-          borderColor: '#000000',
+          borderColor: axisColor,
           borderWidth: 2,
         },
         ticks: {
@@ -298,7 +312,7 @@ function PercentileHistogram({ color, indicatorName }: { color: string; indicato
             if (index === 9) return '100';
             return '';
           },
-          color: '#000000',
+          color: axisColor,
           font: {
             size: 11,
             weight: 'bold' as const,
@@ -316,7 +330,7 @@ function PercentileHistogram({ color, indicatorName }: { color: string; indicato
         ticks: {
           display: true,
           stepSize: Math.ceil(roundedMax / 4 / 10) * 10,
-          color: '#6b7280',
+          color: yAxisColor,
           font: {
             size: 10,
           },
@@ -329,9 +343,14 @@ function PercentileHistogram({ color, indicatorName }: { color: string; indicato
     },
   };
 
+  // Don't render until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return <div className="h-28 w-full px-4 pb-2" />;
+  }
+
   return (
     <div className="h-28 w-full px-4 pb-2">
-      <Bar data={data} options={options} />
+      <Bar key={`${indicatorName}-${resolvedTheme}`} data={data} options={options} />
     </div>
   );
 }
@@ -361,7 +380,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-forest-50 to-river-50">
+    <div className="min-h-screen bg-gradient-to-br from-forest-50 to-river-50 dark:from-gray-900 dark:to-gray-800">
       {/* Hero Section */}
       <section className="bg-forest-900 text-white py-16" aria-labelledby="hero-heading">
         <div className="container mx-auto px-4">
@@ -369,7 +388,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             <h1 id="hero-heading" className="text-4xl md:text-5xl font-bold mb-6">
               Environmental Justice For Prisons
             </h1>
-            <h2 className="text-xl md:text-2xl text-forest-800 dark:text-forest-100 mb-8">
+            <h2 className="text-xl md:text-2xl text-white mb-8">
               Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons
             </h2>
             <div className="flex flex-wrap gap-4 justify-center">
@@ -389,7 +408,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </Button>
               </a>
               <a
-                href="https://appliedsciences.nasa.gov/what-we-do/projects/leveraging-earth-science-data-heighten-awareness-environmental-injustices"
+                href="https://ui.adsabs.harvard.edu/abs/2023AGUFMINV31C0.1M/abstract"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Visit NASA Applied Sciences project page"
@@ -399,7 +418,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                   className="border-forest-200 dark:border-forest-600 bg-white dark:bg-[#404040] text-forest-700 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 hover:border-forest-300 dark:hover:border-forest-500"
                 >
                   <ExternalLinkIcon className="w-4 h-4" aria-hidden={true} />
-                  NASA Project Page
+                  Publication
                   <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden={true} />
                 </Button>
               </a>
@@ -409,38 +428,38 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       </section>
 
       {/* Project Overview Section */}
-      <section className="py-16" aria-labelledby="overview-heading">
+      <section className="py-16 bg-white dark:bg-[#383838]/90" aria-labelledby="overview-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm">
+            <Card className="bg-white/90 dark:bg-[#383838]/90 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle id="overview-heading" className="text-3xl text-forest-800 dark:text-forest-200">Project Overview</CardTitle>
                 <CardDescription className="text-lg text-forest-600 dark:text-forest-300">
                   A groundbreaking research initiative funded by NASA's $100,000 Equity and Environmental Justice Grant
                 </CardDescription>
               </CardHeader>
-              <CardContent className="prose prose-lg max-w-none">
+              <CardContent className="prose max-w-none">
                 <p className="text-forest-800 dark:text-forest-300 leading-relaxed mb-6">
-                  Despite the numerous cases of environmental injustices documented in U.S. prisons by researchers, activists, journalists, and federal government, the examination of prisons as sites of environmental injustice is still understudied. However, prisons are by definition EJ communities, as they are highly overrepresented by people of color, indigenous persons, and low-income individuals, and have no choice but to endure any adverse environmental health threats.
+                  Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition—overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats.
                 </p>
 
                 <p className="text-forest-800 dark:text-forest-300 leading-relaxed mb-6">
-                  This research addresses this vital environmental justice research gap by leveraging NASA's Earth science data—including satellite, land cover, climate, and air quality datasets—in a novel way to characterize the environmental harms faced by incarcerated people across the U.S. in all state- and federally-operated prisons.
+                  This research leverages NASA's Earth science data—including satellite, land cover, climate, and air quality datasets—to characterize environmental harms faced by incarcerated people across all U.S. state and federal prisons.
                 </p>
 
-                <div className="bg-river-50 p-6 rounded-lg mb-6">
-                  <h3 className="text-xl font-semibold text-river-800 mb-4">Key Project Objectives</h3>
+                <div className="bg-river-50 dark:bg-river-900/20 p-6 rounded-lg mb-6">
+                  <h3 className="text-xl font-semibold text-river-800 dark:text-river-300 mb-4">Key Project Objectives</h3>
                   <ul className="space-y-2 text-forest-800 dark:text-forest-300">
                     <li className="flex items-start">
-                      <span className="text-river-600 mr-2">•</span>
+                      <span className="text-river-600 dark:text-river-400 mr-2">•</span>
                       <span>Quantify environmental conditions at all 1,865 state and federal prisons in the U.S.</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="text-river-600 mr-2">•</span>
+                      <span className="text-river-600 dark:text-river-400 mr-2">•</span>
                       <span>Calculate a standardized vulnerability index for each prison</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="text-river-600 mr-2">•</span>
+                      <span className="text-river-600 dark:text-river-400 mr-2">•</span>
                       <span>Create an open-access geospatial dataset and reproducible code base</span>
                     </li>
                   </ul>
@@ -456,7 +475,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       </section>
 
       {/* Interactive Map Visualization Section */}
-      <section className="py-16" aria-labelledby="map-visualization-heading">
+      <section className="py-16 bg-gray-50 dark:bg-[#383838]/90" aria-labelledby="map-visualization-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             <h2 id="map-visualization-heading" className="text-3xl font-bold text-forest-800 dark:text-forest-200 mb-8 text-center">
@@ -468,38 +487,38 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               <TabsList className="grid w-full grid-cols-4 mb-0 bg-transparent p-0 gap-1 relative" style={{ marginBottom: '-1px' }}>
                 <TabsTrigger
                   value="overall"
-                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-red-50/30 dark:bg-red-900/30 text-red-900 dark:text-red-200 rounded-t-lg rounded-b-none data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:border-red-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-red-50/60 dark:bg-red-900/20 text-red-900 dark:text-red-200 rounded-t-lg rounded-b-none hover:bg-red-50/80 dark:hover:bg-red-900/40 data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:border-red-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Overall
                   {currentComponent.category === 'overall' && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"></span>
                   )}
                 </TabsTrigger>
                 <TabsTrigger
                   value="climate"
-                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-forest-50/30 dark:bg-forest-900/30 text-forest-900 dark:text-forest-200 rounded-t-lg rounded-b-none data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-forest-50/60 dark:bg-forest-900/20 text-forest-900 dark:text-forest-200 rounded-t-lg rounded-b-none hover:bg-forest-50/80 dark:hover:bg-forest-900/40 data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Climate Risk
                   {currentComponent.category === 'climate' && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"></span>
                   )}
                 </TabsTrigger>
                 <TabsTrigger
                   value="exposure"
-                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-purple-50/30 dark:bg-purple-900/30 text-purple-900 dark:text-purple-200 rounded-t-lg rounded-b-none data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-purple-50/60 dark:bg-purple-900/20 text-purple-900 dark:text-purple-200 rounded-t-lg rounded-b-none hover:bg-purple-50/80 dark:hover:bg-purple-900/40 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Exposure
                   {currentComponent.category === 'exposure' && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"></span>
                   )}
                 </TabsTrigger>
                 <TabsTrigger
                   value="effects"
-                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-orange-50/30 dark:bg-orange-900/30 text-orange-900 dark:text-orange-200 rounded-t-lg rounded-b-none data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-orange-50/60 dark:bg-orange-900/20 text-orange-900 dark:text-orange-200 rounded-t-lg rounded-b-none hover:bg-orange-50/80 dark:hover:bg-orange-900/40 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
-                  Proximity-Based
+                  Proximity
                   {currentComponent.category === 'effects' && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"></span>
                   )}
                 </TabsTrigger>
               </TabsList>
@@ -525,8 +544,10 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                           key={component.id}
                           role="button"
                           tabIndex={0}
-                          className={`border-l-4 border border-gray-200 dark:border-forest-700 pl-3 pr-2 py-3 cursor-pointer transition-all duration-200 hover:bg-gray-50 dark:hover:bg-forest-800 hover:border-gray-300 dark:hover:border-forest-600 rounded-lg ${
-                            selectedComponent === component.id ? 'bg-blue-50 shadow-md border-blue-200' : ''
+                          className={`border-l-4 border border-gray-200 dark:border-forest-700 pl-3 pr-2 py-3 cursor-pointer transition-all duration-200 rounded-lg ${
+                            selectedComponent === component.id
+                              ? 'bg-blue-50 dark:bg-gray-800 shadow-md border-blue-200 dark:border-forest-600'
+                              : 'hover:bg-gray-50 dark:bg-[#353535]/90 dark:hover:bg-forest-800 hover:border-gray-300 dark:hover:border-forest-600'
                           }`}
                           style={{ borderLeftColor: component.color }}
                           onClick={() => handleComponentClick(component.id)}
@@ -540,14 +561,22 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                           aria-pressed={selectedComponent === component.id}
                         >
                           <div className="flex items-start justify-between mb-1">
-                            <h4 className="font-semibold text-sm text-forest-800 dark:text-forest-300">{component.name}</h4>
+                            <h4 className={`font-semibold text-sm ${
+                              selectedComponent === component.id
+                                ? 'text-forest-800 dark:text-white'
+                                : 'text-forest-800 dark:text-forest-200'
+                            }`}>{component.name}</h4>
                             {selectedComponent === component.id && (
-                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full whitespace-nowrap ml-2">
+                              <span className="text-xs bg-blue-100 dark:bg-forest-600 text-blue-800 dark:text-white px-2 py-0.5 rounded-full whitespace-nowrap ml-2">
                                 Active
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-forest-600 dark:text-forest-400 leading-relaxed">
+                          <p className={`text-xs leading-relaxed ${
+                            selectedComponent === component.id
+                              ? 'text-forest-600 dark:text-forest-100'
+                              : 'text-forest-600 dark:text-forest-300'
+                          }`}>
                             {component.description}
                           </p>
                         </div>
@@ -567,9 +596,9 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 <div className="lg:col-span-7">
                   <CardContent className="p-4">
                     <div className="relative">
-                      {/* Map Container with fixed height */}
+                      {/* Map Container with responsive height */}
                       <div
-                        className="h-[600px] rounded-lg overflow-hidden"
+                        className="h-[323px] md:h-[600px] rounded-lg overflow-hidden"
                         role="application"
                         aria-label="Interactive prison environmental justice map"
                       >
@@ -601,7 +630,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </Card>
 
             {/* Indicator Details Section */}
-            <Card className="mt-8 bg-white/90 backdrop-blur-sm">
+            <Card className="mt-8 bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl text-forest-800 dark:text-forest-200">
                   {currentComponent.name}
@@ -631,7 +660,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                   )}
 
                   {currentComponent.dataSourceLink && (
-                    <div className="bg-forest-50 p-4 rounded-lg border border-forest-200">
+                    <div className="bg-forest-50 dark:bg-forest-900/30 p-4 rounded-lg border border-forest-200 dark:border-forest-700">
                       <h4 className="text-sm font-semibold text-forest-800 dark:text-forest-300 mb-2">Data Source Link</h4>
                       <a
                         href={currentComponent.dataSourceLink}
@@ -661,7 +690,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-sm border-forest-700 dark:border-forest-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Research Team</CardTitle>
+                  <CardTitle className="text-forest-900 dark:text-white">Research Team</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3 text-forest-800 dark:text-forest-100">
@@ -686,7 +715,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
               <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-sm border-forest-700 dark:border-forest-700">
                 <CardHeader>
-                  <CardTitle className="text-white">My Role & Contributions</CardTitle>
+                  <CardTitle className="text-forest-900 dark:text-white">My Role & Contributions</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3 text-forest-800 dark:text-forest-100">
@@ -719,7 +748,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
             <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-sm border-forest-700 dark:border-forest-700">
               <CardHeader>
-                <CardTitle className="text-white text-center">Project Impact & Recognition</CardTitle>
+                <CardTitle className="text-forest-900 dark:text-white text-center">Project Impact & Recognition</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
@@ -745,7 +774,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </Card>
 
             <div className="text-center mt-8">
-              <p className="text-forest-700 dark:text-forest-200 text-sm">
+              <p className="text-white text-sm">
                 Special thanks to the Geospatial Centroid at Colorado State University and NASA's Equity and Environmental Justice Grant program
                 for making this critical research possible.
               </p>
@@ -755,7 +784,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       </section>
 
       {/* Call to Action */}
-      <section className="py-12">
+      <section className="py-12 bg-white dark:bg-[#404040]/90">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold text-forest-800 dark:text-forest-200 mb-4">
             Explore the Research
@@ -769,13 +798,13 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button className="bg-forest-600 hover:bg-forest-700">
+              <Button className="bg-forest-600 hover:bg-forest-700 dark:bg-forest-700 dark:hover:bg-forest-600">
                 <GitHubIcon className="w-4 h-4 mr-2" />
                 Access Repository
               </Button>
             </a>
             <a href="/portfolio">
-              <Button variant="outline" className="border-forest-600 text-forest-600 hover:bg-forest-50">
+              <Button variant="outline" className="border-forest-600 dark:border-forest-400 text-forest-600 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800">
                 Back to Portfolio
               </Button>
             </a>

@@ -167,10 +167,21 @@ export default function PortfolioPage() {
   const { resolvedTheme } = useTheme();
   const [activeProject, setActiveProject] = useState<string>('prison-ej');
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Avoid hydration mismatch by only rendering theme-dependent content after mount
   useEffect(() => {
     setMounted(true);
+
+    // Check if mobile on mount and on resize
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const backgroundImage = mounted && resolvedTheme === 'dark'
@@ -211,7 +222,7 @@ export default function PortfolioPage() {
           className="w-full opacity-10 dark:opacity-15 absolute top-0 left-0 right-0"
           style={{
             backgroundImage,
-            backgroundSize: '100% auto',
+            backgroundSize: isMobile ? '250% auto' : '100% auto',
             backgroundPosition: 'center top',
             backgroundRepeat: 'no-repeat',
             height: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
@@ -223,7 +234,7 @@ export default function PortfolioPage() {
           style={{
             top: '56.25%', // Start where first SVG ends
             backgroundImage,
-            backgroundSize: '100% auto',
+            backgroundSize: isMobile ? '250% auto' : '100% auto',
             backgroundPosition: 'center top',
             backgroundRepeat: 'repeat-y',
             transform: 'scaleY(-1)',
@@ -244,16 +255,16 @@ export default function PortfolioPage() {
 
       {/* Projects Section */}
       <Tabs defaultValue="all" className="mb-8">
-        <div className="relative z-10 mb-8">
+        <div className="relative z-10 mb-8 md:mb-8">
           <TabsList
-            className="flex flex-wrap gap-2 mb-6 justify-center sm:justify-start bg-transparent"
+            className="flex flex-wrap gap-2 mb-12 md:mb-6 justify-center sm:justify-start bg-transparent"
             role="tablist"
             aria-label="Portfolio project categories"
           >
             <TabsTrigger
               value="all"
               id="tab-all"
-              className="px-4 py-2 rounded-lg shadow-sm bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
+              className="px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 z-20 transition-all"
               aria-label={`All projects (${projectsByCategory.all?.length ?? 0} items)`}
             >
               All Projects ({projectsByCategory.all?.length ?? 0})
@@ -261,7 +272,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="water"
               id="tab-water"
-              className="px-4 py-2 rounded-lg shadow-sm bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
+              className="px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 z-20 transition-all"
               aria-label={`Water resources projects (${projectsByCategory.water?.length ?? 0} items)`}
             >
               Water Resources ({projectsByCategory.water?.length ?? 0})
@@ -269,7 +280,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="geospatial"
               id="tab-geospatial"
-              className="px-4 py-2 rounded-lg shadow-sm bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
+              className="px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 z-20 transition-all"
               aria-label={`Geospatial analysis projects (${projectsByCategory.geospatial?.length ?? 0} items)`}
             >
               Geospatial Analysis ({projectsByCategory.geospatial?.length ?? 0})
@@ -277,7 +288,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="research"
               id="tab-research"
-              className="px-4 py-2 rounded-lg shadow-sm bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 data-[state=active]:border z-20 transition-all"
+              className="px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 z-20 transition-all"
               aria-label={`Research projects (${projectsByCategory.research?.length ?? 0} items)`}
             >
               Research ({projectsByCategory.research?.length ?? 0})

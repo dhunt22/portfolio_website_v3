@@ -77,7 +77,7 @@ export const useMapPopup = (
     popup.current = new maplibregl.Popup({
       closeButton: false,
       closeOnClick: false,
-      offset: 10
+      offset: 5
     });
 
     // Handler for mousemove (best practice for overlapping features)
@@ -165,7 +165,7 @@ export const useMapPopup = (
         closeButton: true,
         closeOnClick: true,
         className: 'custom-popup',
-        offset: 10,
+        offset: 5,
         maxWidth: '300px'
       });
 
@@ -201,22 +201,27 @@ export const useMapPopup = (
   const setupSubbasinPopupHandlers = () => {
     if (!map.current) return;
 
+    console.log('Setting up subbasin popup handlers...', { projectId });
+
+    // Clean up existing popups and listeners
+    if (popup.current && popup.current.isOpen()) {
+      popup.current.remove();
+    }
+
+    if (clickPopup.current && clickPopup.current.isOpen()) {
+      clickPopup.current.remove();
+      clickPopup.current = null;
+    }
+
     // Create hover popup with automatic positioning
     popup.current = new maplibregl.Popup({
       closeButton: false,
       closeOnClick: false,
-      offset: 10
+      offset: 5
     });
 
-    // Use mouseenter for cursor changes
-    map.current.on('mouseenter', 'subbasin-fill-layer', () => {
-      if (map.current) {
-        map.current.getCanvas().style.cursor = 'pointer';
-      }
-    });
-
-    // Use mousemove for popup updates (better for overlapping features)
-    map.current.on('mousemove', 'subbasin-fill-layer', (e) => {
+    // Handler for mousemove (best practice for overlapping features)
+    const handleMouseMove = (e: MapMouseEvent & { features?: MapGeoJSONFeature[] }) => {
       if (!map.current || !popup.current || !e.features?.[0]) return;
 
       const feature = e.features[0];
@@ -232,18 +237,19 @@ export const useMapPopup = (
 
       const description = createSubbasinPopupContent(properties, projectId);
       popup.current.setLngLat(coordinates).setHTML(description).addTo(map.current);
-    });
+    };
 
-    // Use mouseleave for cleanup
-    map.current.on('mouseleave', 'subbasin-fill-layer', () => {
-      if (popup.current) popup.current.remove();
+    const handleMouseLeave = () => {
+      // Only remove hover popup, not click popup
+      if (popup.current && popup.current.isOpen()) {
+        popup.current.remove();
+      }
       if (map.current) {
         map.current.getCanvas().style.cursor = '';
       }
-    });
+    };
 
-    // Optional: click handler for future detailed view
-    map.current.on('click', 'subbasin-fill-layer', (e) => {
+    const handleClick = (e: MapMouseEvent & { features?: MapGeoJSONFeature[] }) => {
       if (!map.current || !e.features?.[0]) return;
 
       const feature = e.features[0];
@@ -254,8 +260,57 @@ export const useMapPopup = (
         properties
       });
 
-      // Could expand this to show a more detailed popup or modal
+      // Remove any existing click popup before creating new one
+      if (clickPopup.current && clickPopup.current.isOpen()) {
+        clickPopup.current.remove();
+      }
+
+      // Also remove hover popup when click happens
+      if (popup.current && popup.current.isOpen()) {
+        popup.current.remove();
+      }
+
+      // Get coordinates from mouse position
+      const coordinates = [e.lngLat.lng, e.lngLat.lat] as [number, number];
+
+      // Handle world wrapping
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+
+      // Create new click popup with close button
+      clickPopup.current = new maplibregl.Popup({
+        closeButton: true,
+        closeOnClick: true,
+        className: 'custom-popup',
+        offset: 5,
+        maxWidth: '300px'
+      });
+
+      const description = createSubbasinPopupContent(properties, projectId);
+      clickPopup.current.setLngLat(coordinates).setHTML(description).addTo(map.current);
+
+      // When popup is closed, clear the reference
+      clickPopup.current.on('close', () => {
+        clickPopup.current = null;
+      });
+    };
+
+    // Use mouseenter for cursor changes
+    map.current.on('mouseenter', 'subbasin-fill-layer', () => {
+      if (map.current) {
+        map.current.getCanvas().style.cursor = 'pointer';
+      }
     });
+
+    // Use mousemove for popup updates (better for overlapping features)
+    map.current.on('mousemove', 'subbasin-fill-layer', handleMouseMove);
+
+    // Use mouseleave for cleanup
+    map.current.on('mouseleave', 'subbasin-fill-layer', handleMouseLeave);
+
+    // Use click for persistent popups
+    map.current.on('click', 'subbasin-fill-layer', handleClick);
   };
 
   const setupPopupHandlers = () => {

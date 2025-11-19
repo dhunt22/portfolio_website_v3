@@ -20,6 +20,7 @@ export default function InterestsPage() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Carousel images
   const carouselImages = [
@@ -30,6 +31,16 @@ export default function InterestsPage() {
   // Avoid hydration mismatch by only rendering theme-dependent content after mount
   useEffect(() => {
     setMounted(true);
+
+    // Check if mobile on mount and on resize
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const nextImage = () => {
@@ -52,7 +63,7 @@ export default function InterestsPage() {
           className="w-full h-full opacity-10 dark:opacity-15"
           style={{
             backgroundImage,
-            backgroundSize: '100% auto',
+            backgroundSize: isMobile ? '250% auto' : '100% auto',
             backgroundPosition: 'center top',
             backgroundRepeat: 'repeat-y',
           }}

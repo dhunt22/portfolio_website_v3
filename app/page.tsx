@@ -19,10 +19,21 @@ import { MapIcon, FishIcon } from '@/components/ui/icons/common-icons';
 export default function Home() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Avoid hydration mismatch by only rendering theme-dependent content after mount
   useEffect(() => {
     setMounted(true);
+
+    // Check if mobile on mount and on resize
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const backgroundImage = mounted && resolvedTheme === 'dark'
@@ -37,7 +48,7 @@ export default function Home() {
           className="w-full h-full opacity-10 dark:opacity-15"
           style={{
             backgroundImage,
-            backgroundSize: '100% auto',
+            backgroundSize: isMobile ? '250% auto' : '100% auto',
             backgroundPosition: 'center top',
             backgroundRepeat: 'repeat-y',
           }}

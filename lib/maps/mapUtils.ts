@@ -293,12 +293,21 @@ export function createPrisonPopupContent(
     value = properties[attribute] || 0;
   }
 
+  // Detect mobile devices
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const fontSize = isMobile ? '75%' : '100%';
+  const padding = isMobile ? '1px' : '2px';
+  const titleSize = isMobile ? '10.5px' : '14px';
+  const subtitleSize = isMobile ? '9px' : '12px';
+  const labelSize = isMobile ? '9px' : '12px';
+  const valueSize = isMobile ? '12px' : '16px';
+
   return `
-    <div style="padding: 4px;">
-      <strong style="font-size: 14px; color: #000000;">${properties.NAME}</strong><br/>
-      <span style="font-size: 12px; color: #6b7280;">${properties.CITY}, ${properties.STATE}</span><br/>
-      <div style="margin-top: 8px; font-weight: 600; font-size: 12px; color: #374151;">${label}</div>
-      <div style="font-size: 16px; font-weight: 700; color: #1f2937;">${Math.round(value)} percentile</div>
+    <div style="padding: ${padding}; font-size: ${fontSize}; line-height: 1.2;">
+      <strong style="font-size: ${titleSize}; color: #000000; word-wrap: break-word; max-width: 150px; display: inline-block; line-height: 1.2;">${properties.NAME}</strong><br/>
+      <span style="font-size: ${subtitleSize}; color: #6b7280; line-height: 1.2;">${properties.CITY}, ${properties.STATE}</span><br/>
+      <div style="margin-top: 8px; font-weight: 600; font-size: ${labelSize}; color: #374151; line-height: 1.2;">${label}</div>
+      <div style="font-size: ${valueSize}; font-weight: 700; color: #1f2937; line-height: 1.2;">${Math.round(value)} percentile</div>
     </div>
   `;
 }
