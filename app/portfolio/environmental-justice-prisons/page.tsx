@@ -356,8 +356,8 @@ function PercentileHistogram({ color, indicatorName }: { color: string; indicato
 }
 
 export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
-  const [selectedComponent, setSelectedComponent] = useState<ComponentType>('overall');
-  const [activeTab, setActiveTab] = useState<TabType>('overall');
+  const [selectedComponent, setSelectedComponent] = useState<ComponentType>('heat');
+  const [activeTab, setActiveTab] = useState<TabType>('climate');
   const [showInstructions, setShowInstructions] = useState(true);
 
   // Get the current component configuration
@@ -402,9 +402,8 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                   variant="outline"
                   className="border-forest-200 dark:border-forest-600 bg-white dark:bg-[#404040] text-forest-700 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 hover:border-forest-300 dark:hover:border-forest-500"
                 >
-                  <GitHubIcon className="w-4 h-4" aria-hidden={true} />
-                  View Repository
-                  <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden={true} />
+                  <ExternalLinkIcon className="w-4 h-4" aria-hidden={true} />
+                  Published Dataset
                 </Button>
               </a>
               <a
@@ -419,7 +418,6 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 >
                   <ExternalLinkIcon className="w-4 h-4" aria-hidden={true} />
                   Publication
-                  <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden={true} />
                 </Button>
               </a>
             </div>
@@ -428,25 +426,20 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       </section>
 
       {/* Project Overview Section */}
-      <section className="py-16 bg-white dark:bg-[#383838]/90" aria-labelledby="overview-heading">
+      <section className="py-16 pb-8 bg-white dark:bg-[#383838]/90" aria-labelledby="overview-heading">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <Card className="bg-white/90 dark:bg-[#383838]/90 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle id="overview-heading" className="text-3xl text-forest-800 dark:text-forest-200">Project Overview</CardTitle>
-                <CardDescription className="text-lg text-forest-600 dark:text-forest-300">
-                  A groundbreaking research initiative funded by NASA's $100,000 Equity and Environmental Justice Grant
-                </CardDescription>
               </CardHeader>
               <CardContent className="prose max-w-none">
+                {/* Short paragraph with overview */}
                 <p className="text-forest-800 dark:text-forest-300 leading-relaxed mb-6">
-                  Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition—overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats.
+                  Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition—overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats. This groundbreaking research initiative was funded by NASA's $100,000 Equity and Environmental Justice Grant to address this critical gap.
                 </p>
 
-                <p className="text-forest-800 dark:text-forest-300 leading-relaxed mb-6">
-                  This research leverages NASA's Earth science data—including satellite, land cover, climate, and air quality datasets—to characterize environmental harms faced by incarcerated people across all U.S. state and federal prisons.
-                </p>
-
+                {/* Key Objectives Box */}
                 <div className="bg-river-50 dark:bg-river-900/20 p-6 rounded-lg mb-6">
                   <h3 className="text-xl font-semibold text-river-800 dark:text-river-300 mb-4">Key Project Objectives</h3>
                   <ul className="space-y-2 text-forest-800 dark:text-forest-300">
@@ -465,8 +458,14 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                   </ul>
                 </div>
 
-                <p className="text-forest-800 dark:text-forest-300 leading-relaxed">
-                  The method incorporates 11 environmental indicators grouped into three components, namely climate risk (heat index, canopy cover, wildfire risk and flood hazard), environmental exposures (Ozone, PM 2.5, pesticide use, and traffic density) and environmental effects (proximity to superfund sites, risk management plan facilities and hazardous waste sites).
+                {/* Remaining description */}
+                <p className="text-forest-800 dark:text-forest-300 leading-relaxed mb-6">
+                  This research leverages NASA's Earth science data—including satellite, land cover, climate, and air quality datasets—to characterize environmental harms faced by incarcerated people across all U.S. state and federal prisons. The method incorporates 11 environmental indicators grouped into three components: climate risk (heat index, canopy cover, wildfire risk and flood hazard), environmental exposures (ozone, PM 2.5, pesticide use, and traffic density), and environmental effects (proximity to superfund sites, risk management plan facilities and hazardous waste sites).
+                </p>
+
+                {/* Sentence about exploring the data */}
+                <p className="text-forest-800 dark:text-forest-300 leading-relaxed font-medium">
+                  Explore the interactive map below to visualize how these environmental factors impact prisons across the United States.
                 </p>
               </CardContent>
             </Card>
@@ -475,7 +474,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       </section>
 
       {/* Interactive Map Visualization Section */}
-      <section className="py-16 bg-gray-50 dark:bg-[#383838]/90" aria-labelledby="map-visualization-heading">
+      <section className="pt-8 pb-16 bg-gray-50 dark:bg-[#383838]/90" aria-labelledby="map-visualization-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             <h2 id="map-visualization-heading" className="text-3xl font-bold text-forest-800 dark:text-forest-200 mb-8 text-center">
@@ -486,17 +485,8 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-0 bg-transparent p-0 gap-1 relative" style={{ marginBottom: '-1px' }}>
                 <TabsTrigger
-                  value="overall"
-                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-red-50/60 dark:bg-red-900/20 text-red-900 dark:text-red-200 rounded-t-lg rounded-b-none hover:bg-red-50/80 dark:hover:bg-red-900/40 data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:border-red-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
-                >
-                  Overall
-                  {currentComponent.category === 'overall' && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"></span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger
                   value="climate"
-                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-forest-50/60 dark:bg-forest-900/20 text-forest-900 dark:text-forest-200 rounded-t-lg rounded-b-none hover:bg-forest-50/80 dark:hover:bg-forest-900/40 data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-forest-50 dark:bg-forest-900/50 text-forest-900 dark:text-forest-200 rounded-t-lg rounded-b-none hover:bg-forest-100 dark:hover:bg-forest-900/70 data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Climate Risk
                   {currentComponent.category === 'climate' && (
@@ -505,7 +495,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="exposure"
-                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-purple-50/60 dark:bg-purple-900/20 text-purple-900 dark:text-purple-200 rounded-t-lg rounded-b-none hover:bg-purple-50/80 dark:hover:bg-purple-900/40 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-purple-50 dark:bg-purple-900/50 text-purple-900 dark:text-purple-200 rounded-t-lg rounded-b-none hover:bg-purple-100 dark:hover:bg-purple-900/70 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Exposure
                   {currentComponent.category === 'exposure' && (
@@ -514,10 +504,19 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="effects"
-                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-orange-50/60 dark:bg-orange-900/20 text-orange-900 dark:text-orange-200 rounded-t-lg rounded-b-none hover:bg-orange-50/80 dark:hover:bg-orange-900/40 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-orange-50 dark:bg-orange-900/50 text-orange-900 dark:text-orange-200 rounded-t-lg rounded-b-none hover:bg-orange-100 dark:hover:bg-orange-900/70 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
                 >
                   Proximity
                   {currentComponent.category === 'effects' && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"></span>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="overall"
+                  className="relative border border-gray-100 dark:border-forest-700 border-b-0 bg-red-50 dark:bg-red-900/50 text-red-900 dark:text-red-200 rounded-t-lg rounded-b-none hover:bg-red-100 dark:hover:bg-red-900/70 data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:border-red-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all"
+                >
+                  Overall
+                  {currentComponent.category === 'overall' && (
                     <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full"></span>
                   )}
                 </TabsTrigger>
@@ -583,18 +582,24 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                       ))}
                     </div>
                   </CardContent>
-                  {/* Histogram at bottom */}
-                  <div className="flex-shrink-0 border-t border-gray-200 dark:border-forest-700">
+                  {/* Histogram at bottom - COMMENTED OUT: Data not ready for production */}
+                  {/* <div className="flex-shrink-0 border-t border-gray-200 dark:border-forest-700">
                     <PercentileHistogram
                       color={currentComponent.color}
                       indicatorName={currentComponent.name}
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Right Side - Map (70%) - Stays mounted */}
                 <div className="lg:col-span-7">
                   <CardContent className="p-4">
+                    {/* Mobile-only indicator title */}
+                    <div className="lg:hidden mb-3">
+                      <h3 className="text-lg font-semibold text-forest-800 dark:text-forest-200">
+                        {currentComponent.name}
+                      </h3>
+                    </div>
                     <div className="relative">
                       {/* Map Container with responsive height */}
                       <div
@@ -682,7 +687,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       {/* Project Team & Summary */}
       <section className="py-16 bg-forest-900 text-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12">
               Project Team & My Contribution
             </h2>

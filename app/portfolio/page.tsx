@@ -105,7 +105,6 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
                       >
                         {getIconByType(link.iconType)}
                         <span className="ml-1">{link.label}</span>
-                        {!isInternal && <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden={true} />}
                       </Button>
                     </LinkComponent>
                   );

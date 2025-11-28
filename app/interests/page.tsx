@@ -119,81 +119,6 @@ export default function InterestsPage() {
           </Card>
         </section>
 
-        <section id="gis" className="scroll-mt-16">
-          <Card
-            className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-sm hover:border-river-300 focus-within:border-river-300 focus-within:shadow-sm"
-            tabIndex={0}
-            aria-label="GIS interest section"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">GIS</h2>
-
-                <p className="mb-4">
-                  I love data visualization and deriving digital beauty from the physical world.
-                  See these topographic vectors I made for the website backgrounds.
-                </p>
-
-                <p className="mb-4">
-                  Contact me if you are planning a community event or share an interest in GIS- lets collaborate!
-                </p>
-              </div>
-
-              <div className="relative h-[400px] bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
-                {/* Carousel Container */}
-                <div className="relative w-full h-full flex items-center justify-center p-4">
-                  {/* Current Image */}
-                  <div className="w-full h-full flex items-center justify-center">
-                    <img
-                      src={carouselImages[currentImageIndex].src}
-                      alt={carouselImages[currentImageIndex].alt}
-                      className="w-full h-full object-cover object-center"
-                    />
-                  </div>
-
-                  {/* Previous Button */}
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-2 shadow-lg transition-all"
-                    aria-label="Previous image"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-
-                  {/* Next Button */}
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-2 shadow-lg transition-all"
-                    aria-label="Next image"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-
-                  {/* Dots Indicator */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                    {carouselImages.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          index === currentImageIndex
-                            ? 'bg-forest-600 dark:bg-forest-400 w-4'
-                            : 'bg-gray-400 dark:bg-gray-600'
-                        }`}
-                        aria-label={`Go to image ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </section>
-
         <section id="fishing" className="scroll-mt-16">
           <Card
             className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-sm hover:border-river-300 focus-within:border-river-300 focus-within:shadow-sm"
@@ -244,7 +169,110 @@ export default function InterestsPage() {
             </div>
           </Card>
         </section>
-        
+
+        <section id="bicycles" className="scroll-mt-16">
+          <Card
+            className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-sm hover:border-river-300 focus-within:border-river-300 focus-within:shadow-sm"
+            tabIndex={0}
+            aria-label="Bicycles interest section"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6">
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Bicycles</h2>
+
+                <blockquote className="mb-6 text-lg italic text-foreground">
+                  "It's all mechanical, you can mend it with a hammer."
+                  <footer className="text-forest-600 dark:text-forest-400 mt-1">— Richard Hammond</footer>
+                </blockquote>
+
+                <p className="mb-4">
+                  While the quote references Jeremy's BMW, I find working on bicycles to be a purely mechanical pursuit that I genuinely enjoy.
+                  I love building and riding bikes, and my current fleet consists of a 2009 Fuji Cross Pro and a Cannondale CX3 — these two bikes
+                  account for about 90% of my travel.
+
+                </p>
+
+                <p>
+                  Some notable rides include the Sacramento to Davis Causeway, Lake Tahoe (Tour De Tahoe Route), and the American River Trail from
+                  Midtown to Folsom Lake.
+
+                </p>
+              </div>
+
+              <div className="relative h-[300px] md:h-auto">
+                <Image
+                  src="/images/bicycle_kitchen.jpg"
+                  alt="A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen"
+                  className="object-cover object-bottom"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                  <p className="text-white text-xs italic text-shadow-lg">
+                    A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        <section id="community" className="scroll-mt-16">
+          <Card
+            className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-sm hover:border-river-300 focus-within:border-river-300 focus-within:shadow-sm"
+            tabIndex={0}
+            aria-label="Community involvement section"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="relative h-[300px] md:h-auto order-last md:order-first">
+                <Image
+                  src="/images/vacancyFee.png"
+                  alt="Vacancy Fee organization logo"
+                  className="object-cover object-center"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                  <p className="text-white text-xs italic text-shadow-lg">
+                    An organization I have joined to support the city!
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-6">
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Community</h2>
+
+                <p className="mb-4">
+                  Sacramento is full of opportunities for civic engagement and community involvement.
+                </p>
+
+                <p className="mb-6">
+                  From climbing sessions to technical meetings, I enjoy being involved in a variety of
+                  subcultures that expose me to the wonders of the city and beyond!
+                </p>
+
+                <a
+                  href="https://vacancyfee.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-forest-600 dark:border-forest-400 text-forest-600 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 transition-colors"
+                    aria-label="Get Involved - Open in new tab"
+                  >
+                    <ExternalLinkIcon className="w-4 h-4" />
+                    <span className="ml-1">Get Involved</span>
+                  </Button>
+                </a>
+              </div>
+            </div>
+          </Card>
+        </section>
+
         <section id="mycology" className="scroll-mt-16">
           <Card
             className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-sm hover:border-river-300 focus-within:border-river-300 focus-within:shadow-sm"
@@ -326,105 +354,76 @@ export default function InterestsPage() {
           </Card>
         </section>
 
-        <section id="bicycles" className="scroll-mt-16">
+        <section id="gis" className="scroll-mt-16">
           <Card
             className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-sm hover:border-river-300 focus-within:border-river-300 focus-within:shadow-sm"
             tabIndex={0}
-            aria-label="Bicycles interest section"
+            aria-label="GIS interest section"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Bicycles</h2>
-
-                <blockquote className="mb-6 text-lg italic text-foreground">
-                  "It's all mechanical, you can mend it with a hammer."
-                  <footer className="text-forest-600 dark:text-forest-400 mt-1">— Richard Hammond</footer>
-                </blockquote>
+                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">GIS</h2>
 
                 <p className="mb-4">
-                  While the quote references Jeremy's BMW, I find working on bicycles to be a purely mechanical pursuit that I genuinely enjoy. 
-                  I love building and riding bikes, and my current fleet consists of a 2009 Fuji Cross Pro and a Cannondale CX3 — these two bikes 
-                  account for about 90% of my travel.
-
+                  I love data visualization and deriving digital beauty from the physical world.
+                  See these topographic vectors I made for the website backgrounds.
                 </p>
-
-                <p>
-                  Some notable rides include the Sacramento to Davis Causeway, Lake Tahoe (Tour De Tahoe Route), and the American River Trail from 
-                  Midtown to Folsom Lake.
-
-                </p>
-              </div>
-
-              <div className="relative h-[300px] md:h-auto">
-                <Image
-                  src="/images/bicycle_kitchen.jpg"
-                  alt="A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen"
-                  className="object-cover object-bottom"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  <p className="text-white text-xs italic text-shadow-lg">
-                    A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        <section id="community" className="scroll-mt-16">
-          <Card
-            className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-sm hover:border-river-300 focus-within:border-river-300 focus-within:shadow-sm"
-            tabIndex={0}
-            aria-label="Community involvement section"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative h-[300px] md:h-auto order-last md:order-first">
-                <Image
-                  src="/images/vacancyFee.png"
-                  alt="Vacancy Fee organization logo"
-                  className="object-contain object-center p-8"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                  <p className="text-white text-xs italic text-shadow-lg">
-                    An organization I have joined to support the city!
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">Community</h2>
 
                 <p className="mb-4">
-                  Sacramento is full of opportunities for civic engagement and community involvement.
+                  Contact me if you are planning a community event or share an interest in GIS- lets collaborate!
                 </p>
+              </div>
 
-                <p className="mb-6">
-                  From climbing sessions to technical meetings, I enjoy being involved in a variety of
-                  subcultures that expose me to the wonders of the city and beyond!
-                </p>
+              <div className="relative h-[400px] bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
+                {/* Carousel Container */}
+                <div className="relative w-full h-full flex items-center justify-center p-4">
+                  {/* Current Image */}
+                  <div className="w-full h-full flex items-center justify-center">
+                    <img
+                      src={carouselImages[currentImageIndex].src}
+                      alt={carouselImages[currentImageIndex].alt}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
 
-                <a
-                  href="https://vacancyfee.org/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-forest-600 dark:border-forest-400 text-forest-600 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 transition-colors"
-                    aria-label="Get Involved - Open in new tab"
+                  {/* Previous Button */}
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-2 shadow-lg transition-all"
+                    aria-label="Previous image"
                   >
-                    <ExternalLinkIcon className="w-4 h-4" />
-                    <span className="ml-1">Get Involved</span>
-                    <ExternalLinkIcon className="w-3 h-3 ml-1" aria-hidden={true} />
-                  </Button>
-                </a>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Next Button */}
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-2 shadow-lg transition-all"
+                    aria-label="Next image"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+
+                  {/* Dots Indicator */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    {carouselImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === currentImageIndex
+                            ? 'bg-forest-600 dark:bg-forest-400 w-4'
+                            : 'bg-gray-400 dark:bg-gray-600'
+                        }`}
+                        aria-label={`Go to image ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </Card>

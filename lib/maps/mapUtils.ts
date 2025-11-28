@@ -217,14 +217,30 @@ export function sortPrisonsByRisk(prisons: PrisonFeature[], attribute: RiskAttri
     })
     .sort((a, b) => (b.properties[attribute] || 0) - (a.properties[attribute] || 0))
     .slice(0, count);
-  
+
   console.log(`Sorted top ${count} prisons by ${attribute}:`, sorted.map(p => ({
     name: p.properties.NAME,
     risk: p.properties[attribute],
     objectId: p.properties.OBJECTID
   })));
-  
+
   return sorted;
+}
+
+// Filter prisons by percentile threshold (e.g., >= 95th percentile)
+export function filterPrisonsByPercentile(prisons: PrisonFeature[], attribute: RiskAttribute, percentileThreshold: number = 95): PrisonFeature[] {
+  const filtered = prisons.filter(prison => {
+    const riskValue = prison.properties[attribute];
+    return riskValue !== null && riskValue !== undefined && !isNaN(Number(riskValue)) && Number(riskValue) >= percentileThreshold;
+  });
+
+  console.log(`Filtered ${filtered.length} prisons with ${attribute} >= ${percentileThreshold}:`, filtered.map(p => ({
+    name: p.properties.NAME,
+    risk: p.properties[attribute],
+    objectId: p.properties.OBJECTID
+  })));
+
+  return filtered;
 }
 
 // Get prison ID with fallback logic

@@ -4,13 +4,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
-import { 
+import {
   PrisonFeature,
   createRiskColorScale,
   createEnhancedColorScale,
   createDynamicPaintProperties,
   createTopNFilter,
   sortPrisonsByRisk,
+  filterPrisonsByPercentile,
   applyFilterToLayers,
   updateLayerPaintProperty,
   updateLayerPaintPropertiesBatch,
@@ -50,12 +51,12 @@ export const usePrisonMap = (
       console.log('Cannot apply filter:', { mapExists: !!map.current, dataLength: allPrisonData.length, projectId });
       return;
     }
-    
+
     if (showAll) {
       console.log('Showing all prisons');
       applyFilterToLayers(map.current, PRISON_LAYERS, null);
     } else {
-      console.log(`Applying top 10 filter for attribute: ${selectedAttribute}`);
+      console.log(`Applying >=95 percentile filter for attribute: ${selectedAttribute}`);
       console.log('All prison data sample:', allPrisonData.slice(0, 3).map(p => ({
         name: p.properties.NAME,
         objectId: p.properties.OBJECTID,
@@ -63,14 +64,14 @@ export const usePrisonMap = (
         riskValue: p.properties[selectedAttribute],
         idFieldValue: p.properties[idField]
       })));
-      
-      const sortedPrisons = sortPrisonsByRisk(allPrisonData, selectedAttribute, 10);
-      const topPrisonIds = sortedPrisons.map(prison => getPrisonId(prison));
-      
-      console.log('Top prison IDs for filter:', topPrisonIds);
-      
+
+      const filteredPrisons = filterPrisonsByPercentile(allPrisonData, selectedAttribute, 95);
+      const topPrisonIds = filteredPrisons.map(prison => getPrisonId(prison));
+
+      console.log('Top prison IDs for filter (>=95 percentile):', topPrisonIds);
+
       const filterExpression = createTopNFilter(topPrisonIds, idField);
-      
+
       applyFilterToLayers(map.current, PRISON_LAYERS, filterExpression);
     }
   };

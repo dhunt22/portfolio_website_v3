@@ -114,7 +114,13 @@ const MapControls: React.FC<MapControlsProps> = ({
           aria-label="Show risk category panel"
         >
           <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            {/* Hamburger lines with circles */}
+            <circle cx="5" cy="6" r="1.5" fill="currentColor" />
+            <line x1="9" y1="6" x2="19" y2="6" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="5" cy="12" r="1.5" fill="currentColor" />
+            <line x1="9" y1="12" x2="19" y2="12" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="5" cy="18" r="1.5" fill="currentColor" />
+            <line x1="9" y1="18" x2="19" y2="18" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </button>
       )}
@@ -123,11 +129,11 @@ const MapControls: React.FC<MapControlsProps> = ({
       <button
         onClick={() => setShowAllPrisons(!showAllPrisons)}
         className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-3 py-2 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 min-w-[48px] flex items-center justify-center"
-        title={showAllPrisons ? 'Show top 10 highest risk' : 'Show all prisons'}
-        aria-label={showAllPrisons ? 'Filter to top 10 highest risk prisons' : 'Show all prisons'}
+        title={showAllPrisons ? 'Show top facilities (≥95th percentile)' : 'Show all prisons'}
+        aria-label={showAllPrisons ? 'Filter to top facilities at 95th percentile or higher' : 'Show all prisons'}
       >
         <span className="text-sm font-medium text-black">
-          {showAllPrisons ? 'All' : '10'}
+          {showAllPrisons ? 'All' : 'Top'}
         </span>
       </button>
     </div>

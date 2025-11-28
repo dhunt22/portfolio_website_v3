@@ -102,7 +102,7 @@ export default function ResumePage() {
 
       <Card className="p-6 mb-8 bg-white/80 dark:bg-[#404040]/80 backdrop-blur-sm print:shadow-none">
         <section
-          className="mb-6 print:mb-4 p-4 -m-4 rounded-lg transition-all duration-300 hover:bg-forest-50/50 dark:hover:bg-forest-900/20 focus-within:bg-forest-50/50 dark:focus-within:bg-forest-900/20 focus-within:outline-none focus-within:ring-2 focus-within:ring-river-300"
+          className="mb-6 print:mb-4 p-4 -m-4 rounded-lg transition-all duration-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-river-300"
           tabIndex={0}
           aria-label="Professional summary section"
         >
