@@ -1,0 +1,241 @@
+// Copyright (c) 2025 Devin Hunt contact@devinhunt.com
+// lib/performance.ts
+// Performance utilities flowing like an efficient watershed!
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+/**
+ * Custom hook for debouncing values
+ * @param value - Value to debounce
+ * @param delay - Delay in milliseconds
+ * @returns Debounced value
+ */
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+/**
+ * Custom hook for throttling function calls
+ * @param callback - Function to throttle
+ * @param delay - Delay in milliseconds
+ * @returns Throttled function
+ */
+export function useThrottle<T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number
+): T {
+  const lastRan = useRef<number>(0);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  return useCallback(
+    (...args: Parameters<T>) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      const now = Date.now();
+      if (now - lastRan.current >= delay) {
+        callback(...args);
+        lastRan.current = now;
+      } else {
+        timeoutRef.current = setTimeout(() => {
+          callback(...args);
+          lastRan.current = Date.now();
+        }, delay - (now - lastRan.current));
+      }
+    },
+    [callback, delay]
+  ) as T;
+}
+
+/**
+ * Custom hook for intersection observer
+ * @param options - Intersection observer options
+ * @returns Ref and intersection status
+ */
+export function useIntersectionObserver(
+  options: IntersectionObserverInit = {}
+): [React.RefObject<HTMLElement>, boolean] {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      {
+        threshold: 0.1,
+        ...options,
+      }
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.unobserve(element);
+    };
+  }, [options]);
+
+  return [ref, isIntersecting];
+}
+
+/**
+ * Custom hook for lazy loading images
+ * @param src - Image source
+ * @param options - Intersection observer options
+ * @returns Image source and loading state
+ */
+export function useLazyImage(
+  src: string,
+  options: IntersectionObserverInit = {}
+): [string | undefined, boolean] {
+  const [imageSrc, setImageSrc] = useState<string>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [ref, isIntersecting] = useIntersectionObserver(options);
+
+  useEffect(() => {
+    if (isIntersecting && !imageSrc) {
+      const img = new Image();
+      img.onload = () => {
+        setImageSrc(src);
+        setIsLoading(false);
+      };
+      img.src = src;
+    }
+  }, [isIntersecting, src, imageSrc]);
+
+  return [imageSrc, isLoading];
+}
+
+/**
+ * Preload critical resources
+ * @param resources - Array of resource URLs to preload
+ */
+export function preloadResources(resources: string[]): void {
+  if (typeof window === 'undefined') return;
+
+  resources.forEach((resource) => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = resource;
+    
+    // Determine resource type based on file extension
+    if (resource.match(/\.(jpg|jpeg|png|webp|avif)$/i)) {
+      link.as = 'image';
+    } else if (resource.match(/\.(woff|woff2|ttf|eot)$/i)) {
+      link.as = 'font';
+      link.crossOrigin = 'anonymous';
+    } else if (resource.match(/\.css$/i)) {
+      link.as = 'style';
+    } else if (resource.match(/\.js$/i)) {
+      link.as = 'script';
+    }
+
+    document.head.appendChild(link);
+  });
+}
+
+/**
+ * Performance measurement utility
+ */
+export class PerformanceMonitor {
+  private static instance: PerformanceMonitor;
+  private measurements: Map<string, number> = new Map();
+
+  static getInstance(): PerformanceMonitor {
+    if (!PerformanceMonitor.instance) {
+      PerformanceMonitor.instance = new PerformanceMonitor();
+    }
+    return PerformanceMonitor.instance;
+  }
+
+  /**
+   * Start measuring performance for a given label
+   */
+  start(label: string): void {
+    if (typeof window !== 'undefined' && window.performance) {
+      this.measurements.set(label, performance.now());
+    }
+  }
+
+  /**
+   * End measuring and log the result
+   */
+  end(label: string): number | null {
+    if (typeof window === 'undefined' || !window.performance) return null;
+    
+    const startTime = this.measurements.get(label);
+    if (startTime === undefined) return null;
+
+    const duration = performance.now() - startTime;
+    this.measurements.delete(label);
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`⚡ ${label}: ${duration.toFixed(2)}ms`);
+    }
+
+    return duration;
+  }
+}
+
+/**
+ * Hook for measuring component render performance
+ */
+export function usePerformanceMonitor(componentName: string): void {
+  const monitor = PerformanceMonitor.getInstance();
+
+  useEffect(() => {
+    monitor.start(`${componentName}-render`);
+    return () => {
+      monitor.end(`${componentName}-render`);
+    };
+  });
+}
+
+/**
+ * Optimize images for better performance
+ */
+export function getOptimizedImageProps(
+  src: string,
+  alt: string,
+  options: {
+    priority?: boolean;
+    sizes?: string;
+    quality?: number;
+  } = {}
+) {
+  const { priority = false, sizes = '100vw', quality = 75 } = options;
+
+  return {
+    src,
+    alt,
+    quality,
+    sizes,
+    priority,
+    placeholder: 'blur' as const,
+    blurDataURL: generateBlurDataURL(),
+  };
+}
+
+/**
+ * Generate a simple blur data URL for image placeholders
+ */
+function generateBlurDataURL(): string {
+  return "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==";
+}

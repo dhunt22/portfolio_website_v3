@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 // These are the icon names available in our icon system
-export type IconName = 'book' | 'document' | 'lightbulb' | 'database' | 'geometry' | 'github';
+export type IconName = 'book' | 'document' | 'lightbulb' | 'database' | 'geometry' | 'github' | 'sun' | 'moon';
 
 export interface IconProps {
   name: IconName;
@@ -26,7 +26,7 @@ const Icon: React.FC<IconProps> = ({
       width={size} 
       height={size} 
       className={cn('inline-block', className)}
-      aria-hidden="true"
+      aria-hidden={true}
     >
       <use href={`/icons/sprite.svg#icon-${name}`} />
     </svg>
@@ -34,3 +34,4 @@ const Icon: React.FC<IconProps> = ({
 };
 
 export default Icon;
+export { Icon };
