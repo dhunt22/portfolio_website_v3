@@ -245,7 +245,7 @@ export default function PortfolioPage() {
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header Section */}
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-forest-800 dark:text-forest-200 mb-4">Portfolio</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-forest-800 dark:text-forest-200 mb-4">Portfolio</h1>
           <p className="text-lg text-forest-600 dark:text-forest-300 mb-6 max-w-3xl">
             A collection of water resources and geospatial projects showcasing data-driven solutions
             for sustainable water management across California.

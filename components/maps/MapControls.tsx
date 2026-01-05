@@ -44,7 +44,7 @@ const MapControls: React.FC<MapControlsProps> = ({
   if (projectId !== 'prison-ej') return null;
 
   return (
-    <div className="absolute top-4 right-16 z-40 flex flex-col gap-2 control-panel">
+    <div className="absolute top-2 sm:top-4 right-14 sm:right-16 z-40 flex flex-col gap-2 control-panel">
       {/* Legend Panel - Always show simplified gradient */}
       {showCategoryPanel && (
         <div className="relative">
@@ -57,7 +57,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                 </label>
                 <button
                   onClick={() => setShowCategoryPanel(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded transition-colors"
+                  className="text-gray-400 hover:text-gray-600 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-gray-100 rounded transition-colors"
                   title="Minimize legend"
                   aria-label="Minimize component legend"
                 >
@@ -86,7 +86,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                 </label>
                 <button
                   onClick={() => setShowCategoryPanel(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded transition-colors"
+                  className="text-gray-400 hover:text-gray-600 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-gray-100 rounded transition-colors"
                   title="Minimize legend"
                   aria-label="Minimize risk legend"
                 >
@@ -109,7 +109,7 @@ const MapControls: React.FC<MapControlsProps> = ({
       {!showCategoryPanel && (
         <button
           onClick={() => setShowCategoryPanel(true)}
-          className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md p-2 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-forest-500"
+          className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md p-3 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-forest-500 min-h-[44px]"
           title="Show risk category panel"
           aria-label="Show risk category panel"
         >
@@ -128,7 +128,7 @@ const MapControls: React.FC<MapControlsProps> = ({
       {/* Filter Toggle Button - Always show for prison maps */}
       <button
         onClick={() => setShowAllPrisons(!showAllPrisons)}
-        className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-3 py-2 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 min-w-[48px] flex items-center justify-center"
+        className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-3 py-3 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 min-w-[48px] flex items-center justify-center"
         title={showAllPrisons ? 'Show top facilities (≥95th percentile)' : 'Show all prisons'}
         aria-label={showAllPrisons ? 'Filter to top facilities at 95th percentile or higher' : 'Show all prisons'}
       >

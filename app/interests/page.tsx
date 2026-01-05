@@ -71,7 +71,7 @@ export default function InterestsPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8 relative z-10">
-        <h1 className="text-4xl font-bold text-forest-800 dark:text-forest-200 mb-6">Personal Interests</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-forest-800 dark:text-forest-200 mb-6">Personal Interests</h1>
 
         <div className="space-y-8">
         <section id="exploration" className="scroll-mt-16">
@@ -99,7 +99,7 @@ export default function InterestsPage() {
                 </p>
               </div>
               
-              <div className="relative h-[300px] md:h-auto">
+              <div className="relative h-[250px] sm:h-[300px] md:h-auto">
                 <Image
                   src="/images/exploration.jpg"
                   alt="A silver Tundra covered in orange Moab mud after driving Shafer Trail in Canyonlands National Park"
@@ -126,7 +126,7 @@ export default function InterestsPage() {
             aria-label="Fishing interest section"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative h-[300px] md:h-auto order-last md:order-first">
+              <div className="relative h-[250px] sm:h-[300px] md:h-auto order-last md:order-first">
                 <Image
                   src="/images/fishing.jpg"
                   alt="A calm alpine lake at dusk near Winter Park, Colorado"
@@ -199,7 +199,7 @@ export default function InterestsPage() {
                 </p>
               </div>
 
-              <div className="relative h-[300px] md:h-auto">
+              <div className="relative h-[250px] sm:h-[300px] md:h-auto">
                 <Image
                   src="/images/bicycle_kitchen.jpg"
                   alt="A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen"
@@ -226,7 +226,7 @@ export default function InterestsPage() {
             aria-label="Community involvement section"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative h-[300px] md:h-auto order-last md:order-first">
+              <div className="relative h-[250px] sm:h-[300px] md:h-auto order-last md:order-first">
                 <Image
                   src="/images/vacancyFee.png"
                   alt="Vacancy Fee organization logo"
@@ -299,7 +299,7 @@ export default function InterestsPage() {
                 </p>
               </div>
               
-              <div className="relative h-[300px] md:h-auto">
+              <div className="relative h-[250px] sm:h-[300px] md:h-auto">
                 <Image
                   src="/images/mycology.jpg"
                   alt="Unidentified mushroom in Fraser Experimental Forest"
@@ -323,7 +323,7 @@ export default function InterestsPage() {
             aria-label="Photography interest section"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative h-[300px] md:h-auto order-last md:order-first">
+              <div className="relative h-[250px] sm:h-[300px] md:h-auto order-last md:order-first">
                 <Image
                   src="/images/photography.jpg"
                   alt="Wood texture captured during a hike"
@@ -374,7 +374,7 @@ export default function InterestsPage() {
                 </p>
               </div>
 
-              <div className="relative h-[400px] bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
+              <div className="relative h-[300px] sm:h-[350px] md:h-[400px] bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
                 {/* Carousel Container */}
                 <div className="relative w-full h-full flex items-center justify-center p-4">
                   {/* Current Image */}
@@ -389,7 +389,7 @@ export default function InterestsPage() {
                   {/* Previous Button */}
                   <button
                     onClick={prevImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-2 shadow-lg transition-all"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-3 shadow-lg transition-all"
                     aria-label="Previous image"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -400,7 +400,7 @@ export default function InterestsPage() {
                   {/* Next Button */}
                   <button
                     onClick={nextImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-2 shadow-lg transition-all"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-3 shadow-lg transition-all"
                     aria-label="Next image"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -414,13 +414,15 @@ export default function InterestsPage() {
                       <button
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          index === currentImageIndex
-                            ? 'bg-forest-600 dark:bg-forest-400 w-4'
-                            : 'bg-gray-400 dark:bg-gray-600'
-                        }`}
+                        className="p-2 flex items-center justify-center"
                         aria-label={`Go to image ${index + 1}`}
-                      />
+                      >
+                        <span className={`w-3 h-3 rounded-full transition-all ${
+                          index === currentImageIndex
+                            ? 'bg-forest-600 dark:bg-forest-400 w-6'
+                            : 'bg-gray-400 dark:bg-gray-600'
+                        }`} />
+                      </button>
                     ))}
                   </div>
                 </div>

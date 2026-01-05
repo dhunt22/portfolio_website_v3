@@ -59,13 +59,13 @@ export default function Home() {
         <section className="mb-16">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="w-full md:w-1/2">
-            <h1 className="text-4xl md:text-5xl font-bold text-forest-800 dark:text-forest-200 mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-forest-800 dark:text-forest-200 mb-4">
               Devin Hunt
             </h1>
-            <h2 className="text-xl md:text-2xl text-forest-600 dark:text-forest-300 mb-6">
+            <h2 className="text-lg sm:text-xl md:text-2xl text-forest-600 dark:text-forest-300 mb-6">
               Water Resources Engineer & Explorer
             </h2>
-            <p className="text-base md:text-lg mb-6">
+            <p className="text-sm sm:text-base md:text-lg mb-6">
               Passionate about understanding and solving water resource challenges in California 
               through data-driven approaches. Skilled in leveraging open-source data, spatial 
               analysis, and groundwater modeling to support sustainable water management.
@@ -148,8 +148,8 @@ export default function Home() {
       <section>
         <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-6">Personal Passions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Link href="/interests#exploration" className="group">
-            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md group-hover:scale-105">
+          <Link href="/interests#exploration" className="group touch-manipulation">
+            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm h-full transition-[transform,box-shadow] duration-300 md:group-hover:shadow-md active:shadow-md md:group-hover:scale-105 active:scale-[0.98] md:active:scale-[1.02] group-focus-visible:ring-2 group-focus-visible:ring-blue-500 group-focus-visible:ring-offset-2 dark:group-focus-visible:ring-offset-gray-900">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapIcon className="text-earth-600 w-6 h-6" aria-hidden={true} />
@@ -166,8 +166,8 @@ export default function Home() {
             </Card>
           </Link>
 
-          <Link href="/interests#fishing" className="group">
-            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm h-full transition-all duration-300 group-hover:shadow-md group-hover:scale-105">
+          <Link href="/interests#fishing" className="group touch-manipulation">
+            <Card className="bg-white/90 dark:bg-[#404040]/90 backdrop-blur-sm h-full transition-[transform,box-shadow] duration-300 md:group-hover:shadow-md active:shadow-md md:group-hover:scale-105 active:scale-[0.98] md:active:scale-[1.02] group-focus-visible:ring-2 group-focus-visible:ring-blue-500 group-focus-visible:ring-offset-2 dark:group-focus-visible:ring-offset-gray-900">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FishIcon className="text-river-600 w-6 h-6" aria-hidden={true} />
