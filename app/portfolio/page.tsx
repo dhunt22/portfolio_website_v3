@@ -4,15 +4,32 @@
 
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
+import { useUpperFolsomBackground } from '@/hooks/useThemeBackground';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PROJECTS, Project, getProjectsByCategory } from '@/lib/portfolio-data';
 import { ExternalLinkIcon, GitHubIcon, DownloadIcon } from '@/components/ui/icons/common-icons';
+import { PageBackground } from '@/components/ui/PageBackground';
+
+/**
+ * Shared styles for portfolio category tab triggers
+ */
+const tabTriggerStyles = [
+  "px-4 py-2 rounded-lg shadow-sm z-20",
+  "border border-gray-200 dark:border-gray-600",
+  "bg-white dark:bg-[#404040]",
+  "text-gray-700 dark:text-forest-300 text-sm font-semibold",
+  "hover:bg-gray-100 dark:hover:bg-forest-800",
+  "focus:outline-none focus:ring-2 focus:ring-forest-500",
+  "data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800",
+  "data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200",
+  "data-[state=active]:border-forest-500",
+  "transition-all",
+].join(" ");
 
 /**
  * Get icon component based on icon type
@@ -163,29 +180,8 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
  * @returns {React.JSX.Element} The rendered portfolio page
  */
 export default function PortfolioPage() {
-  const { resolvedTheme } = useTheme();
+  const { isMobile, backgroundImage } = useUpperFolsomBackground();
   const [activeProject, setActiveProject] = useState<string>('prison-ej');
-  const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Avoid hydration mismatch by only rendering theme-dependent content after mount
-  useEffect(() => {
-    setMounted(true);
-
-    // Check if mobile on mount and on resize
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const backgroundImage = mounted && resolvedTheme === 'dark'
-    ? 'url(/images/upper_folsom_contour_dark.svg)'
-    : 'url(/images/upper_folsom_contour_bwn.svg)';
 
   // Memoize filtered projects for better performance
   const projectsByCategory = useMemo(() => {
@@ -215,32 +211,7 @@ export default function PortfolioPage() {
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
-        {/* Normal orientation - single instance from top */}
-        <div
-          className="w-full opacity-10 dark:opacity-15 absolute top-0 left-0 right-0"
-          style={{
-            backgroundImage,
-            backgroundSize: isMobile ? '250% auto' : '100% auto',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'no-repeat',
-            height: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
-          }}
-        />
-        {/* Flipped SVG positioned where first instance ends */}
-        <div
-          className="w-full opacity-10 dark:opacity-15 absolute left-0 right-0"
-          style={{
-            top: '56.25%', // Start where first SVG ends
-            backgroundImage,
-            backgroundSize: isMobile ? '250% auto' : '100% auto',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'repeat-y',
-            transform: 'scaleY(-1)',
-            height: 'calc(100% - 56.25%)',
-          }}
-        />
-      </div>
+      <PageBackground backgroundImage={backgroundImage} isMobile={isMobile} dualBackground />
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header Section */}
@@ -263,7 +234,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="all"
               id="tab-all"
-              className="px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 z-20 transition-all"
+              className={tabTriggerStyles}
               aria-label={`All projects (${projectsByCategory.all?.length ?? 0} items)`}
             >
               All Projects ({projectsByCategory.all?.length ?? 0})
@@ -271,7 +242,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="water"
               id="tab-water"
-              className="px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 z-20 transition-all"
+              className={tabTriggerStyles}
               aria-label={`Water resources projects (${projectsByCategory.water?.length ?? 0} items)`}
             >
               Water Resources ({projectsByCategory.water?.length ?? 0})
@@ -279,7 +250,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="geospatial"
               id="tab-geospatial"
-              className="px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 z-20 transition-all"
+              className={tabTriggerStyles}
               aria-label={`Geospatial analysis projects (${projectsByCategory.geospatial?.length ?? 0} items)`}
             >
               Geospatial Analysis ({projectsByCategory.geospatial?.length ?? 0})
@@ -287,7 +258,7 @@ export default function PortfolioPage() {
             <TabsTrigger
               value="research"
               id="tab-research"
-              className="px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#404040] text-gray-700 dark:text-forest-300 hover:bg-gray-100 dark:hover:bg-forest-800 focus:outline-none focus:ring-2 focus:ring-forest-500 text-sm font-semibold data-[state=active]:bg-forest-50 dark:data-[state=active]:bg-forest-800 data-[state=active]:text-forest-700 dark:data-[state=active]:text-forest-200 data-[state=active]:border-forest-500 z-20 transition-all"
+              className={tabTriggerStyles}
               aria-label={`Research projects (${projectsByCategory.research?.length ?? 0} items)`}
             >
               Research ({projectsByCategory.research?.length ?? 0})

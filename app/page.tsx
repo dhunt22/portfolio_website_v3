@@ -6,54 +6,23 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapIcon, FishIcon } from '@/components/ui/icons/common-icons';
+import { useAmericanRiverBackground } from '@/hooks/useThemeBackground';
+import { PageBackground } from '@/components/ui/PageBackground';
 
 /**
  * Home page component displaying introduction and highlights
  * @returns {React.JSX.Element} The rendered home page
  */
 export default function Home() {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Avoid hydration mismatch by only rendering theme-dependent content after mount
-  useEffect(() => {
-    setMounted(true);
-
-    // Check if mobile on mount and on resize
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const backgroundImage = mounted && resolvedTheme === 'dark'
-    ? 'url(/images/american_river_contour_dark.svg)'
-    : 'url(/images/american_river_contour_bwn.svg)';
+  const { isMobile, backgroundImage } = useAmericanRiverBackground();
 
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
-        <div
-          className="w-full h-full opacity-10 dark:opacity-15"
-          style={{
-            backgroundImage,
-            backgroundSize: isMobile ? '250% auto' : '100% auto',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'repeat-y',
-          }}
-        />
-      </div>
+      <PageBackground backgroundImage={backgroundImage} isMobile={isMobile} />
 
       <div className="container mx-auto px-4 py-12 relative z-10">
         <section className="mb-16">
