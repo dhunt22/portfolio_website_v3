@@ -483,7 +483,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
             {/* Tabs Navigation */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-0 bg-transparent p-0 gap-1 relative" style={{ marginBottom: '-1px' }}>
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-2 md:mb-0 bg-transparent p-0 gap-1 relative z-10">
                 <TabsTrigger
                   value="climate"
                   className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-forest-50 dark:bg-forest-900/50 text-forest-900 dark:text-forest-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-forest-100 dark:hover:bg-forest-900/70 data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"

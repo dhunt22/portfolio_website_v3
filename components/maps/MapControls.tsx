@@ -57,11 +57,11 @@ const MapControls: React.FC<MapControlsProps> = ({
                 </label>
                 <button
                   onClick={() => setShowCategoryPanel(false)}
-                  className="text-gray-400 hover:text-gray-600 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-gray-100 rounded transition-colors"
+                  className="text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-100 rounded transition-colors"
                   title="Minimize legend"
                   aria-label="Minimize component legend"
                 >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -86,11 +86,11 @@ const MapControls: React.FC<MapControlsProps> = ({
                 </label>
                 <button
                   onClick={() => setShowCategoryPanel(false)}
-                  className="text-gray-400 hover:text-gray-600 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-gray-100 rounded transition-colors"
+                  className="text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-100 rounded transition-colors"
                   title="Minimize legend"
                   aria-label="Minimize risk legend"
                 >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -109,7 +109,7 @@ const MapControls: React.FC<MapControlsProps> = ({
       {!showCategoryPanel && (
         <button
           onClick={() => setShowCategoryPanel(true)}
-          className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md p-3 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-forest-500 min-h-[44px]"
+          className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md p-1.5 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-forest-500"
           title="Show risk category panel"
           aria-label="Show risk category panel"
         >
@@ -128,11 +128,11 @@ const MapControls: React.FC<MapControlsProps> = ({
       {/* Filter Toggle Button - Always show for prison maps */}
       <button
         onClick={() => setShowAllPrisons(!showAllPrisons)}
-        className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-3 py-3 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 min-w-[48px] flex items-center justify-center"
+        className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-2 py-1 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 flex items-center justify-center"
         title={showAllPrisons ? 'Show top facilities (≥95th percentile)' : 'Show all prisons'}
         aria-label={showAllPrisons ? 'Filter to top facilities at 95th percentile or higher' : 'Show all prisons'}
       >
-        <span className="text-sm font-medium text-black">
+        <span className="text-xs font-medium text-black">
           {showAllPrisons ? 'All' : 'Top'}
         </span>
       </button>
