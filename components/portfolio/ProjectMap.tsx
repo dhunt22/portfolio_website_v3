@@ -180,18 +180,21 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
     }
   }, [selectedComponent, componentColor, projectId]);
   
-  // Close panels when clicking outside (only for category panel when minimized)
+  // Close panels when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: PointerEvent) => {
       const target = event.target as Element;
-      if (!target.closest('.control-panel') && !showCategoryPanel) {
-        // Only handle outside clicks when panel is minimized
-        // When open, user must explicitly close it
+
+      // Close panel when clicking outside of it (only when panel is open)
+      if (showCategoryPanel && !target.closest('.control-panel')) {
+        setShowCategoryPanel(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => {
+      document.removeEventListener('pointerdown', handleClickOutside);
+    };
   }, [showCategoryPanel]);
   
   if (mapError) {

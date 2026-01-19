@@ -87,7 +87,7 @@ export default function ResumePage() {
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-forest-800 dark:text-forest-200">Resume</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-forest-800 dark:text-forest-200">Resume</h1>
           <Button className="bg-river-600 hover:bg-river-700">
             <a
               href="/data/devin_hunt_resume_june2025.pdf"
