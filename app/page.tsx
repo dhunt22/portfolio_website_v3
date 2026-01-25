@@ -40,14 +40,14 @@ export default function Home() {
               analysis, and groundwater modeling to support sustainable water management.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/resume">
-                <Button className="bg-river-600 hover:bg-river-700 w-full sm:w-auto">View Resume</Button>
-              </Link>
               <Link href="/portfolio">
                 <Button variant="outline" className="border-forest-600 text-forest-600 dark:border-forest-200
                 dark:text-forest-200 hover:bg-forest-900 hover:text-forest-600 hover:border-forest-600 w-full sm:w-auto">
                   Explore Portfolio
                 </Button>
+              </Link>
+              <Link href="/resume">
+                <Button className="bg-forest-600 hover:bg-forest-700 w-full sm:w-auto">View Resume</Button>
               </Link>
             </div>
           </div>

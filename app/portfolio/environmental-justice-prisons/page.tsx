@@ -486,7 +486,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-14 md:mb-0 bg-transparent p-0 gap-1 relative z-10">
                 <TabsTrigger
                   value="climate"
-                  className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-forest-50 dark:bg-forest-900/50 text-forest-900 dark:text-forest-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-forest-100 dark:hover:bg-forest-900/70 data-[state=active]:bg-forest-600 data-[state=active]:text-white data-[state=active]:border-forest-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"
+                  className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-forest-50 dark:bg-forest-900/50 text-forest-900 dark:text-forest-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-forest-100 dark:hover:bg-forest-900/70 data-[state=active]:bg-forest-600 dark:data-[state=active]:bg-forest-500 data-[state=active]:text-white data-[state=active]:border-forest-600 dark:data-[state=active]:border-forest-400 data-[state=active]:border-b-white data-[state=active]:z-10 dark:data-[state=active]:shadow-md transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"
                 >
                   Climate Risk
                   {currentComponent.category === 'climate' && (
@@ -495,7 +495,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="exposure"
-                  className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-purple-50 dark:bg-purple-900/50 text-purple-900 dark:text-purple-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-purple-100 dark:hover:bg-purple-900/70 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"
+                  className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-purple-50 dark:bg-purple-900/50 text-purple-900 dark:text-purple-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-purple-100 dark:hover:bg-purple-900/70 data-[state=active]:bg-purple-600 dark:data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:border-purple-600 dark:data-[state=active]:border-purple-400 data-[state=active]:border-b-white data-[state=active]:z-10 dark:data-[state=active]:shadow-md transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"
                 >
                   Exposure
                   {currentComponent.category === 'exposure' && (
@@ -504,7 +504,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="effects"
-                  className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-orange-50 dark:bg-orange-900/50 text-orange-900 dark:text-orange-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-orange-100 dark:hover:bg-orange-900/70 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:border-orange-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"
+                  className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-orange-50 dark:bg-orange-900/50 text-orange-900 dark:text-orange-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-orange-100 dark:hover:bg-orange-900/70 data-[state=active]:bg-orange-600 dark:data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:border-orange-600 dark:data-[state=active]:border-orange-400 data-[state=active]:border-b-white data-[state=active]:z-10 dark:data-[state=active]:shadow-md transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"
                 >
                   Proximity
                   {currentComponent.category === 'effects' && (
@@ -513,7 +513,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger
                   value="overall"
-                  className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-red-50 dark:bg-red-900/50 text-red-900 dark:text-red-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-red-100 dark:hover:bg-red-900/70 data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:border-red-600 data-[state=active]:border-b-white data-[state=active]:z-10 transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"
+                  className="relative border border-gray-100 dark:border-forest-700 md:border-b-0 bg-red-50 dark:bg-red-900/50 text-red-900 dark:text-red-200 rounded-lg md:rounded-t-lg md:rounded-b-none hover:bg-red-100 dark:hover:bg-red-900/70 data-[state=active]:bg-red-600 dark:data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:border-red-600 dark:data-[state=active]:border-red-400 data-[state=active]:border-b-white data-[state=active]:z-10 dark:data-[state=active]:shadow-md transition-all py-2.5 md:py-1.5 text-xs sm:text-sm"
                 >
                   Overall
                   {currentComponent.category === 'overall' && (
