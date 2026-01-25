@@ -25,7 +25,7 @@ function NavLink({ href, children, currentPath }: {
   currentPath: string | null;
 }) {
   const isActive = currentPath === href || (href !== '/' && currentPath?.startsWith(href));
-  
+
   return (
     <Link
       href={href}
@@ -39,6 +39,49 @@ function NavLink({ href, children, currentPath }: {
         <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-forest-700 dark:bg-forest-400 rounded-full" />
       )}
     </Link>
+  );
+}
+
+/**
+ * Navigation link with dropdown for desktop view
+ */
+function NavLinkWithDropdown({ href, children, currentPath, dropdownItems }: {
+  href: string;
+  children: React.ReactNode;
+  currentPath: string | null;
+  dropdownItems: { href: string; label: string }[];
+}) {
+  const isActive = currentPath === href || (href !== '/' && currentPath?.startsWith(href));
+
+  return (
+    <div className="relative group">
+      <Link
+        href={href}
+        className={`text-forest-700 dark:text-forest-300 hover:text-forest-900 dark:hover:text-forest-200 transition-colors duration-200 relative ${
+          isActive ? 'text-forest-900 dark:text-forest-200 font-semibold' : ''
+        }`}
+        aria-current={isActive ? 'page' : undefined}
+      >
+        {children}
+        {isActive && (
+          <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-forest-700 dark:bg-forest-400 rounded-full" />
+        )}
+      </Link>
+      {/* Dropdown on hover */}
+      <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+        <div className="bg-white dark:bg-[#404040] border border-gray-200 dark:border-forest-700 rounded-md shadow-lg py-1 min-w-max">
+          {dropdownItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="block px-4 py-2 text-sm text-forest-600 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 hover:text-forest-900 dark:hover:text-forest-200 transition-colors"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -112,10 +155,18 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="flex items-center gap-4">
-            <nav className="hidden md:flex space-x-6" role="navigation" aria-label="Main navigation">
+            <nav className="hidden md:flex space-x-6 items-center" role="navigation" aria-label="Main navigation">
               <NavLink href="/" currentPath={pathname}>Home</NavLink>
               <NavLink href="/resume" currentPath={pathname}>Resume</NavLink>
-              <NavLink href="/portfolio" currentPath={pathname}>Portfolio</NavLink>
+              <NavLinkWithDropdown
+                href="/portfolio"
+                currentPath={pathname}
+                dropdownItems={[
+                  { href: '/portfolio/environmental-justice-prisons', label: 'NASA EEJ: Prisons' }
+                ]}
+              >
+                Portfolio
+              </NavLinkWithDropdown>
               <NavLink href="/interests" currentPath={pathname}>Interests</NavLink>
             </nav>
 
@@ -153,9 +204,19 @@ export default function Header() {
               <MobileNavLink href="/resume" onClick={closeMobileMenu} currentPath={pathname}>
                 Resume
               </MobileNavLink>
-              <MobileNavLink href="/portfolio" onClick={closeMobileMenu} currentPath={pathname}>
-                Portfolio
-              </MobileNavLink>
+              <div className="flex items-center gap-2">
+                <MobileNavLink href="/portfolio" onClick={closeMobileMenu} currentPath={pathname}>
+                  Portfolio
+                </MobileNavLink>
+                <span className="text-forest-400 dark:text-forest-600 text-sm">›</span>
+                <Link
+                  href="/portfolio/environmental-justice-prisons"
+                  onClick={closeMobileMenu}
+                  className="text-sm text-forest-500 dark:text-forest-400 hover:text-forest-700 dark:hover:text-forest-300 transition-colors"
+                >
+                  NASA EEJ
+                </Link>
+              </div>
               <MobileNavLink href="/interests" onClick={closeMobileMenu} currentPath={pathname}>
                 Interests
               </MobileNavLink>
