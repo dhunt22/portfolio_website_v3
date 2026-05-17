@@ -7,6 +7,7 @@ interface ThemeBackgroundOptions {
   lightImage: string;
   darkImage: string;
   mobileBreakpoint?: number;
+  animatedLightImage?: string;
 }
 
 interface ThemeBackgroundResult {
@@ -15,6 +16,7 @@ interface ThemeBackgroundResult {
   resolvedTheme: string | undefined;
   backgroundImage: string;
   isDark: boolean;
+  animatedLightSrc?: string;
 }
 
 // Background image presets for different pages
@@ -22,6 +24,7 @@ export const BACKGROUND_PRESETS = {
   americanRiver: {
     lightImage: '/images/american_river_contour_bwn.svg',
     darkImage: '/images/american_river_contour_dark.svg',
+    animatedLightImage: '/images/american_river_contour_bwn.svg',
   },
   upperFolsom: {
     lightImage: '/images/upper_folsom_contour_bwn.svg',
@@ -65,6 +68,7 @@ export function useThemeBackground(options: ThemeBackgroundOptions): ThemeBackgr
     resolvedTheme,
     backgroundImage,
     isDark,
+    animatedLightSrc: options.animatedLightImage,
   };
 }
 
