@@ -10,19 +10,25 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapIcon, FishIcon } from '@/components/ui/icons/common-icons';
 import { useAmericanRiverBackground } from '@/hooks/useThemeBackground';
-import { PageBackground } from '@/components/ui/PageBackground';
+import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
 
 /**
  * Home page component displaying introduction and highlights
  * @returns {React.JSX.Element} The rendered home page
  */
 export default function Home() {
-  const { isMobile, backgroundImage } = useAmericanRiverBackground();
+  const { isMobile, backgroundImage, isDark, mounted, animatedLightSrc } = useAmericanRiverBackground();
 
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <PageBackground backgroundImage={backgroundImage} isMobile={isMobile} />
+      <AnimatedContourBackground
+        backgroundImage={backgroundImage}
+        isMobile={isMobile}
+        isDark={isDark}
+        mounted={mounted}
+        animatedSrc={animatedLightSrc}
+      />
 
       <div className="container mx-auto px-4 py-12 relative z-10">
         <section className="mb-16">

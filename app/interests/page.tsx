@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { useAmericanRiverBackground } from '@/hooks/useThemeBackground';
 import { InterestSection, InterestSectionProps } from '@/components/interests/InterestSection';
-import { PageBackground } from '@/components/ui/PageBackground';
+import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
 
 // Blur data URL constant (reused across multiple sections)
 const DEFAULT_BLUR_DATA_URL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==";
@@ -138,7 +138,7 @@ const interestSections: InterestSectionProps[] = [
  * @returns {React.JSX.Element} The rendered interests page
  */
 export default function InterestsPage() {
-  const { isMobile, backgroundImage } = useAmericanRiverBackground();
+  const { isMobile, backgroundImage, isDark, mounted, animatedLightSrc } = useAmericanRiverBackground();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Carousel images for GIS section
@@ -158,7 +158,13 @@ export default function InterestsPage() {
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <PageBackground backgroundImage={backgroundImage} isMobile={isMobile} />
+      <AnimatedContourBackground
+        backgroundImage={backgroundImage}
+        isMobile={isMobile}
+        isDark={isDark}
+        mounted={mounted}
+        animatedSrc={animatedLightSrc}
+      />
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         <h1 className="text-3xl sm:text-4xl font-bold text-forest-800 dark:text-forest-200 mb-6">
