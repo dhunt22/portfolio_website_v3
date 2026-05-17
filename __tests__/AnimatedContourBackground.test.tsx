@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
 
 function setReducedMotion(matches: boolean) {
@@ -69,4 +69,24 @@ test('underlay removed after object load', () => {
   expect(container.querySelectorAll('[data-bg-underlay]').length).toBe(1);
   fireEvent.load(container.querySelector('object')!);
   expect(container.querySelectorAll('[data-bg-underlay]').length).toBe(0);
+});
+
+test('hides object when reduced-motion turns on at runtime', () => {
+  let changeHandler: ((e: { matches: boolean }) => void) | null = null;
+  window.matchMedia = jest.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: (_: string, cb: (e: { matches: boolean }) => void) => { changeHandler = cb; },
+    removeEventListener: jest.fn(),
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  }));
+  const { container } = render(
+    <AnimatedContourBackground {...base} isDark={false} mounted={true} />,
+  );
+  expect(container.querySelector('object')).toBeInTheDocument();
+  act(() => { changeHandler && changeHandler({ matches: true }); });
+  expect(container.querySelector('object')).not.toBeInTheDocument();
 });

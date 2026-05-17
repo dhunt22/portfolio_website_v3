@@ -27,16 +27,23 @@ export function AnimatedContourBackground({
   animatedSrc,
   dualBackground = false,
 }: AnimatedContourBackgroundProps) {
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false,
+  );
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(mq.matches);
     const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);
   }, []);
+
+  useEffect(() => {
+    setLoaded(false);
+  }, [animatedSrc]);
 
   const shouldAnimate = mounted && !isDark && !reducedMotion && !!animatedSrc;
 
