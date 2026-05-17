@@ -6,8 +6,8 @@ import { useState, useEffect, useMemo } from 'react';
 interface ThemeBackgroundOptions {
   lightImage: string;
   darkImage: string;
-  mobileBreakpoint?: number;
   animatedLightImage?: string;
+  mobileBreakpoint?: number;
 }
 
 interface ThemeBackgroundResult {
