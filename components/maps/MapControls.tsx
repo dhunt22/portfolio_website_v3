@@ -41,10 +41,16 @@ const MapControls: React.FC<MapControlsProps> = ({
   componentName,
   componentColor
 }) => {
+  const [isHoveringControls, setIsHoveringControls] = React.useState(false);
+
   if (projectId !== 'prison-ej') return null;
 
   return (
-    <div className="absolute top-4 right-16 z-40 flex flex-col gap-2 control-panel">
+    <div
+      className="absolute top-4 right-16 z-40 flex flex-col gap-2 control-panel"
+      onMouseEnter={() => setIsHoveringControls(true)}
+      onMouseLeave={() => setIsHoveringControls(false)}
+    >
       {/* Legend Panel - Always show simplified gradient */}
       {showCategoryPanel && (
         <div className="relative">
@@ -109,11 +115,16 @@ const MapControls: React.FC<MapControlsProps> = ({
       {!showCategoryPanel && (
         <button
           onClick={() => setShowCategoryPanel(true)}
-          className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md p-2 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-forest-500"
+          className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-3 py-2 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 flex items-center justify-center gap-2 overflow-hidden"
           title="Show risk category panel"
           aria-label="Show risk category panel"
         >
-          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span className={`text-sm font-medium text-black transition-all duration-300 overflow-hidden whitespace-nowrap ${
+            isHoveringControls ? 'max-w-[100px]' : 'max-w-0'
+          }`}>
+            Legend
+          </span>
+          <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {/* Hamburger lines with circles */}
             <circle cx="5" cy="6" r="1.5" fill="currentColor" />
             <line x1="9" y1="6" x2="19" y2="6" strokeWidth="2" strokeLinecap="round" />
@@ -128,13 +139,28 @@ const MapControls: React.FC<MapControlsProps> = ({
       {/* Filter Toggle Button - Always show for prison maps */}
       <button
         onClick={() => setShowAllPrisons(!showAllPrisons)}
-        className="bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-3 py-2 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 min-w-[48px] flex items-center justify-center"
+        className={`bg-white hover:bg-gray-50 border border-gray-300 rounded-md px-3 py-2 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-forest-500 ${
+          showCategoryPanel ? 'w-48' : 'overflow-hidden'
+        }`}
         title={showAllPrisons ? 'Show top facilities (≥95th percentile)' : 'Show all prisons'}
         aria-label={showAllPrisons ? 'Filter to top facilities at 95th percentile or higher' : 'Show all prisons'}
       >
-        <span className="text-sm font-medium text-black">
-          {showAllPrisons ? 'All' : 'Top'}
-        </span>
+        {showCategoryPanel ? (
+          <div className="text-sm font-medium text-black text-center">
+            {showAllPrisons ? 'All Prisons' : 'Top Percentile'}
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 whitespace-nowrap">
+            <span className="text-sm font-medium text-black">
+              {showAllPrisons ? 'All' : 'Top'}
+            </span>
+            <span className={`text-sm font-medium text-black transition-all duration-300 overflow-hidden ${
+              isHoveringControls ? 'max-w-[100px]' : 'max-w-0'
+            }`}>
+              {showAllPrisons ? 'Prisons' : 'Percentile'}
+            </span>
+          </div>
+        )}
       </button>
     </div>
   );

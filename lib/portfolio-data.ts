@@ -14,7 +14,7 @@ export interface Project {
   links?: {
     href: string;
     label: string;
-    iconType?: 'github' | 'external' | 'document' | 'website';
+    iconType?: 'github' | 'external' | 'document' | 'website';  
   }[];
   featured?: boolean;
   year?: string;
@@ -45,8 +45,8 @@ export const PROJECTS: Project[] = [
     links: [
       {
         href: 'https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1',
-        label: 'GitHub Repository',
-        iconType: 'github'
+        label: 'Published Dataset',
+        iconType: 'external'
       },
       {
         href: '/portfolio/environmental-justice-prisons',

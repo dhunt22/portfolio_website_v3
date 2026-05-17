@@ -10,7 +10,12 @@ const nextConfig = {
   // Disable image optimization for static export
   images: {
     unoptimized: true,
-    domains: ['placeholder.com'], // Add any external image domains here
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placeholder.com',
+      },
+    ],
   },
   
   // Enable strict mode for better development experience

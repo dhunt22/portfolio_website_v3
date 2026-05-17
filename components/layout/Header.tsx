@@ -25,7 +25,7 @@ function NavLink({ href, children, currentPath }: {
   currentPath: string | null;
 }) {
   const isActive = currentPath === href || (href !== '/' && currentPath?.startsWith(href));
-  
+
   return (
     <Link
       href={href}
@@ -39,6 +39,77 @@ function NavLink({ href, children, currentPath }: {
         <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-forest-700 dark:bg-forest-400 rounded-full" />
       )}
     </Link>
+  );
+}
+
+/**
+ * Portfolio dropdown component for desktop view
+ * @param {Object} props - Component props
+ * @param {string} props.currentPath - Current pathname for active state
+ * @returns {React.JSX.Element} Portfolio dropdown
+ */
+function PortfolioDropdown({ currentPath }: { currentPath: string | null }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
+  const isActive = currentPath === '/portfolio' || currentPath?.startsWith('/portfolio');
+
+  const handleMouseEnter = () => {
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setIsOpen(false);
+    }, 500);
+    setCloseTimeout(timeout);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+      }
+    };
+  }, [closeTimeout]);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <Link
+        href="/portfolio"
+        className={`text-forest-700 dark:text-forest-300 hover:text-forest-900 dark:hover:text-forest-200 transition-colors duration-200 relative ${
+          isActive ? 'text-forest-900 dark:text-forest-200 font-semibold' : ''
+        }`}
+        aria-current={isActive ? 'page' : undefined}
+      >
+        Portfolio
+        {isActive && (
+          <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-forest-700 dark:bg-forest-400 rounded-full" />
+        )}
+      </Link>
+
+      {/* Dropdown menu */}
+      <div
+        className={`absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#404040] rounded-lg shadow-lg border border-gray-200 dark:border-forest-700 overflow-hidden transition-all duration-200 origin-top ${
+          isOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'
+        }`}
+      >
+        <Link
+          href="/portfolio/environmental-justice-prisons"
+          className="block px-4 py-3 text-sm text-forest-700 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 transition-colors duration-150"
+        >
+          <div className="font-medium">Environmental Justice</div>
+          <div className="text-xs text-forest-600 dark:text-forest-400 mt-0.5">NASA Prison EJ Project</div>
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -115,7 +186,7 @@ export default function Header() {
             <nav className="hidden md:flex space-x-6" role="navigation" aria-label="Main navigation">
               <NavLink href="/" currentPath={pathname}>Home</NavLink>
               <NavLink href="/resume" currentPath={pathname}>Resume</NavLink>
-              <NavLink href="/portfolio" currentPath={pathname}>Portfolio</NavLink>
+              <PortfolioDropdown currentPath={pathname} />
               <NavLink href="/interests" currentPath={pathname}>Interests</NavLink>
             </nav>
 

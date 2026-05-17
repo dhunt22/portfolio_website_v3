@@ -37,7 +37,7 @@ export function useThrottle<T extends (...args: any[]) => any>(
   delay: number
 ): T {
   const lastRan = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   return useCallback(
     (...args: Parameters<T>) => {
@@ -67,9 +67,9 @@ export function useThrottle<T extends (...args: any[]) => any>(
  */
 export function useIntersectionObserver(
   options: IntersectionObserverInit = {}
-): [React.RefObject<HTMLElement>, boolean] {
+): [React.RefObject<HTMLElement | null>, boolean] {
   const [isIntersecting, setIsIntersecting] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const element = ref.current;
