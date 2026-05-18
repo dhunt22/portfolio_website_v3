@@ -22,17 +22,14 @@ const base = {
 
 beforeEach(() => setReducedMotion(false));
 
-test('renders pulse overlay (object) when light, mounted, motion ok', () => {
+test('renders pulse overlay when light, mounted, motion ok', () => {
   const { container } = render(
     <AnimatedContourBackground {...base} isDark={false} mounted={true} />,
   );
   const overlay = container.querySelector('[data-pulse-overlay]');
-  const obj = container.querySelector('object');
   expect(overlay).toBeInTheDocument();
-  expect(obj).toBeInTheDocument();
-  expect(obj).toHaveAttribute('data', '/images/american_river_pulses.svg');
-  expect(obj).toHaveAttribute('aria-hidden', 'true');
-  expect(obj).toHaveAttribute('tabindex', '-1');
+  expect(overlay).toHaveAttribute('data-src', '/images/american_river_pulses.svg');
+  expect(overlay).toHaveAttribute('aria-hidden', 'true');
 });
 
 test('renders pulse overlay in dark mode too', () => {
@@ -40,7 +37,6 @@ test('renders pulse overlay in dark mode too', () => {
     <AnimatedContourBackground {...base} isDark={true} mounted={true} />,
   );
   expect(container.querySelector('[data-pulse-overlay]')).toBeInTheDocument();
-  expect(container.querySelector('object')).toBeInTheDocument();
 });
 
 test('no pulse overlay before mount', () => {
