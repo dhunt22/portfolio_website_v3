@@ -23,16 +23,19 @@ interface AnimatedContourBackgroundProps {
  *
  * - Backdrop: the unchanged faint static contour (PageBackground) — always
  *   rendered, so there is never a blank/flashing state.
- * - Pulse overlay: a separate, small SMIL-animated SVG of glow pulses that
- *   trace the contour routes, fetched and inlined on top. Rendered (in both
- *   light and dark themes) when mounted, motion is allowed, and a pulse
- *   source is provided.
+ * - Pulse overlay: a separate, small SVG of soft glow sprites that travel
+ *   the contour routes, fetched and inlined on top. Rendered (in both light
+ *   and dark themes) when mounted, motion is allowed, and a pulse source is
+ *   provided.
  *
  * The pulse SVG is inlined (not embedded via <object>): an <object>'s
  * embedded document composites on an opaque white backing in this layered
- * context, which washed out the dark theme. Inline SVG is transparent,
- * still runs SMIL, and is small (~20 paths). Its translucency is baked into
- * the SVG gradient stop-opacity.
+ * context, which washed out the dark theme. Inline SVG is transparent and
+ * small. The sprites are animated with CSS motion path
+ * (offset-path/offset-distance) + opacity — GPU-composited, so there is no
+ * per-frame rasterization (SMIL gradient animation here saturated the
+ * renderer to ~12fps and wrecked INP). Translucency is baked into the
+ * static gradient stop-opacity.
  */
 export function AnimatedContourBackground({
   backgroundImage,
