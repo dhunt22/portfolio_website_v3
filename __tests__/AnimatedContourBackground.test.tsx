@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
 
 function setReducedMotion(matches: boolean) {
@@ -17,61 +17,55 @@ function setReducedMotion(matches: boolean) {
 const base = {
   backgroundImage: 'url(/images/american_river_contour_bwn.svg)',
   isMobile: false,
-  animatedSrc: '/images/american_river_contour_bwn.svg',
+  animatedSrc: '/images/american_river_pulses.svg',
 };
 
 beforeEach(() => setReducedMotion(false));
 
-test('renders object + underlay when light, mounted, motion ok', () => {
+test('renders pulse overlay (object) when light, mounted, motion ok', () => {
   const { container } = render(
     <AnimatedContourBackground {...base} isDark={false} mounted={true} />,
   );
+  const overlay = container.querySelector('[data-pulse-overlay]');
   const obj = container.querySelector('object');
+  expect(overlay).toBeInTheDocument();
   expect(obj).toBeInTheDocument();
-  expect(obj).toHaveAttribute('data', '/images/american_river_contour_bwn.svg');
+  expect(obj).toHaveAttribute('data', '/images/american_river_pulses.svg');
   expect(obj).toHaveAttribute('aria-hidden', 'true');
   expect(obj).toHaveAttribute('tabindex', '-1');
 });
 
-test('no object in dark mode', () => {
+test('renders pulse overlay in dark mode too', () => {
   const { container } = render(
     <AnimatedContourBackground {...base} isDark={true} mounted={true} />,
   );
-  expect(container.querySelector('object')).not.toBeInTheDocument();
+  expect(container.querySelector('[data-pulse-overlay]')).toBeInTheDocument();
+  expect(container.querySelector('object')).toBeInTheDocument();
 });
 
-test('no object before mount', () => {
+test('no pulse overlay before mount', () => {
   const { container } = render(
     <AnimatedContourBackground {...base} isDark={false} mounted={false} />,
   );
-  expect(container.querySelector('object')).not.toBeInTheDocument();
+  expect(container.querySelector('[data-pulse-overlay]')).not.toBeInTheDocument();
 });
 
-test('no object when animatedSrc missing', () => {
+test('no pulse overlay when animatedSrc missing', () => {
   const { container } = render(
     <AnimatedContourBackground {...base} animatedSrc={undefined} isDark={false} mounted={true} />,
   );
-  expect(container.querySelector('object')).not.toBeInTheDocument();
+  expect(container.querySelector('[data-pulse-overlay]')).not.toBeInTheDocument();
 });
 
-test('no object when reduced motion preferred', () => {
+test('no pulse overlay when reduced motion preferred', () => {
   setReducedMotion(true);
   const { container } = render(
     <AnimatedContourBackground {...base} isDark={false} mounted={true} />,
   );
-  expect(container.querySelector('object')).not.toBeInTheDocument();
+  expect(container.querySelector('[data-pulse-overlay]')).not.toBeInTheDocument();
 });
 
-test('underlay removed after object load', () => {
-  const { container } = render(
-    <AnimatedContourBackground {...base} isDark={false} mounted={true} />,
-  );
-  expect(container.querySelectorAll('[data-bg-underlay]').length).toBe(1);
-  fireEvent.load(container.querySelector('object')!);
-  expect(container.querySelectorAll('[data-bg-underlay]').length).toBe(0);
-});
-
-test('hides object when reduced-motion turns on at runtime', () => {
+test('hides pulse overlay when reduced-motion turns on at runtime', () => {
   let changeHandler: ((e: { matches: boolean }) => void) | null = null;
   window.matchMedia = jest.fn().mockImplementation((query: string) => ({
     matches: false,
@@ -86,7 +80,7 @@ test('hides object when reduced-motion turns on at runtime', () => {
   const { container } = render(
     <AnimatedContourBackground {...base} isDark={false} mounted={true} />,
   );
-  expect(container.querySelector('object')).toBeInTheDocument();
+  expect(container.querySelector('[data-pulse-overlay]')).toBeInTheDocument();
   act(() => { changeHandler && changeHandler({ matches: true }); });
-  expect(container.querySelector('object')).not.toBeInTheDocument();
+  expect(container.querySelector('[data-pulse-overlay]')).not.toBeInTheDocument();
 });

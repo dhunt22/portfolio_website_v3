@@ -7,12 +7,12 @@ jest.mock('next-themes', () => ({
 
 test('americanRiver exposes the animated light src', () => {
   const { result } = renderHook(() => useAmericanRiverBackground());
-  expect(result.current.animatedLightSrc).toBe('/images/american_river_contour_bwn.svg');
+  expect(result.current.animatedLightSrc).toBe('/images/american_river_pulses.svg');
 });
 
-test('upperFolsom has no animated light src', () => {
+test('upperFolsom exposes its pulse-overlay src', () => {
   const { result } = renderHook(() => useUpperFolsomBackground());
-  expect(result.current.animatedLightSrc).toBeUndefined();
+  expect(result.current.animatedLightSrc).toBe('/images/upper_folsom_pulses.svg');
 });
 
 test('existing fields still present', () => {

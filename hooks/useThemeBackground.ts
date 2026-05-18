@@ -24,11 +24,12 @@ export const BACKGROUND_PRESETS = {
   americanRiver: {
     lightImage: '/images/american_river_contour_bwn.svg',
     darkImage: '/images/american_river_contour_dark.svg',
-    animatedLightImage: '/images/american_river_contour_bwn.svg',
+    animatedLightImage: '/images/american_river_pulses.svg',
   },
   upperFolsom: {
     lightImage: '/images/upper_folsom_contour_bwn.svg',
     darkImage: '/images/upper_folsom_contour_dark.svg',
+    animatedLightImage: '/images/upper_folsom_pulses.svg',
   },
 } as const;
 

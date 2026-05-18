@@ -4,8 +4,8 @@
 
 'use client';
 
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useAmericanRiverBackground } from '@/hooks/useThemeBackground';
+import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ResumeSection from '@/components/resume/ResumeSection';
@@ -18,17 +18,7 @@ import { DownloadIcon } from '@/components/ui/icons/common-icons';
  * @returns {React.JSX.Element} The rendered resume page
  */
 export default function ResumePage() {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Avoid hydration mismatch by only rendering theme-dependent content after mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const backgroundImage = mounted && resolvedTheme === 'dark'
-    ? 'url(/images/american_river_contour_dark.svg)'
-    : 'url(/images/american_river_contour_bwn.svg)';
+  const { isMobile, backgroundImage, isDark, mounted, animatedLightSrc } = useAmericanRiverBackground();
 
   // Professional skills data
   const professionalSkills = [
@@ -58,32 +48,14 @@ export default function ResumePage() {
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
-        {/* Normal orientation - single instance from top */}
-        <div
-          className="w-full opacity-10 dark:opacity-15 absolute top-0 left-0 right-0"
-          style={{
-            backgroundImage,
-            backgroundSize: '100% auto',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'no-repeat',
-            height: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
-          }}
-        />
-        {/* Flipped SVG positioned where first instance ends */}
-        <div
-          className="w-full opacity-10 dark:opacity-10 absolute left-0 right-0"
-          style={{
-            top: '56.25%', // Start where first SVG ends
-            backgroundImage,
-            backgroundSize: '100% auto',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'repeat-y',
-            transform: 'scaleY(-1)',
-            height: 'calc(100% - 56.25%)',
-          }}
-        />
-      </div>
+      <AnimatedContourBackground
+        backgroundImage={backgroundImage}
+        isMobile={isMobile}
+        isDark={isDark}
+        mounted={mounted}
+        animatedSrc={animatedLightSrc}
+        dualBackground
+      />
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-8">
