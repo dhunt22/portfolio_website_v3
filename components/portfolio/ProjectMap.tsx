@@ -101,7 +101,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
               console.log('Prison data loaded for filtering:', data.length, 'features');
               setAllPrisonData(data);
             }, selectedComponent, componentColor, instanceId);
-          } else if (projectId === 'cuyama-basin' || projectId === 'yuba-recharge' || projectId === 'watershed-hub') {
+          } else if (projectId === 'watershed-hub') {
             console.log('Setting up subbasin layers...');
             setupSubbasinLayers(map.current, mapConfig);
           }
@@ -232,7 +232,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
   }
   
   return (
-    <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden" style={{ pointerEvents: 'auto' }}>
+    <div className="relative w-full h-full min-h-[300px] overflow-hidden" style={{ pointerEvents: 'auto' }}>
       <div
         ref={mapContainer}
         className="w-full h-full"

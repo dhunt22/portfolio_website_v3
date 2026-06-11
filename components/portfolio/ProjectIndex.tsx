@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
-import { Project, getProjectsByCategory } from '@/lib/portfolio-data';
+import type { Project } from '@/lib/portfolio-data';
 
 interface ProjectIndexProps {
   projects: Project[];
@@ -43,26 +43,28 @@ function ProjectRow({ project }: { project: Project }) {
       )}
 
       {displayType === 'map' && (
-        <div className="my-6 h-[420px] max-w-[40rem]">
+        <div className="my-6 h-[420px] max-w-[40rem] border border-border">
           <LazyProjectMap projectId={project.id} />
         </div>
       )}
 
       {displayType === 'image' && project.imagePath && (
-        <figure className="my-6 max-w-[40rem]">
-          <img
-            src={project.imagePath}
-            alt={project.imageAlt || `${project.title} visualization`}
-            loading="lazy"
-            className="w-full"
-          />
-          {project.imageCaption && (
-            <figcaption className="eyebrow mt-2">{project.imageCaption}</figcaption>
-          )}
+        <>
+          <figure className="my-6 max-w-[40rem]">
+            <img
+              src={project.imagePath}
+              alt={project.imageAlt || `${project.title} visualization`}
+              loading="lazy"
+              className="w-full"
+            />
+            {project.imageCaption && (
+              <figcaption className="eyebrow mt-2">{project.imageCaption}</figcaption>
+            )}
+          </figure>
           {project.imageSecondaryText && (
-            <figcaption className="eyebrow mt-2">{project.imageSecondaryText}</figcaption>
+            <p className="mt-2 max-w-[40rem] text-sm text-ink-muted">{project.imageSecondaryText}</p>
           )}
-        </figure>
+        </>
       )}
 
       {project.links && project.links.length > 0 && (
@@ -95,16 +97,17 @@ function ProjectRow({ project }: { project: Project }) {
 }
 
 export function ProjectIndex({ projects }: ProjectIndexProps) {
-  void projects; // page passes PROJECTS; filtering reads from the shared data helper
-
+  // Filter the single-sourced `projects` prop locally (mirrors getProjectsByCategory:
+  // a project belongs to a tab when project.categories includes that category; 'all'
+  // matches every project that lists 'all'). Avoids shipping PROJECTS twice.
   const projectsByCategory = useMemo(
     () => ({
-      all: getProjectsByCategory('all'),
-      water: getProjectsByCategory('water'),
-      geospatial: getProjectsByCategory('geospatial'),
-      research: getProjectsByCategory('research'),
+      all: projects.filter((project) => project.categories.includes('all')),
+      water: projects.filter((project) => project.categories.includes('water')),
+      geospatial: projects.filter((project) => project.categories.includes('geospatial')),
+      research: projects.filter((project) => project.categories.includes('research')),
     }),
-    [],
+    [projects],
   );
 
   const tabs: { value: keyof typeof projectsByCategory; label: string; aria: string }[] = [
@@ -126,7 +129,6 @@ export function ProjectIndex({ projects }: ProjectIndexProps) {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              id={`tab-${tab.value}`}
               className={tabTriggerStyles}
               aria-label={`${tab.aria} (${count} items)`}
             >
@@ -142,9 +144,7 @@ export function ProjectIndex({ projects }: ProjectIndexProps) {
           <TabsContent
             key={tab.value}
             value={tab.value}
-            id={`panel-${tab.value}`}
             className="mt-0"
-            aria-labelledby={`tab-${tab.value}`}
           >
             {categoryProjects.length > 0 ? (
               categoryProjects.map((project) => (

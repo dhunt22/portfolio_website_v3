@@ -16,9 +16,9 @@ export default function PortfolioPage() {
       <ContourBackdrop preset="upperFolsom" dual />
 
       <div className="container relative z-10 mx-auto px-6">
-        <header className="pt-8">
+        <header className="pt-16">
           <h1 className="display text-4xl">Portfolio</h1>
-          <p className="lead mt-6 max-w-3xl">
+          <p className="lead mt-6 max-w-[40rem]">
             A collection of water resources and geospatial projects showcasing data-driven solutions
             for sustainable water management across California.
           </p>

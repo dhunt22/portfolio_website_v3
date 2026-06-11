@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 // import) only loads in the browser when a map row mounts.
 const ProjectMap = dynamic(() => import('./ProjectMap'), {
   ssr: false,
-  loading: () => <div className="h-[420px] w-full bg-muted" aria-label="Loading map" />,
+  loading: () => <div className="h-full min-h-[280px] w-full bg-muted" aria-label="Loading map" />,
 });
 
 interface ProjectMapWrapperProps {
