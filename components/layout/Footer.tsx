@@ -14,7 +14,7 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-border mt-24">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-6">
         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between py-10">
           {/* Block 1: About */}
           <div>
@@ -31,7 +31,7 @@ export default function Footer() {
           {/* Block 2: Quick Links */}
           <div>
             <p className="eyebrow mb-3">Site Navigation</p>
-            <nav className="flex flex-col gap-2 items-start">
+            <nav className="flex flex-col gap-2 items-start" aria-label="Footer">
               <Link href="/" className="link-quiet">
                 Home
               </Link>

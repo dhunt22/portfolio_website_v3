@@ -71,7 +71,7 @@ function NavLinkWithDropdown({ href, children, currentPath, dropdownItems }: {
             <Link
               key={item.href}
               href={item.href}
-              className="block px-4 py-2 text-sm text-ink-muted hover:bg-secondary hover:text-ink-strong transition-colors"
+              className="block px-6 py-2 text-sm text-ink-muted hover:bg-secondary hover:text-ink-strong transition-colors"
             >
               {item.label}
             </Link>
@@ -146,7 +146,7 @@ export default function Header() {
     <header
       className="fixed top-0 inset-x-0 z-50 border-b border-border bg-[color-mix(in_srgb,var(--surface-page)_88%,transparent)] backdrop-blur-[10px]"
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="font-display text-lg font-medium text-ink-strong">
             Devin Hunt
@@ -197,7 +197,7 @@ export default function Header() {
           id="mobile-menu"
           className="md:hidden bg-background border-b border-border animate-rise"
         >
-          <div className="container mx-auto px-4 py-4">
+          <div className="container mx-auto px-6 py-4">
             <nav className="flex flex-col space-y-4" role="navigation" aria-label="Mobile navigation">
               <MobileNavLink href="/" onClick={closeMobileMenu} currentPath={pathname}>
                 Home

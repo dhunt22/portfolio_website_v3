@@ -28,19 +28,18 @@ export default function Home() {
             through data-driven approaches. Skilled in leveraging open-source data, spatial
             analysis, and groundwater modeling to support sustainable water management.
           </p>
-          <nav className="flex gap-12 animate-rise opacity-0 [animation-delay:400ms] motion-reduce:animate-none motion-reduce:opacity-100">
+          <nav aria-label="Hero" className="flex gap-12 animate-rise opacity-0 [animation-delay:400ms] motion-reduce:animate-none motion-reduce:opacity-100">
             <Link href="/portfolio" className="link-quiet">Explore Portfolio</Link>
             <Link href="/resume" className="link-quiet">View Resume</Link>
           </nav>
         </section>
 
-        <section className="grid gap-12 py-24 md:grid-cols-2 md:items-center">
-          <div className="relative h-[320px] md:h-[380px]">
+        <section className="grid gap-12 py-12 md:grid-cols-2 md:items-center">
+          <div className="relative aspect-[4/3] md:aspect-auto md:h-[380px]">
             <Image
               src="/images/profile.jpg"
               alt="Devin Hunt exploring nature - a water resources engineer in his element"
               fill
-              priority
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
               placeholder="blur"
@@ -49,13 +48,13 @@ export default function Home() {
           </div>
           <figure>
             <blockquote className="font-display italic text-xl leading-snug text-ink-strong">
-              &quot;The world is big, and I want to have a good look at it before it gets dark.&quot;
+              &ldquo;The world is big, and I want to have a good look at it before it gets dark.&rdquo;
             </blockquote>
             <figcaption className="eyebrow mt-4">John Muir</figcaption>
           </figure>
         </section>
 
-        <section className="py-24">
+        <section className="py-12">
           <h2 className="eyebrow mb-10">Professional Expertise</h2>
           <div className="grid gap-12 md:grid-cols-3">
             <div>
@@ -82,7 +81,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="pb-28">
+        <section className="pt-12 pb-12">
           <h2 className="eyebrow mb-10">Personal Passions</h2>
           <div className="grid gap-12 md:grid-cols-2">
             <Link href="/interests#exploration" className="group block">

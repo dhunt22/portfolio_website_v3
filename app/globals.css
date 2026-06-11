@@ -44,6 +44,7 @@
     --ring-focus: #7bb17f;         /* forest-400 */
   }
   html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+  :where(a, button, [role="button"]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
 }
 
 @layer components {
