@@ -1,0 +1,69 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-10-minimalist-overhaul.md",
+  "note": "Condensed mirror of the native task list. Full Goal/Files/AC/Verify/Steps for every task live in the plan document (authoritative) and in the native TaskList descriptions.",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Foundation — DS tokens, fonts, cleanup sweep",
+      "status": "pending",
+      "description": "**Goal:** Re-ground styling on design_system/tokens, load DS fonts via next/font, delete all dead code/cruft/deps.\n\n**Files:** create app/fonts.ts; rewrite app/globals.css + tailwind.config.js; modify app/layout.tsx, package.json, netlify.toml, .gitignore, ThemeToggle, common-icons; delete ~30 files per plan Task 1 list.\n\n**Acceptance Criteria:** build+jest pass; paper/night-field grounds; Hanken/Newsreader/JetBrains via next/font, Inter gone; ThemeToggle on inline icons; next-intl/chart.js/react-chartjs-2/playwright/axe-core uninstalled; .eyebrow/.display/.lead/.link-quiet component classes exist; dark --text-body = stone-300 (DS-6).\n\n**Verify:** npm run build && npx jest --ci; grep -r 'next-intl|ProjectMapOriginal|icons/sprite' app components lib → no matches.\n\n```json:metadata\n{\"files\": [\"app/fonts.ts\", \"app/globals.css\", \"tailwind.config.js\", \"app/layout.tsx\"], \"verifyCommand\": \"npm run build && npx jest --ci\", \"acceptanceCriteria\": [\"build+jest pass\", \"DS tokens live\", \"fonts swapped\", \"dead files deleted\", \"deps pruned\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Background engine — overlay generator + ContourBackdrop",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Generate drafted-contour + comet-ignition overlays (2 watersheds x 2 themes), strip legacy SMIL, expose background via one client ContourBackdrop component.\n\n**Files:** create scripts/generate-overlays.mjs (port style-explorations/build.js), scripts/strip-smil.mjs, components/ui/ContourBackdrop.tsx; modify hooks/useThemeBackground.ts, AnimatedContourBackground.tsx, package.json, tests.\n\n**Acceptance Criteria:** 4 overlay SVGs (routes pathLength=1 draft 3s; comets head r5 + 12 followers, speeds 70-150 u/s, fade ~8s integer-locked); theme table dark earth-400/river-200+400 vs light earth-700/river-700+500; glow-trace count 0; reduced-motion suppression intact; 4 pages wired to ContourBackdrop.\n\n**Verify:** node scripts/generate-overlays.mjs && npm run build && npx jest --ci; grep -c glow-trace public/images/american_river_contour_bwn.svg → 0.\n\n```json:metadata\n{\"files\": [\"scripts/generate-overlays.mjs\", \"components/ui/ContourBackdrop.tsx\", \"hooks/useThemeBackground.ts\"], \"verifyCommand\": \"node scripts/generate-overlays.mjs && npm run build && npx jest --ci\", \"acceptanceCriteria\": [\"4 overlays generated\", \"SMIL stripped\", \"theme-aware src\", \"jest passes\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Header and Footer re-skin",
+      "status": "pending",
+      "blockedBy": [2],
+      "description": "**Goal:** Translucent paper header with mono nav + ochre active underline; footer compressed to single hairline band, all copy kept.\n\n**Files:** Header.tsx, Footer.tsx, globals.css (drop slide-in-from-top-2); delete separator.tsx + @radix-ui/react-separator.\n\n**Acceptance Criteria:** color-mix paper 88% + blur header; .eyebrow nav, active ochre underline; dropdown/hamburger/ThemeToggle kept; footer one band, no Separator, all strings verbatim.\n\n**Verify:** npm run build && npx jest --ci; grep -rn 'separator|slide-in-from-top-2' components app → none; grep -c 'Based in California' components/layout/Footer.tsx → 1.\n\n```json:metadata\n{\"files\": [\"components/layout/Header.tsx\", \"components/layout/Footer.tsx\"], \"verifyCommand\": \"npm run build && npx jest --ci\", \"acceptanceCriteria\": [\"paper header + ochre active\", \"single-band footer\", \"copy verbatim\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Home page rewrite",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Server-component home: treatment-D hero (DS-6), expertise as 3 text columns, passions as 2 plain linked entries, Muir quote as figure caption not gradient overlay.\n\n**Files:** app/page.tsx full rewrite per plan JSX skeleton; all copy verbatim.\n\n**Acceptance Criteria:** no 'use client'; hero .eyebrow/.display/.lead/.link-quiet; zero Card/Button; animate-rise with motion-reduce safety; icon decorations dropped.\n\n**Verify:** npm run build && npx jest --ci; grep -c 'use client' app/page.tsx → 0; sentinels: 'Passionate about understanding', 'First Generation Tundra', 'good look at it before it gets dark' each present.\n\n```json:metadata\n{\"files\": [\"app/page.tsx\"], \"verifyCommand\": \"npm run build && npx jest --ci\", \"acceptanceCriteria\": [\"server component\", \"D hero\", \"copy verbatim\", \"no cards/buttons\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Portfolio index rewrite",
+      "status": "pending",
+      "blockedBy": [4],
+      "description": "**Goal:** Editorial project index (eyebrow/title/prose/mono tech line/quiet links) with understated tabs in a client island; real dynamic maplibre import; harvest-water text-only; dead geojson configs removed.\n\n**Files:** create components/portfolio/ProjectIndex.tsx; modify app/portfolio/page.tsx (server shell), LazyProjectMap.tsx (next/dynamic ssr:false), lib/portfolio-data.ts (displayType none), lib/maps/mapConfigurations.ts (prune missing-geojson configs).\n\n**Acceptance Criteria:** no cards/pills/badges; border-t between rows only; tabs .eyebrow + ochre active; prison-ej + watershed-hub maps work; maplibre code-split.\n\n**Verify:** npm run build && npx jest --ci; grep -c 'use client' app/portfolio/page.tsx → 0; grep -c next/dynamic components/portfolio/LazyProjectMap.tsx → 1; sentinel '8 million records' in lib/portfolio-data.ts.\n\n```json:metadata\n{\"files\": [\"components/portfolio/ProjectIndex.tsx\", \"app/portfolio/page.tsx\", \"components/portfolio/LazyProjectMap.tsx\"], \"verifyCommand\": \"npm run build && npx jest --ci\", \"acceptanceCriteria\": [\"editorial rows\", \"dynamic maplibre\", \"dead configs pruned\", \"maps work\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Resume page rewrite",
+      "status": "pending",
+      "blockedBy": [5],
+      "description": "**Goal:** Print-like editorial resume: no Card, no tabIndex/focus rings on prose, valid download anchor, copy verbatim.\n\n**Files:** app/resume/page.tsx, components/resume/{ResumeSection,ExperienceItem,SkillsList}.tsx.\n\n**Acceptance Criteria:** server component; .eyebrow section titles; list-disc marker:text-eyebrow (no manual bullet spans); download = plain anchor .link-quiet; summary in font-display italic.\n\n**Verify:** npm run build && npx jest --ci; grep -c tabIndex app/resume/page.tsx components/resume/*.tsx → 0; sentinels 'EAGLE SCOUT AWARD', 'Fraser Experimental Forest' present.\n\n```json:metadata\n{\"files\": [\"app/resume/page.tsx\", \"components/resume/ResumeSection.tsx\"], \"verifyCommand\": \"npm run build && npx jest --ci\", \"acceptanceCriteria\": [\"server component, no Card\", \"no focus rings on prose\", \"valid download anchor\", \"copy verbatim\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: Interests page rewrite",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** De-carded alternating editorial sections, Newsreader italic pull-quotes, carousel replaced by both contour plates shown plainly.\n\n**Files:** app/interests/page.tsx, components/interests/InterestSection.tsx.\n\n**Acceptance Criteria:** server component, zero useState; alternating flip layout; .eyebrow captions; carousel state/handlers/chevrons/dots deleted; GIS grid md:grid-cols-2; anchors #exploration..#gis preserved; copy verbatim.\n\n**Verify:** npm run build && npx jest --ci; grep -c useState app/interests/page.tsx → 0; sentinels 'Shafer Trail', 'Fishbrain', 'lets collaborate' present.\n\n```json:metadata\n{\"files\": [\"app/interests/page.tsx\", \"components/interests/InterestSection.tsx\"], \"verifyCommand\": \"npm run build && npx jest --ci\", \"acceptanceCriteria\": [\"no useState\", \"alternating sections\", \"carousel removed\", \"anchors + copy verbatim\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: EJ-prisons deep dive de-carding",
+      "status": "pending",
+      "blockedBy": [7],
+      "description": "**Goal:** Keep flagship depth + all substantive copy; remove chrome: no card stacks, no auto-popup, one GitHub CTA, ContourBackdrop replaces gradient; IndicatorBrowser client island.\n\n**Files:** create components/portfolio/IndicatorBrowser.tsx; rewrite app/portfolio/environmental-justice-prisons/page.tsx as server shell.\n\n**Acceptance Criteria:** popup + 5 instruction bullets + duplicate footer repo CTA + blue tab dot deleted (approved); 12 indicators + methodology + team + impact + blockquote + acknowledgment verbatim; tabs/indicator rows in mono with ochre active; map wrapper hairline border only.\n\n**Verify:** npm run build && npx jest --ci; grep -c 'use client' app/portfolio/environmental-justice-prisons/page.tsx → 0; sentinel 'Carrie Chennault' present; 'Select a tab to view indicators' absent everywhere.\n\n```json:metadata\n{\"files\": [\"components/portfolio/IndicatorBrowser.tsx\", \"app/portfolio/environmental-justice-prisons/page.tsx\"], \"verifyCommand\": \"npm run build && npx jest --ci\", \"acceptanceCriteria\": [\"server shell + client island\", \"chrome removed\", \"substantive copy verbatim\", \"map intact\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Finale — 404, metadata, perf pass, config single-sourcing",
+      "status": "pending",
+      "blockedBy": [8],
+      "description": "**Goal:** Re-skin 404, compress heavy assets, verify code-splitting, single-source CSP in public/_headers, remove proxy scripts if tiles verify, final all-routes sweep.\n\n**Files:** app/not-found.tsx, app/layout.tsx (drop Script tags + CSP meta), netlify.toml, public/_headers, scripts/compress-images.mjs; delete map-library-helper.js (unconditional) + map-proxy/netlify-config/function (if tiles verify); 5 photos to webp <=300KB; svgo precision-1 on 4 backdrop SVGs ONLY (never pulses/overlays).\n\n**Acceptance Criteria:** 404 copy verbatim no Card/Button; CSP once in _headers; 5 webp files, references updated; contour SVGs >=30% smaller combined, no visible change; tile verification branch recorded; 6 routes x 2 themes x reduced-motion all correct; out/ size recorded in commit.\n\n**Verify:** npm run build && npx jest --ci; grep -c Content-Security-Policy public/_headers → 1, app/layout.tsx + netlify.toml → 0; ls public/images/*.webp | wc -l → 5.\n\n```json:metadata\n{\"files\": [\"app/not-found.tsx\", \"app/layout.tsx\", \"public/_headers\", \"scripts/compress-images.mjs\"], \"verifyCommand\": \"npm run build && npx jest --ci && ls public/images/*.webp\", \"acceptanceCriteria\": [\"404 re-skinned\", \"single CSP\", \"assets compressed\", \"proxy decision recorded\", \"full sweep passes\"], \"model\": {\"implementer\": \"sonnet\", \"reviewer\": \"opus\"}}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-10"
+}

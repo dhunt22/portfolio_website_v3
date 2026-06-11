@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treatment A — Quad Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — from tailwind.config.js / globals.css */
+  :root {
+    --background: hsl(0 0% 100%);
+    --muted-foreground: hsl(215.4 16.3% 46.9%);
+    --forest-500: #57935c;
+    --forest-600: #3d733f;
+    --forest-700: #315a34;
+    --forest-900: #233c25;
+  }
+
+  * { margin: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--background);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  /* ---- Contour layers ---- */
+  .contours {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .contours .static {
+    position: absolute;
+    inset: 0;
+    background-image: url("../public/images/american_river_contour_bwn.svg");
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    opacity: 0.12;
+  }
+  .contours .pulses {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 22vh clamp(1.5rem, 8vw, 7rem) 0;
+    max-width: 52rem;
+  }
+
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--forest-600);
+    margin-bottom: 1.25rem;
+  }
+
+  h1 {
+    font-weight: 800;
+    font-size: clamp(3.5rem, 9vw, 7.5rem);
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    color: var(--forest-900);
+    margin-bottom: 2.25rem;
+  }
+
+  .hero p {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--muted-foreground);
+    max-width: 36rem;
+    margin-bottom: 3rem;
+  }
+
+  nav { display: flex; gap: 2.75rem; }
+
+  nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--forest-700);
+    text-decoration: underline;
+    text-underline-offset: 0.45em;
+    text-decoration-thickness: 1px;
+    transition: color 0.2s ease-out;
+  }
+  nav a:hover { color: var(--forest-500); }
+
+  /* ---- Load-in: one staggered reveal ---- */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; animation: rise 0.7s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+  .reveal:nth-child(2) { animation-delay: 0.1s; }
+  .reveal:nth-child(3) { animation-delay: 0.22s; }
+  .reveal:nth-child(4) { animation-delay: 0.34s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: none; opacity: 1; transform: none; }
+    .pulse { animation: none !important; opacity: 0 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="contours" aria-hidden="true">
+  <div class="static"></div>
+  <div class="pulses"><!--PULSE--></div>
+</div>
+
+<main class="hero">
+  <p class="kicker reveal">Water Resources Engineer &amp; Explorer</p>
+  <h1 class="reveal">Devin Hunt</h1>
+  <p class="reveal">Passionate about understanding and solving water resource challenges in California
+    through data-driven approaches. Skilled in leveraging open-source data, spatial
+    analysis, and groundwater modeling to support sustainable water management.</p>
+  <nav class="reveal">
+    <a href="#">Explore Portfolio</a>
+    <a href="#">View Resume</a>
+  </nav>
+</main>
+
+</body>
+</html>

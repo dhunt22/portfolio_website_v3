@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treatment C — Drafting Plate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- FLAG: Fraunces is NOT in the design system. Proposed new display-font token,
+     used for the name only. Everything else stays on Inter / JetBrains Mono. -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — from tailwind.config.js / globals.css */
+  :root {
+    --ground: #faf6ef;            /* earth-50 */
+    --ink: #351e16;               /* earth-950 */
+    --muted-foreground: hsl(215.4 16.3% 46.9%);
+    --earth-700: #8f5732;
+    --earth-800: #74472f;
+    --forest-600: #3d733f;
+  }
+
+  * { margin: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--ground);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  /* ---- Contour layers ---- */
+  .contours {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .contours .static {
+    position: absolute;
+    inset: 0;
+    background-image: url("../public/images/american_river_contour_bwn.svg");
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    opacity: 0.08;
+  }
+  .contours .routes {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+  }
+
+  /* Index contours draft themselves in once, then hold still. */
+  .route {
+    stroke: var(--earth-700);
+    stroke-opacity: 0.38;
+    stroke-width: 1.5;
+    fill: none;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draft 3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  }
+  @keyframes draft { to { stroke-dashoffset: 0; } }
+
+  /* ---- Hero: title block anchored low, like a map plate ---- */
+  .hero {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 clamp(1.5rem, 8vw, 7rem) 12vh;
+    max-width: 54rem;
+  }
+
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--earth-700);
+    margin-bottom: 1.25rem;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(3.5rem, 9vw, 7rem);
+    letter-spacing: -0.015em;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 2rem;
+  }
+
+  .hero p {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--muted-foreground);
+    max-width: 35rem;
+    margin-bottom: 3rem;
+  }
+
+  nav { display: flex; gap: 2.75rem; }
+
+  nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--earth-800);
+    text-decoration: underline;
+    text-underline-offset: 0.45em;
+    text-decoration-thickness: 1px;
+    transition: color 0.2s ease-out;
+  }
+  nav a:hover { color: var(--forest-600); }
+
+  /* ---- Load-in: type settles as the lines draft ---- */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; animation: rise 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+  .reveal:nth-child(2) { animation-delay: 0.15s; }
+  .reveal:nth-child(3) { animation-delay: 0.3s; }
+  .reveal:nth-child(4) { animation-delay: 0.45s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: none; opacity: 1; transform: none; }
+    .route { animation: none; stroke-dashoffset: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="contours" aria-hidden="true">
+  <div class="static"></div>
+  <div class="routes"><!--ROUTES--></div>
+</div>
+
+<main class="hero">
+  <p class="kicker reveal">Water Resources Engineer &amp; Explorer</p>
+  <h1 class="reveal">Devin Hunt</h1>
+  <p class="reveal">Passionate about understanding and solving water resource challenges in California
+    through data-driven approaches. Skilled in leveraging open-source data, spatial
+    analysis, and groundwater modeling to support sustainable water management.</p>
+  <nav class="reveal">
+    <a href="#">Explore Portfolio</a>
+    <a href="#">View Resume</a>
+  </nav>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Night Field — Text Color Schemes (design_system tokens)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Hanken+Grotesk:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Ground fixed: design_system dark --surface-page #14130f ("night field").
+     All shades below are design_system primitives (tokens/colors.css).
+     Variants riff on S2 (stone body + river accent) and the Earth palette. */
+  * { margin: 0; box-sizing: border-box; }
+
+  body {
+    background: #14130f;
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  section {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ---- Shared contour layers ---- */
+  .static {
+    position: absolute;
+    inset: 0;
+    background-image: url("../public/images/american_river_contour_dark.svg");
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    opacity: 0.22;
+    pointer-events: none;
+  }
+  .overlay {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    pointer-events: none;
+  }
+  .route {
+    stroke: #cb9a59; /* earth-400 — DS dark --border-contour */
+    stroke-opacity: 0.3;
+    stroke-width: 1.5;
+    fill: none;
+  }
+
+  /* ---- Scheme label (review scaffolding only) ---- */
+  .tag {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: rgba(243 241 232 / 0.45);
+    z-index: 2;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 clamp(1.5rem, 9vw, 9rem);
+    max-width: 60rem;
+  }
+
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--kicker);
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-family: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(3rem, 7vw, 5.25rem);
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    color: var(--name);
+    margin-bottom: 2.25rem;
+  }
+
+  .hero p {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--body);
+    max-width: 34rem;
+    margin-bottom: 3.5rem;
+  }
+
+  nav { display: flex; gap: 3rem; }
+
+  nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 0.5em;
+    text-decoration-thickness: 1px;
+  }
+</style>
+</head>
+<body>
+
+<section id="s1" style="--kicker:#a39a82; --name:#f3f1e8; --body:#ddd9cc; --link:#b3c2cf">
+  <div class="static" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"><!--ROUTES--></div>
+  <p class="tag">DS-1 · semantic default — name text-strong · body stone-200 · kicker stone-400 · links river-300</p>
+  <main class="hero">
+    <p class="kicker">Water Resources Engineer &amp; Explorer</p>
+    <h1>Devin Hunt</h1>
+    <p>Passionate about understanding and solving water resource challenges in California
+      through data-driven approaches. Skilled in leveraging open-source data, spatial
+      analysis, and groundwater modeling to support sustainable water management.</p>
+    <nav><a href="#">Explore Portfolio</a><a href="#">View Resume</a></nav>
+  </main>
+</section>
+
+<section id="s2" style="--kicker:#b3c2cf; --name:#f3f1e8; --body:#ddd9cc; --link:#b3c2cf">
+  <div class="static" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"><!--ROUTES--></div>
+  <p class="tag">DS-2 · river eyebrow (S2 analog) — name text-strong · body stone-200 · kicker/links river-300</p>
+  <main class="hero">
+    <p class="kicker">Water Resources Engineer &amp; Explorer</p>
+    <h1>Devin Hunt</h1>
+    <p>Passionate about understanding and solving water resource challenges in California
+      through data-driven approaches. Skilled in leveraging open-source data, spatial
+      analysis, and groundwater modeling to support sustainable water management.</p>
+    <nav><a href="#">Explore Portfolio</a><a href="#">View Resume</a></nav>
+  </main>
+</section>
+
+<section id="s3" style="--kicker:#91aabf; --name:#e8edf1; --body:#d2dbe3; --link:#b3c2cf">
+  <div class="static" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"><!--ROUTES--></div>
+  <p class="tag">DS-3 · river light — name river-100 · body river-200 · kicker river-400 · links river-300</p>
+  <main class="hero">
+    <p class="kicker">Water Resources Engineer &amp; Explorer</p>
+    <h1>Devin Hunt</h1>
+    <p>Passionate about understanding and solving water resource challenges in California
+      through data-driven approaches. Skilled in leveraging open-source data, spatial
+      analysis, and groundwater modeling to support sustainable water management.</p>
+    <nav><a href="#">Explore Portfolio</a><a href="#">View Resume</a></nav>
+  </main>
+</section>
+
+<section id="s4" style="--kicker:#cb9a59; --name:#f3f1e8; --body:#ddd9cc; --link:#d9b988">
+  <div class="static" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"><!--ROUTES--></div>
+  <p class="tag">DS-4 · earth eyebrow — name text-strong · body stone-200 · kicker earth-400 · links earth-300</p>
+  <main class="hero">
+    <p class="kicker">Water Resources Engineer &amp; Explorer</p>
+    <h1>Devin Hunt</h1>
+    <p>Passionate about understanding and solving water resource challenges in California
+      through data-driven approaches. Skilled in leveraging open-source data, spatial
+      analysis, and groundwater modeling to support sustainable water management.</p>
+    <nav><a href="#">Explore Portfolio</a><a href="#">View Resume</a></nav>
+  </main>
+</section>
+
+<section id="s5" style="--kicker:#c08843; --name:#faf6ef; --body:#e6d3b3; --link:#d9b988">
+  <div class="static" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"><!--ROUTES--></div>
+  <p class="tag">DS-5 · earth light — name earth-50 · body earth-200 · kicker earth-500 · links earth-300</p>
+  <main class="hero">
+    <p class="kicker">Water Resources Engineer &amp; Explorer</p>
+    <h1>Devin Hunt</h1>
+    <p>Passionate about understanding and solving water resource challenges in California
+      through data-driven approaches. Skilled in leveraging open-source data, spatial
+      analysis, and groundwater modeling to support sustainable water management.</p>
+    <nav><a href="#">Explore Portfolio</a><a href="#">View Resume</a></nav>
+  </main>
+</section>
+
+<section id="s6" style="--kicker:#cb9a59; --name:#f3f1e8; --body:#c4bda9; --link:#b3c2cf">
+  <div class="static" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"><!--ROUTES--></div>
+  <p class="tag">DS-6 · mixed survey — name text-strong · body stone-300 · kicker earth-400 · links river-300</p>
+  <main class="hero">
+    <p class="kicker">Water Resources Engineer &amp; Explorer</p>
+    <h1>Devin Hunt</h1>
+    <p>Passionate about understanding and solving water resource challenges in California
+      through data-driven approaches. Skilled in leveraging open-source data, spatial
+      analysis, and groundwater modeling to support sustainable water management.</p>
+    <nav><a href="#">Explore Portfolio</a><a href="#">View Resume</a></nav>
+  </main>
+</section>
+
+</body>
+</html>

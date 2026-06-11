@@ -4,30 +4,30 @@
     {
       "id": 7,
       "subject": "Task 0: Set up Jest + React Testing Library infrastructure",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Establish a working Jest + RTL test environment (none currently exists despite deps being installed) so subsequent tasks can be TDD'd.\n\n**Files:** Create jest.config.js, jest.setup.js, __tests__/smoke.test.tsx\n\n**Verify:** npm test -- __tests__/smoke.test.tsx → 1 passing test\n\n```json:metadata\n{\"files\": [\"jest.config.js\", \"jest.setup.js\", \"__tests__/smoke.test.tsx\"], \"verifyCommand\": \"npm test -- __tests__/smoke.test.tsx\", \"acceptanceCriteria\": [\"npm test runs with jsdom and @/ alias\", \"smoke test passes\", \"jest-dom matchers available\"]}\n```"
     },
     {
       "id": 8,
       "subject": "Task 1: Expose animated SVG source from useThemeBackground",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [7],
       "description": "**Goal:** Add an additive `animatedLightSrc` field to the theme-background hook without changing existing fields/behavior.\n\n**Files:** Modify hooks/useThemeBackground.ts; Test __tests__/useThemeBackground.test.tsx\n\n**Verify:** npm test -- __tests__/useThemeBackground.test.tsx → all passing\n\n```json:metadata\n{\"files\": [\"hooks/useThemeBackground.ts\", \"__tests__/useThemeBackground.test.tsx\"], \"verifyCommand\": \"npm test -- __tests__/useThemeBackground.test.tsx\", \"acceptanceCriteria\": [\"americanRiver animatedLightSrc is the bwn svg path\", \"upperFolsom animatedLightSrc undefined\", \"existing returned fields unchanged\"]}\n```"
     },
     {
       "id": 9,
       "subject": "Task 2: Create AnimatedContourBackground component",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [7],
       "description": "**Goal:** Component renders the animated <object> embed only when appropriate; otherwise renders unchanged PageBackground, which also serves as the load-time underlay.\n\n**Files:** Create components/ui/AnimatedContourBackground.tsx; Test __tests__/AnimatedContourBackground.test.tsx\n\n**Verify:** npm test -- __tests__/AnimatedContourBackground.test.tsx → all passing\n\n```json:metadata\n{\"files\": [\"components/ui/AnimatedContourBackground.tsx\", \"__tests__/AnimatedContourBackground.test.tsx\"], \"verifyCommand\": \"npm test -- __tests__/AnimatedContourBackground.test.tsx\", \"acceptanceCriteria\": [\"object+underlay when light/mounted/motion-ok\", \"no object dark\", \"no object pre-mount\", \"no object missing src\", \"no object reduced-motion\", \"underlay removed after load\", \"object non-interactive\"]}\n```"
     },
     {
       "id": 10,
       "subject": "Task 3: Wire into home + interests pages and verify animation in Chrome",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [8, 9],
       "description": "**Goal:** Swap PageBackground for AnimatedContourBackground on home + interests, and prove in a real browser that the glow runs in light mode while dark/other pages are unchanged.\n\n**USER-ORDERED GATE — NON-SKIPPABLE.** Close only after every acceptanceCriteria item is re-validated independently with output captured.\n\n**Files:** Modify app/page.tsx, app/interests/page.tsx\n\n**Verify:** npm run dev; Chrome SMIL-clock probe per page/mode; npm test full suite green\n\n```json:metadata\n{\"files\": [\"app/page.tsx\", \"app/interests/page.tsx\"], \"verifyCommand\": \"npm test && (manual: Chrome SMIL-clock probe per Step 4-5)\", \"acceptanceCriteria\": [\"home light object SMIL clock advances ~4s\", \"interests light object SMIL clock advances ~4s\", \"home dark no object visually unchanged\", \"portfolio no object dual mirror intact\", \"reduced-motion emulated no object\", \"npm test full suite passes\"], \"userGate\": true, \"tags\": [\"user-gate\"], \"gateScope\": \"all-listed-pages-and-modes\", \"requireEvidenceTokens\": [[\"light\", \"animating\", \"advancedBy\"], [\"dark\", \"static\", \"no object\"]]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-17"
+  "lastUpdated": "2026-05-17T00:00:04Z"
 }
