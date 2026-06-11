@@ -31,7 +31,7 @@ module.exports = {
         ink: { strong:'var(--text-strong)', body:'var(--text-body)', muted:'var(--text-muted)', faint:'var(--text-faint)' },
         link: { DEFAULT:'var(--text-link)', hover:'var(--text-link-hover)' },
         eyebrow: 'var(--text-eyebrow)',
-        accent: { DEFAULT:'var(--brand-accent)' },
+        accent: { DEFAULT:'var(--brand-accent)', foreground:'#351e16' },
         primary: { DEFAULT:'var(--brand-primary)', foreground:'#f2f7f2' },
         border: 'var(--border-hairline)',
         input: 'var(--border-default)',
