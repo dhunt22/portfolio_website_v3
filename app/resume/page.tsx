@@ -4,8 +4,7 @@
 
 'use client';
 
-import { useAmericanRiverBackground } from '@/hooks/useThemeBackground';
-import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
+import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ResumeSection from '@/components/resume/ResumeSection';
@@ -18,7 +17,6 @@ import { DownloadIcon } from '@/components/ui/icons/common-icons';
  * @returns {React.JSX.Element} The rendered resume page
  */
 export default function ResumePage() {
-  const { isMobile, backgroundImage, isDark, mounted, animatedLightSrc } = useAmericanRiverBackground();
 
   // Professional skills data
   const professionalSkills = [
@@ -48,14 +46,7 @@ export default function ResumePage() {
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <AnimatedContourBackground
-        backgroundImage={backgroundImage}
-        isMobile={isMobile}
-        isDark={isDark}
-        mounted={mounted}
-        animatedSrc={animatedLightSrc}
-        dualBackground
-      />
+      <ContourBackdrop preset="americanRiver" dual />
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-8">

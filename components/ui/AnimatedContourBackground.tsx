@@ -6,12 +6,12 @@ import { PageBackground } from '@/components/ui/PageBackground';
 interface AnimatedContourBackgroundProps {
   backgroundImage: string;
   isMobile: boolean;
-  /** Accepted for caller convenience; the pulse overlay renders in both themes. */
-  isDark?: boolean;
   mounted: boolean;
   /**
-   * Path to the SMIL-animated pulse-overlay SVG. When present (and conditions
-   * allow) it is layered on top of the static contour backdrop.
+   * Path to the theme-specific overlay SVG (light or dark variant). When
+   * present (and conditions allow) it is layered on top of the static contour
+   * backdrop. The caller supplies the correct theme variant; this component
+   * fetches and inlines it.
    */
   animatedSrc?: string;
   /** Passthrough to the static PageBackground backdrop. */
@@ -23,10 +23,10 @@ interface AnimatedContourBackgroundProps {
  *
  * - Backdrop: the unchanged faint static contour (PageBackground) — always
  *   rendered, so there is never a blank/flashing state.
- * - Pulse overlay: a separate, small SVG of soft glow sprites that travel
- *   the contour routes, fetched and inlined on top. Rendered (in both light
- *   and dark themes) when mounted, motion is allowed, and a pulse source is
- *   provided.
+ * - Overlay: a separate SVG of drafted route lines + comet ignition sprites,
+ *   fetched and inlined on top. Theme-specific variants (light/dark) are
+ *   supplied by the caller. Rendered when mounted, motion is allowed, and an
+ *   overlay source is provided.
  *
  * The pulse SVG is inlined (not embedded via <object>): an <object>'s
  * embedded document composites on an opaque white backing in this layered

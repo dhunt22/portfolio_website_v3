@@ -6,7 +6,8 @@ import { useState, useEffect, useMemo } from 'react';
 interface ThemeBackgroundOptions {
   lightImage: string;
   darkImage: string;
-  animatedLightImage?: string;
+  overlayLight?: string;
+  overlayDark?: string;
   mobileBreakpoint?: number;
 }
 
@@ -16,7 +17,7 @@ interface ThemeBackgroundResult {
   resolvedTheme: string | undefined;
   backgroundImage: string;
   isDark: boolean;
-  animatedLightSrc?: string;
+  animatedSrc?: string;
 }
 
 // Background image presets for different pages
@@ -24,12 +25,14 @@ export const BACKGROUND_PRESETS = {
   americanRiver: {
     lightImage: '/images/american_river_contour_bwn.svg',
     darkImage: '/images/american_river_contour_dark.svg',
-    animatedLightImage: '/images/american_river_pulses.svg',
+    overlayLight: '/images/american_river_overlay_light.svg',
+    overlayDark: '/images/american_river_overlay_dark.svg',
   },
   upperFolsom: {
     lightImage: '/images/upper_folsom_contour_bwn.svg',
     darkImage: '/images/upper_folsom_contour_dark.svg',
-    animatedLightImage: '/images/upper_folsom_pulses.svg',
+    overlayLight: '/images/upper_folsom_overlay_light.svg',
+    overlayDark: '/images/upper_folsom_overlay_dark.svg',
   },
 } as const;
 
@@ -63,21 +66,18 @@ export function useThemeBackground(options: ThemeBackgroundOptions): ThemeBackgr
     return isDark ? `url(${options.darkImage})` : `url(${options.lightImage})`;
   }, [mounted, isDark, options.lightImage, options.darkImage]);
 
+  const animatedSrc = !mounted
+    ? undefined
+    : isDark
+    ? options.overlayDark
+    : options.overlayLight;
+
   return {
     mounted,
     isMobile,
     resolvedTheme,
     backgroundImage,
     isDark,
-    animatedLightSrc: options.animatedLightImage,
+    animatedSrc,
   };
-}
-
-// Convenience hooks for common backgrounds
-export function useAmericanRiverBackground() {
-  return useThemeBackground(BACKGROUND_PRESETS.americanRiver);
-}
-
-export function useUpperFolsomBackground() {
-  return useThemeBackground(BACKGROUND_PRESETS.upperFolsom);
 }

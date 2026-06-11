@@ -6,14 +6,14 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import { useUpperFolsomBackground } from '@/hooks/useThemeBackground';
+import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PROJECTS, Project, getProjectsByCategory } from '@/lib/portfolio-data';
 import { ExternalLinkIcon, GitHubIcon, DownloadIcon } from '@/components/ui/icons/common-icons';
-import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
+
 
 /**
  * Shared styles for portfolio category tab triggers
@@ -180,7 +180,6 @@ function ProjectCard({ project, isActive, onClick }: ProjectCardProps) {
  * @returns {React.JSX.Element} The rendered portfolio page
  */
 export default function PortfolioPage() {
-  const { isMobile, backgroundImage, isDark, mounted, animatedLightSrc } = useUpperFolsomBackground();
   const [activeProject, setActiveProject] = useState<string>('prison-ej');
 
   // Memoize filtered projects for better performance
@@ -211,14 +210,7 @@ export default function PortfolioPage() {
   return (
     <div className="relative min-h-screen">
       {/* Background SVG */}
-      <AnimatedContourBackground
-        backgroundImage={backgroundImage}
-        isMobile={isMobile}
-        isDark={isDark}
-        mounted={mounted}
-        animatedSrc={animatedLightSrc}
-        dualBackground
-      />
+      <ContourBackdrop preset="upperFolsom" dual />
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header Section */}

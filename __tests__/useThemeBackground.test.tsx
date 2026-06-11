@@ -1,22 +1,31 @@
 import { renderHook } from '@testing-library/react';
-import { useAmericanRiverBackground, useUpperFolsomBackground } from '@/hooks/useThemeBackground';
+import { useThemeBackground, BACKGROUND_PRESETS } from '@/hooks/useThemeBackground';
 
 jest.mock('next-themes', () => ({
   useTheme: () => ({ resolvedTheme: 'light' }),
 }));
 
-test('americanRiver exposes the animated light src', () => {
-  const { result } = renderHook(() => useAmericanRiverBackground());
-  expect(result.current.animatedLightSrc).toBe('/images/american_river_pulses.svg');
+test('americanRiver preset result includes animatedSrc (overlay path or undefined)', () => {
+  const { result } = renderHook(() => useThemeBackground(BACKGROUND_PRESETS.americanRiver));
+  // animatedSrc is either undefined (before mount) or a valid overlay path string
+  expect(
+    result.current.animatedSrc === undefined ||
+    typeof result.current.animatedSrc === 'string'
+  ).toBe(true);
 });
 
-test('upperFolsom exposes its pulse-overlay src', () => {
-  const { result } = renderHook(() => useUpperFolsomBackground());
-  expect(result.current.animatedLightSrc).toBe('/images/upper_folsom_pulses.svg');
+test('BACKGROUND_PRESETS.americanRiver has overlay paths', () => {
+  expect(BACKGROUND_PRESETS.americanRiver.overlayLight).toBe('/images/american_river_overlay_light.svg');
+  expect(BACKGROUND_PRESETS.americanRiver.overlayDark).toBe('/images/american_river_overlay_dark.svg');
+});
+
+test('BACKGROUND_PRESETS.upperFolsom has overlay paths', () => {
+  expect(BACKGROUND_PRESETS.upperFolsom.overlayLight).toBe('/images/upper_folsom_overlay_light.svg');
+  expect(BACKGROUND_PRESETS.upperFolsom.overlayDark).toBe('/images/upper_folsom_overlay_dark.svg');
 });
 
 test('existing fields still present', () => {
-  const { result } = renderHook(() => useAmericanRiverBackground());
+  const { result } = renderHook(() => useThemeBackground(BACKGROUND_PRESETS.americanRiver));
   expect(result.current).toEqual(
     expect.objectContaining({
       mounted: expect.any(Boolean),

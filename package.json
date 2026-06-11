@@ -12,7 +12,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "netlify-build": "next build"
+    "netlify-build": "next build",
+    "generate:overlays": "node scripts/generate-overlays.mjs"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.0.3",
