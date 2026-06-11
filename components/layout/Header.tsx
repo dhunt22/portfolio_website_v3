@@ -189,13 +189,15 @@ export default function Header() {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Navigation Menu */}
-        {isMobileMenuOpen && (
-          <div
-            id="mobile-menu"
-            className="md:hidden py-4 bg-background border-b border-border animate-rise"
-          >
+      {/* Mobile Navigation Menu — full-bleed so opaque background spans the viewport */}
+      {isMobileMenuOpen && (
+        <div
+          id="mobile-menu"
+          className="md:hidden bg-background border-b border-border animate-rise"
+        >
+          <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4" role="navigation" aria-label="Mobile navigation">
               <MobileNavLink href="/" onClick={closeMobileMenu} currentPath={pathname}>
                 Home
@@ -221,8 +223,8 @@ export default function Header() {
               </MobileNavLink>
             </nav>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </header>
   );
 }

@@ -3,7 +3,7 @@
 // The bottom of our watershed - where all information collects before flowing out to sea!
 
 import Link from 'next/link';
-import { GitHubIconWhite, LinkedInIcon, EmailIcon } from '@/components/ui/icons/common-icons';
+import { GitHubIcon, LinkedInIcon, EmailIcon } from '@/components/ui/icons/common-icons';
 
 /**
  * Footer component with contact information and site links
@@ -13,7 +13,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border">
+    <footer className="border-t border-border mt-24">
       <div className="container mx-auto px-4">
         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between py-10">
           {/* Block 1: About */}
@@ -62,7 +62,7 @@ export default function Footer() {
                 className="text-ink-muted hover:text-ink-strong transition-colors"
                 aria-label="GitHub Profile"
               >
-                <GitHubIconWhite className="w-5 h-5" />
+                <GitHubIcon className="w-5 h-5" aria-hidden={true} />
               </a>
               <a
                 href="https://www.linkedin.com/in/devinthunt"
@@ -71,7 +71,7 @@ export default function Footer() {
                 className="text-ink-muted hover:text-ink-strong transition-colors"
                 aria-label="LinkedIn Profile"
               >
-                <LinkedInIcon className="w-5 h-5" />
+                <LinkedInIcon className="w-5 h-5" aria-hidden={true} />
               </a>
             </div>
           </div>
