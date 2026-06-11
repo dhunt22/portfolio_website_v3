@@ -28,7 +28,7 @@ interface AnimatedContourBackgroundProps {
  *   supplied by the caller. Rendered when mounted, motion is allowed, and an
  *   overlay source is provided.
  *
- * The pulse SVG is inlined (not embedded via <object>): an <object>'s
+ * The overlay SVG is inlined (not embedded via <object>): an <object>'s
  * embedded document composites on an opaque white backing in this layered
  * context, which washed out the dark theme. Inline SVG is transparent and
  * small. The sprites are animated with CSS motion path

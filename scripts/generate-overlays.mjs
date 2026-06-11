@@ -102,12 +102,18 @@ for (const watershed of WATERSHEDS) {
     // --- Style block ---
     const fadePeak = cometTheme.headPeak.toFixed(2);
 
-    // Per-route pulse animation rules
+    // Per-route pulse animation rules.
+    // Fade-lock: derive fadeT FROM the printed move duration (not full
+    // precision) so that n × printed-pfade reproduces printed-pmove exactly.
+    // Otherwise the printed values stop dividing evenly and the fade wrap
+    // migrates into the visible phase over a long-lived tab (~42 min).
     const perRouteRules = tuned
       .map((r) => {
-        const fadeT = r.dur / Math.max(1, Math.round(r.dur / COMET.fadePeriod));
+        const printedDur = Number(r.dur.toFixed(2));
+        const n = Math.max(1, Math.round(printedDur / COMET.fadePeriod));
+        const fadeT = (printedDur / n).toFixed(9);
         const scatter = -(r.i * 3.83).toFixed(2);
-        return `.p${r.i}{offset-path:path("${r.d}");animation:pmove ${r.dur.toFixed(2)}s linear ${scatter}s infinite,pfade ${fadeT.toFixed(4)}s ease-in-out ${scatter}s infinite}`;
+        return `.p${r.i}{offset-path:path("${r.d}");animation:pmove ${printedDur}s linear ${scatter}s infinite,pfade ${fadeT}s ease-in-out ${scatter}s infinite}`;
       })
       .join('');
 
@@ -120,12 +126,13 @@ for (const watershed of WATERSHEDS) {
       perRouteRules;
 
     // --- Routes group ---
-    const routesGroup = routes
+    const routePaths = routes
       .map(
         (d, i) =>
-          `  <path class="route" style="animation-delay:${(i * 0.18).toFixed(2)}s" pathLength="1" d="${d}"/>`
+          `    <path class="route" style="animation-delay:${(i * 0.18).toFixed(2)}s" pathLength="1" d="${d}"/>`
       )
       .join('\n');
+    const routesGroup = `  <g class="routes">\n${routePaths}\n  </g>`;
 
     // --- Defs: radial gradients ---
     const defs =
@@ -142,7 +149,9 @@ for (const watershed of WATERSHEDS) {
       `</defs>`;
 
     // --- Comets group ---
-    const cometSprites = tuned
+    // Each route's comet (1 head + 12 followers) is wrapped in its own
+    // <g class="comet">; all comets live inside <g class="comets">.
+    const cometGroups = tuned
       .map((r) => {
         const dt = COMET.gapU / r.speed; // seconds per gapU of travel
         const scatter = -(r.i * 3.83);
@@ -154,9 +163,10 @@ for (const watershed of WATERSHEDS) {
           const fade = (0.7 * Math.pow(1 - (k + 1) / (COMET.tailN + 1), 1.25)).toFixed(2);
           return `<circle class="pulse p${r.i}" r="${radius}" fill="url(#gt)" fill-opacity="${fade}" style="animation-delay:${delay}s"/>`;
         }).join('');
-        return `  ${head}${tail}`;
+        return `    <g class="comet">${head}${tail}</g>`;
       })
       .join('\n');
+    const cometSprites = `  <g class="comets">\n${cometGroups}\n  </g>`;
 
     // --- Assemble SVG ---
     const svg =

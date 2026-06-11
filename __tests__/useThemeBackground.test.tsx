@@ -1,17 +1,32 @@
 import { renderHook } from '@testing-library/react';
 import { useThemeBackground, BACKGROUND_PRESETS } from '@/hooks/useThemeBackground';
 
+// Controllable per-test resolved theme. The mock reads the live variable so an
+// individual test can flip it to exercise the dark branch.
+let mockResolvedTheme = 'light';
 jest.mock('next-themes', () => ({
-  useTheme: () => ({ resolvedTheme: 'light' }),
+  useTheme: () => ({ resolvedTheme: mockResolvedTheme }),
 }));
 
-test('americanRiver preset result includes animatedSrc (overlay path or undefined)', () => {
+beforeEach(() => {
+  mockResolvedTheme = 'light';
+});
+
+test('light theme selects the LIGHT overlay (mounted via effect flush)', () => {
   const { result } = renderHook(() => useThemeBackground(BACKGROUND_PRESETS.americanRiver));
-  // animatedSrc is either undefined (before mount) or a valid overlay path string
-  expect(
-    result.current.animatedSrc === undefined ||
-    typeof result.current.animatedSrc === 'string'
-  ).toBe(true);
+  // renderHook flushes effects, so mounted is true here.
+  expect(result.current.mounted).toBe(true);
+  expect(result.current.isDark).toBe(false);
+  expect(result.current.animatedSrc).toBe(BACKGROUND_PRESETS.americanRiver.overlayLight);
+  expect(result.current.backgroundImage).toBe(`url(${BACKGROUND_PRESETS.americanRiver.lightImage})`);
+});
+
+test('dark theme selects the DARK overlay + dark image + isDark', () => {
+  mockResolvedTheme = 'dark';
+  const { result } = renderHook(() => useThemeBackground(BACKGROUND_PRESETS.americanRiver));
+  expect(result.current.isDark).toBe(true);
+  expect(result.current.animatedSrc).toBe(BACKGROUND_PRESETS.americanRiver.overlayDark);
+  expect(result.current.backgroundImage).toBe(`url(${BACKGROUND_PRESETS.americanRiver.darkImage})`);
 });
 
 test('BACKGROUND_PRESETS.americanRiver has overlay paths', () => {
