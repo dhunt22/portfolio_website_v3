@@ -19,7 +19,7 @@ export interface Project {
   featured?: boolean;
   year?: string;
   technologies?: string[];
-  displayType?: 'map' | 'image'; // Type of visual display (defaults to 'map')
+  displayType?: 'map' | 'image' | 'none'; // Type of visual display (defaults to 'map')
   imagePath?: string; // Path to image file if displayType is 'image'
   imageAlt?: string; // Alt text for image accessibility
   imageCaption?: string; // Caption for the image (e.g., "NASA, 2001")
@@ -131,6 +131,7 @@ export const PROJECTS: Project[] = [
     categories: ['all', 'water', 'geospatial'],
     year: '2024',
     technologies: ['GIS', 'Contract Management', 'Water Law'],
+    displayType: 'none',
     content: [
       'Updated project figures and managed geospatial data for the Sacramento Sewer District\'s Harvest Water Program.',
       'Created advanced plots for legal OFCA supply contracts, supporting implementation of Title 22 water delivery to local farmers within the study area.'
