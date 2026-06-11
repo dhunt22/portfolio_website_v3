@@ -4,8 +4,8 @@
 
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState, useCallback } from 'react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 
 // Individual component types
@@ -193,19 +193,20 @@ export function IndicatorBrowser(): JSX.Element {
   // Get the current component configuration
   const currentComponent: ComponentConfig = COMPONENT_CONFIGS.find(c => c.id === selectedComponent) || COMPONENT_CONFIGS[0];
 
-  // Get indicators for the active tab
-  const tabIndicators = useMemo(() => {
-    return COMPONENT_CONFIGS.filter(c => c.category === activeTab);
-  }, [activeTab]);
-
   // Handler for component selection
   const handleComponentClick = useCallback((componentId: ComponentType) => {
     setSelectedComponent(componentId);
   }, []);
 
-  // Handler for tab change - only changes the visible tab, doesn't change map
+  // Handler for tab change - switch tab and select that tab's first indicator
+  // so the active row is always visible in the open panel and the map stays in sync.
   const handleTabChange = useCallback((value: string) => {
-    setActiveTab(value as TabType);
+    const nextTab = value as TabType;
+    setActiveTab(nextTab);
+    const firstIndicator = COMPONENT_CONFIGS.find(c => c.category === nextTab);
+    if (firstIndicator) {
+      setSelectedComponent(firstIndicator.id);
+    }
   }, []);
 
   return (
@@ -221,54 +222,52 @@ export function IndicatorBrowser(): JSX.Element {
             </TabsTrigger>
           ))}
         </TabsList>
+
+        {tabs.map((tab) => (
+          <TabsContent key={tab.value} value={tab.value} className="mt-0">
+            <h3 className="mb-4 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[tab.value]}</h3>
+            <ul>
+              {COMPONENT_CONFIGS.filter(c => c.category === tab.value).map((component) => {
+                const isActive = selectedComponent === component.id;
+                return (
+                  <li key={component.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleComponentClick(component.id)}
+                      aria-label={`View ${component.name} on map`}
+                      aria-pressed={isActive}
+                      className={`block w-full text-left py-2 font-mono text-xs uppercase tracking-caps ${
+                        isActive
+                          ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-4'
+                          : 'text-ink-muted hover:text-ink-strong'
+                      }`}
+                    >
+                      {component.name}
+                      <span className="mt-1 block font-sans text-sm normal-case tracking-normal text-ink-muted">{component.description}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </TabsContent>
+        ))}
       </Tabs>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-10">
-        {/* Indicator list */}
-        <div className="lg:col-span-3">
-          <h3 className="mb-4 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[activeTab]}</h3>
-          <div role="list" aria-label={`${activeTab} indicators`}>
-            {tabIndicators.map((component) => {
-              const isActive = selectedComponent === component.id;
-              return (
-                <button
-                  key={component.id}
-                  type="button"
-                  onClick={() => handleComponentClick(component.id)}
-                  aria-label={`View ${component.name} on map`}
-                  aria-pressed={isActive}
-                  className={`block w-full text-left py-2 font-mono text-xs uppercase tracking-caps ${
-                    isActive
-                      ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-4'
-                      : 'text-ink-muted hover:text-ink-strong'
-                  }`}
-                >
-                  {component.name}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      {/* Mobile indicator title (detail panel is far below on small screens) */}
+      <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
 
-        {/* Map */}
-        <div className="lg:col-span-7">
-          <div
-            className="h-[280px] border border-border sm:h-[400px] md:h-[500px] lg:h-[600px]"
-            role="application"
-            aria-label="Interactive prison environmental justice map"
-          >
-            <LazyProjectMap
-              projectId="prison-ej"
-              selectedComponent={selectedComponent}
-              componentColor={currentComponent.color}
-            />
-          </div>
-        </div>
+      {/* Map */}
+      <div className="h-[280px] border border-border sm:h-[400px] md:h-[500px] lg:h-[600px]">
+        <LazyProjectMap
+          projectId="prison-ej"
+          selectedComponent={selectedComponent}
+          componentColor={currentComponent.color}
+        />
       </div>
 
       {/* Indicator detail panel */}
       <div className="mt-12 max-w-[40rem]">
-        <h3 className="font-display text-2xl text-ink-strong">{currentComponent.name}</h3>
+        <h3 className="font-display text-xl text-ink-strong">{currentComponent.name}</h3>
         <p className="mt-2 leading-relaxed text-ink-body">{currentComponent.description}</p>
 
         {currentComponent.detailedDescription && (
@@ -287,14 +286,13 @@ export function IndicatorBrowser(): JSX.Element {
 
         {currentComponent.dataSourceLink && (
           <div className="mt-6">
-            <h4 className="eyebrow mb-2">Data Source Link</h4>
             <a
               href={currentComponent.dataSourceLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="link-quiet break-all"
+              className="link-quiet"
             >
-              {currentComponent.dataSourceLink}
+              Data Source Link
             </a>
           </div>
         )}

@@ -17,8 +17,9 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
       <div className="container relative z-10 mx-auto px-6">
         {/* Hero */}
-        <header className="pt-16">
-          <h1 className="display text-[clamp(2.5rem,5vw,4rem)]">
+        <header className="py-12">
+          <p className="eyebrow mb-6">Geospatial Analysis, NASA Grant Project · 2022-2023</p>
+          <h1 className="display text-4xl">
             Environmental Justice For Prisons
           </h1>
           <p className="lead mt-6 max-w-[40rem]">
@@ -30,6 +31,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               target="_blank"
               rel="noopener noreferrer"
               className="link-quiet"
+              aria-label="View GitHub repository for NASA Prison Environmental Justice project"
             >
               Published Dataset
             </a>
@@ -38,6 +40,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               target="_blank"
               rel="noopener noreferrer"
               className="link-quiet"
+              aria-label="Visit NASA Applied Sciences project page"
             >
               Publication
             </a>
@@ -45,7 +48,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </header>
 
         {/* Project Overview */}
-        <section className="pt-16" aria-labelledby="overview-heading">
+        <section className="py-12" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className="eyebrow mb-6">Project Overview</h2>
           <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body">
             <p>
@@ -72,14 +75,14 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Interactive Indicator Browser */}
-        <section className="pt-16" aria-labelledby="indicators-heading">
-          <h2 id="indicators-heading" className="eyebrow mb-8">Environmental Risk Indicators</h2>
+        <section className="py-12" aria-labelledby="indicators-heading">
+          <h2 id="indicators-heading" className="eyebrow mb-6">Environmental Risk Indicators</h2>
           <IndicatorBrowser />
         </section>
 
         {/* Project Team */}
-        <section className="pt-16" aria-labelledby="team-heading">
-          <h2 id="team-heading" className="eyebrow mb-8">Project Team &amp; My Contribution</h2>
+        <section className="py-12" aria-labelledby="team-heading">
+          <h2 id="team-heading" className="eyebrow mb-6">Project Team &amp; My Contribution</h2>
 
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
             <div>
@@ -148,7 +151,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Call to Action */}
-        <section className="pt-16 pb-16" aria-labelledby="cta-heading">
+        <section className="py-12" aria-labelledby="cta-heading">
           <h2 id="cta-heading" className="eyebrow mb-6">Explore the Research</h2>
           <p className="max-w-[40rem] leading-relaxed text-ink-body">
             Access the open-source code, data, and methodology of this environmental justice research.
