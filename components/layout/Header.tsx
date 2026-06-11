@@ -7,7 +7,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { MenuIcon, CloseIcon } from '@/components/ui/icons/common-icons';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
@@ -29,15 +28,14 @@ function NavLink({ href, children, currentPath }: {
   return (
     <Link
       href={href}
-      className={`text-forest-700 dark:text-forest-300 hover:text-forest-900 dark:hover:text-forest-200 transition-colors duration-200 relative ${
-        isActive ? 'text-forest-900 dark:text-forest-200 font-semibold' : ''
+      className={`eyebrow transition-colors duration-200 hover:text-ink-strong ${
+        isActive
+          ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+          : ''
       }`}
       aria-current={isActive ? 'page' : undefined}
     >
       {children}
-      {isActive && (
-        <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-forest-700 dark:bg-forest-400 rounded-full" />
-      )}
     </Link>
   );
 }
@@ -57,24 +55,23 @@ function NavLinkWithDropdown({ href, children, currentPath, dropdownItems }: {
     <div className="relative group">
       <Link
         href={href}
-        className={`text-forest-700 dark:text-forest-300 hover:text-forest-900 dark:hover:text-forest-200 transition-colors duration-200 relative ${
-          isActive ? 'text-forest-900 dark:text-forest-200 font-semibold' : ''
+        className={`eyebrow transition-colors duration-200 hover:text-ink-strong ${
+          isActive
+            ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+            : ''
         }`}
         aria-current={isActive ? 'page' : undefined}
       >
         {children}
-        {isActive && (
-          <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-forest-700 dark:bg-forest-400 rounded-full" />
-        )}
       </Link>
       {/* Dropdown on hover */}
       <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-        <div className="bg-white dark:bg-[#404040] border border-gray-200 dark:border-forest-700 rounded-md shadow-lg py-1 min-w-max">
+        <div className="bg-background border border-border rounded-md shadow-lg py-1 min-w-max">
           {dropdownItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="block px-4 py-2 text-sm text-forest-600 dark:text-forest-300 hover:bg-forest-50 dark:hover:bg-forest-800 hover:text-forest-900 dark:hover:text-forest-200 transition-colors"
+              className="block px-4 py-2 text-sm text-ink-muted hover:bg-secondary hover:text-ink-strong transition-colors"
             >
               {item.label}
             </Link>
@@ -106,12 +103,14 @@ function MobileNavLink({
   currentPath: string | null;
 }) {
   const isActive = currentPath === href || (href !== '/' && currentPath?.startsWith(href));
-  
+
   return (
     <Link
       href={href}
-      className={`block px-2 py-1 text-forest-700 dark:text-forest-300 hover:text-forest-900 dark:hover:text-forest-200 transition-colors duration-200 ${
-        isActive ? 'text-forest-900 dark:text-forest-200 font-semibold bg-forest-50 dark:bg-forest-800 rounded' : ''
+      className={`block px-2 py-1 eyebrow transition-colors duration-200 hover:text-ink-strong ${
+        isActive
+          ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+          : ''
       }`}
       onClick={onClick}
       aria-current={isActive ? 'page' : undefined}
@@ -145,11 +144,11 @@ export default function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 w-full bg-white/90 dark:bg-[#404040]/90 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-forest-700"
+      className="fixed top-0 inset-x-0 z-50 border-b border-border bg-[color-mix(in_srgb,var(--surface-page)_88%,transparent)] backdrop-blur-[10px]"
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="font-bold text-xl text-forest-800 dark:text-forest-200">
+          <Link href="/" className="font-display text-lg font-medium text-ink-strong">
             Devin Hunt
           </Link>
 
@@ -180,7 +179,7 @@ export default function Header() {
           <div className="md:hidden flex items-center gap-2">
             <ThemeToggle />
             <button
-              className="text-forest-800 dark:text-forest-300 p-2 hover:bg-forest-50 dark:hover:bg-forest-800 rounded-md transition-colors duration-200"
+              className="text-ink-strong p-2 hover:bg-secondary rounded-md transition-colors duration-200"
               onClick={toggleMobileMenu}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
@@ -193,9 +192,9 @@ export default function Header() {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div 
+          <div
             id="mobile-menu"
-            className="md:hidden py-4 border-t border-forest-100 animate-in slide-in-from-top-2 duration-200"
+            className="md:hidden py-4 bg-background border-b border-border animate-rise"
           >
             <nav className="flex flex-col space-y-4" role="navigation" aria-label="Mobile navigation">
               <MobileNavLink href="/" onClick={closeMobileMenu} currentPath={pathname}>
@@ -208,11 +207,11 @@ export default function Header() {
                 <MobileNavLink href="/portfolio" onClick={closeMobileMenu} currentPath={pathname}>
                   Portfolio
                 </MobileNavLink>
-                <span className="text-forest-400 dark:text-forest-600 text-sm">›</span>
+                <span className="text-ink-faint text-sm">›</span>
                 <Link
                   href="/portfolio/environmental-justice-prisons"
                   onClick={closeMobileMenu}
-                  className="text-sm text-forest-500 dark:text-forest-400 hover:text-forest-700 dark:hover:text-forest-300 transition-colors"
+                  className="eyebrow transition-colors duration-200 hover:text-ink-strong"
                 >
                   NASA EEJ
                 </Link>

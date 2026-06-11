@@ -3,7 +3,6 @@
 // The bottom of our watershed - where all information collects before flowing out to sea!
 
 import Link from 'next/link';
-import { Separator } from '@/components/ui/separator';
 import { GitHubIconWhite, LinkedInIcon, EmailIcon } from '@/components/ui/icons/common-icons';
 
 /**
@@ -12,66 +11,64 @@ import { GitHubIconWhite, LinkedInIcon, EmailIcon } from '@/components/ui/icons/
  */
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  
+
   return (
-    <footer className="bg-forest-900 text-white mt-12">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Column 1: About */}
+    <footer className="border-t border-border">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between py-10">
+          {/* Block 1: About */}
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-white">Devin Hunt</h3>
-            <p className="text-forest-100 mb-4">
+            <h3 className="font-display text-ink-strong">Devin Hunt</h3>
+            <p className="text-sm text-ink-muted max-w-xs mt-3">
               Water Resources Engineer with a passion for sustainable water management and
               outdoor exploration.
             </p>
-            <p className="text-forest-100">
+            <p className="text-sm text-ink-muted max-w-xs mt-3">
               Based in California, working across multiple groundwater basins to address water resource challenges.
             </p>
           </div>
-          
-          {/* Column 2: Quick Links */}
+
+          {/* Block 2: Quick Links */}
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-white">Site Navigation</h3>
-            <nav className="flex flex-col space-y-2">
-              <Link href="/" className="text-forest-100 hover:text-white transition-colors">
+            <p className="eyebrow mb-3">Site Navigation</p>
+            <nav className="flex flex-col gap-2 items-start">
+              <Link href="/" className="link-quiet">
                 Home
               </Link>
-              <Link href="/resume" className="text-forest-100 hover:text-white transition-colors">
+              <Link href="/resume" className="link-quiet">
                 Resume
               </Link>
-              <Link href="/portfolio" className="text-forest-100 hover:text-white transition-colors">
+              <Link href="/portfolio" className="link-quiet">
                 Portfolio
               </Link>
-              <Link href="/interests" className="text-forest-100 hover:text-white transition-colors">
+              <Link href="/interests" className="link-quiet">
                 Personal Interests
               </Link>
             </nav>
           </div>
-          
-          {/* Column 3: Contact */}
+
+          {/* Block 3: Contact */}
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-white">Contact</h3>
-            <p className="flex items-center text-forest-100 mb-2">
-              <EmailIcon className="mr-2 w-5 h-5" aria-hidden={true} />
-              <a href="mailto:contact@devinhunt.com" className="hover:underline">
-                contact@devinhunt.com
-              </a>
-            </p>
-            <div className="flex space-x-5 mt-5">
+            <p className="eyebrow mb-3">Contact</p>
+            <a href="mailto:contact@devinhunt.com" className="link-quiet inline-flex items-center gap-2">
+              <EmailIcon className="w-4 h-4" aria-hidden={true} />
+              contact@devinhunt.com
+            </a>
+            <div className="flex gap-5 mt-5">
               <a
                 href="https://github.com/dhunt22"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-forest-100 hover:text-white transition-colors"
+                className="text-ink-muted hover:text-ink-strong transition-colors"
                 aria-label="GitHub Profile"
               >
                 <GitHubIconWhite className="w-5 h-5" />
               </a>
-              <a 
-                href="https://www.linkedin.com/in/devinthunt" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-forest-100 hover:text-white transition-colors"
+              <a
+                href="https://www.linkedin.com/in/devinthunt"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink-muted hover:text-ink-strong transition-colors"
                 aria-label="LinkedIn Profile"
               >
                 <LinkedInIcon className="w-5 h-5" />
@@ -79,11 +76,9 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        
-        <Separator className="my-6 bg-forest-700" />
-        
-        <div className="text-center text-forest-300 text-sm">
-          <p>&copy; {currentYear} Devin Hunt. All rights reserved.</p>
+
+        <div className="pb-10">
+          <p className="font-mono text-[0.6875rem] text-ink-faint">&copy; {currentYear} Devin Hunt. All rights reserved.</p>
         </div>
       </div>
     </footer>

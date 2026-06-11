@@ -51,7 +51,6 @@ module.exports = {
       lineHeight: { 'tight-display': '1.08' },
       borderRadius: { lg: '10px', md: '10px', sm: '6px' },
       keyframes: {
-        'slide-in-from-top-2': { from: { transform: 'translateY(-8px)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } },
         rise: { from: { opacity: 0, transform: 'translateY(14px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
       },
       animation: { rise: 'rise 0.8s ease-out forwards' },
