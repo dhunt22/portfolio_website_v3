@@ -3,7 +3,4 @@
   X-XSS-Protection: 1; mode=block
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET,OPTIONS,PATCH,DELETE,POST,PUT
-  Access-Control-Allow-Headers: X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://*.openstreetmap.org https://*.openfreemap.org; img-src 'self' data: blob: https://*.openstreetmap.org https://*.openfreemap.org; font-src 'self'; connect-src 'self' https://*.openstreetmap.org https://*.openfreemap.org; frame-src 'self'; worker-src 'self' blob:; manifest-src 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://*.openfreemap.org; img-src 'self' data: blob: https://*.openfreemap.org; font-src 'self'; connect-src 'self' https://*.openfreemap.org; frame-src 'self'; worker-src 'self' blob:; manifest-src 'self'
