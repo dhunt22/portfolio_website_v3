@@ -6,7 +6,7 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { Icon } from './icons/Icon';
+import { SunIcon, MoonIcon } from './icons/common-icons';
 
 /**
  * Theme toggle button component
@@ -46,9 +46,9 @@ export function ThemeToggle() {
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
       {isDark ? (
-        <Icon name="moon" className="h-5 w-5" />
+        <MoonIcon className="h-5 w-5" />
       ) : (
-        <Icon name="sun" className="h-5 w-5" />
+        <SunIcon className="h-5 w-5" />
       )}
     </button>
   );

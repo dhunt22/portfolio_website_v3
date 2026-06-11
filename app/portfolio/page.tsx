@@ -8,7 +8,7 @@ import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useUpperFolsomBackground } from '@/hooks/useThemeBackground';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PROJECTS, Project, getProjectsByCategory } from '@/lib/portfolio-data';

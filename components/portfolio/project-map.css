@@ -1,0 +1,36 @@
+/* MapLibre Popup Customization */
+.maplibregl-popup.custom-popup .maplibregl-popup-close-button {
+  font-size: 24px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  padding: 0;
+  color: #374151;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.maplibregl-popup.custom-popup .maplibregl-popup-close-button:hover {
+  color: #1f2937;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+/* Prevent scrolling on MapLibre popups */
+.maplibregl-popup-content {
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure popup doesn't capture scroll events */
+.maplibregl-popup {
+  pointer-events: none !important;
+}
+
+/* Allow interaction with popup content and close button */
+.maplibregl-popup-content,
+.maplibregl-popup-close-button {
+  pointer-events: auto !important;
+}

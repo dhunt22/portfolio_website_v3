@@ -6,9 +6,6 @@
 [build.environment]
   NETLIFY_BUILD_BASE_IMAGE = "noble"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
 # Handle SPA routing
 [[redirects]]
   from = "/*"

@@ -1,33 +1,11 @@
 'use client';
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GitHubIcon, ExternalLinkIcon } from '@/components/ui/icons/common-icons';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
-import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js';
-
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
 /**
  * Environmental Justice For Prisons - Dedicated Project Page
  * A comprehensive overview of the NASA-funded research project
@@ -236,121 +214,6 @@ function MapInstructionsPopup({ isOpen, onClose }: { isOpen: boolean; onClose: (
           </ul>
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-// Histogram Component
-function PercentileHistogram({ color, indicatorName }: { color: string; indicatorName: string }) {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Avoid hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Sample data - replace with actual prison data distribution
-  // This represents the count of prisons in each percentile bin
-  const sampleData = [120, 135, 150, 165, 185, 195, 180, 170, 145, 120];
-
-  const data = {
-    labels: ['', '', '', '', '', '', '', '', '', ''],
-    datasets: [
-      {
-        label: 'Number of Prisons',
-        data: sampleData,
-        backgroundColor: color,
-        borderColor: color,
-        borderWidth: 0,
-        barThickness: 'flex' as const,
-      },
-    ],
-  };
-
-  const maxValue = Math.max(...sampleData);
-  const roundedMax = Math.ceil(maxValue / 10) * 10;
-
-  // Determine theme colors dynamically
-  const isDark = mounted && resolvedTheme === 'dark';
-  const axisColor = isDark ? '#ffffff' : '#000000';
-  const yAxisColor = isDark ? '#d1d5db' : '#6b7280';
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        callbacks: {
-          title: (context: any) => {
-            const index = context[0].dataIndex;
-            const ranges = ['0-10', '10-20', '20-30', '30-40', '40-50', '50-60', '60-70', '70-80', '80-90', '90-100'];
-            return `Percentile ${ranges[index]}`;
-          },
-          label: (context: any) => {
-            return `Prisons: ${context.parsed.y}`;
-          },
-        },
-      },
-    },
-    scales: {
-      x: {
-        display: true,
-        grid: {
-          display: false,
-          drawBorder: true,
-          borderColor: axisColor,
-          borderWidth: 2,
-        },
-        ticks: {
-          display: true,
-          callback: function(value: any, index: number) {
-            if (index === 0) return '0';
-            if (index === 9) return '100';
-            return '';
-          },
-          color: axisColor,
-          font: {
-            size: 11,
-            weight: 'bold' as const,
-          },
-        },
-      },
-      y: {
-        display: true,
-        beginAtZero: true,
-        max: roundedMax,
-        grid: {
-          display: false,
-          drawBorder: false,
-        },
-        ticks: {
-          display: true,
-          stepSize: Math.ceil(roundedMax / 4 / 10) * 10,
-          color: yAxisColor,
-          font: {
-            size: 10,
-          },
-          callback: function(value: any) {
-            return Math.round(value / 10) * 10;
-          },
-        },
-        position: 'left' as const,
-      },
-    },
-  };
-
-  // Don't render until mounted to avoid hydration mismatch
-  if (!mounted) {
-    return <div className="h-28 w-full px-4 pb-2" />;
-  }
-
-  return (
-    <div className="h-28 w-full px-4 pb-2">
-      <Bar key={`${indicatorName}-${resolvedTheme}`} data={data} options={options} />
     </div>
   );
 }
@@ -582,13 +445,6 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                       ))}
                     </div>
                   </CardContent>
-                  {/* Histogram at bottom - COMMENTED OUT: Data not ready for production */}
-                  {/* <div className="flex-shrink-0 border-t border-gray-200 dark:border-forest-700">
-                    <PercentileHistogram
-                      color={currentComponent.color}
-                      indicatorName={currentComponent.name}
-                    />
-                  </div> */}
                 </div>
 
                 {/* Right Side - Map (70%) - Stays mounted */}

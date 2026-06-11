@@ -3,15 +3,13 @@
 // The topographic map that guides all other components - hope it doesn't lead us off a cliff!
 
 import './globals.css';
-import { Inter } from 'next/font/google';
+import { newsreader, hanken, jetbrains } from './fonts';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Metadata } from 'next';
 import Script from 'next/script';
-
-const inter = Inter({ subsets: ['latin'] });
 
 // Define the metadata for the application
 export const metadata: Metadata = {
@@ -67,7 +65,7 @@ export default function RootLayout({
         <Script src="/map-proxy.js" strategy="beforeInteractive" />
         <Script src="/map-library-helper.js" strategy="afterInteractive" />
       </head>
-      <body className={`${inter.className} overflow-x-hidden bg-background text-foreground`}>
+      <body className={`${newsreader.variable} ${hanken.variable} ${jetbrains.variable} font-sans overflow-x-hidden bg-background text-foreground antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

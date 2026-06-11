@@ -1,6 +1,5 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // tailwind.config.js
-// Configuring the topography of our styles - just like Devin maps watersheds!
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -22,189 +21,43 @@ module.exports = {
     },
     extend: {
       colors: {
-        // Nature-inspired colors - organized and optimized
-        forest: {
-          50: '#f2f7f2',
-          100: '#e4efe4',
-          200: '#c8e0c9',
-          300: '#a5cba7',
-          400: '#7bb17f',
-          500: '#57935c',
-          600: '#3d733f',
-          700: '#315a34',
-          800: '#29472c',
-          900: '#233c25',
-          950: '#122114',
-        },
-        river: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#b9e6fe',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
-        },
-        earth: {
-          50: '#faf6ef',
-          100: '#f2eada',
-          200: '#e6d3b3',
-          300: '#d9b988',
-          400: '#cb9a59',
-          500: '#c08843',
-          600: '#ac7039',
-          700: '#8f5732',
-          800: '#74472f',
-          900: '#613c2b',
-          950: '#351e16',
-        },
-        // Design system colors
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
+        forest: { 50:'#f2f7f2',100:'#e4efe4',200:'#c8e0c9',300:'#a5cba7',400:'#7bb17f',500:'#57935c',600:'#3d733f',700:'#315a34',800:'#29472c',900:'#233c25',950:'#122114' },
+        earth:  { 50:'#faf6ef',100:'#f2eada',200:'#e6d3b3',300:'#d9b988',400:'#cb9a59',500:'#c08843',600:'#ac7039',700:'#8f5732',800:'#74472f',900:'#613c2b',950:'#351e16' },
+        river:  { 50:'#f5f7f9',100:'#e8edf1',200:'#d2dbe3',300:'#b3c2cf',400:'#91aabf',500:'#738ea6',600:'#5b748c',700:'#495f74',800:'#3b4c5d',900:'#2f3a47',950:'#1d242c' },
+        stone:  { 50:'#f7f6f2',100:'#eeece4',200:'#ddd9cc',300:'#c4bda9',400:'#a39a82',500:'#847b64',600:'#6a624f',700:'#554e40',800:'#3f3a30',900:'#2b2822',950:'#1a1814' },
+        background: 'var(--surface-page)',
+        foreground: 'var(--text-body)',
+        card: { DEFAULT: 'var(--surface-card)', foreground: 'var(--text-body)' },
+        ink: { strong:'var(--text-strong)', body:'var(--text-body)', muted:'var(--text-muted)', faint:'var(--text-faint)' },
+        link: { DEFAULT:'var(--text-link)', hover:'var(--text-link-hover)' },
+        eyebrow: 'var(--text-eyebrow)',
+        accent: { DEFAULT:'var(--brand-accent)' },
+        primary: { DEFAULT:'var(--brand-primary)', foreground:'#f2f7f2' },
+        border: 'var(--border-hairline)',
+        input: 'var(--border-default)',
+        ring: 'var(--ring-focus)',
+        muted: { DEFAULT:'var(--surface-sunken)', foreground:'var(--text-muted)' },
+        secondary: { DEFAULT:'var(--surface-sunken)', foreground:'var(--text-body)' },
+        destructive: { DEFAULT:'#a8472f', foreground:'#faf6ef' },
+        popover: { DEFAULT:'var(--surface-card)', foreground:'var(--text-body)' },
+        contour: 'var(--border-contour)',
       },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      // Enhanced z-index scale
-      zIndex: {
-        'dropdown': '1000',
-        'sticky': '1020', 
-        'fixed': '1030',
-        'modal-backdrop': '1040',
-        'modal': '1050',
-        'popover': '1060',
-        'tooltip': '1070',
-        'toast': '1080',
-      },
-      // Enhanced animation system
-      keyframes: {
-        "accordion-down": {
-          from: { height: 0 },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
-        },
-        "fade-in": {
-          from: { opacity: 0 },
-          to: { opacity: 1 },
-        },
-        "slide-up": {
-          from: { transform: "translateY(100%)" },
-          to: { transform: "translateY(0)" },
-        },
-        "scale-in": {
-          from: { transform: "scale(0.95)" },
-          to: { transform: "scale(1)" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.3s ease-out",
-        "slide-up": "slide-up 0.3s ease-out",
-        "scale-in": "scale-in 0.2s ease-out",
-      },
-      // Enhanced spacing system
-      spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '128': '32rem',
-      },
-      // Typography improvements
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'Iowan Old Style', 'Georgia', 'serif'],
+        mono: ['var(--font-mono)', 'SF Mono', 'Consolas', 'monospace'],
       },
-      fontSize: {
-        '2xs': ['0.625rem', { lineHeight: '0.75rem' }],
+      letterSpacing: { caps: '0.14em', display: '-0.02em', mono: '0.02em' },
+      lineHeight: { 'tight-display': '1.08' },
+      borderRadius: { lg: '10px', md: '10px', sm: '6px' },
+      keyframes: {
+        'slide-in-from-top-2': { from: { transform: 'translateY(-8px)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } },
+        rise: { from: { opacity: 0, transform: 'translateY(14px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
       },
+      animation: { rise: 'rise 0.8s ease-out forwards' },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
-    // Add custom plugin for surface elevation utilities
-    function({ addUtilities, theme }) {
-      const surfaceUtilities = {
-        '.surface-1': {
-          boxShadow: theme('boxShadow.sm'),
-        },
-        '.surface-2': {
-          boxShadow: theme('boxShadow.md'),
-        },
-        '.surface-3': {
-          boxShadow: theme('boxShadow.lg'),
-        },
-        '.surface-4': {
-          boxShadow: theme('boxShadow.xl'),
-        },
-        '.surface-5': {
-          boxShadow: theme('boxShadow.2xl'),
-        },
-      };
-      addUtilities(surfaceUtilities);
-    },
-    // Add custom plugin for text shadow utilities
-    function({ addUtilities }) {
-      const textShadowUtilities = {
-        '.text-shadow-sm': {
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
-        },
-        '.text-shadow': {
-          textShadow: '0 2px 4px rgba(0, 0, 0, 0.7)',
-        },
-        '.text-shadow-md': {
-          textShadow: '0 2px 4px rgba(0, 0, 0, 0.7)',
-        },
-        '.text-shadow-lg': {
-          textShadow: '0 4px 8px rgba(0, 0, 0, 0.8)',
-        },
-        '.text-shadow-xl': {
-          textShadow: '0 8px 16px rgba(0, 0, 0, 0.9)',
-        },
-        '.text-shadow-none': {
-          textShadow: 'none',
-        },
-      };
-      addUtilities(textShadowUtilities);
-    },
   ],
 }

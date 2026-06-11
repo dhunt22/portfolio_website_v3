@@ -16,3 +16,5 @@ cv_processing_to_website.txt
 /components/ui/icons/IconsDemo.tsx
 /components/ui/icons/README.md.envnul
 tsconfig.tsbuildinfo
+out/
+bash.exe.stackdump
