@@ -54,7 +54,7 @@ const interestSections: InterestSectionProps[] = [
     title: 'Bicycles',
     imagePosition: 'right',
     image: {
-      src: '/images/bicycle_kitchen.jpg',
+      src: '/images/bicycle_kitchen.webp',
       alt: "A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen",
       caption: "A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen",
       objectPosition: 'bottom',
@@ -111,7 +111,7 @@ const interestSections: InterestSectionProps[] = [
     title: 'Photography',
     imagePosition: 'left',
     image: {
-      src: '/images/photography.jpg',
+      src: '/images/photography.webp',
       alt: 'Wood texture captured during a hike',
       caption: 'One of my first first long-exposure captures',
       objectPosition: 'bottom',

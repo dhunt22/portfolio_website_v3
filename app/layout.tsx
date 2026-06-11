@@ -9,7 +9,6 @@ import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Metadata } from 'next';
-import Script from 'next/script';
 
 // Define the metadata for the application
 export const metadata: Metadata = {
@@ -50,20 +49,6 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
-        <meta httpEquiv="Content-Security-Policy" content="
-          default-src 'self';
-          script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.netlify.com;
-          style-src 'self' 'unsafe-inline' https://*.openstreetmap.org https://*.openfreemap.org;
-          img-src 'self' data: blob: https://*.openstreetmap.org https://*.openfreemap.org;
-          font-src 'self';
-          connect-src 'self' https://app.netlify.com https://*.openstreetmap.org https://*.openfreemap.org;
-          frame-src 'self' https://app.netlify.com;
-          worker-src 'self' blob:;
-          manifest-src 'self';
-        " />
-        <Script src="/netlify-config.js" strategy="beforeInteractive" />
-        <Script src="/map-proxy.js" strategy="beforeInteractive" />
-        <Script src="/map-library-helper.js" strategy="afterInteractive" />
       </head>
       <body className={`${newsreader.variable} ${hanken.variable} ${jetbrains.variable} font-sans overflow-x-hidden bg-background text-foreground antialiased`}>
         <ThemeProvider

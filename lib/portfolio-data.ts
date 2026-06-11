@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     year: '2023',
     technologies: ['GIS', 'Spatial Analysis', 'Hydrology'],
     displayType: 'image',
-    imagePath: '/images/yuba_recharge_suitability_index_preview.png',
+    imagePath: '/images/yuba_recharge_suitability_index_preview.webp',
     imageAlt: 'Yuba Subbasins Recharge Analysis visualization',
     content: [
       'Computed Recharge Suitability Index (RSI) scores using open-source geospatial data for the Yuba Subbasins. This analysis identified optimal locations for groundwater recharge projects.',
@@ -145,7 +145,7 @@ export const PROJECTS: Project[] = [
     year: '2024',
     technologies: ['Field Testing', 'Soil Analysis', 'GIS'],
     displayType: 'image',
-    imagePath: '/images/modesto_infiltration_snyderWest.jpg',
+    imagePath: '/images/modesto_infiltration_snyderWest.webp',
     imageAlt: 'Infiltration Feasibility Study visualization',
     content: [
       'Conducted initial identification of existing drainage basins for percolation field tests, including spatial analysis of soil profiles and infiltration scores using SAGBI and SSURGO data.',
@@ -160,7 +160,7 @@ export const PROJECTS: Project[] = [
     year: '2024-Present',
     technologies: ['GIS', 'Suitability Analysis', 'Water Infrastructure'],
     displayType: 'image',
-    imagePath: '/images/antelope_valley_LACPW_district40.png',
+    imagePath: '/images/antelope_valley_LACPW_district40.webp',
     imageAlt: 'Antelope Valley Well Resilience Study visualization',
     imageSecondaryText: 'This is the westernmost portion of District 40, spanning Palmdale and Lancaster.',
     content: [
