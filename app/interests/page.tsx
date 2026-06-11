@@ -2,10 +2,6 @@
 // app/interests/page.tsx
 // Exploring personal interests like a river finds its path - always curious about where it leads!
 
-'use client';
-
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { InterestSection, InterestSectionProps } from '@/components/interests/InterestSection';
 
@@ -138,111 +134,45 @@ const interestSections: InterestSectionProps[] = [
  * @returns {React.JSX.Element} The rendered interests page
  */
 export default function InterestsPage() {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  // Carousel images for GIS section
-  const carouselImages = [
-    { src: '/images/american_river_contour_dark.svg', alt: 'American River Contour Map' },
-    { src: '/images/upper_folsom_contour_dark.svg', alt: 'Upper Folsom Contour Map' },
-  ];
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
-  };
-
   return (
     <div className="relative min-h-screen">
-      {/* Background SVG */}
       <ContourBackdrop preset="americanRiver" />
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <h1 className="text-3xl sm:text-4xl font-bold text-forest-800 dark:text-forest-200 mb-6">
-          Personal Interests
-        </h1>
+      <div className="container relative z-10 mx-auto px-6">
+        <header className="pt-16">
+          <h1 className="display text-4xl">Personal Interests</h1>
+        </header>
 
-        <div className="space-y-8">
-          {/* Render standard interest sections */}
-          {interestSections.map((section) => (
-            <InterestSection key={section.id} {...section} />
-          ))}
+        {interestSections.map((section, index) => (
+          <InterestSection key={section.id} {...section} flip={index % 2 === 1} />
+        ))}
 
-          {/* GIS Section - unique carousel layout */}
-          <section id="gis" className="scroll-mt-16">
-            <Card
-              className="bg-white/70 dark:bg-[#404040]/70 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-sm hover:border-river-300 focus-within:border-river-300 focus-within:shadow-sm"
-              tabIndex={0}
-              aria-label="GIS interest section"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6">
-                  <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-300 mb-4">GIS</h2>
-                  <p className="mb-4">
-                    I love data visualization and deriving digital beauty from the physical world.
-                    See these topographic vectors I made for the website backgrounds.
-                  </p>
-                  <p className="mb-4">
-                    Contact me if you are planning a community event or share an interest in GIS- lets collaborate!
-                  </p>
-                </div>
+        {/* GIS Section - topographic vectors shown plainly */}
+        <section id="gis" className="py-16 scroll-mt-16">
+          <h2 className="font-display text-2xl text-ink-strong">GIS</h2>
+          <p className="mt-4 max-w-[40rem] leading-relaxed text-ink-body">
+            I love data visualization and deriving digital beauty from the physical world.
+            See these topographic vectors I made for the website backgrounds.
+          </p>
+          <p className="mt-4 max-w-[40rem] leading-relaxed text-ink-body">
+            Contact me if you are planning a community event or share an interest in GIS- lets collaborate!
+          </p>
 
-                <div className="relative h-[300px] sm:h-[350px] md:h-[400px] bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
-                  <div className="relative w-full h-full flex items-center justify-center p-4">
-                    <div className="w-full h-full flex items-center justify-center">
-                      <img
-                        src={carouselImages[currentImageIndex].src}
-                        alt={carouselImages[currentImageIndex].alt}
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </div>
-
-                    <button
-                      onClick={prevImage}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-3 shadow-lg transition-all"
-                      aria-label="Previous image"
-                    >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                    </button>
-
-                    <button
-                      onClick={nextImage}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 text-forest-700 dark:text-forest-300 rounded-full p-3 shadow-lg transition-all"
-                      aria-label="Next image"
-                    >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                      {carouselImages.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentImageIndex(index)}
-                          className="p-2 flex items-center justify-center"
-                          aria-label={`Go to image ${index + 1}`}
-                        >
-                          <span
-                            className={`w-3 h-3 rounded-full transition-all ${
-                              index === currentImageIndex
-                                ? 'bg-forest-600 dark:bg-forest-400 w-6'
-                                : 'bg-gray-400 dark:bg-gray-600'
-                            }`}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </section>
-        </div>
+          <div className="mt-6 grid gap-6 md:grid-cols-2">
+            <img
+              src="/images/american_river_contour_dark.svg"
+              alt="American River Contour Map"
+              loading="lazy"
+              className="w-full"
+            />
+            <img
+              src="/images/upper_folsom_contour_dark.svg"
+              alt="Upper Folsom Contour Map"
+              loading="lazy"
+              className="w-full"
+            />
+          </div>
+        </section>
       </div>
     </div>
   );
