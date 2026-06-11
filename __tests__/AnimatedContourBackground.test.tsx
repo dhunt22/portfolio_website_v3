@@ -15,7 +15,8 @@ function setReducedMotion(matches: boolean) {
 }
 
 const base = {
-  plateSrc: '/images/plates/home_light.svg',
+  plateSrc: '/images/plates/home_light_plate.svg',
+  glowSrc: '/images/plates/home_light_glow.svg',
 };
 
 beforeEach(() => {
@@ -30,59 +31,82 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-test('always renders the fixed contour-plate layer', async () => {
+test('always renders the fixed contour-plate layer with the static plate background', async () => {
   const { container } = render(
     <AnimatedContourBackground {...base} mounted={true} />,
   );
   const layer = container.querySelector('[data-contour-plate]');
   expect(layer).toBeInTheDocument();
-  expect(layer).toHaveAttribute('data-src', '/images/plates/home_light.svg');
+  expect(layer).toHaveAttribute('data-src', '/images/plates/home_light_plate.svg');
   expect(layer).toHaveAttribute('aria-hidden', 'true');
   expect(layer).toHaveClass('fixed');
-  // Let the inline fetch settle so the state update is flushed inside act.
+  // The static plate is always painted as a CSS background-image.
+  const bg = layer?.querySelector<HTMLDivElement>(
+    'div[style*="background-image"]',
+  );
+  expect(bg).toBeTruthy();
+  expect(bg?.style.backgroundImage).toContain(
+    '/images/plates/home_light_plate.svg',
+  );
+  // Let the inline glow fetch settle so the state update is flushed inside act.
   await waitFor(() => expect(global.fetch).toHaveBeenCalled());
 });
 
-test('inlines the plate (fetches) when mounted and motion is allowed', async () => {
+test('inlines the GLOW (fetches glow, not plate) when mounted and motion is allowed', async () => {
   const fetchMock = global.fetch as jest.Mock;
   render(<AnimatedContourBackground {...base} mounted={true} />);
   await waitFor(() =>
-    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light.svg'),
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light_glow.svg'),
+  );
+  // The static plate is a CSS background — it is NEVER fetched/inlined.
+  expect(fetchMock).not.toHaveBeenCalledWith(
+    '/images/plates/home_light_plate.svg',
   );
 });
 
-test('resolves the dark plate src', async () => {
+test('resolves the dark plate + glow srcs', async () => {
   const { container } = render(
-    <AnimatedContourBackground plateSrc="/images/plates/home_dark.svg" mounted={true} />,
+    <AnimatedContourBackground
+      plateSrc="/images/plates/home_dark_plate.svg"
+      glowSrc="/images/plates/home_dark_glow.svg"
+      mounted={true}
+    />,
   );
   expect(container.querySelector('[data-contour-plate]')).toHaveAttribute(
     'data-src',
-    '/images/plates/home_dark.svg',
+    '/images/plates/home_dark_plate.svg',
   );
   await waitFor(() =>
-    expect(global.fetch).toHaveBeenCalledWith('/images/plates/home_dark.svg'),
+    expect(global.fetch).toHaveBeenCalledWith('/images/plates/home_dark_glow.svg'),
   );
 });
 
-test('reduced motion does NOT inline (no fetch) but still shows the static plate layer', () => {
+test('reduced motion does NOT inline the glow (no fetch) but still shows the static plate', () => {
   setReducedMotion(true);
   const fetchMock = global.fetch as jest.Mock;
   const { container } = render(
     <AnimatedContourBackground {...base} mounted={true} />,
   );
-  // The layer is always present; under reduced motion it paints the plate as a
-  // CSS background instead of inlining the animated SVG.
-  expect(container.querySelector('[data-contour-plate]')).toBeInTheDocument();
+  const layer = container.querySelector('[data-contour-plate]');
+  // The static plate background is always present.
+  expect(layer).toBeInTheDocument();
+  const bg = layer?.querySelector<HTMLDivElement>(
+    'div[style*="background-image"]',
+  );
+  expect(bg?.style.backgroundImage).toContain(
+    '/images/plates/home_light_plate.svg',
+  );
+  // Under reduced motion the glow is never fetched.
   expect(fetchMock).not.toHaveBeenCalled();
 });
 
-test('pre-mount does not inline (no fetch)', () => {
+test('pre-mount does not inline the glow (no fetch)', () => {
   const fetchMock = global.fetch as jest.Mock;
   render(<AnimatedContourBackground {...base} mounted={false} />);
   expect(fetchMock).not.toHaveBeenCalled();
 });
 
-test('stops inlining when reduced-motion turns on at runtime', async () => {
+test('stops inlining the glow when reduced-motion turns on at runtime', async () => {
   let changeHandler: ((e: { matches: boolean }) => void) | null = null;
   window.matchMedia = jest.fn().mockImplementation((query: string) => ({
     matches: false,
@@ -106,18 +130,26 @@ test('stops inlining when reduced-motion turns on at runtime', async () => {
   expect(fetchMock).toHaveBeenCalledTimes(1);
 });
 
-it('refetches when plateSrc changes (theme flip)', async () => {
+it('refetches the glow when glowSrc changes (theme flip)', async () => {
   const fetchMock = global.fetch as jest.Mock;
   const { rerender } = render(
-    <AnimatedContourBackground plateSrc="/images/plates/home_light.svg" mounted />,
+    <AnimatedContourBackground
+      plateSrc="/images/plates/home_light_plate.svg"
+      glowSrc="/images/plates/home_light_glow.svg"
+      mounted
+    />,
   );
   await waitFor(() =>
-    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light.svg'),
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light_glow.svg'),
   );
   rerender(
-    <AnimatedContourBackground plateSrc="/images/plates/home_dark.svg" mounted />,
+    <AnimatedContourBackground
+      plateSrc="/images/plates/home_dark_plate.svg"
+      glowSrc="/images/plates/home_dark_glow.svg"
+      mounted
+    />,
   );
   await waitFor(() =>
-    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_dark.svg'),
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_dark_glow.svg'),
   );
 });

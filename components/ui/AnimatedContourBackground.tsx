@@ -4,34 +4,42 @@ import { useEffect, useState } from 'react';
 
 interface AnimatedContourBackgroundProps {
   /**
-   * Theme-resolved plate SVG URL (light or dark). When motion is allowed it is
-   * fetched + inlined so the CSS motion-path comets animate. Under reduced
-   * motion the same URL is painted as a static CSS background-image instead.
+   * Theme-resolved STATIC plate SVG URL (contours only). Always painted as a
+   * CSS background-image — never inlined, never animated — so the giant vector
+   * is rasterized once and is never re-rasterized per animation frame.
    */
   plateSrc: string;
+  /**
+   * Theme-resolved ANIMATED glow SVG URL (the comet system only, transparent
+   * canvas). Fetched + inlined ON TOP of the plate when motion is allowed so
+   * its CSS motion-path sprites animate in their own small paint object. Under
+   * reduced motion it is simply not loaded (the static plate remains).
+   */
+  glowSrc: string;
   /** Resolved only after mount (avoids an SSR/client theme mismatch flash). */
   mounted: boolean;
 }
 
 /**
- * Backdrop engine v2 — fixed full-viewport contour plate.
+ * Backdrop engine v2 — fixed full-viewport contour plate (two-layer model).
  *
- * A single fixed layer (`fixed inset-0 -z-10`) so the plate covers the viewport
- * at EVERY scroll position; the old -200px / dual / repeat-y machinery is
- * obsolete for these landscape plates.
+ * A single fixed layer (`fixed inset-0 -z-10`) so the backdrop covers the
+ * viewport at EVERY scroll position. It composites two layers:
  *
- * - Motion allowed: the plate SVG is fetched and inlined (not <object>: an
- *   embedded document composites on opaque white and washed out the dark theme;
- *   inline SVG is transparent and small). The comets animate via CSS motion
- *   path (offset-path / offset-distance) + opacity — GPU-composited, no
- *   per-frame rasterization. The plate's own `.plate{opacity}` knob carries the
- *   subtlety; translucency of the glows is baked into the gradient stops.
- * - Reduced motion: do NOT inline. The same plate URL is painted as a static
- *   CSS background-image (cover, center) so the contours still read, with no
- *   animation.
+ * - STATIC plate (always): the contour-only plate URL painted as a CSS
+ *   background-image (cover, center). This never animates and never re-rasters,
+ *   so scrolling no longer stalls behind a giant per-frame vector repaint.
+ * - ANIMATED glow (motion allowed only): the comet-only glow SVG fetched and
+ *   inlined on top (transparent canvas, same viewBox so it registers 1:1). Its
+ *   sprites animate via CSS motion path (offset-path / offset-distance) +
+ *   opacity — GPU-composited, in a small isolated paint object.
+ *
+ * Reduced motion: the glow is not loaded; only the static plate background
+ * shows. Inlining (not <object>) keeps the glow transparent and small.
  */
 export function AnimatedContourBackground({
   plateSrc,
+  glowSrc,
   mounted,
 }: AnimatedContourBackgroundProps) {
   const [reducedMotion, setReducedMotion] = useState(() =>
@@ -39,7 +47,7 @@ export function AnimatedContourBackground({
       ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
       : false,
   );
-  const [svgMarkup, setSvgMarkup] = useState<string | null>(null);
+  const [glowMarkup, setGlowMarkup] = useState<string | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -51,12 +59,12 @@ export function AnimatedContourBackground({
   const shouldAnimate = mounted && !reducedMotion;
 
   useEffect(() => {
-    if (!shouldAnimate || !plateSrc || typeof fetch === 'undefined') {
-      setSvgMarkup(null);
+    if (!shouldAnimate || !glowSrc || typeof fetch === 'undefined') {
+      setGlowMarkup(null);
       return;
     }
     let cancelled = false;
-    fetch(plateSrc)
+    fetch(glowSrc)
       .then((r) => r.text())
       .then((text) => {
         if (cancelled) return;
@@ -68,42 +76,43 @@ export function AnimatedContourBackground({
             /<svg\b/i,
             '<svg style="width:100%;height:100%;display:block"',
           );
-        setSvgMarkup(cleaned);
+        setGlowMarkup(cleaned);
       })
       .catch(() => {
-        if (!cancelled) setSvgMarkup(null);
+        if (!cancelled) setGlowMarkup(null);
       });
     return () => {
       cancelled = true;
     };
-  }, [shouldAnimate, plateSrc]);
+  }, [shouldAnimate, glowSrc]);
 
   return (
     <div
       data-contour-plate
       data-src={plateSrc}
+      data-glow={shouldAnimate ? glowSrc : undefined}
       className="fixed inset-0 -z-10 overflow-hidden"
       aria-hidden="true"
     >
+      {/* Static plate — CSS background-image, never inlined, never animated. */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url(${plateSrc})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      {/* Animated glow — inlined on top only when motion is allowed. */}
       {shouldAnimate ? (
         <div
           style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-          // Trusted first-party static asset (generated contour plate).
-          dangerouslySetInnerHTML={svgMarkup ? { __html: svgMarkup } : undefined}
+          // Trusted first-party static asset (generated glow overlay).
+          dangerouslySetInnerHTML={glowMarkup ? { __html: glowMarkup } : undefined}
         />
-      ) : (
-        // Reduced motion (or pre-mount): static plate as a CSS background.
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `url(${plateSrc})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-          }}
-        />
-      )}
+      ) : null}
     </div>
   );
 }

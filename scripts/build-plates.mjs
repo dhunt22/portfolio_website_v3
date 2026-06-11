@@ -18,8 +18,16 @@
  *      ignition system EXACTLY like scripts/generate-overlays.mjs (the verified
  *      reference) — speeds scaled to THIS coordinate space, glow gradients
  *      derived from each route's native stroke colour.
- *   6. Assembles one output SVG per (page, theme) into
- *      public/images/plates/<page>_<theme>.svg.
+ *   6. Assembles TWO output SVGs per (page, theme) into public/images/plates/:
+ *        <page>_<theme>_plate.svg — contours ONLY (static; consumed as a CSS
+ *          background-image, so no <style>/keyframes/sprites/gradients).
+ *        <page>_<theme>_glow.svg  — the comet system ONLY (keyframes + route
+ *          classes + per-route gradients + sprites) on a transparent canvas
+ *          with the SAME viewBox/preserveAspectRatio so it registers 1:1.
+ *      Splitting static from animated restores the proven two-layer v1 model:
+ *      the giant static plate is never re-rasterized per animation frame, which
+ *      eliminates the scroll re-raster stalls that the merged single-SVG output
+ *      caused (same failure class that killed the original SMIL approach).
  *
  * Usage: node scripts/build-plates.mjs
  */
@@ -501,6 +509,10 @@ function buildCometSystem(routes, theme) {
 // Assembly
 // ---------------------------------------------------------------------------
 
+// --- Static plate file: contours ONLY ------------------------------------
+// Consumed as a CSS background-image, so it must be fully static: the plate
+// group with its opacity knob BAKED into the group (no <style>), clipPath,
+// same viewBox/preserveAspectRatio. No keyframes, no sprites, no gradients.
 function buildPlateSvg(paths, theme) {
   // Plate paths (theme-variant colours). Shared attrs (fill/linecap/linejoin)
   // hoisted to the group to keep the file small.
@@ -512,13 +524,29 @@ function buildPlateSvg(paths, theme) {
     })
     .join('');
 
+  const plateOpacity = PLATE_OPACITY[theme];
+  const defsBlock =
+    `<defs><clipPath id="mc"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath></defs>`;
+
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">` +
+    defsBlock +
+    `<g clip-path="url(#mc)" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${plateOpacity}">${plateBody}</g>` +
+    `</svg>`;
+
+  return svg;
+}
+
+// --- Animated glow file: comet system ONLY -------------------------------
+// Inlined on top of the static plate by the component, on a transparent canvas
+// with the SAME viewBox + preserveAspectRatio so it registers 1:1 over the
+// plate. Carries the <style> keyframes + route classes, per-route gradient
+// defs, sprite circles, and only the clipPath it needs.
+function buildGlowSvg(paths, theme) {
   const routes = pickRoutes(paths);
   const { keyframes, defs, cometGroups } = buildCometSystem(routes, theme);
 
-  const plateOpacity = PLATE_OPACITY[theme];
-
-  const style =
-    `<style>${keyframes}.plate{opacity:${plateOpacity}}</style>`;
+  const style = `<style>${keyframes}</style>`;
   const defsBlock =
     `<defs><clipPath id="mc"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath>${defs}</defs>`;
 
@@ -526,7 +554,6 @@ function buildPlateSvg(paths, theme) {
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">` +
     style +
     defsBlock +
-    `<g class="plate" clip-path="url(#mc)" fill="none" stroke-linecap="round" stroke-linejoin="round">${plateBody}</g>` +
     `<g class="comets" clip-path="url(#mc)">${cometGroups}</g>` +
     `</svg>`;
 
@@ -539,6 +566,14 @@ function buildPlateSvg(paths, theme) {
 
 function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
+
+  // Delete the old merged outputs (<page>_<theme>.svg) and any stale split
+  // files so the directory only ever holds the current 24-file output set.
+  for (const stale of fs.readdirSync(OUT_DIR)) {
+    if (stale.endsWith('.svg')) {
+      fs.unlinkSync(path.join(OUT_DIR, stale));
+    }
+  }
 
   const sizeTable = [];
 
@@ -558,43 +593,55 @@ function main() {
     }
 
     for (const theme of ['light', 'dark']) {
+      // --- Static plate: contours only. Decimate (drop every 4th path) and
+      //     retry if the file exceeds the hard cap. The glow file is tiny and
+      //     is built from the SAME (possibly decimated) working set so the
+      //     route picker stays in sync with what the plate actually draws.
       let decimations = 0;
       let working = paths;
-      let result = buildPlateSvg(working, theme);
-      let bytes = Buffer.byteLength(result.svg, 'utf8');
+      let plateSvg = buildPlateSvg(working, theme);
+      let plateBytes = Buffer.byteLength(plateSvg, 'utf8');
 
-      // FAIL-safe: if over cap, drop every 4th path evenly and retry.
-      while (bytes > MAX_BYTES) {
+      while (plateBytes > MAX_BYTES) {
         decimations++;
         if (decimations > 6) {
           throw new Error(
-            `BLOCKED: ${page}_${theme} still ${(bytes / 1024 / 1024).toFixed(2)}MB after ${decimations} decimations.`,
+            `BLOCKED: ${page}_${theme}_plate still ${(plateBytes / 1024 / 1024).toFixed(2)}MB after ${decimations} decimations.`,
           );
         }
         working = decimate(working);
-        result = buildPlateSvg(working, theme);
-        bytes = Buffer.byteLength(result.svg, 'utf8');
+        plateSvg = buildPlateSvg(working, theme);
+        plateBytes = Buffer.byteLength(plateSvg, 'utf8');
       }
 
-      const outPath = path.join(OUT_DIR, `${page}_${theme}.svg`);
-      fs.writeFileSync(outPath, result.svg);
+      // --- Animated glow: comet system only (transparent canvas, same frame).
+      const glow = buildGlowSvg(working, theme);
+      const glowBytes = Buffer.byteLength(glow.svg, 'utf8');
 
-      const kb = (bytes / 1024).toFixed(1);
+      const platePath = path.join(OUT_DIR, `${page}_${theme}_plate.svg`);
+      const glowPath = path.join(OUT_DIR, `${page}_${theme}_glow.svg`);
+      fs.writeFileSync(platePath, plateSvg);
+      fs.writeFileSync(glowPath, glow.svg);
+
+      const plateKB = (plateBytes / 1024).toFixed(1);
+      const glowKB = (glowBytes / 1024).toFixed(1);
       sizeTable.push({
-        file: `${page}_${theme}.svg`,
+        page,
+        theme,
         paths: working.length,
-        routes: result.routeCount,
+        routes: glow.routeCount,
         rawMB: rawSizeMB,
-        outKB: kb,
+        plateKB,
+        glowKB,
         decimations,
       });
       console.log(
-        `[${page}/${theme}] paths: ${working.length}, routes: ${result.routeCount}, raw: ${rawSizeMB}MB, out: ${kb}KB${decimations ? ` (decimated x${decimations})` : ''} -> ${outPath}`,
+        `[${page}/${theme}] paths: ${working.length}, routes: ${glow.routeCount}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB, glow: ${glowKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}\n    -> ${glowPath}`,
       );
     }
   }
 
-  console.log('\nDone. 12 plate SVGs written to', OUT_DIR);
+  console.log('\nDone. 24 SVGs (12 plate + 12 glow) written to', OUT_DIR);
   console.table(sizeTable);
 }
 
