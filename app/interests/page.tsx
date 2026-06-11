@@ -6,9 +6,6 @@ import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { InterestSection, InterestSectionProps } from '@/components/interests/InterestSection';
 
 
-// Blur data URL constant (reused across multiple sections)
-const DEFAULT_BLUR_DATA_URL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==";
-
 /**
  * Interest section data configuration
  */
@@ -22,7 +19,6 @@ const interestSections: InterestSectionProps[] = [
       alt: 'A silver Tundra covered in orange Moab mud after driving Shafer Trail in Canyonlands National Park',
       caption: 'A silver Tundra covered in orange Moab mud after driving Shafer Trail in Canyonlands National Park',
       objectPosition: 'bottom',
-      blurDataURL: DEFAULT_BLUR_DATA_URL,
     },
     quote: {
       text: 'The world is big, and I want to have a good look at it before it gets dark.',
@@ -42,7 +38,6 @@ const interestSections: InterestSectionProps[] = [
       alt: 'A calm alpine lake at dusk near Winter Park, Colorado',
       caption: 'A calm alpine lake at dusk near Winter Park, Colorado, where I caught my first lake trout',
       objectPosition: 'center',
-      blurDataURL: DEFAULT_BLUR_DATA_URL,
     },
     quote: {
       text: 'What better way to learn about streams than within?',
@@ -63,7 +58,6 @@ const interestSections: InterestSectionProps[] = [
       alt: "A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen",
       caption: "A 'Shaft Drive' bicycle- a rare sight for the Bike Kitchen",
       objectPosition: 'bottom',
-      blurDataURL: DEFAULT_BLUR_DATA_URL,
     },
     quote: {
       text: "It's all mechanical, you can mend it with a hammer.",
@@ -143,8 +137,8 @@ export default function InterestsPage() {
           <h1 className="display text-4xl">Personal Interests</h1>
         </header>
 
-        {interestSections.map((section, index) => (
-          <InterestSection key={section.id} {...section} flip={index % 2 === 1} />
+        {interestSections.map((section) => (
+          <InterestSection key={section.id} {...section} />
         ))}
 
         {/* GIS Section - topographic vectors shown plainly */}
@@ -159,18 +153,34 @@ export default function InterestsPage() {
           </p>
 
           <div className="mt-6 grid gap-6 md:grid-cols-2">
-            <img
-              src="/images/american_river_contour_dark.svg"
-              alt="American River Contour Map"
-              loading="lazy"
-              className="w-full"
-            />
-            <img
-              src="/images/upper_folsom_contour_dark.svg"
-              alt="Upper Folsom Contour Map"
-              loading="lazy"
-              className="w-full"
-            />
+            <div className="border border-border bg-background">
+              <img
+                src="/images/american_river_contour_bwn.svg"
+                alt="American River Contour Map"
+                loading="lazy"
+                className="block w-full max-h-[420px] object-cover object-top dark:hidden"
+              />
+              <img
+                src="/images/american_river_contour_dark.svg"
+                alt="American River Contour Map"
+                loading="lazy"
+                className="hidden w-full max-h-[420px] object-cover object-top dark:block"
+              />
+            </div>
+            <div className="border border-border bg-background">
+              <img
+                src="/images/upper_folsom_contour_bwn.svg"
+                alt="Upper Folsom Contour Map"
+                loading="lazy"
+                className="block w-full max-h-[420px] object-cover object-top dark:hidden"
+              />
+              <img
+                src="/images/upper_folsom_contour_dark.svg"
+                alt="Upper Folsom Contour Map"
+                loading="lazy"
+                className="hidden w-full max-h-[420px] object-cover object-top dark:block"
+              />
+            </div>
           </div>
         </section>
       </div>
