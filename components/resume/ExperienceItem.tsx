@@ -31,18 +31,14 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
   responsibilities,
 }) => {
   return (
-    <div className="mb-6 last:mb-0">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
-        <h3 className="text-lg font-semibold text-forest-800 dark:text-forest-300">{title}</h3>
-        <span className="text-forest-600 dark:text-forest-400 text-sm italic">{period}</span>
-      </div>
-      <p className="text-forest-700 dark:text-forest-300 font-medium mb-2">{company}</p>
-      <ul className="space-y-2 ml-2">
+    <div className="mb-10 last:mb-0 max-w-[40rem]">
+      <h3 className="font-display text-xl text-ink-strong">{title}</h3>
+      <p className="mt-1 font-mono text-xs tracking-mono text-ink-muted">
+        {company} · {period}
+      </p>
+      <ul className="mt-3 list-disc space-y-1 pl-5 leading-relaxed text-ink-body marker:text-eyebrow">
         {responsibilities.map((responsibility, index) => (
-          <li key={index} className="flex items-start">
-            <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
-            <span className="text-forest-800 dark:text-white">{responsibility}</span>
-          </li>
+          <li key={index}>{responsibility}</li>
         ))}
       </ul>
     </div>
