@@ -13,7 +13,7 @@ import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 export default function Home() {
   return (
     <div className="relative min-h-screen">
-      <ContourBackdrop preset="americanRiver" />
+      <ContourBackdrop page="home" />
 
       <div className="container relative z-10 mx-auto px-6">
         <section className="flex min-h-[82vh] max-w-3xl flex-col justify-center">

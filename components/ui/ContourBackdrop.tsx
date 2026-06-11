@@ -1,23 +1,23 @@
 'use client';
 
-import { BACKGROUND_PRESETS, useThemeBackground } from '@/hooks/useThemeBackground';
+import {
+  PLATE_PRESETS,
+  useThemeBackground,
+  type PlatePage,
+} from '@/hooks/useThemeBackground';
 import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
 
 interface ContourBackdropProps {
-  preset: keyof typeof BACKGROUND_PRESETS;
-  dual?: boolean;
+  /** Which page's landscape plate to render. */
+  page: PlatePage;
 }
 
-/** Single client-side entry point for the page background so pages stay server components. */
-export function ContourBackdrop({ preset, dual = false }: ContourBackdropProps) {
-  const { isMobile, backgroundImage, mounted, animatedSrc } = useThemeBackground(BACKGROUND_PRESETS[preset]);
-  return (
-    <AnimatedContourBackground
-      backgroundImage={backgroundImage}
-      isMobile={isMobile}
-      mounted={mounted}
-      animatedSrc={animatedSrc}
-      dualBackground={dual}
-    />
-  );
+/**
+ * Single client-side entry point for the per-page fixed contour plate, so the
+ * pages themselves stay server components. Resolves the theme-specific plate
+ * and hands it to the fixed inlining layer.
+ */
+export function ContourBackdrop({ page }: ContourBackdropProps) {
+  const { plateSrc, mounted } = useThemeBackground(PLATE_PRESETS[page]);
+  return <AnimatedContourBackground plateSrc={plateSrc} mounted={mounted} />;
 }

@@ -1,48 +1,38 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PageBackground } from '@/components/ui/PageBackground';
 
 interface AnimatedContourBackgroundProps {
-  backgroundImage: string;
-  isMobile: boolean;
-  mounted: boolean;
   /**
-   * Path to the theme-specific overlay SVG (light or dark variant). When
-   * present (and conditions allow) it is layered on top of the static contour
-   * backdrop. The caller supplies the correct theme variant; this component
-   * fetches and inlines it.
+   * Theme-resolved plate SVG URL (light or dark). When motion is allowed it is
+   * fetched + inlined so the CSS motion-path comets animate. Under reduced
+   * motion the same URL is painted as a static CSS background-image instead.
    */
-  animatedSrc?: string;
-  /** Passthrough to the static PageBackground backdrop. */
-  dualBackground?: boolean;
+  plateSrc: string;
+  /** Resolved only after mount (avoids an SSR/client theme mismatch flash). */
+  mounted: boolean;
 }
 
 /**
- * Two-layer contour background:
+ * Backdrop engine v2 — fixed full-viewport contour plate.
  *
- * - Backdrop: the unchanged faint static contour (PageBackground) — always
- *   rendered, so there is never a blank/flashing state.
- * - Overlay: a separate SVG of drafted route lines + comet ignition sprites,
- *   fetched and inlined on top. Theme-specific variants (light/dark) are
- *   supplied by the caller. Rendered when mounted, motion is allowed, and an
- *   overlay source is provided.
+ * A single fixed layer (`fixed inset-0 -z-10`) so the plate covers the viewport
+ * at EVERY scroll position; the old -200px / dual / repeat-y machinery is
+ * obsolete for these landscape plates.
  *
- * The overlay SVG is inlined (not embedded via <object>): an <object>'s
- * embedded document composites on an opaque white backing in this layered
- * context, which washed out the dark theme. Inline SVG is transparent and
- * small. The sprites are animated with CSS motion path
- * (offset-path/offset-distance) + opacity — GPU-composited, so there is no
- * per-frame rasterization (SMIL gradient animation here saturated the
- * renderer to ~12fps and wrecked INP). Translucency is baked into the
- * static gradient stop-opacity.
+ * - Motion allowed: the plate SVG is fetched and inlined (not <object>: an
+ *   embedded document composites on opaque white and washed out the dark theme;
+ *   inline SVG is transparent and small). The comets animate via CSS motion
+ *   path (offset-path / offset-distance) + opacity — GPU-composited, no
+ *   per-frame rasterization. The plate's own `.plate{opacity}` knob carries the
+ *   subtlety; translucency of the glows is baked into the gradient stops.
+ * - Reduced motion: do NOT inline. The same plate URL is painted as a static
+ *   CSS background-image (cover, center) so the contours still read, with no
+ *   animation.
  */
 export function AnimatedContourBackground({
-  backgroundImage,
-  isMobile,
+  plateSrc,
   mounted,
-  animatedSrc,
-  dualBackground = false,
 }: AnimatedContourBackgroundProps) {
   const [reducedMotion, setReducedMotion] = useState(() =>
     typeof window !== 'undefined'
@@ -58,25 +48,25 @@ export function AnimatedContourBackground({
     return () => mq.removeEventListener('change', onChange);
   }, []);
 
-  const shouldAnimate = mounted && !reducedMotion && !!animatedSrc;
+  const shouldAnimate = mounted && !reducedMotion;
 
   useEffect(() => {
-    if (!shouldAnimate || !animatedSrc || typeof fetch === 'undefined') {
+    if (!shouldAnimate || !plateSrc || typeof fetch === 'undefined') {
       setSvgMarkup(null);
       return;
     }
     let cancelled = false;
-    fetch(animatedSrc)
+    fetch(plateSrc)
       .then((r) => r.text())
       .then((text) => {
         if (cancelled) return;
-        // Strip XML prolog (invalid inside HTML innerHTML) and force the
-        // inlined <svg> to scale to the container width by its viewBox ratio.
+        // Strip the XML prolog (invalid inside HTML innerHTML) and force the
+        // inlined <svg> to fill the fixed layer.
         const cleaned = text
           .replace(/^\s*<\?xml[^>]*\?>\s*/i, '')
           .replace(
             /<svg\b/i,
-            '<svg style="width:100%;height:auto;display:block"',
+            '<svg style="width:100%;height:100%;display:block"',
           );
         setSvgMarkup(cleaned);
       })
@@ -86,36 +76,34 @@ export function AnimatedContourBackground({
     return () => {
       cancelled = true;
     };
-  }, [shouldAnimate, animatedSrc]);
+  }, [shouldAnimate, plateSrc]);
 
   return (
-    <>
-      <PageBackground
-        backgroundImage={backgroundImage}
-        isMobile={isMobile}
-        dualBackground={dualBackground}
-      />
-      {shouldAnimate && (
+    <div
+      data-contour-plate
+      data-src={plateSrc}
+      className="fixed inset-0 -z-10 overflow-hidden"
+      aria-hidden="true"
+    >
+      {shouldAnimate ? (
         <div
-          data-pulse-overlay
-          data-src={animatedSrc}
-          className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden"
-          aria-hidden="true"
-        >
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: isMobile ? '250%' : '100%',
-              pointerEvents: 'none',
-            }}
-            // Trusted first-party static asset (generated pulse overlay).
-            dangerouslySetInnerHTML={svgMarkup ? { __html: svgMarkup } : undefined}
-          />
-        </div>
+          style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+          // Trusted first-party static asset (generated contour plate).
+          dangerouslySetInnerHTML={svgMarkup ? { __html: svgMarkup } : undefined}
+        />
+      ) : (
+        // Reduced motion (or pre-mount): static plate as a CSS background.
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${plateSrc})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
       )}
-    </>
+    </div>
   );
 }

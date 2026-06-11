@@ -13,7 +13,7 @@ import { IndicatorBrowser } from '@/components/portfolio/IndicatorBrowser';
 export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
   return (
     <div className="relative min-h-screen">
-      <ContourBackdrop preset="upperFolsom" />
+      <ContourBackdrop page="ej" />
 
       <div className="container relative z-10 mx-auto px-6">
         {/* Hero */}

@@ -130,7 +130,7 @@ const interestSections: InterestSectionProps[] = [
 export default function InterestsPage() {
   return (
     <div className="relative min-h-screen">
-      <ContourBackdrop preset="americanRiver" />
+      <ContourBackdrop page="interests" />
 
       <div className="container relative z-10 mx-auto px-6">
         <header className="pt-16">

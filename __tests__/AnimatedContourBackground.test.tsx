@@ -15,9 +15,7 @@ function setReducedMotion(matches: boolean) {
 }
 
 const base = {
-  backgroundImage: 'url(/images/american_river_contour_bwn.svg)',
-  isMobile: false,
-  animatedSrc: '/images/american_river_overlay_light.svg',
+  plateSrc: '/images/plates/home_light.svg',
 };
 
 beforeEach(() => {
@@ -32,77 +30,94 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-test('renders pulse overlay when mounted, motion ok', () => {
+test('always renders the fixed contour-plate layer', async () => {
   const { container } = render(
     <AnimatedContourBackground {...base} mounted={true} />,
   );
-  const overlay = container.querySelector('[data-pulse-overlay]');
-  expect(overlay).toBeInTheDocument();
-  expect(overlay).toHaveAttribute('data-src', '/images/american_river_overlay_light.svg');
-  expect(overlay).toHaveAttribute('aria-hidden', 'true');
+  const layer = container.querySelector('[data-contour-plate]');
+  expect(layer).toBeInTheDocument();
+  expect(layer).toHaveAttribute('data-src', '/images/plates/home_light.svg');
+  expect(layer).toHaveAttribute('aria-hidden', 'true');
+  expect(layer).toHaveClass('fixed');
+  // Let the inline fetch settle so the state update is flushed inside act.
+  await waitFor(() => expect(global.fetch).toHaveBeenCalled());
 });
 
-test('renders pulse overlay with dark overlay src', () => {
-  const { container } = render(
-    <AnimatedContourBackground
-      {...base}
-      animatedSrc="/images/american_river_overlay_dark.svg"
-      mounted={true}
-    />,
+test('inlines the plate (fetches) when mounted and motion is allowed', async () => {
+  const fetchMock = global.fetch as jest.Mock;
+  render(<AnimatedContourBackground {...base} mounted={true} />);
+  await waitFor(() =>
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light.svg'),
   );
-  expect(container.querySelector('[data-pulse-overlay]')).toBeInTheDocument();
 });
 
-test('no pulse overlay before mount', () => {
+test('resolves the dark plate src', async () => {
   const { container } = render(
-    <AnimatedContourBackground {...base} mounted={false} />,
+    <AnimatedContourBackground plateSrc="/images/plates/home_dark.svg" mounted={true} />,
   );
-  expect(container.querySelector('[data-pulse-overlay]')).not.toBeInTheDocument();
+  expect(container.querySelector('[data-contour-plate]')).toHaveAttribute(
+    'data-src',
+    '/images/plates/home_dark.svg',
+  );
+  await waitFor(() =>
+    expect(global.fetch).toHaveBeenCalledWith('/images/plates/home_dark.svg'),
+  );
 });
 
-test('no pulse overlay when animatedSrc missing', () => {
-  const { container } = render(
-    <AnimatedContourBackground {...base} animatedSrc={undefined} mounted={true} />,
-  );
-  expect(container.querySelector('[data-pulse-overlay]')).not.toBeInTheDocument();
-});
-
-test('no pulse overlay when reduced motion preferred', () => {
+test('reduced motion does NOT inline (no fetch) but still shows the static plate layer', () => {
   setReducedMotion(true);
+  const fetchMock = global.fetch as jest.Mock;
   const { container } = render(
     <AnimatedContourBackground {...base} mounted={true} />,
   );
-  expect(container.querySelector('[data-pulse-overlay]')).not.toBeInTheDocument();
+  // The layer is always present; under reduced motion it paints the plate as a
+  // CSS background instead of inlining the animated SVG.
+  expect(container.querySelector('[data-contour-plate]')).toBeInTheDocument();
+  expect(fetchMock).not.toHaveBeenCalled();
 });
 
-test('hides pulse overlay when reduced-motion turns on at runtime', () => {
+test('pre-mount does not inline (no fetch)', () => {
+  const fetchMock = global.fetch as jest.Mock;
+  render(<AnimatedContourBackground {...base} mounted={false} />);
+  expect(fetchMock).not.toHaveBeenCalled();
+});
+
+test('stops inlining when reduced-motion turns on at runtime', async () => {
   let changeHandler: ((e: { matches: boolean }) => void) | null = null;
   window.matchMedia = jest.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
-    addEventListener: (_: string, cb: (e: { matches: boolean }) => void) => { changeHandler = cb; },
+    addEventListener: (_: string, cb: (e: { matches: boolean }) => void) => {
+      changeHandler = cb;
+    },
     removeEventListener: jest.fn(),
     addListener: jest.fn(),
     removeListener: jest.fn(),
     dispatchEvent: jest.fn(),
   }));
-  const { container } = render(
-    <AnimatedContourBackground {...base} mounted={true} />,
-  );
-  expect(container.querySelector('[data-pulse-overlay]')).toBeInTheDocument();
-  act(() => { changeHandler && changeHandler({ matches: true }); });
-  expect(container.querySelector('[data-pulse-overlay]')).not.toBeInTheDocument();
+  const fetchMock = global.fetch as jest.Mock;
+  render(<AnimatedContourBackground {...base} mounted={true} />);
+  await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+  act(() => {
+    changeHandler && changeHandler({ matches: true });
+  });
+  // No additional fetch once reduced motion is on; the layer stays mounted.
+  expect(fetchMock).toHaveBeenCalledTimes(1);
 });
 
-it('refetches when animatedSrc changes', async () => {
+it('refetches when plateSrc changes (theme flip)', async () => {
   const fetchMock = global.fetch as jest.Mock;
   const { rerender } = render(
-    <AnimatedContourBackground backgroundImage="url(/x.svg)" isMobile={false} mounted animatedSrc="/images/a_overlay_light.svg" />,
+    <AnimatedContourBackground plateSrc="/images/plates/home_light.svg" mounted />,
   );
-  await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/images/a_overlay_light.svg'));
+  await waitFor(() =>
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light.svg'),
+  );
   rerender(
-    <AnimatedContourBackground backgroundImage="url(/x.svg)" isMobile={false} mounted animatedSrc="/images/a_overlay_dark.svg" />,
+    <AnimatedContourBackground plateSrc="/images/plates/home_dark.svg" mounted />,
   );
-  await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/images/a_overlay_dark.svg'));
+  await waitFor(() =>
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_dark.svg'),
+  );
 });

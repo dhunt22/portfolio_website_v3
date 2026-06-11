@@ -13,7 +13,7 @@ import { PROJECTS } from '@/lib/portfolio-data';
 export default function PortfolioPage() {
   return (
     <div className="relative min-h-screen">
-      <ContourBackdrop preset="upperFolsom" dual />
+      <ContourBackdrop page="portfolio" />
 
       <div className="container relative z-10 mx-auto px-6">
         <header className="pt-16">

@@ -40,7 +40,7 @@ export default function ResumePage() {
 
   return (
     <div className="relative min-h-screen">
-      <ContourBackdrop preset="americanRiver" dual />
+      <ContourBackdrop page="resume" />
 
       <div className="container relative z-10 mx-auto px-6">
         <header className="flex flex-wrap items-baseline justify-between gap-4 pt-16">

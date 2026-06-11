@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { useThemeBackground, BACKGROUND_PRESETS } from '@/hooks/useThemeBackground';
+import { useThemeBackground, PLATE_PRESETS } from '@/hooks/useThemeBackground';
 
 // Controllable per-test resolved theme. The mock reads the live variable so an
 // individual test can flip it to exercise the dark branch.
@@ -12,40 +12,49 @@ beforeEach(() => {
   mockResolvedTheme = 'light';
 });
 
-test('light theme selects the LIGHT overlay (mounted via effect flush)', () => {
-  const { result } = renderHook(() => useThemeBackground(BACKGROUND_PRESETS.americanRiver));
+test('light theme resolves the LIGHT plate (mounted via effect flush)', () => {
+  const { result } = renderHook(() => useThemeBackground(PLATE_PRESETS.home));
   // renderHook flushes effects, so mounted is true here.
   expect(result.current.mounted).toBe(true);
   expect(result.current.isDark).toBe(false);
-  expect(result.current.animatedSrc).toBe(BACKGROUND_PRESETS.americanRiver.overlayLight);
-  expect(result.current.backgroundImage).toBe(`url(${BACKGROUND_PRESETS.americanRiver.lightImage})`);
+  expect(result.current.plateSrc).toBe('/images/plates/home_light.svg');
+  expect(result.current.animatedSrc).toBe('/images/plates/home_light.svg');
+  expect(result.current.backgroundImage).toBe('url(/images/plates/home_light.svg)');
 });
 
-test('dark theme selects the DARK overlay + dark image + isDark', () => {
+test('dark theme resolves the DARK plate + isDark', () => {
   mockResolvedTheme = 'dark';
-  const { result } = renderHook(() => useThemeBackground(BACKGROUND_PRESETS.americanRiver));
+  const { result } = renderHook(() => useThemeBackground(PLATE_PRESETS.home));
   expect(result.current.isDark).toBe(true);
-  expect(result.current.animatedSrc).toBe(BACKGROUND_PRESETS.americanRiver.overlayDark);
-  expect(result.current.backgroundImage).toBe(`url(${BACKGROUND_PRESETS.americanRiver.darkImage})`);
+  expect(result.current.plateSrc).toBe('/images/plates/home_dark.svg');
+  expect(result.current.animatedSrc).toBe('/images/plates/home_dark.svg');
+  expect(result.current.backgroundImage).toBe('url(/images/plates/home_dark.svg)');
 });
 
-test('BACKGROUND_PRESETS.americanRiver has overlay paths', () => {
-  expect(BACKGROUND_PRESETS.americanRiver.overlayLight).toBe('/images/american_river_overlay_light.svg');
-  expect(BACKGROUND_PRESETS.americanRiver.overlayDark).toBe('/images/american_river_overlay_dark.svg');
+test('every page preset points at its own light/dark plate files', () => {
+  const pages = ['home', 'portfolio', 'ej', 'resume', 'interests', 'notFound'] as const;
+  for (const page of pages) {
+    expect(PLATE_PRESETS[page].lightImage).toBe(`/images/plates/${page}_light.svg`);
+    expect(PLATE_PRESETS[page].darkImage).toBe(`/images/plates/${page}_dark.svg`);
+    // The plate file doubles as the reduced-motion image and the inlined overlay.
+    expect(PLATE_PRESETS[page].overlayLight).toBe(PLATE_PRESETS[page].lightImage);
+    expect(PLATE_PRESETS[page].overlayDark).toBe(PLATE_PRESETS[page].darkImage);
+  }
 });
 
-test('BACKGROUND_PRESETS.upperFolsom has overlay paths', () => {
-  expect(BACKGROUND_PRESETS.upperFolsom.overlayLight).toBe('/images/upper_folsom_overlay_light.svg');
-  expect(BACKGROUND_PRESETS.upperFolsom.overlayDark).toBe('/images/upper_folsom_overlay_dark.svg');
+test('no legacy watershed presets remain', () => {
+  expect((PLATE_PRESETS as Record<string, unknown>).americanRiver).toBeUndefined();
+  expect((PLATE_PRESETS as Record<string, unknown>).upperFolsom).toBeUndefined();
 });
 
 test('existing fields still present', () => {
-  const { result } = renderHook(() => useThemeBackground(BACKGROUND_PRESETS.americanRiver));
+  const { result } = renderHook(() => useThemeBackground(PLATE_PRESETS.portfolio));
   expect(result.current).toEqual(
     expect.objectContaining({
       mounted: expect.any(Boolean),
       isMobile: expect.any(Boolean),
       backgroundImage: expect.any(String),
+      plateSrc: expect.any(String),
       isDark: expect.any(Boolean),
     }),
   );

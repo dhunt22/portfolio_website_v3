@@ -13,7 +13,8 @@
     "lint": "next lint",
     "test": "jest",
     "netlify-build": "next build",
-    "generate:overlays": "node scripts/generate-overlays.mjs"
+    "generate:overlays": "node scripts/generate-overlays.mjs",
+    "build:plates": "node scripts/build-plates.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
@@ -43,6 +44,7 @@
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "sharp": "^0.35.0"
+    "sharp": "^0.35.0",
+    "svgo": "^4.0.1"
   }
 }
