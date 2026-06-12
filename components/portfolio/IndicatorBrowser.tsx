@@ -344,30 +344,8 @@ export function IndicatorBrowser(): JSX.Element {
           {/* Category panel label */}
           <h3 className="mb-3 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[activeTab]}</h3>
 
-          {/* Tab nav (desktop side rail) */}
-          <nav aria-label="Indicator categories" className="flex gap-6 mb-4">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.value;
-              return (
-                <button
-                  key={tab.value}
-                  type="button"
-                  onClick={() => handleTabChange(tab.value)}
-                  aria-pressed={isActive}
-                  className={[
-                    'eyebrow whitespace-nowrap px-0 py-1 transition-colors hover:text-ink-strong',
-                    isActive
-                      ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
-                      : '',
-                  ].join(' ')}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Indicator list for active tab */}
+          {/* Indicator list for active tab (category switching lives in the
+              single top tab row — a second in-rail nav duplicated it) */}
           <ul className="border-t border-border">
             {COMPONENT_CONFIGS.filter(c => c.category === activeTab).map((component) => (
               <IndicatorButton
