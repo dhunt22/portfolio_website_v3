@@ -92,6 +92,20 @@
   @apply bg-stone-600;
 }
 
+/* Hero load-in: hide children until GSAP runs (no-FOUC + no-JS-safe).
+   The `html.js` class is set by an inline script in <head> before first paint.
+   Without JS the class is never added, so children remain visible (opacity
+   unset = 1). Under reduced-motion, immediately override back to visible so
+   GSAP never needs to touch them. */
+html.js [data-hero-loadin] > * {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-hero-loadin] > * {
+    opacity: 1;
+  }
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,

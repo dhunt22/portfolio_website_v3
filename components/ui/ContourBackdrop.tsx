@@ -18,7 +18,7 @@ interface ContourBackdropProps {
  * and hands it to the fixed inlining layer.
  */
 export function ContourBackdrop({ page }: ContourBackdropProps) {
-  const { lightPlate, darkPlate, glowSrc, mounted } = useThemeBackground(
+  const { lightPlate, darkPlate, glowSrc, mounted, isMobile } = useThemeBackground(
     PLATE_PRESETS[page],
   );
   return (
@@ -27,6 +27,7 @@ export function ContourBackdrop({ page }: ContourBackdropProps) {
       darkPlate={darkPlate}
       glowSrc={glowSrc}
       mounted={mounted}
+      isMobile={isMobile}
     />
   );
 }
