@@ -1,11 +1,10 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/portfolio/IndicatorBrowser.tsx
-// Quiet client island: tab filters + indicator list + map + detail panel for the EJ-prisons deep dive
+// Quiet client island: tab filters + indicator rail + map + detail panel for the EJ-prisons deep dive
 
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 
 // Individual component types
@@ -165,12 +164,12 @@ const COMPONENT_CONFIGS: ComponentConfig[] = [
   }
 ];
 
-// Filter trigger: sans eyebrow style, active = ink-strong with an ochre underline (mirrors ProjectIndex).
-const tabTriggerStyles = [
-  'eyebrow whitespace-nowrap px-0 py-1 transition-colors hover:text-ink-strong',
-  'data-[state=active]:text-ink-strong data-[state=active]:underline',
-  'data-[state=active]:decoration-accent data-[state=active]:decoration-2 data-[state=active]:underline-offset-8',
-].join(' ');
+const TAB_LABELS: Record<TabType, string> = {
+  overall: 'Overall',
+  climate: 'Climate Risk',
+  exposure: 'Exposure',
+  effects: 'Proximity',
+};
 
 const TAB_PANEL_LABELS: Record<TabType, string> = {
   overall: 'Overall Risk',
@@ -186,24 +185,95 @@ const tabs: { value: TabType; label: string }[] = [
   { value: 'overall', label: 'Overall' },
 ];
 
+// ── Indicator button component ──────────────────────────────────────────────
+interface IndicatorButtonProps {
+  component: ComponentConfig;
+  isActive: boolean;
+  onClick: (id: ComponentType) => void;
+}
+
+function IndicatorButton({ component, isActive, onClick }: IndicatorButtonProps) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={() => onClick(component.id)}
+        aria-label={`View ${component.name} on map`}
+        aria-pressed={isActive}
+        style={isActive ? { borderLeftColor: component.color } : undefined}
+        className={[
+          // Full-width row, left color rule (3px) when active
+          'group relative block w-full text-left',
+          'py-3 pl-4 pr-3',
+          'border-l-[3px] transition-colors duration-150',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+          isActive
+            ? 'bg-card'
+            : 'border-l-transparent hover:bg-card/60',
+        ].join(' ')}
+      >
+        <span className={[
+          'block font-sans font-medium text-sm leading-snug',
+          isActive ? 'text-ink-strong' : 'text-ink-body group-hover:text-ink-strong',
+        ].join(' ')}>
+          {component.name}
+        </span>
+        <span className="mt-0.5 block font-sans text-xs leading-relaxed text-ink-muted">
+          {component.description}
+        </span>
+      </button>
+    </li>
+  );
+}
+
+// ── Mobile chip component ───────────────────────────────────────────────────
+interface MobileChipProps {
+  component: ComponentConfig;
+  isActive: boolean;
+  onClick: (id: ComponentType) => void;
+}
+
+function MobileChip({ component, isActive, onClick }: MobileChipProps) {
+  return (
+    <button
+      type="button"
+      onClick={() => onClick(component.id)}
+      aria-pressed={isActive}
+      aria-label={`View ${component.name} on map`}
+      style={isActive ? { borderColor: component.color, color: component.color } : undefined}
+      className={[
+        'flex-none inline-flex items-center',
+        'h-11 px-3 rounded',
+        'font-sans font-medium text-xs whitespace-nowrap',
+        'border transition-colors duration-150',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        isActive
+          ? 'bg-card'
+          : 'border-border text-ink-muted bg-card/40 hover:text-ink-body hover:bg-card',
+      ].join(' ')}
+    >
+      {component.name}
+    </button>
+  );
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
 export function IndicatorBrowser(): JSX.Element {
   const [selectedComponent, setSelectedComponent] = useState<ComponentType>('heat');
   const [activeTab, setActiveTab] = useState<TabType>('climate');
 
-  // Get the current component configuration
   const currentComponent: ComponentConfig = COMPONENT_CONFIGS.find(c => c.id === selectedComponent) || COMPONENT_CONFIGS[0];
 
-  // Handler for component selection
   const handleComponentClick = useCallback((componentId: ComponentType) => {
     setSelectedComponent(componentId);
+    // Sync tab to match the category of the selected indicator
+    const config = COMPONENT_CONFIGS.find(c => c.id === componentId);
+    if (config) setActiveTab(config.category);
   }, []);
 
-  // Handler for tab change - switch tab and select that tab's first indicator
-  // so the active row is always visible in the open panel and the map stays in sync.
-  const handleTabChange = useCallback((value: string) => {
-    const nextTab = value as TabType;
-    setActiveTab(nextTab);
-    const firstIndicator = COMPONENT_CONFIGS.find(c => c.category === nextTab);
+  const handleTabChange = useCallback((value: TabType) => {
+    setActiveTab(value);
+    const firstIndicator = COMPONENT_CONFIGS.find(c => c.category === value);
     if (firstIndicator) {
       setSelectedComponent(firstIndicator.id);
     }
@@ -211,109 +281,152 @@ export function IndicatorBrowser(): JSX.Element {
 
   return (
     <div>
-      {/* Tabs row: full-width above the two-column body. */}
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList
-          className="mb-8 flex h-auto flex-wrap justify-start gap-8 rounded-none bg-transparent p-0"
-          aria-label="Environmental risk indicator categories"
+      {/* ── Desktop tab row (hidden on mobile — mobile uses chip scroll rail) ── */}
+      <nav
+        aria-label="Environmental risk indicator categories"
+        className="hidden lg:flex gap-8 mb-8"
+      >
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.value;
+          return (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => handleTabChange(tab.value)}
+              aria-pressed={isActive}
+              className={[
+                'eyebrow whitespace-nowrap px-0 py-1 transition-colors hover:text-ink-strong',
+                isActive
+                  ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+                  : '',
+              ].join(' ')}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* ── Mobile chip scroll rail: single row, all indicators + category labels ── */}
+      {/* Hidden on lg+ where the side rail handles selection */}
+      <div className="lg:hidden mb-4 -mx-4 px-4">
+        <div
+          className="flex gap-2 overflow-x-auto pb-2 no-scrollbar"
+          role="group"
+          aria-label="Select an indicator"
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {tabs.map((tab) => (
-            <TabsTrigger key={tab.value} value={tab.value} className={tabTriggerStyles}>
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {/* Two-column body at lg: LEFT column = indicator list (active tab) stacked above
-            the detail text; RIGHT column = map spanning both left rows. On mobile this
-            stacks in source order: list → map → detail. Placement is explicit (col/row
-            starts) rather than auto so the detail always lands under the list, beside the
-            taller map. Rows are [auto_1fr] so the detail row absorbs free height; the map
-            cell self-stretches to the full grid-area height so its bottom tracks the left
-            column's bottom (no void under the map). */}
-        <div className="lg:grid lg:grid-cols-[minmax(0,22rem)_1fr] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:items-start">
-          {/* LEFT, row 1: indicator list panels (one TabsContent per tab) */}
-          <div className="lg:col-start-1 lg:row-start-1">
-            {tabs.map((tab) => (
-              <TabsContent key={tab.value} value={tab.value} className="mt-0">
-                <h3 className="mb-4 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[tab.value]}</h3>
-                <ul>
-                  {COMPONENT_CONFIGS.filter(c => c.category === tab.value).map((component) => {
-                    const isActive = selectedComponent === component.id;
-                    return (
-                      <li key={component.id}>
-                        <button
-                          type="button"
-                          onClick={() => handleComponentClick(component.id)}
-                          aria-label={`View ${component.name} on map`}
-                          aria-pressed={isActive}
-                          className={`block w-full text-left py-2 font-sans font-medium text-xs uppercase tracking-caps ${
-                            isActive
-                              ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-4'
-                              : 'text-ink-muted hover:text-ink-strong'
-                          }`}
-                        >
-                          {component.name}
-                          <span className="mt-1 block font-sans text-sm normal-case tracking-normal text-ink-muted">{component.description}</span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </TabsContent>
-            ))}
-          </div>
-
-          {/* RIGHT: map (owns its column, spanning both left rows). At lg the cell stretches
-              to the full grid-area height (self-stretch overrides items-start) so the map can
-              grow to match the left column (list + detail) and the bottoms align. */}
-          <div className="mt-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:flex lg:h-full lg:flex-col lg:self-stretch">
-            {/* Mobile indicator title (detail panel is below the map on small screens) */}
-            <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
-
-            <div className="h-[60svh] min-h-[320px] border border-border md:h-[500px] lg:h-full lg:min-h-[70vh]">
-              <LazyProjectMap
-                projectId="prison-ej"
-                selectedComponent={selectedComponent}
-                componentColor={currentComponent.color}
-              />
+            <div key={tab.value} className="flex items-center gap-2 flex-none">
+              {/* Category label chip */}
+              <span className="flex-none inline-flex items-center h-11 px-2 font-sans font-medium text-xs uppercase tracking-caps text-ink-faint whitespace-nowrap">
+                {TAB_LABELS[tab.value]}
+              </span>
+              {/* Indicator chips for this category */}
+              {COMPONENT_CONFIGS.filter(c => c.category === tab.value).map((component) => (
+                <MobileChip
+                  key={component.id}
+                  component={component}
+                  isActive={selectedComponent === component.id}
+                  onClick={handleComponentClick}
+                />
+              ))}
             </div>
-          </div>
+          ))}
+        </div>
+      </div>
 
-          {/* Indicator detail panel: LEFT column, row 2 (below the list) on lg. */}
-          <div className="mt-12 max-w-[40rem] lg:col-start-1 lg:row-start-2 lg:mt-8">
-            <h3 className="font-display text-xl text-ink-strong">{currentComponent.name}</h3>
-            <p className="mt-2 leading-relaxed text-ink-body">{currentComponent.description}</p>
+      {/* ── Two-column body at lg ── */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,22rem)_1fr] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:items-start">
 
-            {currentComponent.detailedDescription && (
-              <div className="mt-6">
-                <h4 className="eyebrow mb-2">Data Source Description</h4>
-                <p className="leading-relaxed text-ink-body">{currentComponent.detailedDescription}</p>
-              </div>
-            )}
+        {/* LEFT, row 1: indicator rail — shown only on desktop (mobile uses chips above) */}
+        <div className="hidden lg:block lg:col-start-1 lg:row-start-1">
+          {/* Category panel label */}
+          <h3 className="mb-3 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[activeTab]}</h3>
 
-            {currentComponent.methodology && (
-              <div className="mt-6">
-                <h4 className="eyebrow mb-2">Processing &amp; Methodology</h4>
-                <p className="leading-relaxed text-ink-body">{currentComponent.methodology}</p>
-              </div>
-            )}
-
-            {currentComponent.dataSourceLink && (
-              <div className="mt-6">
-                <a
-                  href={currentComponent.dataSourceLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-quiet"
+          {/* Tab nav (desktop side rail) */}
+          <nav aria-label="Indicator categories" className="flex gap-6 mb-4">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.value;
+              return (
+                <button
+                  key={tab.value}
+                  type="button"
+                  onClick={() => handleTabChange(tab.value)}
+                  aria-pressed={isActive}
+                  className={[
+                    'eyebrow whitespace-nowrap px-0 py-1 transition-colors hover:text-ink-strong',
+                    isActive
+                      ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+                      : '',
+                  ].join(' ')}
                 >
-                  Data Source Link
-                </a>
-              </div>
-            )}
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Indicator list for active tab */}
+          <ul className="border-t border-border">
+            {COMPONENT_CONFIGS.filter(c => c.category === activeTab).map((component) => (
+              <IndicatorButton
+                key={component.id}
+                component={component}
+                isActive={selectedComponent === component.id}
+                onClick={handleComponentClick}
+              />
+            ))}
+          </ul>
+        </div>
+
+        {/* RIGHT: map — spans both left rows */}
+        <div className="mt-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:flex lg:h-full lg:flex-col lg:self-stretch">
+          {/* Mobile indicator title */}
+          <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
+
+          <div className="h-[60svh] min-h-[320px] border border-border md:h-[500px] lg:h-full lg:min-h-[70vh]">
+            <LazyProjectMap
+              projectId="prison-ej"
+              selectedComponent={selectedComponent}
+              componentColor={currentComponent.color}
+            />
           </div>
         </div>
-      </Tabs>
+
+        {/* Indicator detail panel: LEFT column, row 2, below indicator rail on desktop */}
+        <div className="mt-12 max-w-[40rem] lg:col-start-1 lg:row-start-2 lg:mt-8">
+          <h3 className="font-display text-xl text-ink-strong">{currentComponent.name}</h3>
+          <p className="mt-2 leading-relaxed text-ink-body">{currentComponent.description}</p>
+
+          {currentComponent.detailedDescription && (
+            <div className="mt-6">
+              <h4 className="eyebrow mb-2">Data Source Description</h4>
+              <p className="leading-relaxed text-ink-body">{currentComponent.detailedDescription}</p>
+            </div>
+          )}
+
+          {currentComponent.methodology && (
+            <div className="mt-6">
+              <h4 className="eyebrow mb-2">Processing &amp; Methodology</h4>
+              <p className="leading-relaxed text-ink-body">{currentComponent.methodology}</p>
+            </div>
+          )}
+
+          {currentComponent.dataSourceLink && (
+            <div className="mt-6">
+              <a
+                href={currentComponent.dataSourceLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link-quiet"
+              >
+                Data Source Link
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
