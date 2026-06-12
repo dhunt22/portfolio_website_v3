@@ -16,8 +16,8 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       <ContourBackdrop page="ej" />
 
       <div className="container relative z-10 mx-auto px-6">
-        {/* Hero */}
-        <header className="py-12">
+        {/* Hero — compact so the dashboard enters the first viewport on desktop */}
+        <header className="pt-8 pb-8">
           <p className="eyebrow mb-6">Geospatial Analysis, NASA Grant Project · 2022-2023</p>
           <h1 className="display text-4xl">
             Environmental Justice For Prisons
@@ -47,8 +47,14 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
           </nav>
         </header>
 
-        {/* Project Overview */}
-        <section className="panel mb-8" aria-labelledby="overview-heading">
+        {/* Dashboard — map leads as the primary element */}
+        <section className="panel mb-8" aria-labelledby="indicators-heading">
+          <h2 id="indicators-heading" className="eyebrow mb-6">Environmental Risk Indicators</h2>
+          <IndicatorBrowser />
+        </section>
+
+        {/* About — Project Overview */}
+        <section id="about" className="panel mb-8" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className="eyebrow mb-6">Project Overview</h2>
           <div className="xl:grid xl:grid-cols-[minmax(0,40rem)_1fr] xl:gap-10 xl:items-start">
             {/* Overview paragraphs (left column on xl; single column below) */}
@@ -78,13 +84,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
           </div>
         </section>
 
-        {/* Interactive Indicator Browser */}
-        <section className="panel mb-8" aria-labelledby="indicators-heading">
-          <h2 id="indicators-heading" className="eyebrow mb-6">Environmental Risk Indicators</h2>
-          <IndicatorBrowser />
-        </section>
-
-        {/* Project Team */}
+        {/* Long-form read — Project Team & Impact */}
         <section className="panel mb-8" aria-labelledby="team-heading">
           <h2 id="team-heading" className="eyebrow mb-6">Project Team &amp; My Contribution</h2>
 

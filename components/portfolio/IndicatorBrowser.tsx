@@ -271,7 +271,7 @@ export function IndicatorBrowser(): JSX.Element {
             {/* Mobile indicator title (detail panel is below the map on small screens) */}
             <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
 
-            <div className="h-[280px] border border-border sm:h-[400px] md:h-[500px] lg:h-full lg:min-h-[640px]">
+            <div className="h-[60svh] min-h-[320px] border border-border md:h-[500px] lg:h-full lg:min-h-[70vh]">
               <LazyProjectMap
                 projectId="prison-ej"
                 selectedComponent={selectedComponent}
