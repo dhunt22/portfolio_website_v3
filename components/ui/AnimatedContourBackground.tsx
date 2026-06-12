@@ -99,9 +99,6 @@ export function AnimatedContourBackground({
   const reducedMotion = useReducedMotion();
   const [glowMarkup, setGlowMarkup] = useState<string | null>(null);
   const glowDivRef = useRef<HTMLDivElement>(null);
-  // Keep a stable ref to the isMobile flag for the animation effect.
-  const isMobileRef = useRef(isMobile);
-  useEffect(() => { isMobileRef.current = isMobile; }, [isMobile]);
 
   const shouldAnimate = mounted && !reducedMotion;
 
@@ -151,7 +148,7 @@ export function AnimatedContourBackground({
         const svgEl = container.querySelector('svg');
         if (!svgEl) return;
 
-        const mobile = isMobileRef.current;
+        const mobile = isMobile;
 
         // Iterate over every comet group in the inlined SVG.
         const groups = svgEl.querySelectorAll<SVGGElement>('g[data-route]');
@@ -169,11 +166,6 @@ export function AnimatedContourBackground({
           }
 
           // Reference the invisible route path in <defs> for MotionPathPlugin.
-          // The path id is "{page}-route{i}" — derive the page from any
-          // sibling g's class attribute (e.g. "home-comet" → page = "home")
-          // or directly from the path id attribute.
-          const svgId = svgEl.id;
-          // Find the route path by querying the SVG's own <defs>.
           // Build the id from the group's class: "{page}-comet" → "{page}-route{i}"
           const groupClass = group.getAttribute('class') ?? '';
           const pageMatch = groupClass.match(/^(\S+)-comet/);
