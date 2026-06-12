@@ -48,6 +48,7 @@ const SVGO_BIN = path.resolve(__dirname, '..', 'node_modules', 'svgo', 'bin', 's
 // ---------------------------------------------------------------------------
 
 const SRC_DIR = 'C:/Users/devin/Desktop/Claude/minicontour_gis/exports/svg/11x17';
+const SRC_DIR_PORTRAIT = 'C:/Users/devin/Desktop/Claude/minicontour_gis/exports/svg/8.5x11';
 const OUT_DIR = path.join('public', 'images', 'plates');
 
 // page key -> source landscape median file
@@ -60,12 +61,22 @@ const PAGES = {
   notFound: 'world_santorini-landscape_median_11x17.svg',
 };
 
+// Pages with a portrait (mobile) variant: page key -> source portrait file.
+// Pick the iqr3 (sparsest) portrait variant; prefer the non-landscape name.
+// big-sur portrait: 215.9 x 279.4 mm → inner box 12.7 12.7 190.5 254.
+const PAGES_MOBILE = {
+  home: 'california_big-sur_iqr3_8.5x11.svg',
+};
+
 // Clip box from the source <clipPath id="mc"> rect: x=12.7 y=12.7 w=406.4 h=254.
 const VIEWBOX = '12.7 12.7 406.4 254';
 const VIEW_W = 406.4; // used to scale the reference's 1080-wide tuning constants
 
-// Plate group opacity — the single subtlety knob (R2 user asked "more subtle").
-const PLATE_OPACITY = { light: 0.5, dark: 0.45 };
+// Landscape margin: 12.7mm on all sides (derived from standard GIS export).
+const MARGIN = 12.7;
+
+// Plate group opacity — single subtlety knobs; quieter contours (was 0.5/0.45).
+const PLATE_OPACITY = { light: 0.35, dark: 0.30 };
 
 // Output hard cap; engage decimation (drop every 4th path) and retry if exceeded.
 const MAX_BYTES = 2.5 * 1024 * 1024;
@@ -360,8 +371,36 @@ function downsample(points, max) {
 // Source preprocessing
 // ---------------------------------------------------------------------------
 
-function preprocessAndOptimize(srcPath) {
+// Derive the clip-box viewBox from source SVG dimensions + margin.
+// Source width/height are in mm (e.g. "215.9mm" or a bare number). Returns a
+// viewBox string "MARGIN MARGIN (W-2M) (H-2M)" where M = MARGIN.
+function deriveViewBox(srcPath) {
+  const raw = fs.readFileSync(srcPath, 'utf8');
+  const wMatch = raw.match(/\swidth="([0-9.]+)(?:mm)?"/i);
+  const hMatch = raw.match(/\sheight="([0-9.]+)(?:mm)?"/i);
+  // Fall back to parsing the root viewBox if width/height attrs are absent.
+  if (!wMatch || !hMatch) {
+    const vbMatch = raw.match(/viewBox="[0-9.\s-]* ([0-9.]+) ([0-9.]+)"/i);
+    if (!vbMatch) throw new Error(`Cannot derive dimensions from ${srcPath}`);
+    const w = parseFloat(vbMatch[1]);
+    const h = parseFloat(vbMatch[2]);
+    return {
+      viewBox: `${MARGIN} ${MARGIN} ${+(w - 2 * MARGIN).toFixed(4)} ${+(h - 2 * MARGIN).toFixed(4)}`,
+      w, h,
+    };
+  }
+  const w = parseFloat(wMatch[1]);
+  const h = parseFloat(hMatch[1]);
+  return {
+    viewBox: `${MARGIN} ${MARGIN} ${+(w - 2 * MARGIN).toFixed(4)} ${+(h - 2 * MARGIN).toFixed(4)}`,
+    w, h,
+  };
+}
+
+function preprocessAndOptimize(srcPath, viewBoxOverride) {
   let raw = fs.readFileSync(srcPath, 'utf8');
+
+  const vb = viewBoxOverride ?? VIEWBOX;
 
   // 1. Strip XML prolog.
   raw = raw.replace(/^\s*<\?xml[^>]*\?>\s*/i, '');
@@ -372,7 +411,7 @@ function preprocessAndOptimize(srcPath) {
 
   // 3. Re-frame the viewBox to the clip box so the plate is edge-to-edge.
   raw = raw
-    .replace(/viewBox="[^"]*"/i, `viewBox="${VIEWBOX}"`)
+    .replace(/viewBox="[^"]*"/i, `viewBox="${vb}"`)
     .replace(/\swidth="[^"]*"/i, '')
     .replace(/\sheight="[^"]*"/i, '');
 
@@ -595,7 +634,11 @@ function buildCometSystem(routes, theme, page) {
 // Consumed as a CSS background-image, so it must be fully static: the plate
 // group with its opacity knob BAKED into the group (no <style>), clipPath,
 // same viewBox/preserveAspectRatio. No keyframes, no sprites, no gradients.
-function buildPlateSvg(paths, theme) {
+function buildPlateSvg(paths, theme, viewBox) {
+  const vb = viewBox ?? VIEWBOX;
+  // Parse inner rect dimensions from viewBox "x y w h".
+  const [vbX, vbY, vbW, vbH] = vb.split(' ').map(Number);
+
   // Plate paths (theme-variant colours). Shared attrs (fill/linecap/linejoin)
   // hoisted to the group to keep the file small.
   const plateBody = paths
@@ -608,10 +651,10 @@ function buildPlateSvg(paths, theme) {
 
   const plateOpacity = PLATE_OPACITY[theme];
   const defsBlock =
-    `<defs><clipPath id="mc"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath></defs>`;
+    `<defs><clipPath id="mc"><rect x="${vbX}" y="${vbY}" width="${vbW}" height="${vbH}"/></clipPath></defs>`;
 
   const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" preserveAspectRatio="xMidYMid slice">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid slice">` +
     defsBlock +
     `<g clip-path="url(#mc)" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${plateOpacity}">${plateBody}</g>` +
     `</svg>`;
@@ -626,7 +669,11 @@ function buildPlateSvg(paths, theme) {
 // gradient defs, and sprite circles with data-* attributes. Zero @keyframes
 // and zero animation: declarations — all animation is driven by GSAP at
 // runtime via AnimatedContourBackground.
-function buildGlowSvg(paths, theme, page) {
+function buildGlowSvg(paths, theme, page, viewBox) {
+  const vb = viewBox ?? VIEWBOX;
+  // Parse inner rect dimensions from viewBox "x y w h".
+  const [vbX, vbY, vbW, vbH] = vb.split(' ').map(Number);
+
   const routes = pickRoutes(paths);
   const { routePaths, defs, cometGroups } = buildCometSystem(routes, theme, page);
 
@@ -637,13 +684,13 @@ function buildGlowSvg(paths, theme, page) {
   // referenced by GSAP MotionPathPlugin via id.
   const defsBlock =
     `<defs>` +
-    `<clipPath id="${clipId}"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath>` +
+    `<clipPath id="${clipId}"><rect x="${vbX}" y="${vbY}" width="${vbW}" height="${vbH}"/></clipPath>` +
     routePaths +
     defs +
     `</defs>`;
 
   const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" preserveAspectRatio="xMidYMid slice">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid slice">` +
     defsBlock +
     `<g class="${page}-comets" clip-path="url(#${clipId})">${cometGroups}</g>` +
     `</svg>`;
@@ -655,11 +702,64 @@ function buildGlowSvg(paths, theme, page) {
 // Main
 // ---------------------------------------------------------------------------
 
+// Build one landscape or portrait (page, theme) pair into OUT_DIR.
+// Returns size-table row.
+function buildPageTheme(page, theme, srcPath, viewBox, suffix, rawSizeMB) {
+  const optimized = preprocessAndOptimize(srcPath, viewBox);
+  let paths = parsePaths(optimized);
+  if (paths.length === 0) {
+    throw new Error(
+      `BLOCKED: no stroked contour <path> parsed for ${page}${suffix}/${theme} — ramp lost after svgo.`,
+    );
+  }
+
+  let decimations = 0;
+  let working = paths;
+  let plateSvg = buildPlateSvg(working, theme, viewBox);
+  let plateBytes = Buffer.byteLength(plateSvg, 'utf8');
+
+  while (plateBytes > MAX_BYTES) {
+    decimations++;
+    if (decimations > 6) {
+      throw new Error(
+        `BLOCKED: ${page}${suffix}_${theme}_plate still ${(plateBytes / 1024 / 1024).toFixed(2)}MB after ${decimations} decimations.`,
+      );
+    }
+    working = decimate(working);
+    plateSvg = buildPlateSvg(working, theme, viewBox);
+    plateBytes = Buffer.byteLength(plateSvg, 'utf8');
+  }
+
+  const glow = buildGlowSvg(working, theme, page, viewBox);
+  const glowBytes = Buffer.byteLength(glow.svg, 'utf8');
+
+  const platePath = path.join(OUT_DIR, `${page}_${theme}_plate${suffix}.svg`);
+  const glowPath = path.join(OUT_DIR, `${page}_${theme}_glow${suffix}.svg`);
+  fs.writeFileSync(platePath, plateSvg);
+  fs.writeFileSync(glowPath, glow.svg);
+
+  const plateKB = (plateBytes / 1024).toFixed(1);
+  const glowKB = (glowBytes / 1024).toFixed(1);
+  console.log(
+    `[${page}${suffix}/${theme}] paths: ${working.length}, routes: ${glow.routeCount}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB, glow: ${glowKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}\n    -> ${glowPath}`,
+  );
+  return {
+    page: page + suffix,
+    theme,
+    paths: working.length,
+    routes: glow.routeCount,
+    rawMB: rawSizeMB,
+    plateKB,
+    glowKB,
+    decimations,
+  };
+}
+
 function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   // Delete the old merged outputs (<page>_<theme>.svg) and any stale split
-  // files so the directory only ever holds the current 24-file output set.
+  // files so the directory only ever holds the current output set.
   for (const stale of fs.readdirSync(OUT_DIR)) {
     if (stale.endsWith('.svg')) {
       fs.unlinkSync(path.join(OUT_DIR, stale));
@@ -675,64 +775,29 @@ function main() {
     }
     const rawSizeMB = (fs.statSync(srcPath).size / 1024 / 1024).toFixed(1);
 
-    const optimized = preprocessAndOptimize(srcPath);
-    const paths = parsePaths(optimized);
-    if (paths.length === 0) {
-      throw new Error(
-        `BLOCKED: no stroked contour <path> parsed for ${page} (${file}) — ramp lost after svgo.`,
-      );
+    // Landscape (desktop) — two themes.
+    for (const theme of ['light', 'dark']) {
+      const row = buildPageTheme(page, theme, srcPath, VIEWBOX, '', rawSizeMB);
+      sizeTable.push(row);
     }
 
-    for (const theme of ['light', 'dark']) {
-      // --- Static plate: contours only. Decimate (drop every 4th path) and
-      //     retry if the file exceeds the hard cap. The glow file is tiny and
-      //     is built from the SAME (possibly decimated) working set so the
-      //     route picker stays in sync with what the plate actually draws.
-      let decimations = 0;
-      let working = paths;
-      let plateSvg = buildPlateSvg(working, theme);
-      let plateBytes = Buffer.byteLength(plateSvg, 'utf8');
-
-      while (plateBytes > MAX_BYTES) {
-        decimations++;
-        if (decimations > 6) {
-          throw new Error(
-            `BLOCKED: ${page}_${theme}_plate still ${(plateBytes / 1024 / 1024).toFixed(2)}MB after ${decimations} decimations.`,
-          );
-        }
-        working = decimate(working);
-        plateSvg = buildPlateSvg(working, theme);
-        plateBytes = Buffer.byteLength(plateSvg, 'utf8');
+    // Portrait (mobile) variant — only for pages listed in PAGES_MOBILE.
+    if (PAGES_MOBILE[page]) {
+      const mSrcPath = path.join(SRC_DIR_PORTRAIT, PAGES_MOBILE[page]);
+      if (!fs.existsSync(mSrcPath)) {
+        throw new Error(`BLOCKED: missing mobile source asset ${mSrcPath}`);
       }
-
-      // --- Animated glow: comet system only (transparent canvas, same frame).
-      const glow = buildGlowSvg(working, theme, page);
-      const glowBytes = Buffer.byteLength(glow.svg, 'utf8');
-
-      const platePath = path.join(OUT_DIR, `${page}_${theme}_plate.svg`);
-      const glowPath = path.join(OUT_DIR, `${page}_${theme}_glow.svg`);
-      fs.writeFileSync(platePath, plateSvg);
-      fs.writeFileSync(glowPath, glow.svg);
-
-      const plateKB = (plateBytes / 1024).toFixed(1);
-      const glowKB = (glowBytes / 1024).toFixed(1);
-      sizeTable.push({
-        page,
-        theme,
-        paths: working.length,
-        routes: glow.routeCount,
-        rawMB: rawSizeMB,
-        plateKB,
-        glowKB,
-        decimations,
-      });
-      console.log(
-        `[${page}/${theme}] paths: ${working.length}, routes: ${glow.routeCount}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB, glow: ${glowKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}\n    -> ${glowPath}`,
-      );
+      const { viewBox: mViewBox } = deriveViewBox(mSrcPath);
+      const mRawSizeMB = (fs.statSync(mSrcPath).size / 1024 / 1024).toFixed(1);
+      for (const theme of ['light', 'dark']) {
+        const row = buildPageTheme(page, theme, mSrcPath, mViewBox, '_mobile', mRawSizeMB);
+        sizeTable.push(row);
+      }
     }
   }
 
-  console.log('\nDone. 24 SVGs (12 plate + 12 glow) written to', OUT_DIR);
+  const totalFiles = sizeTable.reduce((acc, row) => acc + 2, 0);
+  console.log(`\nDone. ${totalFiles} SVGs (${totalFiles / 2} plate + ${totalFiles / 2} glow) written to`, OUT_DIR);
   console.table(sizeTable);
 }
 
