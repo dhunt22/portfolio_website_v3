@@ -15,9 +15,9 @@
  *                still reads as a ramp on the #14130f night ground.
  *   5. Picks 14 glow routes spread across the elevation ramp, estimates each
  *      route's true length by flattening its cubic Béziers, and emits the comet
- *      ignition system EXACTLY like scripts/generate-overlays.mjs (the verified
- *      reference) — speeds scaled to THIS coordinate space, glow gradients
- *      derived from each route's native stroke colour.
+ *      ignition system from the original verified two-layer reference — speeds
+ *      scaled to THIS coordinate space, glow gradients derived from each route's
+ *      native stroke colour.
  *   6. Assembles TWO output SVGs per (page, theme) into public/images/plates/:
  *        <page>_<theme>_plate.svg — contours ONLY (static; consumed as a CSS
  *          background-image, so no <style>/keyframes/sprites/gradients).
@@ -75,7 +75,7 @@ const N_ROUTES = 14;
 // the length estimate still uses the full flatten).
 const ROUTE_MAX_PTS = 140;
 
-// Comet system — scaled from generate-overlays.mjs (1080-wide) to 406-wide.
+// Comet system — scaled from the original 1080-wide reference to 406-wide.
 // scale = VIEW_W / 1080 ≈ 0.376.
 const SCALE = VIEW_W / 1080;
 const COMET = {
