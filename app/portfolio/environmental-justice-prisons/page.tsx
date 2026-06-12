@@ -50,9 +50,9 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         {/* Project Overview */}
         <section className="panel mb-8" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className="eyebrow mb-6">Project Overview</h2>
-          <div className="lg:grid lg:grid-cols-[minmax(0,40rem)_1fr] lg:gap-10 lg:items-start">
-            {/* Overview paragraphs (left column on lg) */}
-            <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body lg:max-w-none">
+          <div className="xl:grid xl:grid-cols-[minmax(0,40rem)_1fr] xl:gap-10 xl:items-start">
+            {/* Overview paragraphs (left column on xl; single column below) */}
+            <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body xl:max-w-none">
               <p>
                 Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition&mdash;overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats. This groundbreaking research initiative was funded by NASA&apos;s $100,000 Equity and Environmental Justice Grant to address this critical gap.
               </p>
@@ -66,8 +66,8 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               </p>
             </div>
 
-            {/* Key Project Objectives (right column on lg) */}
-            <div className="mt-6 leading-relaxed text-ink-body lg:mt-0">
+            {/* Key Project Objectives (right column on xl) */}
+            <div className="mt-6 leading-relaxed text-ink-body xl:mt-0">
               <h3 className="mb-3 font-display text-xl text-ink-strong">Key Project Objectives</h3>
               <ul className="list-disc space-y-2 pl-5 marker:text-eyebrow">
                 <li>Quantify environmental conditions at all 1,865 state and federal prisons in the U.S.</li>

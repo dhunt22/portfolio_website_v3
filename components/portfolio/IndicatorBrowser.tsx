@@ -165,7 +165,7 @@ const COMPONENT_CONFIGS: ComponentConfig[] = [
   }
 ];
 
-// Quiet mono filter trigger: eyebrow style, active = ink-strong with an ochre underline (mirrors ProjectIndex).
+// Filter trigger: sans eyebrow style, active = ink-strong with an ochre underline (mirrors ProjectIndex).
 const tabTriggerStyles = [
   'eyebrow whitespace-nowrap px-0 py-1 transition-colors hover:text-ink-strong',
   'data-[state=active]:text-ink-strong data-[state=active]:underline',
@@ -228,7 +228,9 @@ export function IndicatorBrowser(): JSX.Element {
             the detail text; RIGHT column = map spanning both left rows. On mobile this
             stacks in source order: list → map → detail. Placement is explicit (col/row
             starts) rather than auto so the detail always lands under the list, beside the
-            taller map. */}
+            taller map. Rows are [auto_1fr] so the detail row absorbs free height; the map
+            cell self-stretches to the full grid-area height so its bottom tracks the left
+            column's bottom (no void under the map). */}
         <div className="lg:grid lg:grid-cols-[minmax(0,22rem)_1fr] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:items-start">
           {/* LEFT, row 1: indicator list panels (one TabsContent per tab) */}
           <div className="lg:col-start-1 lg:row-start-1">
@@ -262,12 +264,14 @@ export function IndicatorBrowser(): JSX.Element {
             ))}
           </div>
 
-          {/* RIGHT: map (owns its column, spanning both left rows, so it can grow taller at lg). */}
-          <div className="mt-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0">
+          {/* RIGHT: map (owns its column, spanning both left rows). At lg the cell stretches
+              to the full grid-area height (self-stretch overrides items-start) so the map can
+              grow to match the left column (list + detail) and the bottoms align. */}
+          <div className="mt-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:flex lg:h-full lg:flex-col lg:self-stretch">
             {/* Mobile indicator title (detail panel is below the map on small screens) */}
             <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
 
-            <div className="h-[280px] border border-border sm:h-[400px] md:h-[500px] lg:h-[640px]">
+            <div className="h-[280px] border border-border sm:h-[400px] md:h-[500px] lg:h-full lg:min-h-[640px]">
               <LazyProjectMap
                 projectId="prison-ej"
                 selectedComponent={selectedComponent}

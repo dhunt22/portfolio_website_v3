@@ -48,7 +48,7 @@
 }
 
 @layer components {
-  .panel { @apply border border-border bg-card p-8 md:p-10; }
+  .panel { @apply border bg-card p-8 md:p-10; border-color: var(--border-default); }
   .eyebrow { @apply font-sans font-medium text-xs uppercase tracking-caps text-eyebrow; }
   .eyebrow-mono { @apply font-mono text-xs font-normal uppercase tracking-caps text-eyebrow; }
   .display { @apply font-display font-medium tracking-display leading-tight-display text-ink-strong; }

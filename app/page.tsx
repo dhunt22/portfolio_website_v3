@@ -54,7 +54,7 @@ export default function Home() {
           </figure>
         </section>
 
-        <section className="py-12">
+        <section className="pt-12 pb-0">
           <div className="panel">
             <h2 className="eyebrow mb-10">Professional Expertise</h2>
             <div className="grid gap-12 md:grid-cols-3">
@@ -83,7 +83,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="pt-12 pb-12">
+        <section className="pt-8 pb-12">
           <div className="panel">
             <h2 className="eyebrow mb-10">Personal Passions</h2>
             <div className="grid gap-12 md:grid-cols-2">

@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/portfolio/ProjectIndex.tsx
-// Editorial project index: quiet mono tab filters + hairline-separated project rows
+// Editorial project index: sans-serif tab filters + project rows in .panel cards
 
 'use client';
 
@@ -14,7 +14,7 @@ interface ProjectIndexProps {
   projects: Project[];
 }
 
-// Quiet mono filter trigger: eyebrow style, active = ink-strong with an ochre underline,
+// Filter trigger: sans eyebrow style, active = ink-strong with an ochre underline,
 // no pill/box chrome (TabsList is transparent).
 const tabTriggerStyles = [
   'eyebrow whitespace-nowrap px-0 py-1 transition-colors hover:text-ink-strong',
@@ -24,7 +24,7 @@ const tabTriggerStyles = [
 
 function ProjectRow({ project }: { project: Project }) {
   const displayType = project.displayType ?? 'map';
-  const hasMedia = displayType !== 'none';
+  const hasMedia = displayType === 'map' || (displayType === 'image' && Boolean(project.imagePath));
 
   const eyebrow = <p className="eyebrow mb-2">{project.description} · {project.year}</p>;
   const title = <h2 className="mb-4 font-display text-2xl text-ink-strong">{project.title}</h2>;
@@ -68,17 +68,17 @@ function ProjectRow({ project }: { project: Project }) {
   );
 
   const media = displayType === 'map' ? (
-    <div className="my-6 h-[420px] w-full border border-border lg:my-0">
+    <div className="h-[420px] w-full border border-border">
       <LazyProjectMap projectId={project.id} />
     </div>
   ) : displayType === 'image' && project.imagePath ? (
-    <div className="my-6 lg:my-0">
+    <div>
       <figure>
         <img
           src={project.imagePath}
           alt={project.imageAlt || `${project.title} visualization`}
           loading="lazy"
-          className="w-full"
+          className="w-auto max-w-full"
         />
         {project.imageCaption && (
           <figcaption className="eyebrow mt-2">{project.imageCaption}</figcaption>
@@ -105,23 +105,22 @@ function ProjectRow({ project }: { project: Project }) {
 
   // With media: two-column at lg, stacked below.
   //
-  // The article is a flex column on mobile (source order: text → media → links) and a
-  // two-column grid on lg. The left text column uses `display:contents` on mobile so the
-  // eyebrow/title/paragraphs/tech and the links flatten into the article's flex flow with
-  // the media sitting between them; at lg it becomes a real flex column so the links can
-  // be pinned to the column bottom (mt-auto). The media is the second grid item on lg
-  // (right column) and is pulled above the links on mobile via `order`. This keeps the
-  // single (heavy) map island in one place rather than duplicating it per breakpoint.
+  // DOM is true source order: text → media → links. On mobile the article is a flex column
+  // so they render top-to-bottom in that order. At lg it becomes a two-column grid with
+  // explicit placement: the text column (col 1, row 1) and links (col 1, row 2) share the
+  // left column while the media spans both rows in the right column (col 2). The first row
+  // is `1fr` so it absorbs free height and the links land pinned at the column bottom. The
+  // single (heavy) map island renders once — no per-breakpoint duplication.
   return (
-    <article className="panel flex flex-col lg:grid lg:grid-cols-[minmax(0,26rem)_1fr] lg:gap-10 lg:items-start">
-      <div className="contents lg:flex lg:h-full lg:flex-col">
+    <article className="panel flex flex-col lg:grid lg:grid-cols-[minmax(0,26rem)_1fr] lg:grid-rows-[1fr_auto] lg:gap-x-10 lg:items-start">
+      <div className="lg:col-start-1 lg:row-start-1">
         {eyebrow}
         {title}
         {paragraphs}
         {techLine}
-        {links && <div className="order-last mt-6 lg:order-none lg:mt-auto lg:pt-6">{links}</div>}
       </div>
-      {media}
+      {media && <div className="my-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:my-0">{media}</div>}
+      {links && <div className="mt-6 lg:col-start-1 lg:row-start-2 lg:mt-auto lg:pt-6">{links}</div>}
     </article>
   );
 }
