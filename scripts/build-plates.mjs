@@ -469,7 +469,7 @@ function buildCometSystem(routes, theme, page) {
     // route never crosses a subpath boundary.
     const { points, length } = longestSubpath(flat.points, flat.starts);
     // The full flatten of a long contour can still be 100k+ points (the longest
-    // source paths are ~190KB of `d`), which would bloat the <style> block past
+    // source paths are ~190KB of `d`), which would bloat the old <style> block past
     // the 2.5MB cap. Downsample to a bounded point count — a contour at
     // ~ROUTE_MAX_PTS samples is plenty smooth for a sprite to traverse. Length is
     // computed from the FULL subpath flatten, so speed/duration stay accurate.
@@ -479,40 +479,36 @@ function buildCometSystem(routes, theme, page) {
     const len = Math.max(length, 1);
     const speed = Math.min(COMET.maxSpeed, Math.max(COMET.minSpeed, len / 8));
     const dur = len / speed;
-    return { i, d: polyD, len, speed, dur, stroke: route.stroke };
+    // Start point of the sampled route — used for cx/cy defaults so a
+    // non-animated render is not a pile of circles at (0,0).
+    const startX = sampled[0] ? sampled[0][0].toFixed(2) : '0';
+    const startY = sampled[0] ? sampled[0][1].toFixed(2) : '0';
+    return { i, d: polyD, len, speed, dur, stroke: route.stroke, startX, startY };
   });
 
   const rawSpeedMin = Math.min(...tuned.map((r) => r.speed)).toFixed(1);
   const rawSpeedMax = Math.max(...tuned.map((r) => r.speed)).toFixed(1);
 
   // Per-page scope token. Inlined glows share one document scope, so every
-  // class, keyframe name, and gradient id is namespaced with the page key so two
-  // pages' glows could coexist and nothing generic (.pulse/.comet/.p0/pmove…)
-  // leaks into page CSS. `ns` is the per-page prefix (e.g. "home-").
-  const ns = `${page}-`;
-  const kMove = `pmove-${page}`;
-  const kFade = `pfade-${page}`;
+  // gradient id is namespaced with the page key.
   const ghId = (i) => `${page}-gh${i}`;
   const gtId = (i) => `${page}-gt${i}`;
 
-  // Per-route pulse rules (fade-lock derived from the printed move duration,
-  // exactly as the reference does).
+  // Fade-peak opacity by theme (same as the reference).
   const fadePeakByTheme = theme === 'light' ? 0.6 : 0.85;
-  const perRouteRules = tuned
+
+  // Per-route <path> defs — these carry the route geometry as GSAP MotionPath
+  // targets. fill+stroke none so they are invisible; GSAP references them by id.
+  // NOTE: the glow SVG is NOT passed through svgo, so data-* attrs and invisible
+  // defs paths are preserved as-is.
+  const routePaths = tuned
     .map((r) => {
       const printedDur = Number(r.dur.toFixed(2));
       const n = Math.max(1, Math.round(printedDur / COMET.fadePeriod));
       const fadeT = (printedDur / n).toFixed(9);
-      const scatter = -(r.i * 3.83).toFixed(2);
-      return `.${ns}p${r.i}{offset-path:path("${r.d}");animation:${kMove} ${printedDur}s linear ${scatter}s infinite,${kFade} ${fadeT}s ease-in-out ${scatter}s infinite}`;
+      return `<path id="${page}-route${r.i}" d="${r.d}" fill="none" stroke="none" data-dur="${printedDur}" data-fade="${fadeT}"/>`;
     })
     .join('');
-
-  const keyframes =
-    `@keyframes ${kMove}{to{offset-distance:100%}}` +
-    `@keyframes ${kFade}{0%{opacity:0}14%{opacity:${fadePeakByTheme}}45%{opacity:${fadePeakByTheme}}62%{opacity:0}100%{opacity:0}}` +
-    `.${ns}pulse{offset-rotate:0deg;offset-distance:0%;opacity:0;will-change:offset-distance,opacity}` +
-    perRouteRules;
 
   // Per-route radial gradients (gh = head, gt = tail), derived from native colour.
   const defs = tuned
@@ -532,24 +528,63 @@ function buildCometSystem(routes, theme, page) {
     })
     .join('');
 
-  // Comet sprites: 1 head + 12 tapering followers per route.
+  // Comet sprites: 1 head (data-k=0) + 12 tapering followers (data-k=1..12) per
+  // route. cx/cy set to the route start so non-animated render is not a pile at
+  // (0,0). No animation classes or inline style animation — GSAP drives these.
+  //
+  // data-lag on each circle = seconds the sprite trails the head (lag=0 for head;
+  // lag = k * dt for follower k, matching the old CSS animation-delay math:
+  //   old delay[head]      = scatter               → timeAdvanced = |scatter|
+  //   old delay[tail k]    = scatter + k*dt        → timeAdvanced = |scatter| - k*dt
+  //   relative lag of tail k vs head               = k*dt
+  // GSAP phase seeding: totalTime = ((|scatter| - lag) % dur + dur) % dur
   const cometGroups = tuned
     .map((r) => {
-      const dt = COMET.gapU / r.speed; // seconds per gapU of travel
-      const scatter = -(r.i * 3.83);
-      const head = `<circle class="${ns}pulse ${ns}p${r.i}" r="${COMET.headR}" fill="url(#${ghId(r.i)})"/>`;
+      const printedDur = Number(r.dur.toFixed(2));
+      const n = Math.max(1, Math.round(printedDur / COMET.fadePeriod));
+      const fadeT = (printedDur / n).toFixed(9);
+      const scatterAbs = (r.i * 3.83).toFixed(4);
+      const dt = COMET.gapU / r.speed; // seconds per gapU gap
+      const head =
+        `<circle` +
+        ` data-k="0"` +
+        ` data-lag="0"` +
+        ` r="${COMET.headR}"` +
+        ` cx="${r.startX}" cy="${r.startY}"` +
+        ` fill="url(#${ghId(r.i)})"` +
+        `/>`;
       const tail = Array.from({ length: COMET.tailN }, (_, k) => {
-        const t = (k + 1) / COMET.tailN;
-        const radius = (COMET.tailRMax - (COMET.tailRMax - COMET.tailRMin) * t).toFixed(2);
-        const delay = (scatter + (k + 1) * dt).toFixed(3);
-        const fade = (0.7 * Math.pow(1 - (k + 1) / (COMET.tailN + 1), 1.25)).toFixed(2);
-        return `<circle class="${ns}pulse ${ns}p${r.i}" r="${radius}" fill="url(#${gtId(r.i)})" fill-opacity="${fade}" style="animation-delay:${delay}s"/>`;
+        // k is 0-indexed here → circle data-k = k+1 (1..tailN)
+        const lagK = ((k + 1) * dt).toFixed(6);
+        const taper = (k + 1) / COMET.tailN;
+        const radius = (COMET.tailRMax - (COMET.tailRMax - COMET.tailRMin) * taper).toFixed(2);
+        const fadeOp = (0.7 * Math.pow(1 - (k + 1) / (COMET.tailN + 1), 1.25)).toFixed(2);
+        return (
+          `<circle` +
+          ` data-k="${k + 1}"` +
+          ` data-lag="${lagK}"` +
+          ` r="${radius}"` +
+          ` cx="${r.startX}" cy="${r.startY}"` +
+          ` fill="url(#${gtId(r.i)})"` +
+          ` fill-opacity="${fadeOp}"` +
+          `/>`
+        );
       }).join('');
-      return `<g class="${ns}comet">${head}${tail}</g>`;
+      return (
+        `<g` +
+        ` class="${page}-comet"` +
+        ` data-route="${r.i}"` +
+        ` data-dur="${printedDur}"` +
+        ` data-fade="${fadeT}"` +
+        ` data-scatter="${scatterAbs}"` +
+        ` data-fade-peak="${fadePeakByTheme}"` +
+        ` opacity="0"` +
+        `>${head}${tail}</g>`
+      );
     })
     .join('');
 
-  return { keyframes, defs, cometGroups, rawSpeedMin, rawSpeedMax };
+  return { routePaths, defs, cometGroups, rawSpeedMin, rawSpeedMax };
 }
 
 // ---------------------------------------------------------------------------
@@ -584,25 +619,31 @@ function buildPlateSvg(paths, theme) {
   return svg;
 }
 
-// --- Animated glow file: comet system ONLY -------------------------------
+// --- Animated glow file: comet system ONLY (GSAP-driven, no CSS keyframes) ---
 // Inlined on top of the static plate by the component, on a transparent canvas
 // with the SAME viewBox + preserveAspectRatio so it registers 1:1 over the
-// plate. Carries the <style> keyframes + route classes, per-route gradient
-// defs, sprite circles, and only the clipPath it needs.
+// plate. Carries per-route <path> defs (GSAP MotionPath targets), per-route
+// gradient defs, and sprite circles with data-* attributes. Zero @keyframes
+// and zero animation: declarations — all animation is driven by GSAP at
+// runtime via AnimatedContourBackground.
 function buildGlowSvg(paths, theme, page) {
   const routes = pickRoutes(paths);
-  const { keyframes, defs, cometGroups } = buildCometSystem(routes, theme, page);
+  const { routePaths, defs, cometGroups } = buildCometSystem(routes, theme, page);
 
-  // Scope the clip id + wrapper class per page too: glows are inlined into a
-  // shared document, so `url(#mc)`/.comets must not collide across pages.
+  // Scope the clip id per page: glows are inlined into a shared document, so
+  // `url(#mc)` and route path ids must not collide across pages.
   const clipId = `${page}-mc`;
-  const style = `<style>${keyframes}</style>`;
+  // Route paths go in <defs> alongside gradients: invisible (fill+stroke none),
+  // referenced by GSAP MotionPathPlugin via id.
   const defsBlock =
-    `<defs><clipPath id="${clipId}"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath>${defs}</defs>`;
+    `<defs>` +
+    `<clipPath id="${clipId}"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath>` +
+    routePaths +
+    defs +
+    `</defs>`;
 
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" preserveAspectRatio="xMidYMid slice">` +
-    style +
     defsBlock +
     `<g class="${page}-comets" clip-path="url(#${clipId})">${cometGroups}</g>` +
     `</svg>`;
