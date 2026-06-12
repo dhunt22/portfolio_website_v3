@@ -77,7 +77,12 @@ export const usePrisonMap = (
   };
 
   const updatePrisonColors = (componentId?: string, compColor?: string) => {
-    if (!map.current || !map.current.isStyleLoaded() || projectId !== 'prison-ej') return;
+    // NOTE: no isStyleLoaded() gate here — it is false during ANY tile/sprite
+    // loading and silently swallowed clicks (the "buttons don't update the map"
+    // bug). setPaintProperty is safe whenever the layer exists; the per-layer
+    // getLayer() guards in mapUtils handle the not-yet-added case, and the
+    // effect below queues a retry on 'idle' for that window.
+    if (!map.current || projectId !== 'prison-ej') return;
 
     console.log(`Updating prison colors for attribute: ${selectedAttribute}, component: ${componentId}`);
     const colorScale = componentId && compColor ?
@@ -105,13 +110,32 @@ export const usePrisonMap = (
     }
   };
 
-  // Apply filter when threshold, facilityTypes, selectedAttribute, or selectedComponent changes
+  // Apply filter + colors when threshold, facilityTypes, selectedAttribute, or
+  // selectedComponent changes. If the prison layers are not ready yet (initial
+  // style/tiles still loading, or a theme style-swap mid-flight), QUEUE the
+  // apply on the map's next 'idle' instead of dropping it — a click made while
+  // the map is busy must still land. The cleanup removes a stale queued apply
+  // when deps change again, so only the latest state is ever applied.
   useEffect(() => {
-    if (projectId === 'prison-ej') {
+    if (projectId !== 'prison-ej' || !map.current) return;
+    const m = map.current;
+
+    const apply = () => {
       const activeColumn = resolveActiveColumn(selectedComponent, selectedAttribute);
       applyCurrentFilter(percentileThreshold, facilityTypes, activeColumn);
       updatePrisonColors(selectedComponent, componentColor);
+    };
+
+    const layersReady = !!m.getLayer(PRISON_LAYERS[0]);
+    if (layersReady) {
+      apply();
+      return;
     }
+    const onIdle = () => apply();
+    m.once('idle', onIdle);
+    return () => {
+      m.off('idle', onIdle);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [percentileThreshold, facilityTypes, selectedAttribute, allPrisonData, projectId, selectedComponent, componentColor]);
 

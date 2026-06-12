@@ -148,8 +148,10 @@ export function ProjectIndex({ projects }: ProjectIndexProps) {
 
   return (
     <Tabs defaultValue="all" className="mt-12">
+      {/* Soft surface bar behind the filters — the tab text sat directly on the
+          busy contour plate and lacked contrast. */}
       <TabsList
-        className="mb-4 flex h-auto flex-wrap justify-start gap-8 rounded-none bg-transparent p-0"
+        className="mb-4 flex h-auto flex-wrap justify-start gap-8 rounded-none border border-border bg-[color-mix(in_srgb,var(--surface-card)_82%,transparent)] px-5 py-3"
         aria-label="Portfolio project categories"
       >
         {tabs.map((tab) => {

@@ -291,33 +291,31 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedTheme]);
 
-  // Update prison map colors when selectedAttribute changes
+  // Re-bind popup handlers when the active indicator changes so popups show the
+  // right values. Colors + filters are applied by usePrisonMap's own effect
+  // (which queues on 'idle' if the map is busy) — the old pair of effects here
+  // gated on isStyleLoaded() and silently DROPPED clicks made while tiles were
+  // still loading. Popup rebinding is idempotent (useMapPopup offs before ons).
   useEffect(() => {
-    if (projectId === 'prison-ej' && map.current?.isStyleLoaded() && !isStyleChanging.current) {
-      console.log(`Updating colors for attribute change: ${selectedAttribute}`);
+    if (projectId !== 'prison-ej' || !map.current) return;
+    const m = map.current;
+    const rebind = () => {
       try {
-        updatePrisonColors(selectedComponent, componentColor);
         setupPopupHandlers();
       } catch (error) {
-        console.error('Error updating prison colors:', error);
-        setMapError(`Failed to update colors: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        console.error('Error rebinding popup handlers:', error);
       }
+    };
+    if (m.getLayer(`prison-${instanceId}-polygons`)) {
+      rebind();
+      return;
     }
+    m.once('idle', rebind);
+    return () => {
+      m.off('idle', rebind);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAttribute, selectedComponent, componentColor, projectId]);
-
-  // Handle immediate component selection changes
-  useEffect(() => {
-    if (projectId === 'prison-ej' && map.current?.isStyleLoaded() && selectedComponent && componentColor && !isStyleChanging.current) {
-      console.log(`Updating colors for component selection change: ${selectedComponent}`);
-      try {
-        updatePrisonColors(selectedComponent, componentColor);
-        setupPopupHandlers();
-      } catch (error) {
-        console.error('Error updating colors for component selection:', error);
-        setMapError(`Failed to update colors: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      }
-    }
-  }, [selectedComponent, componentColor, projectId]);
 
   // Close panels when clicking outside
   useEffect(() => {

@@ -207,9 +207,11 @@ function IndicatorButton({ component, isActive, onClick }: IndicatorButtonProps)
           'py-3 pl-4 pr-3',
           'border-l-[3px] transition-colors duration-150',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+          // Selected = soft SUNKEN darkening (bg-card is lighter than the page
+          // in light mode, which read as a highlight, not a pressed state).
           isActive
-            ? 'bg-card'
-            : 'border-l-transparent hover:bg-card/60',
+            ? 'bg-[var(--surface-sunken)]'
+            : 'border-l-transparent hover:bg-[color-mix(in_srgb,var(--surface-sunken)_55%,transparent)]',
         ].join(' ')}
       >
         <span className={[
@@ -248,8 +250,8 @@ function MobileChip({ component, isActive, onClick }: MobileChipProps) {
         'border transition-colors duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         isActive
-          ? 'bg-card'
-          : 'border-border text-ink-muted bg-card/40 hover:text-ink-body hover:bg-card',
+          ? 'bg-[var(--surface-sunken)]'
+          : 'border-border text-ink-muted bg-card/40 hover:text-ink-body hover:bg-[color-mix(in_srgb,var(--surface-sunken)_55%,transparent)]',
       ].join(' ')}
     >
       {component.name}
@@ -336,17 +338,19 @@ export function IndicatorBrowser(): JSX.Element {
         </div>
       </div>
 
-      {/* ── Two-column body at lg ── */}
-      <div className="lg:grid lg:grid-cols-[minmax(0,22rem)_1fr] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:items-start">
+      {/* ── Two-column dashboard at lg — FIXED height so the map never resizes
+            when the explanatory text below changes length. The rail scrolls
+            internally if a category has more indicators than fit. ── */}
+      <div className="lg:grid lg:h-[40rem] lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-x-10">
 
-        {/* LEFT, row 1: indicator rail — shown only on desktop (mobile uses chips above) */}
-        <div className="hidden lg:block lg:col-start-1 lg:row-start-1">
+        {/* LEFT: indicator rail — shown only on desktop (mobile uses chips above) */}
+        <div className="hidden lg:flex lg:h-full lg:min-h-0 lg:flex-col">
           {/* Category panel label */}
           <h3 className="mb-3 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[activeTab]}</h3>
 
           {/* Indicator list for active tab (category switching lives in the
               single top tab row — a second in-rail nav duplicated it) */}
-          <ul className="border-t border-border">
+          <ul className="min-h-0 overflow-y-auto border-t border-border">
             {COMPONENT_CONFIGS.filter(c => c.category === activeTab).map((component) => (
               <IndicatorButton
                 key={component.id}
@@ -358,12 +362,12 @@ export function IndicatorBrowser(): JSX.Element {
           </ul>
         </div>
 
-        {/* RIGHT: map — spans both left rows */}
-        <div className="mt-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:flex lg:h-full lg:flex-col lg:self-stretch">
+        {/* RIGHT: map — fills the fixed dashboard height */}
+        <div className="mt-4 lg:mt-0 lg:flex lg:h-full lg:flex-col">
           {/* Mobile indicator title */}
           <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
 
-          <div className="h-[60svh] min-h-[320px] border border-border md:h-[500px] lg:h-full lg:min-h-[70vh]">
+          <div className="h-[60svh] min-h-[320px] border border-border md:h-[500px] lg:h-full">
             <LazyProjectMap
               projectId="prison-ej"
               selectedComponent={selectedComponent}
@@ -371,9 +375,12 @@ export function IndicatorBrowser(): JSX.Element {
             />
           </div>
         </div>
+      </div>
 
-        {/* Indicator detail panel: LEFT column, row 2, below indicator rail on desktop */}
-        <div className="mt-12 max-w-[40rem] lg:col-start-1 lg:row-start-2 lg:mt-8">
+      {/* Indicator detail: BELOW the dashboard, separated by a hairline so the
+          buttons above read as controls and this reads as explanation. Its
+          length can change freely without touching the map height. */}
+      <div className="mt-8 max-w-[44rem] border-t border-border pt-6">
           <h3 className="font-display text-xl text-ink-strong">{currentComponent.name}</h3>
           <p className="mt-2 leading-relaxed text-ink-body">{currentComponent.description}</p>
 
@@ -403,7 +410,6 @@ export function IndicatorBrowser(): JSX.Element {
               </a>
             </div>
           )}
-        </div>
       </div>
     </div>
   );

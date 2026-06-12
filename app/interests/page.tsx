@@ -144,11 +144,11 @@ export default function InterestsPage() {
         {/* GIS Section - topographic vectors shown plainly */}
         <section id="gis" className="panel mb-4 scroll-mt-16">
           <h2 className="font-display text-2xl text-ink-strong">GIS</h2>
-          <p className="mt-4 max-w-[40rem] leading-relaxed text-ink-body">
+          <p className="mt-4 leading-relaxed text-ink-body">
             I love data visualization and deriving digital beauty from the physical world.
             See these topographic vectors I made for the website backgrounds.
           </p>
-          <p className="mt-4 max-w-[40rem] leading-relaxed text-ink-body">
+          <p className="mt-4 leading-relaxed text-ink-body">
             Contact me if you are planning a community event or share an interest in GIS- lets collaborate!
           </p>
 
