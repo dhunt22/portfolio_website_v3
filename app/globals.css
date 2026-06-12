@@ -54,6 +54,10 @@
 
 @layer components {
   .panel { @apply border bg-card p-8 md:p-10; border-color: var(--border-default); }
+  /* Dark: the stone surface steps (page→header→card) carry the layer
+     separation, so panel outlines recede to the hairline (brief: layers
+     read as distinct WITHOUT hard borders). Light is untouched. */
+  .dark .panel { border-color: var(--border-hairline); }
   .eyebrow { @apply font-sans font-medium text-xs uppercase tracking-caps text-eyebrow; }
   .eyebrow-mono { @apply font-mono text-xs font-normal uppercase tracking-caps text-eyebrow; }
   .display { @apply font-display font-medium tracking-display leading-tight-display text-ink-strong; }
