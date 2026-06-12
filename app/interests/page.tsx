@@ -129,7 +129,7 @@ const interestSections: InterestSectionProps[] = [
  */
 export default function InterestsPage() {
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-svh">
       <ContourBackdrop page="interests" />
 
       <div className="container relative z-10 mx-auto px-6">

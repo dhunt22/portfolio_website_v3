@@ -12,7 +12,7 @@ import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
  */
 export default function Home() {
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-svh">
       <ContourBackdrop page="home" />
 
       <div className="container relative z-10 mx-auto px-6">

@@ -11,7 +11,7 @@ import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
  */
 export default function NotFound() {
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-svh">
       <ContourBackdrop page="notFound" />
 
       <div className="container relative z-10 mx-auto px-6">

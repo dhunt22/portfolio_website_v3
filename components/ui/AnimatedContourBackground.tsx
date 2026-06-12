@@ -103,7 +103,7 @@ export function AnimatedContourBackground({
       data-light-src={lightPlate}
       data-dark-src={darkPlate}
       data-glow={shouldAnimate ? glowSrc : undefined}
-      className="fixed inset-0 -z-10 overflow-hidden"
+      className="fixed top-0 left-0 right-0 h-lvh -z-10 overflow-hidden"
       aria-hidden="true"
     >
       {/* Static plate — two CSS-themed background-image layers. The browser

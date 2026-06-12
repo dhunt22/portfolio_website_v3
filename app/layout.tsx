@@ -8,7 +8,17 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
+
+// Viewport export — kept separate from metadata (Next 14 requirement).
+// interactiveWidget: 'resizes-visual' tells mobile browsers that the on-screen
+// keyboard / URL-bar resizes only the visual viewport, not the layout viewport,
+// preventing layout reflows and background re-rasters on bar collapse.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  interactiveWidget: 'resizes-visual',
+};
 
 // Define the metadata for the application
 export const metadata: Metadata = {
@@ -58,7 +68,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ErrorBoundary>
-            <div className="min-h-screen flex flex-col">
+            <div className="min-h-svh flex flex-col">
               <Header />
               <main className="flex-grow pt-16">
                 {children}

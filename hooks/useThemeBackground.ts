@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 
 interface ThemeBackgroundOptions {
   /** Static plate (contours only) — painted as a CSS background-image. */
@@ -75,18 +75,41 @@ export function useThemeBackground(options: ThemeBackgroundOptions): ThemeBackgr
   const [isMobile, setIsMobile] = useState(false);
 
   const mobileBreakpoint = options.mobileBreakpoint ?? 768;
+  const lastWidthRef = useRef<number | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setMounted(true);
 
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < mobileBreakpoint);
+    // Synchronous initial check on mount.
+    lastWidthRef.current = window.innerWidth;
+    setIsMobile(window.innerWidth < mobileBreakpoint);
+
+    const handleResize = () => {
+      const currentWidth = window.innerWidth;
+      // URL-bar collapse is height-only — width stays the same.
+      // Bail out immediately to avoid re-rendering the backdrop.
+      if (currentWidth === lastWidthRef.current) return;
+
+      // Width actually changed — debounce the state update by ~150 ms so
+      // rapid resize drags only trigger one re-render.
+      lastWidthRef.current = currentWidth;
+      if (debounceTimerRef.current !== null) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        setIsMobile(currentWidth < mobileBreakpoint);
+      }, 150);
     };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener('resize', handleResize);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (debounceTimerRef.current !== null) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, [mobileBreakpoint]);
 
   const isDark = mounted && resolvedTheme === 'dark';
