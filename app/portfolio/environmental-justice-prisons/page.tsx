@@ -48,13 +48,13 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </header>
 
         {/* Dashboard — map leads as the primary element */}
-        <section className="panel mb-8" aria-labelledby="indicators-heading">
+        <section className="panel mb-4" aria-labelledby="indicators-heading">
           <h2 id="indicators-heading" className="eyebrow mb-6">Environmental Risk Indicators</h2>
           <IndicatorBrowser />
         </section>
 
         {/* About — Project Overview */}
-        <section id="about" className="panel mb-8" aria-labelledby="overview-heading">
+        <section id="about" className="panel mb-4" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className="eyebrow mb-6">Project Overview</h2>
           <div className="xl:grid xl:grid-cols-[minmax(0,40rem)_1fr] xl:gap-10 xl:items-start">
             {/* Overview paragraphs (left column on xl; single column below) */}
@@ -85,7 +85,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Long-form read — Project Team & Impact */}
-        <section className="panel mb-8" aria-labelledby="team-heading">
+        <section className="panel mb-4" aria-labelledby="team-heading">
           <h2 id="team-heading" className="eyebrow mb-6">Project Team &amp; My Contribution</h2>
 
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2">

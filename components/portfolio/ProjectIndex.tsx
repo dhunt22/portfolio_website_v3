@@ -173,7 +173,7 @@ export function ProjectIndex({ projects }: ProjectIndexProps) {
           <TabsContent
             key={tab.value}
             value={tab.value}
-            className="mt-0 space-y-8"
+            className="mt-0 space-y-4"
           >
             {categoryProjects.length > 0 ? (
               categoryProjects.map((project) => (

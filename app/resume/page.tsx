@@ -54,7 +54,7 @@ export default function ResumePage() {
           </a>
         </header>
 
-        <div className="panel mt-8">
+        <div className="panel mt-4">
         <div>
           <h2 className="font-display text-2xl text-ink-strong">Devin Hunt</h2>
           <p className="mt-1 font-sans font-medium text-xs uppercase tracking-caps text-ink-muted">Water Resources Engineer</p>

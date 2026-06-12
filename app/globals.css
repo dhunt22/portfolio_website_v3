@@ -53,7 +53,7 @@
 }
 
 @layer components {
-  .panel { @apply border bg-card p-8 md:p-10; border-color: var(--border-default); }
+  .panel { @apply border bg-card p-4 md:p-5; border-color: var(--border-default); }
   /* Dark: the stone surface steps (page→header→card) carry the layer
      separation, so panel outlines recede to the hairline (brief: layers
      read as distinct WITHOUT hard borders). Light is untouched. */

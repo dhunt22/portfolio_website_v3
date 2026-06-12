@@ -42,7 +42,7 @@ export function InterestSection({
   return (
     <section
       id={id}
-      className={`panel mb-8 flex flex-col gap-10 md:items-center ${imagePosition === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'} scroll-mt-16`}
+      className={`panel mb-4 flex flex-col gap-10 md:items-center ${imagePosition === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'} scroll-mt-16`}
     >
       <figure className="md:w-5/12">
         <img
