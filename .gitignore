@@ -18,3 +18,12 @@ cv_processing_to_website.txt
 tsconfig.tsbuildinfo
 out/
 bash.exe.stackdump
+
+# Local-only references and scratch (intentionally not shipped)
+/design_system/
+/eslint.config.mjs
+/bun.lock
+/.tmp_plates/
+/.tmp_review/
+tmp-*.mjs
+/style-explorations/bigsur_p*.svg
