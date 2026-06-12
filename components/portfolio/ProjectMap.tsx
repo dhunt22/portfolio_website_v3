@@ -132,6 +132,14 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
 
         try {
           if (projectId === 'prison-ej') {
+            // Idempotent: if a theme swap happened while the initial style was
+            // still loading, its finalize path already (re)added the layers —
+            // adding sources twice throws "source already exists".
+            if (map.current.getLayer(`prison-${instanceId}-polygons`)) {
+              console.log('Prison layers already present — skipping init setup');
+              setupPopupHandlers();
+              return;
+            }
             console.log('Setting up prison layers...');
             setupPrisonLayers(map.current, mapConfig, selectedAttribute, (data) => {
               console.log('Prison data loaded for filtering:', data.length, 'features');
@@ -226,16 +234,15 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
       const snapshotColor = componentColorRef.current;
 
       const mapConfig = getMapConfig(projectId);
+      const lp = instanceId ? `prison-${instanceId}` : 'prison';
 
-      // setStyle wipes all sources/layers; re-add them on next style.load
-      map.current.setStyle(newStyle);
-
-      map.current.once('style.load', () => {
+      const reAddLayers = () => {
         if (!map.current) return;
-        console.log('style.load after basemap swap — re-adding prison layers');
+        // Idempotent: skip if this swap (or the init 'load' path) already added them.
+        if (map.current.getLayer(`${lp}-polygons`)) return;
+        console.log('Re-adding prison layers after basemap swap');
 
         try {
-          const lp = instanceId ? `prison-${instanceId}` : 'prison';
           const colorScale = createEnhancedColorScale(snapshotComponent, snapshotColor);
 
           // Re-add sources and layers (setupPrisonLayers fetches data again)
@@ -275,7 +282,25 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         } catch (error) {
           console.error('Error re-adding layers after style swap:', error);
         }
+      };
 
+      // Finalize is attached to BOTH 'style.load' and 'idle' and runs exactly
+      // once — whichever fires first. Rationale (root cause of the stuck-map
+      // bug): a single once('style.load') can be swallowed — maplibre's
+      // default setStyle DIFFS between styles and skips the full style load,
+      // and a swap initiated while the initial style is still loading also
+      // never emits a discrete style.load. When that happened,
+      // isStyleChanging stayed true FOREVER and every later toggle was
+      // queued into the void: the map froze on the old basemap. 'idle' is
+      // guaranteed once the map settles, so the flag always clears.
+      let finalized = false;
+      const finalize = () => {
+        if (finalized || !map.current) return;
+        finalized = true;
+        map.current.off('style.load', finalize);
+        map.current.off('idle', finalize);
+
+        reAddLayers();
         isStyleChanging.current = false;
 
         // If another theme change arrived while this swap was in-flight, apply it now
@@ -283,7 +308,14 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
           const next = queuedTheme.current;
           applyThemeSwap(next);
         }
-      });
+      };
+
+      // diff: false forces a FULL style reload — deterministic wipe + a
+      // guaranteed 'style.load'. The default diff mode keeps the swap
+      // partial and skips the event, leaving our custom layers half-gone.
+      map.current.setStyle(newStyle, { diff: false });
+      map.current.once('style.load', finalize);
+      map.current.once('idle', finalize);
     };
 
     applyThemeSwap(resolvedTheme);
