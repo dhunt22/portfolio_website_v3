@@ -17,6 +17,7 @@ import { usePrisonMap } from '@/hooks/usePrisonMap';
 import { useMapPopup } from '@/hooks/useMapPopup';
 import MapControls from '@/components/maps/MapControls';
 import { createEnhancedColorScale, applyFilterToLayers } from '@/lib/maps/mapUtils';
+import { resolveActiveColumn, buildCombinedFilter } from '@/hooks/usePrisonMap';
 
 interface ProjectMapProps {
   projectId: string;
@@ -53,6 +54,9 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
   const [showCategoryPanel, setShowCategoryPanel] = useState(true);
   const [mapError, setMapError] = useState<string | null>(null);
   const isStyleChanging = useRef(false);
+  // If a style swap is already in-flight, store the desired next theme here;
+  // the style.load completion loop will apply it when the current swap finishes.
+  const queuedTheme = useRef<string | null>(null);
 
   // Generate unique ID for this map instance to avoid conflicts
   const mapInstanceId = useRef<string>(`map-${Math.random().toString(36).substring(2, 11)}`);
@@ -65,8 +69,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
   const {
     selectedAttribute,
     setSelectedAttribute,
-    showAllPrisons,
-    setShowAllPrisons,
     percentileThreshold,
     setPercentileThreshold,
     facilityTypes,
@@ -79,10 +81,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
     selectedAttributeRef,
     selectedComponentRef,
     componentColorRef,
-    buildCombinedFilter,
     PRISON_LAYERS,
-    idField,
-    allPrisonData,
   } = usePrisonMap(map, projectId, selectedComponent, componentColor, instanceId);
 
   // Use custom hook for popup management
@@ -203,79 +202,91 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
     if (prevTheme.current === resolvedTheme) return;
     prevTheme.current = resolvedTheme;
 
-    const newStyle = resolvedTheme === 'dark' ? DARK_STYLE : GRAY_STYLE;
-    console.log(`Theme changed to ${resolvedTheme} — swapping basemap to ${newStyle}`);
+    // If a swap is already in-flight, queue the new target and let the
+    // in-flight style.load loop pick it up — avoids double setStyle + double
+    // once('style.load') which could cause "source already exists" errors.
+    if (isStyleChanging.current) {
+      queuedTheme.current = resolvedTheme;
+      return;
+    }
 
-    isStyleChanging.current = true;
-
-    // Snapshot current state from refs (state may lag behind)
-    const snapshotThreshold = percentileThresholdRef.current;
-    const snapshotTypes = facilityTypesRef.current;
-    const snapshotAttribute = selectedAttributeRef.current;
-    const snapshotComponent = selectedComponentRef.current;
-    const snapshotColor = componentColorRef.current;
-
-    const mapConfig = getMapConfig(projectId);
-
-    // setStyle wipes all sources/layers; re-add them on next style.load
-    map.current.setStyle(newStyle);
-
-    map.current.once('style.load', () => {
+    const applyThemeSwap = (targetTheme: string) => {
       if (!map.current) return;
-      console.log('style.load after basemap swap — re-adding prison layers');
+      const newStyle = targetTheme === 'dark' ? DARK_STYLE : GRAY_STYLE;
+      console.log(`Theme changed to ${targetTheme} — swapping basemap to ${newStyle}`);
 
-      try {
-        // Re-add sources and layers (setupPrisonLayers fetches data again)
-        setupPrisonLayers(
-          map.current,
-          mapConfig,
-          snapshotAttribute,
-          (data) => {
-            // Re-apply saved filter state once data is available
-            const filterExpr = buildCombinedFilter(
-              snapshotThreshold,
-              snapshotTypes,
-              snapshotAttribute,
-              // idField may not be refreshed yet; use 'OBJECTID' as safe fallback
-              idField || 'OBJECTID',
-              data
-            );
-            console.log('Re-applying filter after style swap:', JSON.stringify(filterExpr));
-            applyFilterToLayers(map.current!, PRISON_LAYERS, filterExpr);
-            setAllPrisonData(data);
-          },
-          snapshotComponent,
-          snapshotColor,
-          instanceId
-        );
+      isStyleChanging.current = true;
+      queuedTheme.current = null;
 
-        // Re-apply current paint colors
-        setTimeout(() => {
-          if (map.current?.isStyleLoaded()) {
-            const colorScale = createEnhancedColorScale(snapshotComponent, snapshotColor);
-            const layerPrefix = instanceId ? `prison-${instanceId}` : 'prison';
-            const updates = [
-              { layerId: `${layerPrefix}-polygons`, property: 'fill-color', value: colorScale },
-              { layerId: `${layerPrefix}-polygons-highlight`, property: 'fill-color', value: colorScale },
-              { layerId: `${layerPrefix}-centroids`, property: 'circle-color', value: colorScale },
-            ];
-            updates.forEach(({ layerId, property, value }) => {
-              if (map.current?.getLayer(layerId)) {
-                map.current.setPaintProperty(layerId, property, value);
-              }
-            });
-            map.current?.triggerRepaint();
-          }
-        }, 100);
+      // Snapshot current state from refs (state may lag behind)
+      const snapshotThreshold = percentileThresholdRef.current;
+      const snapshotTypes = facilityTypesRef.current;
+      const snapshotAttribute = selectedAttributeRef.current;
+      const snapshotComponent = selectedComponentRef.current;
+      const snapshotColor = componentColorRef.current;
 
-        setupPopupHandlers();
-        setMapError(null);
-      } catch (error) {
-        console.error('Error re-adding layers after style swap:', error);
-      }
+      const mapConfig = getMapConfig(projectId);
 
-      isStyleChanging.current = false;
-    });
+      // setStyle wipes all sources/layers; re-add them on next style.load
+      map.current.setStyle(newStyle);
+
+      map.current.once('style.load', () => {
+        if (!map.current) return;
+        console.log('style.load after basemap swap — re-adding prison layers');
+
+        try {
+          const lp = instanceId ? `prison-${instanceId}` : 'prison';
+          const colorScale = createEnhancedColorScale(snapshotComponent, snapshotColor);
+
+          // Re-add sources and layers (setupPrisonLayers fetches data again)
+          setupPrisonLayers(
+            map.current,
+            mapConfig,
+            snapshotAttribute,
+            (data) => {
+              // Re-apply saved filter state once data is available (event-driven, no setTimeout)
+              const activeColumn = resolveActiveColumn(snapshotComponent, snapshotAttribute);
+              const filterExpr = buildCombinedFilter(snapshotThreshold, snapshotTypes, activeColumn);
+              console.log('Re-applying filter after style swap:', JSON.stringify(filterExpr));
+              applyFilterToLayers(map.current!, PRISON_LAYERS, filterExpr);
+
+              // Re-apply paint colors now that layers exist and data is ready
+              const paintUpdates = [
+                { layerId: `${lp}-polygons`, property: 'fill-color', value: colorScale },
+                { layerId: `${lp}-polygons-highlight`, property: 'fill-color', value: colorScale },
+                { layerId: `${lp}-centroids`, property: 'circle-color', value: colorScale },
+              ];
+              paintUpdates.forEach(({ layerId, property, value }) => {
+                if (map.current?.getLayer(layerId)) {
+                  map.current.setPaintProperty(layerId, property, value);
+                }
+              });
+              map.current?.triggerRepaint();
+
+              setAllPrisonData(data);
+            },
+            snapshotComponent,
+            snapshotColor,
+            instanceId
+          );
+
+          setupPopupHandlers();
+          setMapError(null);
+        } catch (error) {
+          console.error('Error re-adding layers after style swap:', error);
+        }
+
+        isStyleChanging.current = false;
+
+        // If another theme change arrived while this swap was in-flight, apply it now
+        if (queuedTheme.current) {
+          const next = queuedTheme.current;
+          applyThemeSwap(next);
+        }
+      });
+    };
+
+    applyThemeSwap(resolvedTheme);
   // resolvedTheme is the only trigger; refs track the rest
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedTheme]);
@@ -375,8 +386,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         projectId={projectId}
         selectedAttribute={selectedAttribute}
         setSelectedAttribute={setSelectedAttribute}
-        showAllPrisons={showAllPrisons}
-        setShowAllPrisons={setShowAllPrisons}
         showCategoryPanel={showCategoryPanel}
         setShowCategoryPanel={setShowCategoryPanel}
         hideRiskSelector={!!selectedComponent && selectedComponent !== 'overall'}

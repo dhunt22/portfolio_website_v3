@@ -9,21 +9,24 @@ import {
   createRiskColorScale,
   createEnhancedColorScale,
   createDynamicPaintProperties,
-  createTopNFilter,
-  sortPrisonsByRisk,
-  filterPrisonsByPercentile,
   applyFilterToLayers,
   updateLayerPaintProperty,
   updateLayerPaintPropertiesBatch,
-  getPrisonId,
-  determineIdField
 } from '@/lib/maps/mapUtils';
+import {
+  buildCombinedFilter,
+  resolveActiveColumn,
+  type PercentileThreshold,
+  type FacilityType,
+} from '@/lib/maps/filterUtils';
+
+// Re-export pure filter utilities so consumers (ProjectMap, tests) can import
+// from a single location without pulling in maplibre-gl.
+export { buildCombinedFilter, resolveActiveColumn };
+export type { PercentileThreshold, FacilityType };
 
 // Define RiskAttribute locally to avoid circular imports (using new geojson column names)
 type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
-
-export type PercentileThreshold = 0 | 50 | 75 | 95;
-export type FacilityType = 'STATE' | 'FEDERAL';
 
 export const usePrisonMap = (
   map: React.MutableRefObject<maplibregl.Map | null>,
@@ -33,15 +36,9 @@ export const usePrisonMap = (
   instanceId?: string
 ) => {
   const [selectedAttribute, setSelectedAttribute] = useState<RiskAttribute>("final_risk_score_pcntl");
-  // Legacy: showAllPrisons = (percentileThreshold === 0)
   const [percentileThreshold, setPercentileThreshold] = useState<PercentileThreshold>(0);
   const [facilityTypes, setFacilityTypes] = useState<FacilityType[]>(['STATE', 'FEDERAL']);
   const [allPrisonData, setAllPrisonData] = useState<PrisonFeature[]>([]);
-  const [idField, setIdField] = useState<string>('FACILIT');
-
-  // Derived compat shim so ProjectMap's existing showAllPrisons consumers keep working
-  const showAllPrisons = percentileThreshold === 0;
-  const setShowAllPrisons = (show: boolean) => setPercentileThreshold(show ? 0 : 95);
 
   // Create unique layer names for this instance
   const layerPrefix = instanceId ? `prison-${instanceId}` : 'prison';
@@ -61,72 +58,16 @@ export const usePrisonMap = (
   useEffect(() => { selectedComponentRef.current = selectedComponent; }, [selectedComponent]);
   useEffect(() => { componentColorRef.current = componentColor; }, [componentColor]);
 
-  // Update ID field when data changes
-  useEffect(() => {
-    if (allPrisonData.length > 0) {
-      const detectedField = determineIdField(allPrisonData);
-      setIdField(detectedField);
-    }
-  }, [allPrisonData]);
-
-  /**
-   * Build the combined setFilter expression:
-   *   ['all', threshold_clause, type_clause]
-   *
-   * threshold = 0  → no threshold clause (null filter = show all)
-   * types = both   → no type clause
-   */
-  const buildCombinedFilter = (
-    threshold: PercentileThreshold,
-    types: FacilityType[],
-    attribute: RiskAttribute,
-    currentIdField: string,
-    prisons: PrisonFeature[]
-  ): any[] | null => {
-    const clauses: any[] = [];
-
-    // Percentile filter: filter to IDs that meet the threshold
-    if (threshold > 0) {
-      const filtered = filterPrisonsByPercentile(prisons, attribute, threshold);
-      const topPrisonIds = filtered.map(prison => getPrisonId(prison));
-      if (topPrisonIds.length > 0) {
-        clauses.push(createTopNFilter(topPrisonIds, currentIdField));
-      } else {
-        // No prisons meet threshold — show nothing
-        clauses.push(['==', ['literal', ''], ['literal', 'NOMATCH']]);
-      }
-    }
-
-    // Facility type filter
-    if (types.length === 1) {
-      // Only one type selected — use in expression
-      clauses.push(['==', ['get', 'TYPE'], types[0]]);
-    }
-    // If both selected, no clause needed (show all types)
-
-    if (clauses.length === 0) return null;
-    if (clauses.length === 1) return clauses[0];
-    return ['all', ...clauses];
-  };
-
   const applyCurrentFilter = (
     threshold: PercentileThreshold,
     types: FacilityType[],
-    attribute: RiskAttribute,
-    currentIdField: string,
-    prisons: PrisonFeature[]
+    activeColumn: string
   ) => {
     if (!map.current || projectId !== 'prison-ej') return;
 
-    const filterExpr = buildCombinedFilter(threshold, types, attribute, currentIdField, prisons);
+    const filterExpr = buildCombinedFilter(threshold, types, activeColumn);
     console.log('Applying combined filter:', JSON.stringify(filterExpr));
     applyFilterToLayers(map.current, PRISON_LAYERS, filterExpr);
-  };
-
-  // Legacy helper kept for MapControls compatibility
-  const applyTopNFilter = (showAll: boolean) => {
-    const threshold = showAll ? 0 : 95;
-    applyCurrentFilter(threshold, facilityTypes, selectedAttribute, idField, allPrisonData);
   };
 
   const clearFilters = () => {
@@ -142,7 +83,8 @@ export const usePrisonMap = (
     const colorScale = componentId && compColor ?
       createEnhancedColorScale(componentId, compColor) :
       createRiskColorScale(selectedAttribute);
-    const dynamicProperties = createDynamicPaintProperties(selectedAttribute);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _dynamicProperties = createDynamicPaintProperties(selectedAttribute);
 
     // Use batch update for better consistency
     const updates = [
@@ -151,21 +93,9 @@ export const usePrisonMap = (
       { layerId: `${layerPrefix}-centroids`, property: "circle-color", value: colorScale }
     ];
 
-    if (showAllPrisons) {
+    if (percentileThreshold === 0) {
       console.log('Applying enhanced repaint strategy for all prisons mode');
       updateLayerPaintPropertiesBatch(map.current, updates, true);
-
-      setTimeout(() => {
-        if (map.current && map.current.isStyleLoaded()) {
-          try {
-            const currentOpacity = map.current.getPaintProperty(`${layerPrefix}-polygons`, 'fill-opacity');
-            map.current.setPaintProperty(`${layerPrefix}-polygons`, 'fill-opacity', currentOpacity);
-            map.current.triggerRepaint();
-          } catch (error) {
-            console.warn('Additional repaint strategy failed:', error);
-          }
-        }
-      }, 10);
     } else {
       console.log('Applying standard repaint strategy for filtered mode');
       updates.forEach(update => {
@@ -175,28 +105,25 @@ export const usePrisonMap = (
     }
   };
 
-  // Apply filter when threshold, facilityTypes, selectedAttribute, or data changes
+  // Apply filter when threshold, facilityTypes, selectedAttribute, or selectedComponent changes
   useEffect(() => {
-    if (allPrisonData.length > 0 && projectId === 'prison-ej') {
-      applyCurrentFilter(percentileThreshold, facilityTypes, selectedAttribute, idField, allPrisonData);
-      setTimeout(() => {
-        updatePrisonColors(selectedComponent, componentColor);
-      }, 50);
+    if (projectId === 'prison-ej') {
+      const activeColumn = resolveActiveColumn(selectedComponent, selectedAttribute);
+      applyCurrentFilter(percentileThreshold, facilityTypes, activeColumn);
+      updatePrisonColors(selectedComponent, componentColor);
     }
-  }, [percentileThreshold, facilityTypes, selectedAttribute, allPrisonData, projectId, selectedComponent, componentColor, idField]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [percentileThreshold, facilityTypes, selectedAttribute, allPrisonData, projectId, selectedComponent, componentColor]);
 
   return {
     selectedAttribute,
     setSelectedAttribute,
-    showAllPrisons,
-    setShowAllPrisons,
     percentileThreshold,
     setPercentileThreshold,
     facilityTypes,
     setFacilityTypes,
     allPrisonData,
     setAllPrisonData,
-    applyTopNFilter,
     clearFilters,
     updatePrisonColors,
     // Expose refs for style.load re-apply in ProjectMap
@@ -205,8 +132,8 @@ export const usePrisonMap = (
     selectedAttributeRef,
     selectedComponentRef,
     componentColorRef,
-    buildCombinedFilter,
     PRISON_LAYERS,
-    idField,
+    resolveActiveColumn,
+    buildCombinedFilter,
   };
 };

@@ -4,7 +4,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import type { PercentileThreshold, FacilityType } from '@/hooks/usePrisonMap';
 
 // Define types locally to avoid circular imports
@@ -14,14 +14,11 @@ interface MapControlsProps {
   projectId: string;
   selectedAttribute: RiskAttribute;
   setSelectedAttribute: (attr: RiskAttribute) => void;
-  showAllPrisons: boolean;
-  setShowAllPrisons: (show: boolean) => void;
   showCategoryPanel: boolean;
   setShowCategoryPanel: (show: boolean) => void;
   hideRiskSelector?: boolean;
   componentName?: string;
   componentColor?: string;
-  // New controls
   percentileThreshold?: PercentileThreshold;
   setPercentileThreshold?: (t: PercentileThreshold) => void;
   facilityTypes?: FacilityType[];
@@ -46,8 +43,6 @@ const MapControls: React.FC<MapControlsProps> = ({
   projectId,
   selectedAttribute,
   setSelectedAttribute,
-  showAllPrisons,
-  setShowAllPrisons,
   showCategoryPanel,
   setShowCategoryPanel,
   hideRiskSelector = false,
@@ -75,37 +70,25 @@ const MapControls: React.FC<MapControlsProps> = ({
   const handlePercentileChange = (value: PercentileThreshold) => {
     if (setPercentileThreshold) {
       setPercentileThreshold(value);
-    } else {
-      // Fallback to legacy toggle
-      setShowAllPrisons(value === 0);
     }
   };
 
-  // Resolve current threshold for the segmented control display
-  const currentThreshold = setPercentileThreshold ? percentileThreshold : (showAllPrisons ? 0 : 95);
-
   return (
     <>
-      {/* ── Toolbar row: slim strip along the bottom edge of the map container ── */}
-      {/* Positioned absolute at the bottom of the map, NOT overlapping data area */}
-      <div
-        className="absolute bottom-0 left-0 right-0 z-30 flex items-center gap-3 px-3 py-2"
-        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.18) 0%, transparent 100%)' }}
-      >
-        {/* Percentile segmented control — radiogroup semantics */}
+      {/* ── Toolbar row: compact control group at the bottom-left of the map ── */}
+      <div className="absolute bottom-2 left-2 z-30 flex items-center gap-3 px-3 py-1.5 rounded border border-border bg-card/80 backdrop-blur-sm">
+        {/* Percentile segmented control — plain buttons with aria-pressed */}
         <div
-          role="radiogroup"
-          aria-label="Percentile threshold filter"
-          className="flex items-center rounded border border-white/20 overflow-hidden bg-card/80 backdrop-blur-sm"
+          aria-label="Percentile threshold"
+          className="flex items-center rounded border border-white/20 overflow-hidden"
         >
           {PERCENTILE_OPTIONS.map((opt) => {
-            const isSelected = currentThreshold === opt.value;
+            const isSelected = percentileThreshold === opt.value;
             return (
               <button
                 key={opt.value}
                 type="button"
-                role="radio"
-                aria-checked={isSelected}
+                aria-pressed={isSelected}
                 onClick={() => handlePercentileChange(opt.value)}
                 className={[
                   'px-2.5 py-1 text-xs font-sans font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -170,7 +153,7 @@ const MapControls: React.FC<MapControlsProps> = ({
       {/* ── Legend: overlaid top-right, collapsible ── */}
       <div className="absolute top-2 right-14 z-40 flex flex-col items-end gap-1 control-panel">
         {showCategoryPanel ? (
-          <div className="panel p-3 w-44 shadow-sm">
+          <div className="panel p-3 w-44">
             <div className="flex items-center justify-between mb-2">
               <span className="eyebrow">
                 {hideRiskSelector && componentName ? componentName : 'Risk Score'}
