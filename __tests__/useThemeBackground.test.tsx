@@ -12,7 +12,7 @@ beforeEach(() => {
   mockResolvedTheme = 'light';
 });
 
-test('light theme: exposes BOTH plate urls (not JS-resolved) + LIGHT glow', () => {
+test('light theme: exposes BOTH plate urls (not JS-resolved) + themeless glow', () => {
   const { result } = renderHook(() => useThemeBackground(PLATE_PRESETS.home));
   // renderHook flushes effects, so mounted is true here.
   expect(result.current.mounted).toBe(true);
@@ -22,20 +22,23 @@ test('light theme: exposes BOTH plate urls (not JS-resolved) + LIGHT glow', () =
   // single plateSrc by JS.
   expect(result.current.lightPlate).toBe('/images/plates/home_light_plate.svg');
   expect(result.current.darkPlate).toBe('/images/plates/home_dark_plate.svg');
-  expect(result.current.glowSrc).toBe('/images/plates/home_light_glow.svg');
+  // Glow is themeless — same src regardless of theme.
+  expect(result.current.glowSrc).toBe('/images/plates/home_glow.svg');
 });
 
-test('dark theme: still exposes BOTH plate urls + DARK glow + isDark', () => {
+test('dark theme: still exposes BOTH plate urls + SAME themeless glow + isDark', () => {
   mockResolvedTheme = 'dark';
   const { result } = renderHook(() => useThemeBackground(PLATE_PRESETS.home));
   expect(result.current.isDark).toBe(true);
-  // Plate urls are theme-independent here — only the glow flips by JS.
+  // Plate urls are theme-independent — the CSS dark: classes resolve which is shown.
   expect(result.current.lightPlate).toBe('/images/plates/home_light_plate.svg');
   expect(result.current.darkPlate).toBe('/images/plates/home_dark_plate.svg');
-  expect(result.current.glowSrc).toBe('/images/plates/home_dark_glow.svg');
+  // Glow is THEMELESS — the same file for both light and dark.
+  // var(--surface-page) in the inlined SVG resolves the correct colour at runtime.
+  expect(result.current.glowSrc).toBe('/images/plates/home_glow.svg');
 });
 
-test('every page preset points at its own light/dark plate + glow files', () => {
+test('every page preset points at its own light/dark plate + single themeless glow', () => {
   const pages = ['home', 'portfolio', 'ej', 'resume', 'interests', 'notFound'] as const;
   for (const page of pages) {
     expect(PLATE_PRESETS[page].lightImage).toBe(
@@ -44,14 +47,20 @@ test('every page preset points at its own light/dark plate + glow files', () => 
     expect(PLATE_PRESETS[page].darkImage).toBe(
       `/images/plates/${page}_dark_plate.svg`,
     );
-    // The static plate and the animated glow are now SEPARATE assets.
-    expect(PLATE_PRESETS[page].glowLight).toBe(
-      `/images/plates/${page}_light_glow.svg`,
-    );
-    expect(PLATE_PRESETS[page].glowDark).toBe(
-      `/images/plates/${page}_dark_glow.svg`,
+    // Single themeless glow per page (var(--surface-page) resolves colour at runtime).
+    expect(PLATE_PRESETS[page].glow).toBe(
+      `/images/plates/${page}_glow.svg`,
     );
   }
+});
+
+test('no legacy theme-split glow fields remain on presets', () => {
+  // glowLight / glowDark / glowDarkMobile have been removed in favour of
+  // glow / glowMobile (themeless).
+  const home = PLATE_PRESETS.home as Record<string, unknown>;
+  expect(home.glowLight).toBeUndefined();
+  expect(home.glowDark).toBeUndefined();
+  expect(home.glowDarkMobile).toBeUndefined();
 });
 
 test('no legacy watershed presets remain', () => {

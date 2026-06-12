@@ -13,18 +13,21 @@
  *        light = native colours as-is
  *        dark  = per-colour lightness transform (hue/sat preserved) so the ramp
  *                still reads as a ramp on the #14130f night ground.
- *   5. Picks GLOW_LINES paths from the N longest paths, keeping every other one
- *      for spatial spread. Emits the reverse-glow overlay from the EXACT SAME
- *      post-svgo path data the plate writes (bit-identical geometry; comet routes
- *      and MotionPath are GONE).
- *   6. Assembles TWO output SVGs per (page, theme) into public/images/plates/:
- *        <page>_<theme>_plate.svg — contours ONLY (static; consumed as a CSS
+ *   5. Picks GLOW_LINES paths from the N longest paths (skipping any whose `d`
+ *      exceeds GLOW_MAX_PATH_BYTES bytes — merged mega-paths — then taking the
+ *      next longest), keeping every other one for spatial spread. Emits the
+ *      reverse-glow overlay from the EXACT SAME post-svgo path data the plate
+ *      writes (bit-identical geometry; comet routes and MotionPath are GONE).
+ *   6. Assembles TWO output SVGs per page into public/images/plates/:
+ *        <page>_<theme>_plate.svg  — contours ONLY (static; consumed as a CSS
  *          background-image, so no <style>/keyframes/sprites/gradients).
- *        <page>_<theme>_glow.svg  — the reverse-glow overlay only: same viewBox
- *          + slice, a SUBSET of the plate's path elements copied verbatim (exact
- *          `d` and stroke-width/linecap as emitted in the final plate), each with
- *          stroke = theme page-bg color (#f7f4ec light / #1a1814 dark), opacity=0,
- *          and data-line/data-cycle/data-delay attributes for GSAP. Zero comet
+ *        {page}_glow.svg / home_glow_mobile.svg — the reverse-glow overlay only:
+ *          same viewBox + slice, SUBSET of plate paths copied verbatim (exact `d`
+ *          and stroke-width/linecap). Overlay paths carry
+ *          style="stroke:var(--surface-page)" instead of a hard-coded hex — the
+ *          CSS custom property resolves from the page's html.dark class, so a
+ *          SINGLE themeless file handles both light and dark. opacity=0, and
+ *          data-line/data-cycle/data-delay attributes for GSAP. Zero comet
  *          geometry, no gradients, no sprite circles.
  *      Splitting static from animated restores the proven two-layer v1 model:
  *      the giant static plate is never re-rasterized per animation frame, which
@@ -91,15 +94,15 @@ const MAX_BYTES = 2.5 * 1024 * 1024;
 // lines depending on N pool.
 const GLOW_LINES = 14;
 
-// Theme page-background colours (--surface-page CSS custom property values).
-// The overlay strokes use these EXACT colours so animating opacity 0→1 fully
-// erases a contour line into the page background. Full-strength (no plate
-// group opacity applied) is required: a plate line at opacity 0.35 covered by
-// an overlay stroke at α is line×(1−α); reaching zero at α=1.
-const GLOW_BG = {
-  light: '#f7f4ec',
-  dark: '#1a1814',
-};
+// Max byte length of a candidate path's `d` attribute. Paths longer than this
+// are skipped (they are svgo-merged mega-paths that dominate the file size and
+// look visually indistinct from a dozen individual contours). The next-longest
+// eligible path is taken instead. Keeps total glow file ≤ ~350 KB.
+const GLOW_MAX_PATH_BYTES = 60_000;
+
+// NOTE: GLOW_BG hex constants removed. The overlay now uses
+// style="stroke:var(--surface-page)" so one themeless file handles both
+// light (#f7f4ec) and dark (#1a1814) by CSS custom-property resolution.
 
 // Per-line cycle period: uniform 35s. A fixed cycle is required to keep worst-
 // case concurrent fades ≤ 3. Analysis: with delay spacing = 2.5s and cycle = 35s,
@@ -439,16 +442,19 @@ function decimate(paths) {
 
 // Pick GLOW_LINES overlay paths from the N longest paths, keeping every other
 // one for spatial spread. Selection is deterministic (sort by path length
-// desc, keep every other one up to GLOW_LINES). The path objects returned
-// have the EXACT `d`, `stroke`, `width` as they appear in `paths` — these are
-// the SAME strings the plate emits, guaranteeing bit-identical geometry.
+// desc, keep every other one up to GLOW_LINES). Paths whose `d` exceeds
+// GLOW_MAX_PATH_BYTES are skipped (svgo mega-paths) so single large strings
+// don't dominate the glow file. The path objects returned have the EXACT `d`,
+// `stroke`, `width` as they appear in `paths` — the SAME strings the plate
+// emits, guaranteeing bit-identical geometry.
 function pickGlowLines(paths) {
   if (paths.length === 0) return [];
 
-  // Estimate length from d-string length as a fast proxy (no full flatten).
-  // This is fine for selection — we only need a relative ordering.
+  // Estimate length from d-string byte length as a fast proxy (no full flatten).
   // Sort descending by d.length (longer d string ≈ longer/more-complex path).
-  const sorted = [...paths].sort((a, b) => b.d.length - a.d.length);
+  // Skip mega-paths whose d string exceeds GLOW_MAX_PATH_BYTES to keep file small.
+  const eligible = paths.filter((p) => Buffer.byteLength(p.d, 'utf8') <= GLOW_MAX_PATH_BYTES);
+  const sorted = [...eligible].sort((a, b) => b.d.length - a.d.length);
 
   // Keep every other one from the sorted list for spatial spread, up to GLOW_LINES.
   const spread = [];
@@ -528,19 +534,21 @@ function buildPlateSvg(paths, theme, viewBox) {
 //
 // Contains a SUBSET of the plate's path elements copied VERBATIM (exact `d`
 // and stroke-width attrs as emitted in the final plate — post-svgo optimized
-// path strings). Overlay strokes use the THEME PAGE BG colour so animating a
-// line's opacity 0→1 fully ERASES it into the background. The plate group's
+// path strings). Overlay paths carry style="stroke:var(--surface-page)" so
+// the CSS custom property resolves from the page's html.dark class — a SINGLE
+// themeless file handles both light (#f7f4ec) and dark (#1a1814). Presentation
+// attributes can't hold var(); the style attribute can. The plate group's
 // 0.35/0.30 wrapper opacity does NOT apply here (full-strength bg stroke is
 // required to fully erase a line: line×(1−α) → 0 at α=1).
 //
 // Each path carries: data-line, data-cycle (period in seconds), data-delay
 // (initial phase scatter in seconds). All animation is driven by GSAP at
-// runtime via AnimatedContourBackground.
-function buildGlowSvg(paths, theme, page, viewBox) {
+// runtime via AnimatedContourBackground. Re-theming is instant — var() resolves
+// live; no refetch required on theme toggle.
+function buildGlowSvg(paths, page, viewBox) {
   const vb = viewBox ?? VIEWBOX;
   const [vbX, vbY, vbW, vbH] = vb.split(' ').map(Number);
 
-  const bgColor = GLOW_BG[theme];
   const glowLines = pickGlowLines(paths);
 
   // Scope the clip id per page: glows are inlined into a shared document, so
@@ -549,8 +557,10 @@ function buildGlowSvg(paths, theme, page, viewBox) {
   const defsBlock =
     `<defs><clipPath id="${clipId}"><rect x="${vbX}" y="${vbY}" width="${vbW}" height="${vbH}"/></clipPath></defs>`;
 
-  // Each glow path: verbatim d and stroke-width from the plate, but stroke =
-  // theme bg color, fill none, opacity 0 at rest, and data-* for GSAP.
+  // Each glow path: verbatim d and stroke-width from the plate, but
+  // style="stroke:var(--surface-page)" (CSS custom property, NOT a presentation
+  // attribute — var() only works in style), fill none, opacity 0 at rest,
+  // and data-* for GSAP.
   // We use the plate's stroke-width (not the native stroke colour) for thickness —
   // the overlay must cover exactly the same pixels the plate line occupies.
   const glowBody = glowLines
@@ -560,7 +570,7 @@ function buildGlowSvg(paths, theme, page, viewBox) {
       return (
         `<path` +
         ` d="${p.d}"` +
-        ` stroke="${bgColor}"` +
+        ` style="stroke:var(--surface-page)"` +
         ` stroke-width="${p.width}"` +
         ` fill="none"` +
         ` stroke-linecap="round"` +
@@ -587,66 +597,96 @@ function buildGlowSvg(paths, theme, page, viewBox) {
 // Main
 // ---------------------------------------------------------------------------
 
-// Build one landscape or portrait (page, theme) pair into OUT_DIR.
-// Returns size-table row.
-function buildPageTheme(page, theme, srcPath, viewBox, suffix, rawSizeMB) {
+// Build both theme plates for one (page, orientation) into OUT_DIR.
+// Also builds ONE shared themeless glow file (only on the FIRST call for this
+// page+suffix combo — caller controls this via emitGlow flag).
+// Returns size-table rows (one per theme plate + one glow row).
+function buildPageOrientation(page, srcPath, viewBox, suffix, rawSizeMB, emitGlow) {
   const optimized = preprocessAndOptimize(srcPath, viewBox);
   let paths = parsePaths(optimized);
   if (paths.length === 0) {
     throw new Error(
-      `BLOCKED: no stroked contour <path> parsed for ${page}${suffix}/${theme} — ramp lost after svgo.`,
+      `BLOCKED: no stroked contour <path> parsed for ${page}${suffix} — ramp lost after svgo.`,
     );
   }
 
-  let decimations = 0;
-  let working = paths;
-  let plateSvg = buildPlateSvg(working, theme, viewBox);
-  let plateBytes = Buffer.byteLength(plateSvg, 'utf8');
+  // Build both theme plates from the same parsed paths.
+  const rows = [];
+  let sharedWorking = null;
 
-  while (plateBytes > MAX_BYTES) {
-    decimations++;
-    if (decimations > 6) {
-      throw new Error(
-        `BLOCKED: ${page}${suffix}_${theme}_plate still ${(plateBytes / 1024 / 1024).toFixed(2)}MB after ${decimations} decimations.`,
-      );
+  for (const theme of ['light', 'dark']) {
+    let decimations = 0;
+    let working = paths;
+    let plateSvg = buildPlateSvg(working, theme, viewBox);
+    let plateBytes = Buffer.byteLength(plateSvg, 'utf8');
+
+    while (plateBytes > MAX_BYTES) {
+      decimations++;
+      if (decimations > 6) {
+        throw new Error(
+          `BLOCKED: ${page}${suffix}_${theme}_plate still ${(plateBytes / 1024 / 1024).toFixed(2)}MB after ${decimations} decimations.`,
+        );
+      }
+      working = decimate(working);
+      plateSvg = buildPlateSvg(working, theme, viewBox);
+      plateBytes = Buffer.byteLength(plateSvg, 'utf8');
     }
-    working = decimate(working);
-    plateSvg = buildPlateSvg(working, theme, viewBox);
-    plateBytes = Buffer.byteLength(plateSvg, 'utf8');
+
+    const platePath = path.join(OUT_DIR, `${page}_${theme}_plate${suffix}.svg`);
+    fs.writeFileSync(platePath, plateSvg);
+    const plateKB = (plateBytes / 1024).toFixed(1);
+    console.log(
+      `[${page}${suffix}/${theme}] paths: ${working.length}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}`,
+    );
+    rows.push({
+      page: page + suffix,
+      theme,
+      paths: working.length,
+      rawMB: rawSizeMB,
+      plateKB,
+      decimations,
+    });
+
+    // Use the light-theme working set for glow path selection (the d strings are
+    // identical between themes — only stroke colours differ in the plate).
+    if (theme === 'light') sharedWorking = working;
   }
 
-  // Glow uses the SAME `working` paths array the plate was assembled from —
-  // pickGlowLines selects from this set and copies the exact same `d` strings.
-  const glow = buildGlowSvg(working, theme, page, viewBox);
-  const glowBytes = Buffer.byteLength(glow.svg, 'utf8');
+  // Emit ONE themeless glow file (uses the light working paths — geometry is
+  // identical for both themes; only the stroke colour differed, which is now
+  // var(--surface-page) resolved by CSS at runtime).
+  if (emitGlow && sharedWorking) {
+    const glowSuffix = suffix ? suffix : '';
+    const glowName = suffix
+      ? `${page}_glow${glowSuffix}.svg`
+      : `${page}_glow.svg`;
+    const glow = buildGlowSvg(sharedWorking, page, viewBox);
+    const glowBytes = Buffer.byteLength(glow.svg, 'utf8');
+    const glowPath = path.join(OUT_DIR, glowName);
+    fs.writeFileSync(glowPath, glow.svg);
+    const glowKB = (glowBytes / 1024).toFixed(1);
+    console.log(
+      `[${page}${suffix}/glow] lines: ${glow.lineCount}, glow: ${glowKB}KB (themeless — var(--surface-page))\n    -> ${glowPath}`,
+    );
+    rows.push({
+      page: page + suffix,
+      theme: '(glow)',
+      paths: sharedWorking.length,
+      rawMB: rawSizeMB,
+      plateKB: '-',
+      glowKB,
+      decimations: 0,
+    });
+  }
 
-  const platePath = path.join(OUT_DIR, `${page}_${theme}_plate${suffix}.svg`);
-  const glowPath = path.join(OUT_DIR, `${page}_${theme}_glow${suffix}.svg`);
-  fs.writeFileSync(platePath, plateSvg);
-  fs.writeFileSync(glowPath, glow.svg);
-
-  const plateKB = (plateBytes / 1024).toFixed(1);
-  const glowKB = (glowBytes / 1024).toFixed(1);
-  console.log(
-    `[${page}${suffix}/${theme}] paths: ${working.length}, glow lines: ${glow.lineCount}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB, glow: ${glowKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}\n    -> ${glowPath}`,
-  );
-  return {
-    page: page + suffix,
-    theme,
-    paths: working.length,
-    glowLines: glow.lineCount,
-    rawMB: rawSizeMB,
-    plateKB,
-    glowKB,
-    decimations,
-  };
+  return rows;
 }
 
 function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  // Delete the old merged outputs (<page>_<theme>.svg) and any stale split
-  // files so the directory only ever holds the current output set.
+  // Delete all stale SVGs from the output directory so only the current output
+  // set remains. (Old {page}_{light|dark}_glow*.svg files are removed here.)
   for (const stale of fs.readdirSync(OUT_DIR)) {
     if (stale.endsWith('.svg')) {
       fs.unlinkSync(path.join(OUT_DIR, stale));
@@ -662,11 +702,9 @@ function main() {
     }
     const rawSizeMB = (fs.statSync(srcPath).size / 1024 / 1024).toFixed(1);
 
-    // Landscape (desktop) — two themes.
-    for (const theme of ['light', 'dark']) {
-      const row = buildPageTheme(page, theme, srcPath, VIEWBOX, '', rawSizeMB);
-      sizeTable.push(row);
-    }
+    // Landscape (desktop) — both theme plates + ONE shared glow.
+    const rows = buildPageOrientation(page, srcPath, VIEWBOX, '', rawSizeMB, true);
+    sizeTable.push(...rows);
 
     // Portrait (mobile) variant — only for pages listed in PAGES_MOBILE.
     if (PAGES_MOBILE[page]) {
@@ -676,10 +714,8 @@ function main() {
       }
       const { viewBox: mViewBox } = deriveViewBox(mSrcPath);
       const mRawSizeMB = (fs.statSync(mSrcPath).size / 1024 / 1024).toFixed(1);
-      for (const theme of ['light', 'dark']) {
-        const row = buildPageTheme(page, theme, mSrcPath, mViewBox, '_mobile', mRawSizeMB);
-        sizeTable.push(row);
-      }
+      const mRows = buildPageOrientation(page, mSrcPath, mViewBox, '_mobile', mRawSizeMB, true);
+      sizeTable.push(...mRows);
     }
   }
 
@@ -696,8 +732,9 @@ function main() {
     console.log(`  OK: within the ≤3 simultaneous budget.`);
   }
 
-  const totalFiles = sizeTable.reduce((acc) => acc + 2, 0);
-  console.log(`\nDone. ${totalFiles} SVGs (${totalFiles / 2} plate + ${totalFiles / 2} glow) written to`, OUT_DIR);
+  const plateFiles = sizeTable.filter((r) => r.theme !== '(glow)').length;
+  const glowFiles = sizeTable.filter((r) => r.theme === '(glow)').length;
+  console.log(`\nDone. ${plateFiles + glowFiles} SVGs (${plateFiles} plate + ${glowFiles} glow) written to`, OUT_DIR);
   console.table(sizeTable);
 }
 

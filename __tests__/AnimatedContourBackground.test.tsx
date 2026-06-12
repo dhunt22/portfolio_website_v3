@@ -17,7 +17,7 @@ function setReducedMotion(matches: boolean) {
 const base = {
   lightPlate: '/images/plates/home_light_plate.svg',
   darkPlate: '/images/plates/home_dark_plate.svg',
-  glowSrc: '/images/plates/home_light_glow.svg',
+  glowSrc: '/images/plates/home_glow.svg',
 };
 
 beforeEach(() => {
@@ -81,7 +81,7 @@ test('inlines the GLOW (fetches glow, not either plate) when mounted and motion 
   const fetchMock = global.fetch as jest.Mock;
   render(<AnimatedContourBackground {...base} mounted={true} />);
   await waitFor(() =>
-    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light_glow.svg'),
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_glow.svg'),
   );
   // Plates are CSS backgrounds — they are NEVER fetched/inlined by JS.
   expect(fetchMock).not.toHaveBeenCalledWith(
@@ -92,12 +92,12 @@ test('inlines the GLOW (fetches glow, not either plate) when mounted and motion 
   );
 });
 
-test('resolves the dark glow src + keeps both plate srcs', async () => {
+test('themeless glow src + keeps both plate srcs', async () => {
   const { container } = render(
     <AnimatedContourBackground
       lightPlate="/images/plates/home_light_plate.svg"
       darkPlate="/images/plates/home_dark_plate.svg"
-      glowSrc="/images/plates/home_dark_glow.svg"
+      glowSrc="/images/plates/home_glow.svg"
       mounted={true}
     />,
   );
@@ -111,7 +111,7 @@ test('resolves the dark glow src + keeps both plate srcs', async () => {
     '/images/plates/home_dark_plate.svg',
   );
   await waitFor(() =>
-    expect(global.fetch).toHaveBeenCalledWith('/images/plates/home_dark_glow.svg'),
+    expect(global.fetch).toHaveBeenCalledWith('/images/plates/home_glow.svg'),
   );
 });
 
@@ -170,28 +170,31 @@ test('stops inlining the glow when reduced-motion turns on at runtime', async ()
   expect(fetchMock).toHaveBeenCalledTimes(1);
 });
 
-it('refetches the glow when glowSrc changes (theme flip)', async () => {
+it('refetches the glow when glowSrc changes (orientation flip: desktop → mobile)', async () => {
+  // With themeless glows, glowSrc only changes on orientation (mobile breakpoint),
+  // NOT on theme toggle. This test verifies that a src change (e.g. landscape→portrait)
+  // still triggers a refetch as expected.
   const fetchMock = global.fetch as jest.Mock;
   const { rerender } = render(
     <AnimatedContourBackground
       lightPlate="/images/plates/home_light_plate.svg"
       darkPlate="/images/plates/home_dark_plate.svg"
-      glowSrc="/images/plates/home_light_glow.svg"
+      glowSrc="/images/plates/home_glow.svg"
       mounted
     />,
   );
   await waitFor(() =>
-    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light_glow.svg'),
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_glow.svg'),
   );
   rerender(
     <AnimatedContourBackground
-      lightPlate="/images/plates/home_light_plate.svg"
-      darkPlate="/images/plates/home_dark_plate.svg"
-      glowSrc="/images/plates/home_dark_glow.svg"
+      lightPlate="/images/plates/home_light_plate_mobile.svg"
+      darkPlate="/images/plates/home_dark_plate_mobile.svg"
+      glowSrc="/images/plates/home_glow_mobile.svg"
       mounted
     />,
   );
   await waitFor(() =>
-    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_dark_glow.svg'),
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_glow_mobile.svg'),
   );
 });
