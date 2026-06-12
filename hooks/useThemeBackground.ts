@@ -17,9 +17,14 @@ interface ThemeBackgroundResult {
   mounted: boolean;
   isMobile: boolean;
   resolvedTheme: string | undefined;
-  backgroundImage: string;
-  /** Resolved static plate URL (light or dark) without the url() wrapper. */
-  plateSrc: string;
+  /**
+   * Raw static plate URLs (NOT JS-resolved). The component paints both as CSS
+   * background-images on `dark:hidden` / `hidden dark:block` siblings so the
+   * correct plate is picked by the `.dark` class from SSR and only the visible
+   * one is fetched — no SSR-light-then-dark double download, no flash.
+   */
+  lightPlate: string;
+  darkPlate: string;
   /** Resolved animated glow URL (light or dark) — inlined over the plate. */
   glowSrc: string;
   isDark: boolean;
@@ -86,24 +91,25 @@ export function useThemeBackground(options: ThemeBackgroundOptions): ThemeBackgr
 
   const isDark = mounted && resolvedTheme === 'dark';
 
-  const plateSrc = useMemo(
-    () => (!mounted ? options.lightImage : isDark ? options.darkImage : options.lightImage),
-    [mounted, isDark, options.lightImage, options.darkImage],
-  );
+  // The plate is no longer JS-resolved: both URLs are handed to the component,
+  // which paints them on theme-gated (`dark:hidden` / `hidden dark:block`)
+  // siblings so the browser fetches only the visible one and SSR HTML already
+  // references the correct theme.
+  const lightPlate = options.lightImage;
+  const darkPlate = options.darkImage;
 
+  // The glow is fetched + inlined POST-mount, so resolving it by JS is fine.
   const glowSrc = useMemo(
     () => (!mounted ? options.glowLight : isDark ? options.glowDark : options.glowLight),
     [mounted, isDark, options.glowLight, options.glowDark],
   );
 
-  const backgroundImage = useMemo(() => `url(${plateSrc})`, [plateSrc]);
-
   return {
     mounted,
     isMobile,
     resolvedTheme,
-    backgroundImage,
-    plateSrc,
+    lightPlate,
+    darkPlate,
     glowSrc,
     isDark,
   };

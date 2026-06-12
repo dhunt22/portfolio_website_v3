@@ -15,7 +15,8 @@ function setReducedMotion(matches: boolean) {
 }
 
 const base = {
-  plateSrc: '/images/plates/home_light_plate.svg',
+  lightPlate: '/images/plates/home_light_plate.svg',
+  darkPlate: '/images/plates/home_dark_plate.svg',
   glowSrc: '/images/plates/home_light_glow.svg',
 };
 
@@ -31,49 +32,82 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-test('always renders the fixed contour-plate layer with the static plate background', async () => {
+test('always renders the fixed contour-plate layer with BOTH theme-gated plate backgrounds', async () => {
   const { container } = render(
     <AnimatedContourBackground {...base} mounted={true} />,
   );
   const layer = container.querySelector('[data-contour-plate]');
   expect(layer).toBeInTheDocument();
-  expect(layer).toHaveAttribute('data-src', '/images/plates/home_light_plate.svg');
-  expect(layer).toHaveAttribute('aria-hidden', 'true');
-  expect(layer).toHaveClass('fixed');
-  // The static plate is always painted as a CSS background-image.
-  const bg = layer?.querySelector<HTMLDivElement>(
-    'div[style*="background-image"]',
-  );
-  expect(bg).toBeTruthy();
-  expect(bg?.style.backgroundImage).toContain(
+  expect(layer).toHaveAttribute(
+    'data-light-src',
     '/images/plates/home_light_plate.svg',
   );
+  expect(layer).toHaveAttribute(
+    'data-dark-src',
+    '/images/plates/home_dark_plate.svg',
+  );
+  expect(layer).toHaveAttribute('aria-hidden', 'true');
+  expect(layer).toHaveClass('fixed');
+
+  // The LIGHT plate is painted on the dark:hidden div (shown in light mode).
+  const lightBg = layer?.querySelector<HTMLDivElement>(
+    'div.dark\\:hidden[style*="background-image"]',
+  );
+  expect(lightBg).toBeTruthy();
+  expect(lightBg).toHaveClass('dark:hidden');
+  expect(lightBg?.style.backgroundImage).toContain(
+    '/images/plates/home_light_plate.svg',
+  );
+
+  // The DARK plate is painted on the hidden dark:block div (shown in dark mode).
+  // Because it is display:none in light mode, the browser never fetches it — and
+  // vice-versa — so each visitor downloads exactly ONE plate. The .dark class is
+  // applied from SSR, so the correct plate is chosen with no flash/double load.
+  const darkBg = layer?.querySelector<HTMLDivElement>(
+    'div.dark\\:block[style*="background-image"]',
+  );
+  expect(darkBg).toBeTruthy();
+  expect(darkBg).toHaveClass('hidden');
+  expect(darkBg).toHaveClass('dark:block');
+  expect(darkBg?.style.backgroundImage).toContain(
+    '/images/plates/home_dark_plate.svg',
+  );
+
   // Let the inline glow fetch settle so the state update is flushed inside act.
   await waitFor(() => expect(global.fetch).toHaveBeenCalled());
 });
 
-test('inlines the GLOW (fetches glow, not plate) when mounted and motion is allowed', async () => {
+test('inlines the GLOW (fetches glow, not either plate) when mounted and motion is allowed', async () => {
   const fetchMock = global.fetch as jest.Mock;
   render(<AnimatedContourBackground {...base} mounted={true} />);
   await waitFor(() =>
     expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_light_glow.svg'),
   );
-  // The static plate is a CSS background — it is NEVER fetched/inlined.
+  // Plates are CSS backgrounds — they are NEVER fetched/inlined by JS.
   expect(fetchMock).not.toHaveBeenCalledWith(
     '/images/plates/home_light_plate.svg',
   );
+  expect(fetchMock).not.toHaveBeenCalledWith(
+    '/images/plates/home_dark_plate.svg',
+  );
 });
 
-test('resolves the dark plate + glow srcs', async () => {
+test('resolves the dark glow src + keeps both plate srcs', async () => {
   const { container } = render(
     <AnimatedContourBackground
-      plateSrc="/images/plates/home_dark_plate.svg"
+      lightPlate="/images/plates/home_light_plate.svg"
+      darkPlate="/images/plates/home_dark_plate.svg"
       glowSrc="/images/plates/home_dark_glow.svg"
       mounted={true}
     />,
   );
-  expect(container.querySelector('[data-contour-plate]')).toHaveAttribute(
-    'data-src',
+  const layer = container.querySelector('[data-contour-plate]');
+  expect(layer).toHaveAttribute(
+    'data-light-src',
+    '/images/plates/home_light_plate.svg',
+  );
+  expect(layer).toHaveAttribute(
+    'data-dark-src',
     '/images/plates/home_dark_plate.svg',
   );
   await waitFor(() =>
@@ -81,20 +115,26 @@ test('resolves the dark plate + glow srcs', async () => {
   );
 });
 
-test('reduced motion does NOT inline the glow (no fetch) but still shows the static plate', () => {
+test('reduced motion does NOT inline the glow (no fetch) but still shows BOTH static plates', () => {
   setReducedMotion(true);
   const fetchMock = global.fetch as jest.Mock;
   const { container } = render(
     <AnimatedContourBackground {...base} mounted={true} />,
   );
   const layer = container.querySelector('[data-contour-plate]');
-  // The static plate background is always present.
+  // Both theme-gated plate backgrounds are always present.
   expect(layer).toBeInTheDocument();
-  const bg = layer?.querySelector<HTMLDivElement>(
-    'div[style*="background-image"]',
+  const lightBg = layer?.querySelector<HTMLDivElement>(
+    'div.dark\\:hidden[style*="background-image"]',
   );
-  expect(bg?.style.backgroundImage).toContain(
+  expect(lightBg?.style.backgroundImage).toContain(
     '/images/plates/home_light_plate.svg',
+  );
+  const darkBg = layer?.querySelector<HTMLDivElement>(
+    'div.dark\\:block[style*="background-image"]',
+  );
+  expect(darkBg?.style.backgroundImage).toContain(
+    '/images/plates/home_dark_plate.svg',
   );
   // Under reduced motion the glow is never fetched.
   expect(fetchMock).not.toHaveBeenCalled();
@@ -134,7 +174,8 @@ it('refetches the glow when glowSrc changes (theme flip)', async () => {
   const fetchMock = global.fetch as jest.Mock;
   const { rerender } = render(
     <AnimatedContourBackground
-      plateSrc="/images/plates/home_light_plate.svg"
+      lightPlate="/images/plates/home_light_plate.svg"
+      darkPlate="/images/plates/home_dark_plate.svg"
       glowSrc="/images/plates/home_light_glow.svg"
       mounted
     />,
@@ -144,7 +185,8 @@ it('refetches the glow when glowSrc changes (theme flip)', async () => {
   );
   rerender(
     <AnimatedContourBackground
-      plateSrc="/images/plates/home_dark_plate.svg"
+      lightPlate="/images/plates/home_light_plate.svg"
+      darkPlate="/images/plates/home_dark_plate.svg"
       glowSrc="/images/plates/home_dark_glow.svg"
       mounted
     />,

@@ -202,10 +202,14 @@ function glowColors(nativeHex, theme) {
 // Parse a path `d` into a flat list of absolute points by tracking the pen and
 // evaluating each command's endpoint (and sampling cubic segments). The source
 // paths are absolute M / C cubics (verified), but we handle the common subset
-// defensively. Returns { points: [[x,y],...], length }.
+// defensively. svgo's mergePaths fuses disconnected contours into one `d` with
+// multiple M/m subpath starts; `starts` records the index in `points` where each
+// new subpath begins so callers can avoid sampling across a contour gap.
+// Returns { points: [[x,y],...], starts: [0,...], length }.
 function flattenPath(d) {
   const tokens = d.match(/[a-zA-Z]|-?\d*\.?\d+(?:e-?\d+)?/g) || [];
   const points = [];
+  const starts = [];
   let i = 0;
   let cmd = '';
   let cx = 0;
@@ -240,6 +244,7 @@ function flattenPath(d) {
         cy = num();
         sx = cx;
         sy = cy;
+        starts.push(points.length); // new subpath begins here
         points.push([cx, cy]);
         cmd = 'L'; // implicit lineto for subsequent coordinate pairs
         break;
@@ -248,6 +253,7 @@ function flattenPath(d) {
         cy += num();
         sx = cx;
         sy = cy;
+        starts.push(points.length); // new subpath begins here
         points.push([cx, cy]);
         cmd = 'l';
         break;
@@ -313,7 +319,30 @@ function flattenPath(d) {
       points[k][1] - points[k - 1][1],
     );
   }
-  return { points, length };
+  return { points, starts, length };
+}
+
+// From a flattened path with subpath break indices, return the LONGEST
+// contiguous subpath (its own points + true length). Comet routes ride a single
+// offset-path; sampling across an M/m gap would draw a straight chord between
+// two disconnected contour fragments. Restricting the route to one subpath keeps
+// the comet on a real, connected contour.
+function longestSubpath(points, starts) {
+  if (points.length === 0) return { points: [], length: 0 };
+  // Subpath span boundaries: each start index .. next start (or end).
+  const bounds = starts.length ? starts : [0];
+  let best = { points: [], length: -1 };
+  for (let s = 0; s < bounds.length; s++) {
+    const from = bounds[s];
+    const to = s + 1 < bounds.length ? bounds[s + 1] : points.length;
+    const seg = points.slice(from, to);
+    let len = 0;
+    for (let k = 1; k < seg.length; k++) {
+      len += Math.hypot(seg[k][0] - seg[k - 1][0], seg[k][1] - seg[k - 1][1]);
+    }
+    if (len > best.length) best = { points: seg, length: len };
+  }
+  return best;
 }
 
 // Evenly thin a point list to at most `max` points (keeps first + last).
@@ -354,7 +383,9 @@ function preprocessAndOptimize(srcPath) {
     execFileSync(
       process.execPath,
       [SVGO_BIN, '--multipass', '-p', '1', tmp, '-o', tmp],
-      { stdio: 'ignore', maxBuffer: 256 * 1024 * 1024 },
+      // Pipe stderr (inherited) so an svgo failure surfaces its diagnostics
+      // instead of a bare non-zero-exit error.
+      { stdio: ['ignore', 'ignore', 'inherit'], maxBuffer: 256 * 1024 * 1024 },
     );
     const optimized = fs.readFileSync(tmp, 'utf8');
     return optimized;
@@ -426,16 +457,22 @@ function pickRoutes(paths) {
   return routes;
 }
 
-function buildCometSystem(routes, theme) {
+function buildCometSystem(routes, theme, page) {
   // Estimate each route's true length and tune duration to a scaled speed band.
   const tuned = routes.map((route, i) => {
-    const { points, length } = flattenPath(route.d);
-    // The comet rides offset-path:path(polyline). The full flatten of a long
-    // contour can be 100k+ points (the longest source paths are ~190KB of `d`),
-    // which would bloat the <style> block past the 2.5MB cap. Downsample to a
-    // bounded point count — a contour at ~ROUTE_MAX_PTS samples is plenty smooth
-    // for a sprite to traverse. Length is still computed from the FULL flatten,
-    // so speed/duration stay accurate.
+    const flat = flattenPath(route.d);
+    // svgo's mergePaths fuses disconnected contours into a single `d`. The comet
+    // rides ONE offset-path joined entirely with 'L', so sampling across an M/m
+    // boundary would draw a straight chord between separate contour fragments.
+    // Restrict the route to the LONGEST contiguous subpath — its points, its
+    // length, and therefore its duration all come from that subpath alone, so a
+    // route never crosses a subpath boundary.
+    const { points, length } = longestSubpath(flat.points, flat.starts);
+    // The full flatten of a long contour can still be 100k+ points (the longest
+    // source paths are ~190KB of `d`), which would bloat the <style> block past
+    // the 2.5MB cap. Downsample to a bounded point count — a contour at
+    // ~ROUTE_MAX_PTS samples is plenty smooth for a sprite to traverse. Length is
+    // computed from the FULL subpath flatten, so speed/duration stay accurate.
     const sampled = downsample(points, ROUTE_MAX_PTS);
     const polyD =
       'M' + sampled.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join('L');
@@ -448,6 +485,16 @@ function buildCometSystem(routes, theme) {
   const rawSpeedMin = Math.min(...tuned.map((r) => r.speed)).toFixed(1);
   const rawSpeedMax = Math.max(...tuned.map((r) => r.speed)).toFixed(1);
 
+  // Per-page scope token. Inlined glows share one document scope, so every
+  // class, keyframe name, and gradient id is namespaced with the page key so two
+  // pages' glows could coexist and nothing generic (.pulse/.comet/.p0/pmove…)
+  // leaks into page CSS. `ns` is the per-page prefix (e.g. "home-").
+  const ns = `${page}-`;
+  const kMove = `pmove-${page}`;
+  const kFade = `pfade-${page}`;
+  const ghId = (i) => `${page}-gh${i}`;
+  const gtId = (i) => `${page}-gt${i}`;
+
   // Per-route pulse rules (fade-lock derived from the printed move duration,
   // exactly as the reference does).
   const fadePeakByTheme = theme === 'light' ? 0.6 : 0.85;
@@ -457,14 +504,14 @@ function buildCometSystem(routes, theme) {
       const n = Math.max(1, Math.round(printedDur / COMET.fadePeriod));
       const fadeT = (printedDur / n).toFixed(9);
       const scatter = -(r.i * 3.83).toFixed(2);
-      return `.p${r.i}{offset-path:path("${r.d}");animation:pmove ${printedDur}s linear ${scatter}s infinite,pfade ${fadeT}s ease-in-out ${scatter}s infinite}`;
+      return `.${ns}p${r.i}{offset-path:path("${r.d}");animation:${kMove} ${printedDur}s linear ${scatter}s infinite,${kFade} ${fadeT}s ease-in-out ${scatter}s infinite}`;
     })
     .join('');
 
   const keyframes =
-    `@keyframes pmove{to{offset-distance:100%}}` +
-    `@keyframes pfade{0%{opacity:0}14%{opacity:${fadePeakByTheme}}45%{opacity:${fadePeakByTheme}}62%{opacity:0}100%{opacity:0}}` +
-    `.pulse{offset-rotate:0deg;offset-distance:0%;opacity:0;will-change:offset-distance,opacity}` +
+    `@keyframes ${kMove}{to{offset-distance:100%}}` +
+    `@keyframes ${kFade}{0%{opacity:0}14%{opacity:${fadePeakByTheme}}45%{opacity:${fadePeakByTheme}}62%{opacity:0}100%{opacity:0}}` +
+    `.${ns}pulse{offset-rotate:0deg;offset-distance:0%;opacity:0;will-change:offset-distance,opacity}` +
     perRouteRules;
 
   // Per-route radial gradients (gh = head, gt = tail), derived from native colour.
@@ -472,12 +519,12 @@ function buildCometSystem(routes, theme) {
     .map((r) => {
       const { headCore, halo } = glowColors(r.stroke, theme);
       return (
-        `<radialGradient id="gh${r.i}">` +
+        `<radialGradient id="${ghId(r.i)}">` +
         `<stop offset="0" stop-color="${headCore}" stop-opacity="0.95"/>` +
         `<stop offset="0.35" stop-color="${halo}" stop-opacity="0.5"/>` +
         `<stop offset="1" stop-color="${halo}" stop-opacity="0"/>` +
         `</radialGradient>` +
-        `<radialGradient id="gt${r.i}">` +
+        `<radialGradient id="${gtId(r.i)}">` +
         `<stop offset="0" stop-color="${halo}" stop-opacity="0.6"/>` +
         `<stop offset="1" stop-color="${halo}" stop-opacity="0"/>` +
         `</radialGradient>`
@@ -490,15 +537,15 @@ function buildCometSystem(routes, theme) {
     .map((r) => {
       const dt = COMET.gapU / r.speed; // seconds per gapU of travel
       const scatter = -(r.i * 3.83);
-      const head = `<circle class="pulse p${r.i}" r="${COMET.headR}" fill="url(#gh${r.i})"/>`;
+      const head = `<circle class="${ns}pulse ${ns}p${r.i}" r="${COMET.headR}" fill="url(#${ghId(r.i)})"/>`;
       const tail = Array.from({ length: COMET.tailN }, (_, k) => {
         const t = (k + 1) / COMET.tailN;
         const radius = (COMET.tailRMax - (COMET.tailRMax - COMET.tailRMin) * t).toFixed(2);
         const delay = (scatter + (k + 1) * dt).toFixed(3);
         const fade = (0.7 * Math.pow(1 - (k + 1) / (COMET.tailN + 1), 1.25)).toFixed(2);
-        return `<circle class="pulse p${r.i}" r="${radius}" fill="url(#gt${r.i})" fill-opacity="${fade}" style="animation-delay:${delay}s"/>`;
+        return `<circle class="${ns}pulse ${ns}p${r.i}" r="${radius}" fill="url(#${gtId(r.i)})" fill-opacity="${fade}" style="animation-delay:${delay}s"/>`;
       }).join('');
-      return `<g class="comet">${head}${tail}</g>`;
+      return `<g class="${ns}comet">${head}${tail}</g>`;
     })
     .join('');
 
@@ -542,19 +589,22 @@ function buildPlateSvg(paths, theme) {
 // with the SAME viewBox + preserveAspectRatio so it registers 1:1 over the
 // plate. Carries the <style> keyframes + route classes, per-route gradient
 // defs, sprite circles, and only the clipPath it needs.
-function buildGlowSvg(paths, theme) {
+function buildGlowSvg(paths, theme, page) {
   const routes = pickRoutes(paths);
-  const { keyframes, defs, cometGroups } = buildCometSystem(routes, theme);
+  const { keyframes, defs, cometGroups } = buildCometSystem(routes, theme, page);
 
+  // Scope the clip id + wrapper class per page too: glows are inlined into a
+  // shared document, so `url(#mc)`/.comets must not collide across pages.
+  const clipId = `${page}-mc`;
   const style = `<style>${keyframes}</style>`;
   const defsBlock =
-    `<defs><clipPath id="mc"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath>${defs}</defs>`;
+    `<defs><clipPath id="${clipId}"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath>${defs}</defs>`;
 
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">` +
     style +
     defsBlock +
-    `<g class="comets" clip-path="url(#mc)">${cometGroups}</g>` +
+    `<g class="${page}-comets" clip-path="url(#${clipId})">${cometGroups}</g>` +
     `</svg>`;
 
   return { svg, routeCount: routes.length };
@@ -615,7 +665,7 @@ function main() {
       }
 
       // --- Animated glow: comet system only (transparent canvas, same frame).
-      const glow = buildGlowSvg(working, theme);
+      const glow = buildGlowSvg(working, theme, page);
       const glowBytes = Buffer.byteLength(glow.svg, 'utf8');
 
       const platePath = path.join(OUT_DIR, `${page}_${theme}_plate.svg`);

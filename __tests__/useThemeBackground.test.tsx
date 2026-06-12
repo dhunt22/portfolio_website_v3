@@ -12,27 +12,27 @@ beforeEach(() => {
   mockResolvedTheme = 'light';
 });
 
-test('light theme resolves the LIGHT plate + glow (mounted via effect flush)', () => {
+test('light theme: exposes BOTH plate urls (not JS-resolved) + LIGHT glow', () => {
   const { result } = renderHook(() => useThemeBackground(PLATE_PRESETS.home));
   // renderHook flushes effects, so mounted is true here.
   expect(result.current.mounted).toBe(true);
   expect(result.current.isDark).toBe(false);
-  expect(result.current.plateSrc).toBe('/images/plates/home_light_plate.svg');
+  // Both plate URLs are handed to the component for CSS theming (the component
+  // gates them via dark:hidden / hidden dark:block); the hook never resolves a
+  // single plateSrc by JS.
+  expect(result.current.lightPlate).toBe('/images/plates/home_light_plate.svg');
+  expect(result.current.darkPlate).toBe('/images/plates/home_dark_plate.svg');
   expect(result.current.glowSrc).toBe('/images/plates/home_light_glow.svg');
-  expect(result.current.backgroundImage).toBe(
-    'url(/images/plates/home_light_plate.svg)',
-  );
 });
 
-test('dark theme resolves the DARK plate + glow + isDark', () => {
+test('dark theme: still exposes BOTH plate urls + DARK glow + isDark', () => {
   mockResolvedTheme = 'dark';
   const { result } = renderHook(() => useThemeBackground(PLATE_PRESETS.home));
   expect(result.current.isDark).toBe(true);
-  expect(result.current.plateSrc).toBe('/images/plates/home_dark_plate.svg');
+  // Plate urls are theme-independent here — only the glow flips by JS.
+  expect(result.current.lightPlate).toBe('/images/plates/home_light_plate.svg');
+  expect(result.current.darkPlate).toBe('/images/plates/home_dark_plate.svg');
   expect(result.current.glowSrc).toBe('/images/plates/home_dark_glow.svg');
-  expect(result.current.backgroundImage).toBe(
-    'url(/images/plates/home_dark_plate.svg)',
-  );
 });
 
 test('every page preset points at its own light/dark plate + glow files', () => {
@@ -65,8 +65,8 @@ test('existing fields still present', () => {
     expect.objectContaining({
       mounted: expect.any(Boolean),
       isMobile: expect.any(Boolean),
-      backgroundImage: expect.any(String),
-      plateSrc: expect.any(String),
+      lightPlate: expect.any(String),
+      darkPlate: expect.any(String),
       glowSrc: expect.any(String),
       isDark: expect.any(Boolean),
     }),

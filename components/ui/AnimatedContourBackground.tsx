@@ -4,19 +4,25 @@ import { useEffect, useState } from 'react';
 
 interface AnimatedContourBackgroundProps {
   /**
-   * Theme-resolved STATIC plate SVG URL (contours only). Always painted as a
-   * CSS background-image — never inlined, never animated — so the giant vector
-   * is rasterized once and is never re-rasterized per animation frame.
+   * LIGHT-theme STATIC plate SVG URL (contours only). Painted as the CSS
+   * background-image of a `dark:hidden` div. Because the dark plate lives on a
+   * `display:none` sibling in dark mode, the browser never fetches it — and
+   * vice-versa — so each visitor downloads exactly ONE plate, with the correct
+   * theme chosen from SSR HTML (next-themes sets `.dark` before first paint).
+   * The giant vector is rasterized once and never re-rasterized per frame.
    */
-  plateSrc: string;
+  lightPlate: string;
+  /** DARK-theme STATIC plate SVG URL — painted on the `hidden dark:block` div. */
+  darkPlate: string;
   /**
    * Theme-resolved ANIMATED glow SVG URL (the comet system only, transparent
    * canvas). Fetched + inlined ON TOP of the plate when motion is allowed so
    * its CSS motion-path sprites animate in their own small paint object. Under
-   * reduced motion it is simply not loaded (the static plate remains).
+   * reduced motion it is simply not loaded (the static plate remains). Resolved
+   * by JS post-mount, which is fine: the glow fetch already happens after mount.
    */
   glowSrc: string;
-  /** Resolved only after mount (avoids an SSR/client theme mismatch flash). */
+  /** Resolved only after mount (gates the post-mount glow fetch). */
   mounted: boolean;
 }
 
@@ -26,9 +32,13 @@ interface AnimatedContourBackgroundProps {
  * A single fixed layer (`fixed inset-0 -z-10`) so the backdrop covers the
  * viewport at EVERY scroll position. It composites two layers:
  *
- * - STATIC plate (always): the contour-only plate URL painted as a CSS
- *   background-image (cover, center). This never animates and never re-rasters,
- *   so scrolling no longer stalls behind a giant per-frame vector repaint.
+ * - STATIC plate (always): the contour-only plate, painted as a CSS
+ *   background-image. Two sibling divs carry the light and dark plate — one is
+ *   `dark:hidden`, the other `hidden dark:block` — so the correct plate is
+ *   chosen by the `.dark` class from SSR (no JS, no flash) and the browser only
+ *   fetches the visible one (background-images of `display:none` elements are
+ *   never requested). This never animates and never re-rasters, so scrolling no
+ *   longer stalls behind a giant per-frame vector repaint.
  * - ANIMATED glow (motion allowed only): the comet-only glow SVG fetched and
  *   inlined on top (transparent canvas, same viewBox so it registers 1:1). Its
  *   sprites animate via CSS motion path (offset-path / offset-distance) +
@@ -38,7 +48,8 @@ interface AnimatedContourBackgroundProps {
  * shows. Inlining (not <object>) keeps the glow transparent and small.
  */
 export function AnimatedContourBackground({
-  plateSrc,
+  lightPlate,
+  darkPlate,
   glowSrc,
   mounted,
 }: AnimatedContourBackgroundProps) {
@@ -89,17 +100,29 @@ export function AnimatedContourBackground({
   return (
     <div
       data-contour-plate
-      data-src={plateSrc}
+      data-light-src={lightPlate}
+      data-dark-src={darkPlate}
       data-glow={shouldAnimate ? glowSrc : undefined}
       className="fixed inset-0 -z-10 overflow-hidden"
       aria-hidden="true"
     >
-      {/* Static plate — CSS background-image, never inlined, never animated. */}
+      {/* Static plate — two CSS-themed background-image layers. The browser
+          only fetches the visible one (display:none background-images are never
+          requested), and the .dark class is applied from SSR, so each visitor
+          downloads exactly one plate with the correct theme and no flash. */}
       <div
+        className="absolute inset-0 dark:hidden"
         style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${plateSrc})`,
+          backgroundImage: `url(${lightPlate})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      <div
+        className="absolute inset-0 hidden dark:block"
+        style={{
+          backgroundImage: `url(${darkPlate})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
