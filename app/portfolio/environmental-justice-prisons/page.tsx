@@ -50,12 +50,24 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         {/* Project Overview */}
         <section className="panel mb-8" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className="eyebrow mb-6">Project Overview</h2>
-          <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body">
-            <p>
-              Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition&mdash;overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats. This groundbreaking research initiative was funded by NASA&apos;s $100,000 Equity and Environmental Justice Grant to address this critical gap.
-            </p>
+          <div className="lg:grid lg:grid-cols-[minmax(0,40rem)_1fr] lg:gap-10 lg:items-start">
+            {/* Overview paragraphs (left column on lg) */}
+            <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body lg:max-w-none">
+              <p>
+                Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition&mdash;overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats. This groundbreaking research initiative was funded by NASA&apos;s $100,000 Equity and Environmental Justice Grant to address this critical gap.
+              </p>
 
-            <div>
+              <p>
+                This research leverages NASA&apos;s Earth science data&mdash;including satellite, land cover, climate, and air quality datasets&mdash;to characterize environmental harms faced by incarcerated people across all U.S. state and federal prisons. The method incorporates 11 environmental indicators grouped into three components: climate risk (heat index, canopy cover, wildfire risk and flood hazard), environmental exposures (ozone, PM 2.5, pesticide use, and traffic density), and environmental effects (proximity to superfund sites, risk management plan facilities and hazardous waste sites).
+              </p>
+
+              <p>
+                Explore the interactive map below to visualize how these environmental factors impact prisons across the United States.
+              </p>
+            </div>
+
+            {/* Key Project Objectives (right column on lg) */}
+            <div className="mt-6 leading-relaxed text-ink-body lg:mt-0">
               <h3 className="mb-3 font-display text-xl text-ink-strong">Key Project Objectives</h3>
               <ul className="list-disc space-y-2 pl-5 marker:text-eyebrow">
                 <li>Quantify environmental conditions at all 1,865 state and federal prisons in the U.S.</li>
@@ -63,14 +75,6 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
                 <li>Create an open-access geospatial dataset and reproducible code base</li>
               </ul>
             </div>
-
-            <p>
-              This research leverages NASA&apos;s Earth science data&mdash;including satellite, land cover, climate, and air quality datasets&mdash;to characterize environmental harms faced by incarcerated people across all U.S. state and federal prisons. The method incorporates 11 environmental indicators grouped into three components: climate risk (heat index, canopy cover, wildfire risk and flood hazard), environmental exposures (ozone, PM 2.5, pesticide use, and traffic density), and environmental effects (proximity to superfund sites, risk management plan facilities and hazardous waste sites).
-            </p>
-
-            <p>
-              Explore the interactive map below to visualize how these environmental factors impact prisons across the United States.
-            </p>
           </div>
         </section>
 

@@ -211,6 +211,7 @@ export function IndicatorBrowser(): JSX.Element {
 
   return (
     <div>
+      {/* Tabs row: full-width above the two-column body. */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList
           className="mb-8 flex h-auto flex-wrap justify-start gap-8 rounded-none bg-transparent p-0"
@@ -223,80 +224,92 @@ export function IndicatorBrowser(): JSX.Element {
           ))}
         </TabsList>
 
-        {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value} className="mt-0">
-            <h3 className="mb-4 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[tab.value]}</h3>
-            <ul>
-              {COMPONENT_CONFIGS.filter(c => c.category === tab.value).map((component) => {
-                const isActive = selectedComponent === component.id;
-                return (
-                  <li key={component.id}>
-                    <button
-                      type="button"
-                      onClick={() => handleComponentClick(component.id)}
-                      aria-label={`View ${component.name} on map`}
-                      aria-pressed={isActive}
-                      className={`block w-full text-left py-2 font-sans font-medium text-xs uppercase tracking-caps ${
-                        isActive
-                          ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-4'
-                          : 'text-ink-muted hover:text-ink-strong'
-                      }`}
-                    >
-                      {component.name}
-                      <span className="mt-1 block font-sans text-sm normal-case tracking-normal text-ink-muted">{component.description}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </TabsContent>
-        ))}
+        {/* Two-column body at lg: LEFT column = indicator list (active tab) stacked above
+            the detail text; RIGHT column = map spanning both left rows. On mobile this
+            stacks in source order: list → map → detail. Placement is explicit (col/row
+            starts) rather than auto so the detail always lands under the list, beside the
+            taller map. */}
+        <div className="lg:grid lg:grid-cols-[minmax(0,22rem)_1fr] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:items-start">
+          {/* LEFT, row 1: indicator list panels (one TabsContent per tab) */}
+          <div className="lg:col-start-1 lg:row-start-1">
+            {tabs.map((tab) => (
+              <TabsContent key={tab.value} value={tab.value} className="mt-0">
+                <h3 className="mb-4 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[tab.value]}</h3>
+                <ul>
+                  {COMPONENT_CONFIGS.filter(c => c.category === tab.value).map((component) => {
+                    const isActive = selectedComponent === component.id;
+                    return (
+                      <li key={component.id}>
+                        <button
+                          type="button"
+                          onClick={() => handleComponentClick(component.id)}
+                          aria-label={`View ${component.name} on map`}
+                          aria-pressed={isActive}
+                          className={`block w-full text-left py-2 font-sans font-medium text-xs uppercase tracking-caps ${
+                            isActive
+                              ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-4'
+                              : 'text-ink-muted hover:text-ink-strong'
+                          }`}
+                        >
+                          {component.name}
+                          <span className="mt-1 block font-sans text-sm normal-case tracking-normal text-ink-muted">{component.description}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </TabsContent>
+            ))}
+          </div>
+
+          {/* RIGHT: map (owns its column, spanning both left rows, so it can grow taller at lg). */}
+          <div className="mt-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0">
+            {/* Mobile indicator title (detail panel is below the map on small screens) */}
+            <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
+
+            <div className="h-[280px] border border-border sm:h-[400px] md:h-[500px] lg:h-[640px]">
+              <LazyProjectMap
+                projectId="prison-ej"
+                selectedComponent={selectedComponent}
+                componentColor={currentComponent.color}
+              />
+            </div>
+          </div>
+
+          {/* Indicator detail panel: LEFT column, row 2 (below the list) on lg. */}
+          <div className="mt-12 max-w-[40rem] lg:col-start-1 lg:row-start-2 lg:mt-8">
+            <h3 className="font-display text-xl text-ink-strong">{currentComponent.name}</h3>
+            <p className="mt-2 leading-relaxed text-ink-body">{currentComponent.description}</p>
+
+            {currentComponent.detailedDescription && (
+              <div className="mt-6">
+                <h4 className="eyebrow mb-2">Data Source Description</h4>
+                <p className="leading-relaxed text-ink-body">{currentComponent.detailedDescription}</p>
+              </div>
+            )}
+
+            {currentComponent.methodology && (
+              <div className="mt-6">
+                <h4 className="eyebrow mb-2">Processing &amp; Methodology</h4>
+                <p className="leading-relaxed text-ink-body">{currentComponent.methodology}</p>
+              </div>
+            )}
+
+            {currentComponent.dataSourceLink && (
+              <div className="mt-6">
+                <a
+                  href={currentComponent.dataSourceLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-quiet"
+                >
+                  Data Source Link
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
       </Tabs>
-
-      {/* Mobile indicator title (detail panel is far below on small screens) */}
-      <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
-
-      {/* Map */}
-      <div className="h-[280px] border border-border sm:h-[400px] md:h-[500px] lg:h-[600px]">
-        <LazyProjectMap
-          projectId="prison-ej"
-          selectedComponent={selectedComponent}
-          componentColor={currentComponent.color}
-        />
-      </div>
-
-      {/* Indicator detail panel */}
-      <div className="mt-12 max-w-[40rem]">
-        <h3 className="font-display text-xl text-ink-strong">{currentComponent.name}</h3>
-        <p className="mt-2 leading-relaxed text-ink-body">{currentComponent.description}</p>
-
-        {currentComponent.detailedDescription && (
-          <div className="mt-6">
-            <h4 className="eyebrow mb-2">Data Source Description</h4>
-            <p className="leading-relaxed text-ink-body">{currentComponent.detailedDescription}</p>
-          </div>
-        )}
-
-        {currentComponent.methodology && (
-          <div className="mt-6">
-            <h4 className="eyebrow mb-2">Processing &amp; Methodology</h4>
-            <p className="leading-relaxed text-ink-body">{currentComponent.methodology}</p>
-          </div>
-        )}
-
-        {currentComponent.dataSourceLink && (
-          <div className="mt-6">
-            <a
-              href={currentComponent.dataSourceLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-quiet"
-            >
-              Data Source Link
-            </a>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
