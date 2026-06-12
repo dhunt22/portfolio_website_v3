@@ -4,7 +4,7 @@
 // Kept separate so jest unit tests can import it without triggering the
 // maplibre-gl browser bootstrap (window.URL.createObjectURL).
 
-// Individual component → percentile column mapping (kept in sync with mapUtils COMPONENT_COLUMNS)
+// Canonical component → percentile column mapping (mapUtils re-exports this as COMPONENT_COLUMNS)
 export const COMPONENT_FILTER_COLUMNS: Record<string, string> = {
   'overall': 'final_risk_score_pcntl',
   'heat': 'lst_avg_pcntl',

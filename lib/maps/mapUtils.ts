@@ -3,6 +3,7 @@
 // Utility functions for map operations
 
 import maplibregl, { MapMouseEvent, MapGeoJSONFeature } from 'maplibre-gl';
+import { COMPONENT_FILTER_COLUMNS } from './filterUtils';
 
 export interface PrisonFeatureProperties {
   NAME: string;
@@ -47,21 +48,10 @@ export const RISK_ATTRIBUTES = {
 
 export type RiskAttribute = keyof typeof RISK_ATTRIBUTES;
 
-// Individual component mappings (using new geojson column names)
-export const COMPONENT_COLUMNS = {
-  'overall': 'final_risk_score_pcntl',
-  'heat': 'lst_avg_pcntl',
-  'canopy': 'percent_tree_cover_pcntl',
-  'wildfire': 'wildfire_risk_pcntl',
-  'flood': 'flood_risk_pcntl',
-  'ozone': 'mean_ozone_pcntl',
-  'pm25': 'avg_pm25_pcntl',
-  'pesticide': 'pesticides_pcntl',
-  'traffic': 'trafficProx_pcntl',
-  'superfund': 'npl_prox_pcntl',
-  'rmp': 'rmp_prox_pcntl',
-  'hazwaste': 'haz_prox_pcntl'
-} as const;
+// Individual component mappings (using new geojson column names).
+// Single source of truth lives in filterUtils (pure module, jest-importable);
+// re-exported here for existing consumers.
+export const COMPONENT_COLUMNS = COMPONENT_FILTER_COLUMNS;
 
 export function getAttributeLabel(attr: RiskAttribute): string {
   return RISK_ATTRIBUTES[attr] || "Risk Score";
