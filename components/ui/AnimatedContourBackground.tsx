@@ -20,11 +20,21 @@ interface AnimatedContourBackgroundProps {
   /** DARK-theme STATIC plate SVG URL — painted on the `hidden dark:block` div. */
   darkPlate: string;
   /**
+   * Portrait (mobile) plate URLs. When provided the component renders TWO sets
+   * of plate wrapper divs: `md:hidden` pointing at the mobile plates and
+   * `hidden md:block` pointing at the desktop plates. `display:none` parents
+   * ensure the browser never fetches the hidden variant.
+   */
+  lightPlateMobile?: string;
+  darkPlateMobile?: string;
+  /**
    * Theme-resolved ANIMATED glow SVG URL (the comet system only, transparent
    * canvas). Fetched + inlined ON TOP of the plate when motion is allowed so
    * its GSAP MotionPath sprites animate in their own small paint object. Under
    * reduced motion it is simply not loaded (the static plate remains). Resolved
    * by JS post-mount, which is fine: the glow fetch already happens after mount.
+   * When a mobile glow variant exists, the hook resolves this to the portrait
+   * glow URL when isMobile is true.
    */
   glowSrc: string;
   /** Resolved only after mount (gates the post-mount glow fetch). */
@@ -92,6 +102,8 @@ function seedTotalTime(
 export function AnimatedContourBackground({
   lightPlate,
   darkPlate,
+  lightPlateMobile,
+  darkPlateMobile,
   glowSrc,
   mounted,
   isMobile = false,
@@ -248,6 +260,9 @@ export function AnimatedContourBackground({
     };
   }, [glowMarkup, isMobile]);
 
+  // Whether this page has portrait (mobile) plate variants.
+  const hasMobilePlates = !!(lightPlateMobile && darkPlateMobile);
+
   return (
     <div
       data-contour-plate
@@ -257,28 +272,78 @@ export function AnimatedContourBackground({
       className="fixed top-0 left-0 right-0 h-lvh -z-10 overflow-hidden"
       aria-hidden="true"
     >
-      {/* Static plate — two CSS-themed background-image layers. The browser
-          only fetches the visible one (display:none background-images are never
-          requested), and the .dark class is applied from SSR, so each visitor
-          downloads exactly one plate with the correct theme and no flash. */}
-      <div
-        className="absolute inset-0 dark:hidden"
-        style={{
-          backgroundImage: `url(${lightPlate})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
-      <div
-        className="absolute inset-0 hidden dark:block"
-        style={{
-          backgroundImage: `url(${darkPlate})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
+      {hasMobilePlates ? (
+        <>
+          {/* Mobile portrait plates (< md). TWO wrapper divs for theme gating so
+              display:none parents prevent the hidden plate from being fetched. */}
+          <div className="md:hidden">
+            <div
+              className="absolute inset-0 dark:hidden"
+              style={{
+                backgroundImage: `url(${lightPlateMobile})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+            <div
+              className="absolute inset-0 hidden dark:block"
+              style={{
+                backgroundImage: `url(${darkPlateMobile})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+          </div>
+          {/* Desktop landscape plates (≥ md). */}
+          <div className="hidden md:block">
+            <div
+              className="absolute inset-0 dark:hidden"
+              style={{
+                backgroundImage: `url(${lightPlate})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+            <div
+              className="absolute inset-0 hidden dark:block"
+              style={{
+                backgroundImage: `url(${darkPlate})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Static plate — two CSS-themed background-image layers. The browser
+              only fetches the visible one (display:none background-images are never
+              requested), and the .dark class is applied from SSR, so each visitor
+              downloads exactly one plate with the correct theme and no flash. */}
+          <div
+            className="absolute inset-0 dark:hidden"
+            style={{
+              backgroundImage: `url(${lightPlate})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+          <div
+            className="absolute inset-0 hidden dark:block"
+            style={{
+              backgroundImage: `url(${darkPlate})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+        </>
+      )}
       {/* Animated glow — inlined on top only when motion is allowed. */}
       {shouldAnimate ? (
         <div

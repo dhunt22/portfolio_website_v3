@@ -10,6 +10,11 @@ interface ThemeBackgroundOptions {
   /** Animated glow (comet system only) — fetched + inlined over the plate. */
   glowLight: string;
   glowDark: string;
+  /** Optional portrait (mobile) plate/glow — only home sets these. */
+  lightImageMobile?: string;
+  darkImageMobile?: string;
+  glowMobile?: string;
+  glowDarkMobile?: string;
   mobileBreakpoint?: number;
 }
 
@@ -25,6 +30,9 @@ interface ThemeBackgroundResult {
    */
   lightPlate: string;
   darkPlate: string;
+  /** Portrait (mobile) plate URLs — present only for pages with mobile variants. */
+  lightPlateMobile?: string;
+  darkPlateMobile?: string;
   /** Resolved animated glow URL (light or dark) — inlined over the plate. */
   glowSrc: string;
   isDark: boolean;
@@ -58,7 +66,14 @@ const platePreset = (page: PlatePage) => {
 };
 
 export const PLATE_PRESETS = {
-  home: platePreset('home'),
+  home: {
+    ...platePreset('home'),
+    // Portrait (mobile) plate/glow for the home page — Big Sur iqr3 portrait.
+    lightImageMobile: '/images/plates/home_light_plate_mobile.svg',
+    darkImageMobile: '/images/plates/home_dark_plate_mobile.svg',
+    glowMobile: '/images/plates/home_light_glow_mobile.svg',
+    glowDarkMobile: '/images/plates/home_dark_glow_mobile.svg',
+  },
   portfolio: platePreset('portfolio'),
   ej: platePreset('ej'),
   resume: platePreset('resume'),
@@ -122,10 +137,14 @@ export function useThemeBackground(options: ThemeBackgroundOptions): ThemeBackgr
   const darkPlate = options.darkImage;
 
   // The glow is fetched + inlined POST-mount, so resolving it by JS is fine.
-  const glowSrc = useMemo(
-    () => (!mounted ? options.glowLight : isDark ? options.glowDark : options.glowLight),
-    [mounted, isDark, options.glowLight, options.glowDark],
-  );
+  // When isMobile and a portrait glow exists, resolve to the mobile variant.
+  const glowSrc = useMemo(() => {
+    const hasMobileGlow = !!(options.glowMobile || options.glowDarkMobile);
+    if (hasMobileGlow && isMobile) {
+      return isDark ? (options.glowDarkMobile ?? options.glowMobile ?? options.glowLight) : (options.glowMobile ?? options.glowLight);
+    }
+    return !mounted ? options.glowLight : isDark ? options.glowDark : options.glowLight;
+  }, [mounted, isDark, isMobile, options.glowLight, options.glowDark, options.glowMobile, options.glowDarkMobile]);
 
   return {
     mounted,
@@ -133,6 +152,8 @@ export function useThemeBackground(options: ThemeBackgroundOptions): ThemeBackgr
     resolvedTheme,
     lightPlate,
     darkPlate,
+    lightPlateMobile: options.lightImageMobile,
+    darkPlateMobile: options.darkImageMobile,
     glowSrc,
     isDark,
   };
