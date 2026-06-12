@@ -144,7 +144,7 @@ export default function Header() {
 
   return (
     <header
-      className="fixed top-0 inset-x-0 z-50 border-b border-border bg-[color-mix(in_srgb,var(--surface-page)_88%,transparent)] backdrop-blur-[10px]"
+      className="fixed top-0 inset-x-0 z-50 border-b border-border bg-[color-mix(in_srgb,var(--surface-header)_88%,transparent)] backdrop-blur-[10px]"
     >
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">

@@ -12,6 +12,7 @@
     --surface-page: var(--paper-base);
     --surface-card: var(--paper-raised);
     --surface-sunken: var(--paper-sunken);
+    --surface-header: var(--paper-base); /* light: same as page (header is translucent over page) */
     --text-strong: #122114;        /* forest-950 */
     --text-body: #3f3a30;          /* stone-800 */
     --text-muted: #6a624f;         /* stone-600 */
@@ -27,8 +28,12 @@
     --ring-focus: #3d733f;         /* forest-600 */
   }
   .dark {
-    /* Night field */
-    --surface-page: #14130f; --surface-card: #1d1c16; --surface-sunken: #100f0c;
+    /* Stone palette — topo-at-dusk (2026-06 brief) */
+    --stone-925: #221f1b; /* new token: interpolated stone-950↔900 for the header layer (2026-06 brief) */
+    --surface-page:   #1a1814; /* stone-950 */
+    --surface-card:   #2b2822; /* stone-900 */
+    --surface-sunken: #15130f; /* derived well — darker than page, stone hue */
+    --surface-header: var(--stone-925); /* stone-925: distinct step between page and card */
     --text-strong: #f3f1e8;
     --text-body: #c4bda9;          /* stone-300 — approved DS-6 (deliberate one-step deviation from DS stone-200) */
     --text-muted: #a39a82;         /* stone-400 */
@@ -38,8 +43,8 @@
     --text-eyebrow: #cb9a59;       /* earth-400 */
     --brand-primary: #57935c;      /* forest-500 */
     --brand-accent: #cb9a59;
-    --border-hairline: #2c2a22;
-    --border-default: #3a372c;
+    --border-hairline: #3a372c;    /* stepped up from #2c2a22 — old value was near-flush with stone-900 card */
+    --border-default: #4a4437;     /* stepped up proportionally */
     --border-contour: rgba(203, 154, 89, 0.3);
     --ring-focus: #7bb17f;         /* forest-400 */
   }
