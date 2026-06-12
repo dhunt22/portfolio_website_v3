@@ -576,7 +576,7 @@ function buildPlateSvg(paths, theme) {
     `<defs><clipPath id="mc"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath></defs>`;
 
   const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" preserveAspectRatio="xMidYMid slice">` +
     defsBlock +
     `<g clip-path="url(#mc)" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${plateOpacity}">${plateBody}</g>` +
     `</svg>`;
@@ -601,7 +601,7 @@ function buildGlowSvg(paths, theme, page) {
     `<defs><clipPath id="${clipId}"><rect x="12.7" y="12.7" width="406.4" height="254"/></clipPath>${defs}</defs>`;
 
   const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}" preserveAspectRatio="xMidYMid slice">` +
     style +
     defsBlock +
     `<g class="${page}-comets" clip-path="url(#${clipId})">${cometGroups}</g>` +
