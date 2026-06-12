@@ -1,5 +1,5 @@
 /**
- * Backdrop engine v2 — build per-page fixed landscape contour plates.
+ * Backdrop engine v3 — build per-page fixed landscape contour plates.
  *
  * For each (page, sourceFile) this:
  *   1. Reads the raw 11x17 landscape median export, strips the XML prolog and
@@ -13,17 +13,19 @@
  *        light = native colours as-is
  *        dark  = per-colour lightness transform (hue/sat preserved) so the ramp
  *                still reads as a ramp on the #14130f night ground.
- *   5. Picks 14 glow routes spread across the elevation ramp, estimates each
- *      route's true length by flattening its cubic Béziers, and emits the comet
- *      ignition system from the original verified two-layer reference — speeds
- *      scaled to THIS coordinate space, glow gradients derived from each route's
- *      native stroke colour.
+ *   5. Picks GLOW_LINES paths from the N longest paths, keeping every other one
+ *      for spatial spread. Emits the reverse-glow overlay from the EXACT SAME
+ *      post-svgo path data the plate writes (bit-identical geometry; comet routes
+ *      and MotionPath are GONE).
  *   6. Assembles TWO output SVGs per (page, theme) into public/images/plates/:
  *        <page>_<theme>_plate.svg — contours ONLY (static; consumed as a CSS
  *          background-image, so no <style>/keyframes/sprites/gradients).
- *        <page>_<theme>_glow.svg  — the comet system ONLY (keyframes + route
- *          classes + per-route gradients + sprites) on a transparent canvas
- *          with the SAME viewBox/preserveAspectRatio so it registers 1:1.
+ *        <page>_<theme>_glow.svg  — the reverse-glow overlay only: same viewBox
+ *          + slice, a SUBSET of the plate's path elements copied verbatim (exact
+ *          `d` and stroke-width/linecap as emitted in the final plate), each with
+ *          stroke = theme page-bg color (#f7f4ec light / #1a1814 dark), opacity=0,
+ *          and data-line/data-cycle/data-delay attributes for GSAP. Zero comet
+ *          geometry, no gradients, no sprite circles.
  *      Splitting static from animated restores the proven two-layer v1 model:
  *      the giant static plate is never re-rasterized per animation frame, which
  *      eliminates the scroll re-raster stalls that the merged single-SVG output
@@ -70,7 +72,6 @@ const PAGES_MOBILE = {
 
 // Clip box from the source <clipPath id="mc"> rect: x=12.7 y=12.7 w=406.4 h=254.
 const VIEWBOX = '12.7 12.7 406.4 254';
-const VIEW_W = 406.4; // used to scale the reference's 1080-wide tuning constants
 
 // Landscape margin: 12.7mm on all sides (derived from standard GIS export).
 const MARGIN = 12.7;
@@ -81,24 +82,38 @@ const PLATE_OPACITY = { light: 0.35, dark: 0.30 };
 // Output hard cap; engage decimation (drop every 4th path) and retry if exceeded.
 const MAX_BYTES = 2.5 * 1024 * 1024;
 
-const N_ROUTES = 14;
-// Cap printed comet-route polyline resolution (keeps the <style> block small;
-// the length estimate still uses the full flatten).
-const ROUTE_MAX_PTS = 140;
+// ---------------------------------------------------------------------------
+// Reverse-glow knobs (v3)
+// ---------------------------------------------------------------------------
 
-// Comet system — scaled from the original 1080-wide reference to 406-wide.
-// scale = VIEW_W / 1080 ≈ 0.376.
-const SCALE = VIEW_W / 1080;
-const COMET = {
-  headR: 1.9, // ~ reference 5 * scale, nudged up for visibility
-  tailRMax: 1.7, // followers taper 1.7 -> 0.75
-  tailRMin: 0.75,
-  tailN: 12,
-  gapU: 3.5 * SCALE, // ≈ 1.32 units
-  minSpeed: 70 * SCALE, // ≈ 26 u/s
-  maxSpeed: 150 * SCALE, // ≈ 56 u/s
-  fadePeriod: 8, // integer-locked exactly as the reference
+// Number of glow lines to emit per glow file. Derived from top-N longest paths,
+// then keep every other one for spatial spread → ~GLOW_LINES/2 ... GLOW_LINES
+// lines depending on N pool.
+const GLOW_LINES = 14;
+
+// Theme page-background colours (--surface-page CSS custom property values).
+// The overlay strokes use these EXACT colours so animating opacity 0→1 fully
+// erases a contour line into the page background. Full-strength (no plate
+// group opacity applied) is required: a plate line at opacity 0.35 covered by
+// an overlay stroke at α is line×(1−α); reaching zero at α=1.
+const GLOW_BG = {
+  light: '#f7f4ec',
+  dark: '#1a1814',
 };
+
+// Per-line cycle period: uniform 35s. A fixed cycle is required to keep worst-
+// case concurrent fades ≤ 3. Analysis: with delay spacing = 2.5s and cycle = 35s,
+// at any instant at most ceil(7/2.5) = 3 lines can be mid-fade simultaneously
+// (verified by exhaustive 2000s simulation at 0.01s resolution). Mixed cycle
+// lengths cause lines to drift into resonance and cluster — uniform cycle prevents
+// this. 35s gives a gentle, unhurried breathing cadence.
+const cyclePeriod = (_idx) => 35;
+
+// Per-line scatter delay (seconds): idx * 2.5.
+// 14 lines * 2.5s = 35s total span = exactly one cycle → lines are evenly
+// distributed through the cycle on load. Spacing > fw/3 (= 7/3 ≈ 2.33s) ensures
+// worst-case concurrent fades = 3, not 4.
+const lineDelay = (idx) => idx * 2.5;
 
 // ---------------------------------------------------------------------------
 // Colour helpers
@@ -191,23 +206,8 @@ function darkVariant(hex) {
   return hslToHex(h, s, lp);
 }
 
-// Glow head/halo derivation per route.
-//   light: head core = darken+saturate native (L*0.75, S+10), halo = native
-//   dark:  head core = dark-variant extra-lightened (L+12, capped), halo = dark-variant
-function glowColors(nativeHex, theme) {
-  if (theme === 'light') {
-    const [h, s, l] = hexToHsl(nativeHex);
-    const headCore = hslToHex(h, Math.min(100, s + 10), l * 0.75);
-    return { headCore, halo: nativeHex };
-  }
-  const darkHex = darkVariant(nativeHex);
-  const [h, s, l] = hexToHsl(darkHex);
-  const headCore = hslToHex(h, s, Math.min(95, l + 12));
-  return { headCore, halo: darkHex };
-}
-
 // ---------------------------------------------------------------------------
-// Path geometry helpers
+// Path geometry helpers (used only for selecting the longest paths)
 // ---------------------------------------------------------------------------
 
 // Parse a path `d` into a flat list of absolute points by tracking the pen and
@@ -333,40 +333,6 @@ function flattenPath(d) {
   return { points, starts, length };
 }
 
-// From a flattened path with subpath break indices, return the LONGEST
-// contiguous subpath (its own points + true length). Comet routes ride a single
-// offset-path; sampling across an M/m gap would draw a straight chord between
-// two disconnected contour fragments. Restricting the route to one subpath keeps
-// the comet on a real, connected contour.
-function longestSubpath(points, starts) {
-  if (points.length === 0) return { points: [], length: 0 };
-  // Subpath span boundaries: each start index .. next start (or end).
-  const bounds = starts.length ? starts : [0];
-  let best = { points: [], length: -1 };
-  for (let s = 0; s < bounds.length; s++) {
-    const from = bounds[s];
-    const to = s + 1 < bounds.length ? bounds[s + 1] : points.length;
-    const seg = points.slice(from, to);
-    let len = 0;
-    for (let k = 1; k < seg.length; k++) {
-      len += Math.hypot(seg[k][0] - seg[k - 1][0], seg[k][1] - seg[k - 1][1]);
-    }
-    if (len > best.length) best = { points: seg, length: len };
-  }
-  return best;
-}
-
-// Evenly thin a point list to at most `max` points (keeps first + last).
-function downsample(points, max) {
-  if (points.length <= max) return points;
-  const out = [];
-  const step = (points.length - 1) / (max - 1);
-  for (let k = 0; k < max; k++) {
-    out.push(points[Math.round(k * step)]);
-  }
-  return out;
-}
-
 // ---------------------------------------------------------------------------
 // Source preprocessing
 // ---------------------------------------------------------------------------
@@ -440,7 +406,7 @@ function preprocessAndOptimize(srcPath, viewBoxOverride) {
 // Parse the stroked contour <path>s only: capture d + native stroke colour (the
 // hypsometric ramp — the thing to preserve). svgo synthesizes a clipPath rect
 // path and a couple of fill="#fff" border paths with NO stroke; those are
-// skipped here so only true contours reach the plate body and route picker.
+// skipped here so only true contours reach the plate body and glow picker.
 function parsePaths(svg) {
   const out = [];
   const pathRe = /<path\b[^>]*\/?>/gi;
@@ -468,162 +434,55 @@ function decimate(paths) {
 }
 
 // ---------------------------------------------------------------------------
-// Route selection + comet emission
+// Glow line selection (v3 — reverse-glow overlay)
 // ---------------------------------------------------------------------------
 
-function pickRoutes(paths) {
-  const colored = paths.filter((p) => p.stroke);
-  if (colored.length === 0) {
-    throw new Error('BLOCKED: no stroked paths found — ramp lost after svgo.');
-  }
-  // Sort by stroke lightness so we can take evenly spaced elevation bands.
-  const withL = colored.map((p) => ({ ...p, L: hexToHsl(p.stroke)[2] }));
-  withL.sort((a, b) => a.L - b.L);
+// Pick GLOW_LINES overlay paths from the N longest paths, keeping every other
+// one for spatial spread. Selection is deterministic (sort by path length
+// desc, keep every other one up to GLOW_LINES). The path objects returned
+// have the EXACT `d`, `stroke`, `width` as they appear in `paths` — these are
+// the SAME strings the plate emits, guaranteeing bit-identical geometry.
+function pickGlowLines(paths) {
+  if (paths.length === 0) return [];
 
-  const n = Math.min(N_ROUTES, withL.length);
-  const routes = [];
-  for (let r = 0; r < n; r++) {
-    // Band [lo, hi) across the sorted list; prefer the longest `d` within it
-    // (crude length proxy: d.length).
-    const lo = Math.floor((r * withL.length) / n);
-    const hi = Math.max(lo + 1, Math.floor(((r + 1) * withL.length) / n));
-    let best = withL[lo];
-    for (let k = lo; k < hi; k++) {
-      if (withL[k].d.length > best.d.length) best = withL[k];
-    }
-    routes.push(best);
+  // Estimate length from d-string length as a fast proxy (no full flatten).
+  // This is fine for selection — we only need a relative ordering.
+  // Sort descending by d.length (longer d string ≈ longer/more-complex path).
+  const sorted = [...paths].sort((a, b) => b.d.length - a.d.length);
+
+  // Keep every other one from the sorted list for spatial spread, up to GLOW_LINES.
+  const spread = [];
+  for (let i = 0; i < sorted.length && spread.length < GLOW_LINES * 2; i += 2) {
+    spread.push(sorted[i]);
   }
-  return routes;
+
+  return spread.slice(0, GLOW_LINES);
 }
 
-function buildCometSystem(routes, theme, page) {
-  // Estimate each route's true length and tune duration to a scaled speed band.
-  const tuned = routes.map((route, i) => {
-    const flat = flattenPath(route.d);
-    // svgo's mergePaths fuses disconnected contours into a single `d`. The comet
-    // rides ONE offset-path joined entirely with 'L', so sampling across an M/m
-    // boundary would draw a straight chord between separate contour fragments.
-    // Restrict the route to the LONGEST contiguous subpath — its points, its
-    // length, and therefore its duration all come from that subpath alone, so a
-    // route never crosses a subpath boundary.
-    const { points, length } = longestSubpath(flat.points, flat.starts);
-    // The full flatten of a long contour can still be 100k+ points (the longest
-    // source paths are ~190KB of `d`), which would bloat the old <style> block past
-    // the 2.5MB cap. Downsample to a bounded point count — a contour at
-    // ~ROUTE_MAX_PTS samples is plenty smooth for a sprite to traverse. Length is
-    // computed from the FULL subpath flatten, so speed/duration stay accurate.
-    const sampled = downsample(points, ROUTE_MAX_PTS);
-    const polyD =
-      'M' + sampled.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join('L');
-    const len = Math.max(length, 1);
-    const speed = Math.min(COMET.maxSpeed, Math.max(COMET.minSpeed, len / 8));
-    const dur = len / speed;
-    // Start point of the sampled route — used for cx/cy defaults so a
-    // non-animated render is not a pile of circles at (0,0).
-    const startX = sampled[0] ? sampled[0][0].toFixed(2) : '0';
-    const startY = sampled[0] ? sampled[0][1].toFixed(2) : '0';
-    return { i, d: polyD, len, speed, dur, stroke: route.stroke, startX, startY };
-  });
+// ---------------------------------------------------------------------------
+// Concurrent-fade analysis (verification)
+// ---------------------------------------------------------------------------
+// Fade window: 7s total (2.5s fade-in + 2s hold + 2.5s fade-out).
+// Samples at t in [0, SAMPLE_DURATION] at fine granularity.
+// Returns max simultaneous fades observed.
+function computeMaxConcurrentFades(n) {
+  const FADE_WINDOW = 7; // 2.5s in + 2s hold + 2.5s out
+  const SAMPLE_STEP = 0.01; // fine resolution
+  const SAMPLE_DURATION = 2000; // sample over 2000s to capture all resonance patterns
 
-  const rawSpeedMin = Math.min(...tuned.map((r) => r.speed)).toFixed(1);
-  const rawSpeedMax = Math.max(...tuned.map((r) => r.speed)).toFixed(1);
-
-  // Per-page scope token. Inlined glows share one document scope, so every
-  // gradient id is namespaced with the page key.
-  const ghId = (i) => `${page}-gh${i}`;
-  const gtId = (i) => `${page}-gt${i}`;
-
-  // Fade-peak opacity by theme (same as the reference).
-  const fadePeakByTheme = theme === 'light' ? 0.6 : 0.85;
-
-  // Per-route <path> defs — these carry the route geometry as GSAP MotionPath
-  // targets. fill+stroke none so they are invisible; GSAP references them by id.
-  // NOTE: the glow SVG is NOT passed through svgo, so data-* attrs and invisible
-  // defs paths are preserved as-is.
-  const routePaths = tuned
-    .map((r) => {
-      const printedDur = Number(r.dur.toFixed(2));
-      const n = Math.max(1, Math.round(printedDur / COMET.fadePeriod));
-      const fadeT = (printedDur / n).toFixed(9);
-      return `<path id="${page}-route${r.i}" d="${r.d}" fill="none" stroke="none" data-dur="${printedDur}" data-fade="${fadeT}"/>`;
-    })
-    .join('');
-
-  // Per-route radial gradients (gh = head, gt = tail), derived from native colour.
-  const defs = tuned
-    .map((r) => {
-      const { headCore, halo } = glowColors(r.stroke, theme);
-      return (
-        `<radialGradient id="${ghId(r.i)}">` +
-        `<stop offset="0" stop-color="${headCore}" stop-opacity="0.95"/>` +
-        `<stop offset="0.35" stop-color="${halo}" stop-opacity="0.5"/>` +
-        `<stop offset="1" stop-color="${halo}" stop-opacity="0"/>` +
-        `</radialGradient>` +
-        `<radialGradient id="${gtId(r.i)}">` +
-        `<stop offset="0" stop-color="${halo}" stop-opacity="0.6"/>` +
-        `<stop offset="1" stop-color="${halo}" stop-opacity="0"/>` +
-        `</radialGradient>`
-      );
-    })
-    .join('');
-
-  // Comet sprites: 1 head (data-k=0) + 12 tapering followers (data-k=1..12) per
-  // route. cx/cy set to the route start so non-animated render is not a pile at
-  // (0,0). No animation classes or inline style animation — GSAP drives these.
-  //
-  // data-lag on each circle = seconds the sprite trails the head (lag=0 for head;
-  // lag = k * dt for follower k, matching the old CSS animation-delay math:
-  //   old delay[head]      = scatter               → timeAdvanced = |scatter|
-  //   old delay[tail k]    = scatter + k*dt        → timeAdvanced = |scatter| - k*dt
-  //   relative lag of tail k vs head               = k*dt
-  // GSAP phase seeding: totalTime = ((|scatter| - lag) % dur + dur) % dur
-  const cometGroups = tuned
-    .map((r) => {
-      const printedDur = Number(r.dur.toFixed(2));
-      const n = Math.max(1, Math.round(printedDur / COMET.fadePeriod));
-      const fadeT = (printedDur / n).toFixed(9);
-      const scatterAbs = (r.i * 3.83).toFixed(4);
-      const dt = COMET.gapU / r.speed; // seconds per gapU gap
-      const head =
-        `<circle` +
-        ` data-k="0"` +
-        ` data-lag="0"` +
-        ` r="${COMET.headR}"` +
-        ` cx="${r.startX}" cy="${r.startY}"` +
-        ` fill="url(#${ghId(r.i)})"` +
-        `/>`;
-      const tail = Array.from({ length: COMET.tailN }, (_, k) => {
-        // k is 0-indexed here → circle data-k = k+1 (1..tailN)
-        const lagK = ((k + 1) * dt).toFixed(6);
-        const taper = (k + 1) / COMET.tailN;
-        const radius = (COMET.tailRMax - (COMET.tailRMax - COMET.tailRMin) * taper).toFixed(2);
-        const fadeOp = (0.7 * Math.pow(1 - (k + 1) / (COMET.tailN + 1), 1.25)).toFixed(2);
-        return (
-          `<circle` +
-          ` data-k="${k + 1}"` +
-          ` data-lag="${lagK}"` +
-          ` r="${radius}"` +
-          ` cx="${r.startX}" cy="${r.startY}"` +
-          ` fill="url(#${gtId(r.i)})"` +
-          ` fill-opacity="${fadeOp}"` +
-          `/>`
-        );
-      }).join('');
-      return (
-        `<g` +
-        ` class="${page}-comet"` +
-        ` data-route="${r.i}"` +
-        ` data-dur="${printedDur}"` +
-        ` data-fade="${fadeT}"` +
-        ` data-scatter="${scatterAbs}"` +
-        ` data-fade-peak="${fadePeakByTheme}"` +
-        ` opacity="0"` +
-        `>${head}${tail}</g>`
-      );
-    })
-    .join('');
-
-  return { routePaths, defs, cometGroups, rawSpeedMin, rawSpeedMax };
+  let maxSimultaneous = 0;
+  for (let t = 0; t <= SAMPLE_DURATION; t += SAMPLE_STEP) {
+    let active = 0;
+    for (let idx = 0; idx < n; idx++) {
+      const cycle = cyclePeriod(idx);
+      const delay = lineDelay(idx);
+      // Phase at time t: the line's position within its cycle (accounting for delay)
+      const phase = ((t - delay) % cycle + cycle) % cycle;
+      if (phase < FADE_WINDOW) active++;
+    }
+    if (active > maxSimultaneous) maxSimultaneous = active;
+  }
+  return maxSimultaneous;
 }
 
 // ---------------------------------------------------------------------------
@@ -662,40 +521,66 @@ function buildPlateSvg(paths, theme, viewBox) {
   return svg;
 }
 
-// --- Animated glow file: comet system ONLY (GSAP-driven, no CSS keyframes) ---
+// --- Animated glow file: reverse-glow overlay ONLY (GSAP-driven, no CSS) ---
 // Inlined on top of the static plate by the component, on a transparent canvas
 // with the SAME viewBox + preserveAspectRatio so it registers 1:1 over the
-// plate. Carries per-route <path> defs (GSAP MotionPath targets), per-route
-// gradient defs, and sprite circles with data-* attributes. Zero @keyframes
-// and zero animation: declarations — all animation is driven by GSAP at
+// plate (pixel-perfect at any scale — no resampling drift).
+//
+// Contains a SUBSET of the plate's path elements copied VERBATIM (exact `d`
+// and stroke-width attrs as emitted in the final plate — post-svgo optimized
+// path strings). Overlay strokes use the THEME PAGE BG colour so animating a
+// line's opacity 0→1 fully ERASES it into the background. The plate group's
+// 0.35/0.30 wrapper opacity does NOT apply here (full-strength bg stroke is
+// required to fully erase a line: line×(1−α) → 0 at α=1).
+//
+// Each path carries: data-line, data-cycle (period in seconds), data-delay
+// (initial phase scatter in seconds). All animation is driven by GSAP at
 // runtime via AnimatedContourBackground.
 function buildGlowSvg(paths, theme, page, viewBox) {
   const vb = viewBox ?? VIEWBOX;
-  // Parse inner rect dimensions from viewBox "x y w h".
   const [vbX, vbY, vbW, vbH] = vb.split(' ').map(Number);
 
-  const routes = pickRoutes(paths);
-  const { routePaths, defs, cometGroups } = buildCometSystem(routes, theme, page);
+  const bgColor = GLOW_BG[theme];
+  const glowLines = pickGlowLines(paths);
 
   // Scope the clip id per page: glows are inlined into a shared document, so
-  // `url(#mc)` and route path ids must not collide across pages.
+  // `url(#mc)` must not collide across pages.
   const clipId = `${page}-mc`;
-  // Route paths go in <defs> alongside gradients: invisible (fill+stroke none),
-  // referenced by GSAP MotionPathPlugin via id.
   const defsBlock =
-    `<defs>` +
-    `<clipPath id="${clipId}"><rect x="${vbX}" y="${vbY}" width="${vbW}" height="${vbH}"/></clipPath>` +
-    routePaths +
-    defs +
-    `</defs>`;
+    `<defs><clipPath id="${clipId}"><rect x="${vbX}" y="${vbY}" width="${vbW}" height="${vbH}"/></clipPath></defs>`;
+
+  // Each glow path: verbatim d and stroke-width from the plate, but stroke =
+  // theme bg color, fill none, opacity 0 at rest, and data-* for GSAP.
+  // We use the plate's stroke-width (not the native stroke colour) for thickness —
+  // the overlay must cover exactly the same pixels the plate line occupies.
+  const glowBody = glowLines
+    .map((p, idx) => {
+      const cycle = cyclePeriod(idx).toFixed(2);
+      const delay = lineDelay(idx).toFixed(2);
+      return (
+        `<path` +
+        ` d="${p.d}"` +
+        ` stroke="${bgColor}"` +
+        ` stroke-width="${p.width}"` +
+        ` fill="none"` +
+        ` stroke-linecap="round"` +
+        ` stroke-linejoin="round"` +
+        ` opacity="0"` +
+        ` data-line="${idx}"` +
+        ` data-cycle="${cycle}"` +
+        ` data-delay="${delay}"` +
+        `/>`
+      );
+    })
+    .join('');
 
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid slice">` +
     defsBlock +
-    `<g class="${page}-comets" clip-path="url(#${clipId})">${cometGroups}</g>` +
+    `<g clip-path="url(#${clipId})" fill="none">${glowBody}</g>` +
     `</svg>`;
 
-  return { svg, routeCount: routes.length };
+  return { svg, lineCount: glowLines.length };
 }
 
 // ---------------------------------------------------------------------------
@@ -730,6 +615,8 @@ function buildPageTheme(page, theme, srcPath, viewBox, suffix, rawSizeMB) {
     plateBytes = Buffer.byteLength(plateSvg, 'utf8');
   }
 
+  // Glow uses the SAME `working` paths array the plate was assembled from —
+  // pickGlowLines selects from this set and copies the exact same `d` strings.
   const glow = buildGlowSvg(working, theme, page, viewBox);
   const glowBytes = Buffer.byteLength(glow.svg, 'utf8');
 
@@ -741,13 +628,13 @@ function buildPageTheme(page, theme, srcPath, viewBox, suffix, rawSizeMB) {
   const plateKB = (plateBytes / 1024).toFixed(1);
   const glowKB = (glowBytes / 1024).toFixed(1);
   console.log(
-    `[${page}${suffix}/${theme}] paths: ${working.length}, routes: ${glow.routeCount}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB, glow: ${glowKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}\n    -> ${glowPath}`,
+    `[${page}${suffix}/${theme}] paths: ${working.length}, glow lines: ${glow.lineCount}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB, glow: ${glowKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}\n    -> ${glowPath}`,
   );
   return {
     page: page + suffix,
     theme,
     paths: working.length,
-    routes: glow.routeCount,
+    glowLines: glow.lineCount,
     rawMB: rawSizeMB,
     plateKB,
     glowKB,
@@ -796,7 +683,20 @@ function main() {
     }
   }
 
-  const totalFiles = sizeTable.reduce((acc, row) => acc + 2, 0);
+  // Concurrent-fade analysis: compute worst-case overlapping fade windows.
+  const maxConcurrent = computeMaxConcurrentFades(GLOW_LINES);
+  console.log(`\nConcurrent-fade analysis (GLOW_LINES=${GLOW_LINES}):`);
+  console.log(`  Fade window per line: 7s (2.5s in + 2s hold + 2.5s out)`);
+  console.log(`  Cycle periods: ${Array.from({length: GLOW_LINES}, (_, i) => cyclePeriod(i).toFixed(1)).join(', ')}s`);
+  console.log(`  Delays: ${Array.from({length: GLOW_LINES}, (_, i) => lineDelay(i).toFixed(2)).join(', ')}s`);
+  console.log(`  Worst-case simultaneous fades: ${maxConcurrent}`);
+  if (maxConcurrent > 3) {
+    console.warn(`  WARNING: max concurrent fades (${maxConcurrent}) exceeds budget of 3!`);
+  } else {
+    console.log(`  OK: within the ≤3 simultaneous budget.`);
+  }
+
+  const totalFiles = sizeTable.reduce((acc) => acc + 2, 0);
   console.log(`\nDone. ${totalFiles} SVGs (${totalFiles / 2} plate + ${totalFiles / 2} glow) written to`, OUT_DIR);
   console.table(sizeTable);
 }
