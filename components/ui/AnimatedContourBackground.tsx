@@ -202,9 +202,16 @@ export function AnimatedContourBackground({
             gsap.set(circle, { willChange: 'transform' });
 
             // Movement tween: travel the route path, repeat infinitely.
+            // `align` is REQUIRED: without it, MotionPathPlugin treats the path
+            // coordinates as relative transform deltas from the element's current
+            // position rather than absolute canvas positions, and `alignOrigin`
+            // is inert. With `align: routePathEl`, GSAP snapshots both the path
+            // and the element via getBoundingClientRect at tween creation and
+            // compensates so the element's centre lands exactly on the path point.
             const moveTween = gsap.to(circle, {
               motionPath: {
                 path: routePathEl,
+                align: routePathEl,
                 alignOrigin: [0.5, 0.5],
               },
               duration: dur,
