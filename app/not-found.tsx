@@ -15,7 +15,7 @@ export default function NotFound() {
       <ContourBackdrop page="notFound" />
 
       <div className="container relative z-10 mx-auto px-6">
-        <section className="flex min-h-[82vh] max-w-3xl flex-col justify-center">
+        <section className="flex min-h-[82svh] max-w-3xl flex-col justify-center">
           <h1 className="display mb-8 text-[clamp(3rem,7vw,5.25rem)]">404</h1>
 
           <div className="panel">

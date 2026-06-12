@@ -16,7 +16,7 @@ export default function Home() {
       <ContourBackdrop page="home" />
 
       <div className="container relative z-10 mx-auto px-6">
-        <section className="flex min-h-[82vh] max-w-3xl flex-col justify-center">
+        <section className="flex min-h-[82svh] max-w-3xl flex-col justify-center">
           <p className="eyebrow-mono mb-6 animate-rise opacity-0 motion-reduce:animate-none motion-reduce:opacity-100">
             Water Resources Engineer &amp; Explorer
           </p>
