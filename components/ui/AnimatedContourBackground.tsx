@@ -4,7 +4,7 @@
 // components/ui/AnimatedContourBackground.tsx
 // Backdrop engine v3 — fixed full-viewport contour plate with GSAP reverse-glow overlay.
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface AnimatedContourBackgroundProps {
@@ -78,10 +78,26 @@ export function AnimatedContourBackground({
 }: AnimatedContourBackgroundProps) {
   const reducedMotion = useReducedMotion();
   const [glowMarkup, setGlowMarkup] = useState<string | null>(null);
+  // Theme-toggle crossfade: once the OPPOSITE theme's plate has been prefetched
+  // (idle, post-load), plate gating upgrades from display (lazy first fetch) to
+  // opacity + transition (smooth toggle, contours persistent).
+  const [xfade, setXfade] = useState(false);
   const glowDivRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const shouldAnimate = mounted && !reducedMotion;
+
+  // CRITICAL: the dangerouslySetInnerHTML wrapper object MUST be referentially
+  // stable across re-renders. Next 14's React canary re-applies innerHTML when
+  // the wrapper identity changes even if the string is equal — which destroyed
+  // the GSAP-animated SVG on the first re-render after markup landed (theme
+  // toggle: breathing died and the overlay went inert). Root-caused 2026-06-12
+  // by trapping Element#innerHTML: react-dom's setInnerHTML fired on toggle
+  // with an identical-length string and no re-fetch.
+  const glowHtml = useMemo(
+    () => (glowMarkup ? { __html: glowMarkup } : undefined),
+    [glowMarkup],
+  );
 
   // ── Mobile height pin ────────────────────────────────────────────────────────
   // On iOS, `lvh` re-resolves frame-by-frame as the URL bar collapses
@@ -104,38 +120,41 @@ export function AnimatedContourBackground({
   // (URL-bar collapse) are the very thing we're suppressing — ignore them.
   const pinHeightRef = useRef<number | null>(null);
 
-  const applyPin = useCallback((el: HTMLDivElement) => {
+  // The INITIAL pin happens pre-paint in the layout <head> bootstrap script
+  // (sets --backdrop-h on <html>), so the plate's cover scale is correct from
+  // the very first frame — no post-hydration rescale. This callback only
+  // MAINTAINS the pin across width changes (orientation flips, window resize).
+  const applyPin = useCallback(() => {
+    const root = document.documentElement;
     const w = window.innerWidth;
     // Touch-primary devices (phones AND tablets — iPads are ≥768px wide but
     // their Safari chrome still collapses) get the px pin. True desktops
-    // (fine primary pointer, no collapsing chrome) keep h-lvh.
+    // (fine primary pointer, no collapsing chrome) keep the 100lvh fallback.
     const coarse =
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(pointer: coarse)').matches;
     if (w >= 768 && !coarse) {
-      // Desktop: remove any previously set inline height; h-lvh takes over.
-      if (el.style.height) el.style.height = '';
+      root.style.removeProperty('--backdrop-h');
       pinHeightRef.current = null;
       return;
     }
-    // Mobile: compute the stable full-screen height from screen dimensions.
-    // screen.* are CSS px and do not change during URL-bar animation.
+    // Stable full-screen height from screen dimensions. screen.* are CSS px
+    // and do not change during URL-bar animation; min/max normalizes iOS
+    // (orientation-fixed dims) vs Android (rotating dims).
     const portrait = window.innerHeight >= window.innerWidth;
     const pinH = portrait
       ? Math.max(window.screen.height, window.screen.width)
       : Math.min(window.screen.height, window.screen.width);
     if (pinH !== pinHeightRef.current) {
-      el.style.height = `${pinH}px`;
+      root.style.setProperty('--backdrop-h', `${pinH}px`);
       pinHeightRef.current = pinH;
     }
   }, []);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    // Initial pin (synchronous on mount, before first paint).
-    applyPin(el);
+    // Reconcile with whatever the head bootstrap set (also covers the edge
+    // where hydration happens after a rotation).
+    applyPin();
 
     let lastWidth = window.innerWidth;
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -151,7 +170,7 @@ export function AnimatedContourBackground({
       lastWidth = currentWidth;
       if (debounceTimer !== null) clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
-        applyPin(el);
+        applyPin();
         debounceTimer = null;
       }, 150);
     };
@@ -269,6 +288,58 @@ export function AnimatedContourBackground({
   // Whether this page has portrait (mobile) plate variants.
   const hasMobilePlates = !!(lightPlateMobile && darkPlateMobile);
 
+  // ── Theme-toggle crossfade upgrade ──────────────────────────────────────────
+  // First paint keeps display-gating (lazy: only the active theme's plate is
+  // fetched). A few seconds after mount we prefetch the OPPOSITE theme's plate
+  // for the current orientation; once cached, gating upgrades to
+  // opacity + transition so a theme toggle is a smooth crossfade and contours
+  // never vanish behind an in-flight 2MB download.
+  useEffect(() => {
+    if (!mounted) return;
+    let cancelled = false;
+    const idle = setTimeout(() => {
+      const pair =
+        isMobile && hasMobilePlates
+          ? [lightPlateMobile as string, darkPlateMobile as string]
+          : [lightPlate, darkPlate];
+      Promise.all(
+        pair.map(
+          (src) =>
+            new Promise((res) => {
+              const img = new Image();
+              img.onload = img.onerror = res;
+              img.src = src;
+            }),
+        ),
+      ).then(() => {
+        if (!cancelled) setXfade(true);
+      });
+    }, 2500);
+    return () => {
+      cancelled = true;
+      clearTimeout(idle);
+    };
+  }, [mounted, isMobile, hasMobilePlates, lightPlate, darkPlate, lightPlateMobile, darkPlateMobile]);
+
+  // Theme gating classes for a plate div. Before the crossfade upgrade:
+  // display-gated (hidden plates are never fetched). After: opacity-gated with
+  // a transition (both plates are cached; toggling fades between them).
+  const plateClass = (theme: 'light' | 'dark') =>
+    xfade
+      ? theme === 'light'
+        ? 'absolute inset-0 transition-opacity duration-700 opacity-100 dark:opacity-0'
+        : 'absolute inset-0 transition-opacity duration-700 opacity-0 dark:opacity-100'
+      : theme === 'light'
+        ? 'absolute inset-0 dark:hidden'
+        : 'absolute inset-0 hidden dark:block';
+
+  const plateStyle = (url: string) => ({
+    backgroundImage: `url(${url})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+  });
+
   return (
     <div
       ref={containerRef}
@@ -276,88 +347,44 @@ export function AnimatedContourBackground({
       data-light-src={lightPlate}
       data-dark-src={darkPlate}
       data-glow={shouldAnimate ? glowSrc : undefined}
-      className="fixed top-0 left-0 right-0 h-lvh -z-10 overflow-hidden"
+      className="fixed top-0 left-0 right-0 -z-10 overflow-hidden"
+      // Pre-paint pinned px height on touch devices (head bootstrap sets the
+      // var); 100lvh fallback for desktop / no-JS.
+      style={{ height: 'var(--backdrop-h, 100lvh)' }}
       aria-hidden="true"
     >
       {hasMobilePlates ? (
         <>
-          {/* Mobile portrait plates (< md). TWO wrapper divs for theme gating so
-              display:none parents prevent the hidden plate from being fetched. */}
+          {/* Mobile portrait plates (< md); orientation stays display-gated
+              (it cannot toggle interactively), themes use plateClass gating. */}
           <div className="md:hidden">
-            <div
-              className="absolute inset-0 dark:hidden"
-              style={{
-                backgroundImage: `url(${lightPlateMobile})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            />
-            <div
-              className="absolute inset-0 hidden dark:block"
-              style={{
-                backgroundImage: `url(${darkPlateMobile})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            />
+            <div className={plateClass('light')} style={plateStyle(lightPlateMobile as string)} />
+            <div className={plateClass('dark')} style={plateStyle(darkPlateMobile as string)} />
           </div>
           {/* Desktop landscape plates (≥ md). */}
           <div className="hidden md:block">
-            <div
-              className="absolute inset-0 dark:hidden"
-              style={{
-                backgroundImage: `url(${lightPlate})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            />
-            <div
-              className="absolute inset-0 hidden dark:block"
-              style={{
-                backgroundImage: `url(${darkPlate})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            />
+            <div className={plateClass('light')} style={plateStyle(lightPlate)} />
+            <div className={plateClass('dark')} style={plateStyle(darkPlate)} />
           </div>
         </>
       ) : (
         <>
-          {/* Static plate — two CSS-themed background-image layers. The browser
-              only fetches the visible one (display:none background-images are never
-              requested), and the .dark class is applied from SSR, so each visitor
-              downloads exactly one plate with the correct theme and no flash. */}
-          <div
-            className="absolute inset-0 dark:hidden"
-            style={{
-              backgroundImage: `url(${lightPlate})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-            }}
-          />
-          <div
-            className="absolute inset-0 hidden dark:block"
-            style={{
-              backgroundImage: `url(${darkPlate})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-            }}
-          />
+          {/* Static plate — two CSS-themed background-image layers. Until the
+              crossfade upgrade, the browser only fetches the visible one
+              (display:none background-images are never requested). */}
+          <div className={plateClass('light')} style={plateStyle(lightPlate)} />
+          <div className={plateClass('dark')} style={plateStyle(darkPlate)} />
         </>
       )}
-      {/* Animated glow — inlined on top only when motion is allowed. */}
+      {/* Animated glow — inlined on top only when motion is allowed.
+          glowHtml is memoized: a fresh wrapper object per render makes React
+          re-apply innerHTML, destroying the GSAP-animated DOM (see above). */}
       {shouldAnimate ? (
         <div
           ref={glowDivRef}
           style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
           // Trusted first-party static asset (generated glow overlay).
-          dangerouslySetInnerHTML={glowMarkup ? { __html: glowMarkup } : undefined}
+          dangerouslySetInnerHTML={glowHtml}
         />
       ) : null}
     </div>

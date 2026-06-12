@@ -62,11 +62,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Add `js` class to <html> synchronously before first paint so
-            HeroLoadIn's CSS selector `html.js [data-hero-loadin] > *` can
-            hide children before GSAP runs — prevents FOUC on JS-enabled
-            browsers while keeping elements visible for no-JS. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* Pre-paint bootstrap, runs synchronously before first paint:
+            1. `js` class — HeroLoadIn's CSS selector `html.js [data-hero-loadin] > *`
+               hides children before GSAP runs (no FOUC, no-JS users keep content).
+            2. `--backdrop-h` — px-pins the contour backdrop height on touch-primary
+               devices BEFORE the first paint, so the plate's cover scale never
+               changes afterwards (useEffect pinning was post-paint and caused a
+               one-time rescale that read as a first-scroll glitch on iOS, where
+               lvh resolves small until the URL bar first collapses). screen.* are
+               CSS px; min/max normalizes iOS (orientation-fixed) vs Android. */}
+        <script dangerouslySetInnerHTML={{ __html: "(function(){var d=document.documentElement;d.classList.add('js');try{var w=innerWidth,c=matchMedia('(pointer: coarse)').matches;if(w<768||c){var p=innerHeight>=w?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);d.style.setProperty('--backdrop-h',p+'px');}}catch(e){}})()" }} />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
