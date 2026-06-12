@@ -6,14 +6,17 @@
 
 import './project-map.css';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTheme } from 'next-themes';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import { getMapConfig } from '@/lib/maps/mapConfigurations';
+import { GRAY_STYLE, DARK_STYLE } from '@/lib/maps/mapConfigurations';
 import { setupPrisonLayers, setupSubbasinLayers, addMapControls } from '@/lib/maps/layerSetup';
 import { usePrisonMap } from '@/hooks/usePrisonMap';
 import { useMapPopup } from '@/hooks/useMapPopup';
 import MapControls from '@/components/maps/MapControls';
+import { createEnhancedColorScale, applyFilterToLayers } from '@/lib/maps/mapUtils';
 
 interface ProjectMapProps {
   projectId: string;
@@ -25,7 +28,7 @@ interface ProjectMapProps {
 const getCurrentComponentName = (componentId: string): string => {
   const componentNames: Record<string, string> = {
     'heat': 'Heat Index',
-    'canopy': 'Canopy Cover', 
+    'canopy': 'Canopy Cover',
     'wildfire': 'Wildfire Risk',
     'flood': 'Flood Hazard',
     'ozone': 'Ozone Levels',
@@ -39,40 +42,74 @@ const getCurrentComponentName = (componentId: string): string => {
   return componentNames[componentId] || componentId;
 };
 
+const US_BOUNDS: maplibregl.LngLatBoundsLike = [
+  [-167.276413, 15.875834],
+  [-52.233040, 72.553967]
+];
+
 const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, componentColor }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const [showCategoryPanel, setShowCategoryPanel] = useState(true); // Default to open
+  const [showCategoryPanel, setShowCategoryPanel] = useState(true);
   const [mapError, setMapError] = useState<string | null>(null);
-  
+  const isStyleChanging = useRef(false);
+
   // Generate unique ID for this map instance to avoid conflicts
   const mapInstanceId = useRef<string>(`map-${Math.random().toString(36).substring(2, 11)}`);
   const instanceId = mapInstanceId.current;
-  
+
+  const { resolvedTheme } = useTheme();
+  const prevTheme = useRef<string | undefined>(undefined);
+
   // Use custom hooks for prison map functionality
   const {
     selectedAttribute,
     setSelectedAttribute,
     showAllPrisons,
     setShowAllPrisons,
+    percentileThreshold,
+    setPercentileThreshold,
+    facilityTypes,
+    setFacilityTypes,
     setAllPrisonData,
-    updatePrisonColors
+    updatePrisonColors,
+    // State refs for style.load re-apply
+    percentileThresholdRef,
+    facilityTypesRef,
+    selectedAttributeRef,
+    selectedComponentRef,
+    componentColorRef,
+    buildCombinedFilter,
+    PRISON_LAYERS,
+    idField,
+    allPrisonData,
   } = usePrisonMap(map, projectId, selectedComponent, componentColor, instanceId);
 
   // Use custom hook for popup management
   const { setupPopupHandlers } = useMapPopup(map, projectId, selectedAttribute, selectedComponent, instanceId);
 
+  // Reset view to US extent
+  const handleResetView = () => {
+    if (!map.current) return;
+    map.current.fitBounds(US_BOUNDS, { padding: 20, duration: 600 });
+  };
+
   // Initialize map
   useEffect(() => {
     if (!mapContainer.current) return;
-    
+
     console.log(`Initializing map for project: ${projectId}`);
     const mapConfig = getMapConfig(projectId);
-    
+
+    // Pick style based on current theme at init time
+    const initStyle = projectId === 'prison-ej'
+      ? (resolvedTheme === 'dark' ? DARK_STYLE : GRAY_STYLE)
+      : mapConfig.style;
+
     try {
       map.current = new maplibregl.Map({
         container: mapContainer.current,
-        style: mapConfig.style,
+        style: initStyle,
         center: mapConfig.center,
         zoom: mapConfig.zoom,
         attributionControl: false,
@@ -87,9 +124,9 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
           }
         });
       }
-      
+
       addMapControls(map.current);
-      
+
       // Setup map layers based on project type
       const setupMapLayers = () => {
         if (!map.current) return;
@@ -105,7 +142,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
             console.log('Setting up subbasin layers...');
             setupSubbasinLayers(map.current, mapConfig);
           }
-          
+
           setupPopupHandlers();
           setMapError(null);
         } catch (error) {
@@ -119,7 +156,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
       } else {
         map.current.on("load", setupMapLayers);
       }
-      
+
       // Enhanced error handling
       map.current.on('error', (e) => {
         console.error('Map error:', e);
@@ -131,7 +168,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
           const sourceId = (e as any).sourceId;
           console.log(`Source data loaded: ${sourceId}`);
 
-          // Re-setup popup handlers when source data is loaded to ensure layers exist
           if (sourceId === 'prisons' || sourceId === 'subbasin-source') {
             setTimeout(() => {
               setupPopupHandlers();
@@ -151,11 +187,102 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         map.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
-  
-  // Update prison map colors when selectedAttribute changes - with immediate effect
+
+  // ── Dark/light basemap theme sync ──────────────────────────────────────────
   useEffect(() => {
-    if (projectId === 'prison-ej' && map.current?.isStyleLoaded()) {
+    if (projectId !== 'prison-ej') return;
+    if (!map.current) return;
+    if (!resolvedTheme) return;
+    // Skip on first render (map init already picked the right style)
+    if (prevTheme.current === undefined) {
+      prevTheme.current = resolvedTheme;
+      return;
+    }
+    if (prevTheme.current === resolvedTheme) return;
+    prevTheme.current = resolvedTheme;
+
+    const newStyle = resolvedTheme === 'dark' ? DARK_STYLE : GRAY_STYLE;
+    console.log(`Theme changed to ${resolvedTheme} — swapping basemap to ${newStyle}`);
+
+    isStyleChanging.current = true;
+
+    // Snapshot current state from refs (state may lag behind)
+    const snapshotThreshold = percentileThresholdRef.current;
+    const snapshotTypes = facilityTypesRef.current;
+    const snapshotAttribute = selectedAttributeRef.current;
+    const snapshotComponent = selectedComponentRef.current;
+    const snapshotColor = componentColorRef.current;
+
+    const mapConfig = getMapConfig(projectId);
+
+    // setStyle wipes all sources/layers; re-add them on next style.load
+    map.current.setStyle(newStyle);
+
+    map.current.once('style.load', () => {
+      if (!map.current) return;
+      console.log('style.load after basemap swap — re-adding prison layers');
+
+      try {
+        // Re-add sources and layers (setupPrisonLayers fetches data again)
+        setupPrisonLayers(
+          map.current,
+          mapConfig,
+          snapshotAttribute,
+          (data) => {
+            // Re-apply saved filter state once data is available
+            const filterExpr = buildCombinedFilter(
+              snapshotThreshold,
+              snapshotTypes,
+              snapshotAttribute,
+              // idField may not be refreshed yet; use 'OBJECTID' as safe fallback
+              idField || 'OBJECTID',
+              data
+            );
+            console.log('Re-applying filter after style swap:', JSON.stringify(filterExpr));
+            applyFilterToLayers(map.current!, PRISON_LAYERS, filterExpr);
+            setAllPrisonData(data);
+          },
+          snapshotComponent,
+          snapshotColor,
+          instanceId
+        );
+
+        // Re-apply current paint colors
+        setTimeout(() => {
+          if (map.current?.isStyleLoaded()) {
+            const colorScale = createEnhancedColorScale(snapshotComponent, snapshotColor);
+            const layerPrefix = instanceId ? `prison-${instanceId}` : 'prison';
+            const updates = [
+              { layerId: `${layerPrefix}-polygons`, property: 'fill-color', value: colorScale },
+              { layerId: `${layerPrefix}-polygons-highlight`, property: 'fill-color', value: colorScale },
+              { layerId: `${layerPrefix}-centroids`, property: 'circle-color', value: colorScale },
+            ];
+            updates.forEach(({ layerId, property, value }) => {
+              if (map.current?.getLayer(layerId)) {
+                map.current.setPaintProperty(layerId, property, value);
+              }
+            });
+            map.current?.triggerRepaint();
+          }
+        }, 100);
+
+        setupPopupHandlers();
+        setMapError(null);
+      } catch (error) {
+        console.error('Error re-adding layers after style swap:', error);
+      }
+
+      isStyleChanging.current = false;
+    });
+  // resolvedTheme is the only trigger; refs track the rest
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedTheme]);
+
+  // Update prison map colors when selectedAttribute changes
+  useEffect(() => {
+    if (projectId === 'prison-ej' && map.current?.isStyleLoaded() && !isStyleChanging.current) {
       console.log(`Updating colors for attribute change: ${selectedAttribute}`);
       try {
         updatePrisonColors(selectedComponent, componentColor);
@@ -165,11 +292,11 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         setMapError(`Failed to update colors: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
-  }, [selectedAttribute, selectedComponent, componentColor, projectId]); // Removed updatePrisonColors and setupPopupHandlers from deps to avoid cycles
-  
+  }, [selectedAttribute, selectedComponent, componentColor, projectId]);
+
   // Handle immediate component selection changes
   useEffect(() => {
-    if (projectId === 'prison-ej' && map.current?.isStyleLoaded() && selectedComponent && componentColor) {
+    if (projectId === 'prison-ej' && map.current?.isStyleLoaded() && selectedComponent && componentColor && !isStyleChanging.current) {
       console.log(`Updating colors for component selection change: ${selectedComponent}`);
       try {
         updatePrisonColors(selectedComponent, componentColor);
@@ -180,13 +307,11 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
       }
     }
   }, [selectedComponent, componentColor, projectId]);
-  
+
   // Close panels when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
       const target = event.target as Element;
-
-      // Close panel when clicking outside of it (only when panel is open)
       if (showCategoryPanel && !target.closest('.control-panel')) {
         setShowCategoryPanel(false);
       }
@@ -197,7 +322,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
       document.removeEventListener('pointerdown', handleClickOutside);
     };
   }, [showCategoryPanel]);
-  
+
   if (mapError) {
     return (
       <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden bg-red-50 border border-red-200 flex items-center justify-center">
@@ -210,7 +335,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
           <h3 className="text-red-800 font-semibold mb-2">Map Loading Error</h3>
           <p className="text-red-600 text-sm mb-4">{mapError}</p>
           <div className="flex gap-2 justify-center">
-            <button 
+            <button
               onClick={() => {
                 setMapError(null);
                 window.location.reload();
@@ -219,7 +344,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
             >
               Retry
             </button>
-            <button 
+            <button
               onClick={() => setMapError(null)}
               className="px-4 py-2 border border-red-300 text-red-700 rounded hover:bg-red-100 transition-colors text-sm"
             >
@@ -230,7 +355,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
       </div>
     );
   }
-  
+
   return (
     <div className="relative w-full h-full min-h-[300px] overflow-hidden" style={{ pointerEvents: 'auto' }}>
       <div
@@ -245,7 +370,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
       <div id={`${projectId}-map-description`} className="sr-only">
         Interactive geospatial map showing data for the {projectId} project. Use the controls below to filter and explore the data. Map supports zooming and panning with mouse or keyboard.
       </div>
-      
+
       <MapControls
         projectId={projectId}
         selectedAttribute={selectedAttribute}
@@ -257,6 +382,11 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         hideRiskSelector={!!selectedComponent && selectedComponent !== 'overall'}
         componentName={selectedComponent && selectedComponent !== 'overall' ? getCurrentComponentName(selectedComponent) : undefined}
         componentColor={selectedComponent && selectedComponent !== 'overall' ? componentColor : undefined}
+        percentileThreshold={percentileThreshold}
+        setPercentileThreshold={setPercentileThreshold}
+        facilityTypes={facilityTypes}
+        setFacilityTypes={setFacilityTypes}
+        onResetView={handleResetView}
       />
     </div>
   );

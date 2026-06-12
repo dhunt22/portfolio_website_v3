@@ -51,6 +51,7 @@ export const LAYER_CONFIGS: Record<string, MapLayerConfig> = {
 // Styles URL
 export const DEFAULT_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
 export const GRAY_STYLE = 'https://tiles.openfreemap.org/styles/positron';
+export const DARK_STYLE = 'https://tiles.openfreemap.org/styles/dark';
 
 // Project-specific configurations
 export const PROJECT_CONFIGS: Record<string, MapConfig> = {
