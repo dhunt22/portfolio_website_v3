@@ -2,7 +2,7 @@
 
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/ui/AnimatedContourBackground.tsx
-// Backdrop engine v2 — fixed full-viewport contour plate with GSAP comet glow.
+// Backdrop engine v3 — fixed full-viewport contour plate with GSAP reverse-glow overlay.
 
 import { useEffect, useState, useRef } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -28,13 +28,13 @@ interface AnimatedContourBackgroundProps {
   lightPlateMobile?: string;
   darkPlateMobile?: string;
   /**
-   * Theme-resolved ANIMATED glow SVG URL (the comet system only, transparent
-   * canvas). Fetched + inlined ON TOP of the plate when motion is allowed so
-   * its GSAP MotionPath sprites animate in their own small paint object. Under
-   * reduced motion it is simply not loaded (the static plate remains). Resolved
-   * by JS post-mount, which is fine: the glow fetch already happens after mount.
-   * When a mobile glow variant exists, the hook resolves this to the portrait
-   * glow URL when isMobile is true.
+   * Theme-resolved ANIMATED glow SVG URL (the reverse-glow overlay only,
+   * transparent canvas). Fetched + inlined ON TOP of the plate when motion is
+   * allowed so its GSAP opacity tweens animate in their own small paint object.
+   * Under reduced motion it is simply not loaded (the static plate remains).
+   * Resolved by JS post-mount, which is fine: the glow fetch already happens
+   * after mount. When a mobile glow variant exists, the hook resolves this to
+   * the portrait glow URL when isMobile is true.
    */
   glowSrc: string;
   /** Resolved only after mount (gates the post-mount glow fetch). */
@@ -43,43 +43,8 @@ interface AnimatedContourBackgroundProps {
   isMobile?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Phase-seeding math (maps old CSS animation-delay → GSAP totalTime)
-//
-// Old CSS emission per circle:
-//   head:      animation-delay = scatter                  (scatter = -(i * 3.83))
-//   tail k:    animation-delay = scatter + k * dt         (k = 1..tailN)
-//              where dt = gapU / speed
-//
-// A negative CSS animation-delay means the animation started |delay| seconds
-// BEFORE the element was created → the animation has progressed |delay| into
-// its cycle at t=0.
-//
-//   cssDelay          = scatter + lag           (lag = 0 for head, k*dt for tail k)
-//   timeAdvanced      = -cssDelay = scatterAbs - lag   (scatterAbs = i * 3.83)
-//
-// GSAP totalTime seeding:
-//   phase = ((scatterAbs - lag) % dur + dur) % dur
-//   tween.totalTime(phase + 10 * dur)    // +10*dur keeps totalTime positive
-//
-// This exactly reproduces the old position. The +10*dur offset is invisible
-// to the animation because totalTime() on an infinite repeat tween wraps
-// correctly; it just guarantees we never pass a negative value.
-// ---------------------------------------------------------------------------
-
-function seedTotalTime(
-  tween: { totalTime: (t: number) => void },
-  scatterAbs: number,
-  lag: number,
-  dur: number,
-) {
-  const advanced = scatterAbs - lag;
-  const phase = ((advanced % dur) + dur) % dur;
-  tween.totalTime(phase + 10 * dur);
-}
-
 /**
- * Backdrop engine v2 — fixed full-viewport contour plate (two-layer model).
+ * Backdrop engine v3 — fixed full-viewport contour plate (two-layer model).
  *
  * A single fixed layer (`fixed inset-0 -z-10`) so the backdrop covers the
  * viewport at EVERY scroll position. It composites two layers:
@@ -91,10 +56,13 @@ function seedTotalTime(
  *   fetches the visible one (background-images of `display:none` elements are
  *   never requested). This never animates and never re-rasters, so scrolling no
  *   longer stalls behind a giant per-frame vector repaint.
- * - ANIMATED glow (motion allowed only): the comet-only glow SVG fetched and
- *   inlined on top (transparent canvas, same viewBox so it registers 1:1). Its
- *   sprites animate via GSAP MotionPathPlugin (GPU-composited transform) and
- *   a repeating opacity timeline — no CSS @keyframes in the SVG file.
+ * - ANIMATED glow (motion allowed only): the reverse-glow overlay SVG fetched
+ *   and inlined on top (transparent canvas, same viewBox so it registers 1:1).
+ *   Each overlay path has stroke = theme page-background colour, opacity 0 at
+ *   rest. GSAP fades a line's opacity 0→1 (ERASING it into the background) then
+ *   0 again — a reverse-glow "breathe" with zero registration drift since the
+ *   overlay paths are verbatim copies of the plate paths. No MotionPathPlugin,
+ *   no sprite circles, no comet system.
  *
  * Reduced motion: the glow is not loaded; only the static plate background
  * shows. Inlining (not <object>) keeps the glow transparent and small.
@@ -162,94 +130,55 @@ export function AnimatedContourBackground({
 
         const mobile = isMobile;
 
-        // Iterate over every comet group in the inlined SVG.
-        const groups = svgEl.querySelectorAll<SVGGElement>('g[data-route]');
-        groups.forEach((group) => {
-          const routeIdx = Number(group.getAttribute('data-route'));
-          const dur = Number(group.getAttribute('data-dur'));
-          const fadeT = Number(group.getAttribute('data-fade'));
-          const scatterAbs = Number(group.getAttribute('data-scatter'));
-          const fadePeak = Number(group.getAttribute('data-fade-peak') ?? '0.6');
+        // Iterate over every glow overlay path in the inlined SVG.
+        const paths = svgEl.querySelectorAll<SVGPathElement>('path[data-line]');
 
-          // Mobile budget: only routes 0–7 animate; surplus groups are hidden.
-          if (mobile && routeIdx > 7) {
-            gsap.set(group, { display: 'none' });
+        paths.forEach((pathEl) => {
+          const lineIdx = Number(pathEl.getAttribute('data-line') ?? '0');
+          const cycle = Number(pathEl.getAttribute('data-cycle') ?? '35');
+          const delay = Number(pathEl.getAttribute('data-delay') ?? '0');
+
+          // Mobile budget: only animate lines 0–7; hide the rest before creating tweens.
+          if (mobile && lineIdx >= 8) {
+            gsap.set(pathEl, { display: 'none' });
             return;
           }
 
-          // Reference the invisible route path in <defs> for MotionPathPlugin.
-          // Build the id from the group's class: "{page}-comet" → "{page}-route{i}"
-          const groupClass = group.getAttribute('class') ?? '';
-          const pageMatch = groupClass.match(/^(\S+)-comet/);
-          if (!pageMatch) return;
-          const page = pageMatch[1];
-          const routePathEl = svgEl.querySelector<SVGPathElement>(
-            `#${page}-route${routeIdx}`,
-          );
-          if (!routePathEl) return;
+          // Fade timeline: per-line repeating breathe sequence.
+          //   - hold at 0 for the scatter delay (handled via phase seeding)
+          //   - fade IN over 2.5s (sine.inOut)
+          //   - hold at 1 for 2s
+          //   - fade OUT over 2.5s (sine.inOut)
+          //   - hold at 0 for remainder of cycle
+          // Total active fade window = 7s; remainder = cycle - 7s (dead time).
+          const FADE_IN = 2.5;
+          const HOLD = 2.0;
+          const FADE_OUT = 2.5;
+          const FADE_WINDOW = FADE_IN + HOLD + FADE_OUT; // 7s
+          const DEAD = cycle - FADE_WINDOW; // 28s at 35s cycle
 
-          // Circles inside this group.
-          const circles = Array.from(group.querySelectorAll<SVGCircleElement>('circle'));
+          // willChange is toggled on/off per-leg to avoid static compositor layers.
+          // At most ~3 lines are mid-fade at any instant (verified: worst-case 3
+          // with cycle=35, delay spacing=2.5s, fade_window=7s over 2000s simulation).
+          const tl = gsap.timeline({ repeat: -1 });
+          tl
+            .set(pathEl, { opacity: 0 })
+            // Fade-in leg: promote to compositor layer only while animating.
+            .call(() => { gsap.set(pathEl, { willChange: 'opacity' }); })
+            .to(pathEl, { opacity: 1, duration: FADE_IN, ease: 'sine.inOut' })
+            // Hold at full opacity (still compositor layer).
+            .to(pathEl, { opacity: 1, duration: HOLD, ease: 'none' })
+            // Fade-out leg.
+            .to(pathEl, { opacity: 0, duration: FADE_OUT, ease: 'sine.inOut' })
+            // Demote compositor layer during dead time.
+            .call(() => { gsap.set(pathEl, { willChange: 'auto' }); })
+            // Hold at 0 for the remainder of the cycle.
+            .to(pathEl, { opacity: 0, duration: DEAD, ease: 'none' });
 
-          // Animate each circle along the motion path.
-          circles.forEach((circle) => {
-            const k = Number(circle.getAttribute('data-k') ?? '0');
-            const lag = Number(circle.getAttribute('data-lag') ?? '0');
-
-            // Mobile budget: only sprites 0–6 (head + first 6 followers).
-            if (mobile && k > 6) {
-              gsap.set(circle, { display: 'none' });
-              return;
-            }
-
-            // GPU compositing hint — only on animated circles.
-            gsap.set(circle, { willChange: 'transform' });
-
-            // Movement tween: travel the route path, repeat infinitely.
-            // `align` is REQUIRED: without it, MotionPathPlugin treats the path
-            // coordinates as relative transform deltas from the element's current
-            // position rather than absolute canvas positions, and `alignOrigin`
-            // is inert. With `align: routePathEl`, GSAP snapshots both the path
-            // and the element via getBoundingClientRect at tween creation and
-            // compensates so the element's centre lands exactly on the path point.
-            const moveTween = gsap.to(circle, {
-              motionPath: {
-                path: routePathEl,
-                align: routePathEl,
-                alignOrigin: [0.5, 0.5],
-              },
-              duration: dur,
-              ease: 'none',
-              repeat: -1,
-            });
-
-            // Seed the phase to match the old CSS animation-delay behavior:
-            //   old delay = scatter + lag  (scatter = -(i*3.83), negative = started ahead)
-            //   timeAdvanced = -delay = scatterAbs - lag
-            //   phase = ((scatterAbs - lag) % dur + dur) % dur
-            seedTotalTime(moveTween, scatterAbs, lag, dur);
-          });
-
-          // Ignition fade: a repeating timeline on the GROUP opacity through
-          // the 5-point curve: 0%→0, 14%→peak, 45%→peak, 62%→0, 100%→0.
-          // Period = data-fade (an exact integer divisor of data-dur, preserving
-          // the loop-wrap-lands-dark property from the original CSS emission).
-          const fadeTl = gsap.timeline({ repeat: -1 });
-          const p14 = fadeT * 0.14;
-          const p45 = fadeT * 0.45;
-          const p62 = fadeT * 0.62;
-          fadeTl
-            .set(group, { opacity: 0 })
-            .to(group, { opacity: fadePeak, duration: p14, ease: 'sine.inOut' })
-            .to(group, { opacity: fadePeak, duration: p45 - p14, ease: 'none' })
-            .to(group, { opacity: 0, duration: p62 - p45, ease: 'sine.inOut' })
-            .to(group, { opacity: 0, duration: fadeT - p62, ease: 'none' });
-
-          // Seed fade timeline to the same scatter offset as the movement.
-          // The fade uses the same -scatter CSS delay as the move tween, so
-          // phase = scatterAbs % fadeT (+ fadeT for safety).
-          const fadePhase = ((scatterAbs % fadeT) + fadeT) % fadeT;
-          fadeTl.totalTime(fadePhase + 10 * fadeT);
+          // Seed the phase so lines are mid-cycle on load (no synchronized start).
+          // delay = initial scatter offset in seconds; phase within the cycle.
+          const phase = ((delay % cycle) + cycle) % cycle;
+          tl.totalTime(phase + 10 * cycle);
         });
       }, container);
     });
