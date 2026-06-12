@@ -12,8 +12,13 @@ import { Metadata, Viewport } from 'next';
 
 // Viewport export — kept separate from metadata (Next 14 requirement).
 // interactiveWidget: 'resizes-visual' tells mobile browsers that the on-screen
-// keyboard / URL-bar resizes only the visual viewport, not the layout viewport,
-// preventing layout reflows and background re-rasters on bar collapse.
+// keyboard resizes only the visual viewport, not the layout viewport, preventing
+// layout reflows when the keyboard appears or dismisses. NOTE: this setting does
+// NOT prevent the URL-bar from resizing fixed elements or viewport units (lvh).
+// iOS WebKit re-resolves lvh frame-by-frame as the address bar retracts (bugs
+// 255708 / 261185), and Chrome Android's interactive-widget only governs the
+// virtual keyboard — the URL bar still causes height changes. The backdrop
+// component handles this separately via a px-pinned inline height on mobile.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,

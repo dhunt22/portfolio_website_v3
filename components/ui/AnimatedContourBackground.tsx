@@ -4,7 +4,7 @@
 // components/ui/AnimatedContourBackground.tsx
 // Backdrop engine v3 — fixed full-viewport contour plate with GSAP reverse-glow overlay.
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface AnimatedContourBackgroundProps {
@@ -79,8 +79,83 @@ export function AnimatedContourBackground({
   const reducedMotion = useReducedMotion();
   const [glowMarkup, setGlowMarkup] = useState<string | null>(null);
   const glowDivRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const shouldAnimate = mounted && !reducedMotion;
+
+  // ── Mobile height pin ────────────────────────────────────────────────────────
+  // On iOS, `lvh` re-resolves frame-by-frame as the URL bar collapses
+  // (WebKit bugs 255708 / 261185: at load lvh ≈ svh, then grows to full height
+  // as chrome retracts). On Chrome Android, `interactive-widget=resizes-visual`
+  // only governs the virtual keyboard — the URL bar STILL causes height changes
+  // on fixed/lvh elements. Both produce visible scale-bounce on mobile because
+  // the plate's `cover` scale is height-driven (portrait: height/254 > width/190.5
+  // at all phone heights), so any height delta = visible zoom.
+  //
+  // Fix: on mobile (< 768 px), measure once and pin the container height in px.
+  // `screen.*` are CSS px. On iOS they are orientation-FIXED (portrait-major);
+  // on Android they follow orientation — we normalise with min/max so we always
+  // pin to the longer dimension in portrait and the shorter in landscape.
+  // This produces a constant small overdraw (screen includes system bars) rather
+  // than any visible rescale. Desktop (≥ 768 px) must NOT be pinned — lvh is
+  // correct there and browsers have no collapsing chrome.
+  //
+  // Re-pin on orientation/viewport-width change only; height-only changes
+  // (URL-bar collapse) are the very thing we're suppressing — ignore them.
+  const pinHeightRef = useRef<number | null>(null);
+
+  const applyPin = useCallback((el: HTMLDivElement) => {
+    const w = window.innerWidth;
+    if (w >= 768) {
+      // Desktop: remove any previously set inline height; h-lvh takes over.
+      if (el.style.height) el.style.height = '';
+      pinHeightRef.current = null;
+      return;
+    }
+    // Mobile: compute the stable full-screen height from screen dimensions.
+    // screen.* are CSS px and do not change during URL-bar animation.
+    const portrait = window.innerHeight >= window.innerWidth;
+    const pinH = portrait
+      ? Math.max(window.screen.height, window.screen.width)
+      : Math.min(window.screen.height, window.screen.width);
+    if (pinH !== pinHeightRef.current) {
+      el.style.height = `${pinH}px`;
+      pinHeightRef.current = pinH;
+    }
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    // Initial pin (synchronous on mount, before first paint).
+    applyPin(el);
+
+    let lastWidth = window.innerWidth;
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const handleResize = () => {
+      const currentWidth = window.innerWidth;
+      // Height-only change (URL-bar collapse) — width is unchanged. Ignore it;
+      // that's the exact event we're suppressing with the pin.
+      if (currentWidth === lastWidth) return;
+
+      // Width changed: true orientation flip or window resize. Debounce ~150 ms
+      // to let the browser finish the transition before reading screen dimensions.
+      lastWidth = currentWidth;
+      if (debounceTimer !== null) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        applyPin(el);
+        debounceTimer = null;
+      }, 150);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (debounceTimer !== null) clearTimeout(debounceTimer);
+    };
+  }, [applyPin]);
 
   // Fetch + clean the glow SVG whenever the source or motion preference changes.
   useEffect(() => {
@@ -194,6 +269,7 @@ export function AnimatedContourBackground({
 
   return (
     <div
+      ref={containerRef}
       data-contour-plate
       data-light-src={lightPlate}
       data-dark-src={darkPlate}
