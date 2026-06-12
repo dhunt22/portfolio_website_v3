@@ -13,11 +13,10 @@
  *        light = native colours as-is
  *        dark  = per-colour lightness transform (hue/sat preserved) so the ramp
  *                still reads as a ramp on the #14130f night ground.
- *   5. Picks GLOW_LINES paths from the N longest paths (skipping any whose `d`
- *      exceeds GLOW_MAX_PATH_BYTES bytes — merged mega-paths — then taking the
- *      next longest), keeping every other one for spatial spread. Emits the
- *      reverse-glow overlay from the EXACT SAME post-svgo path data the plate
- *      writes (bit-identical geometry; comet routes and MotionPath are GONE).
+ *   5. Emits a FULL-TWIN glow per page: every plate path verbatim (bit-identical
+ *      post-svgo geometry), grouped into GLOW_BANDS elevation bands by stroke-
+ *      colour luminance, strokes = var(--surface-page). The runtime sweeps a
+ *      wave of erasure through the bands (comet routes and MotionPath are GONE).
  *   6. Assembles TWO output SVGs per page into public/images/plates/:
  *        <page>_<theme>_plate.svg  — contours ONLY (static; consumed as a CSS
  *          background-image, so no <style>/keyframes/sprites/gradients).
@@ -86,37 +85,19 @@ const PLATE_OPACITY = { light: 0.35, dark: 0.30 };
 const MAX_BYTES = 2.5 * 1024 * 1024;
 
 // ---------------------------------------------------------------------------
-// Reverse-glow knobs (v3)
+// Reverse-glow knobs (v4 — full-twin elevation-band wave)
 // ---------------------------------------------------------------------------
 
-// Number of glow lines to emit per glow file. Derived from top-N longest paths,
-// then keep every other one for spatial spread → ~GLOW_LINES/2 ... GLOW_LINES
-// lines depending on N pool.
-const GLOW_LINES = 14;
-
-// Max byte length of a candidate path's `d` attribute. Paths longer than this
-// are skipped (they are svgo-merged mega-paths that dominate the file size and
-// look visually indistinct from a dozen individual contours). The next-longest
-// eligible path is taken instead. Keeps total glow file ≤ ~350 KB.
-const GLOW_MAX_PATH_BYTES = 60_000;
-
-// NOTE: GLOW_BG hex constants removed. The overlay now uses
-// style="stroke:var(--surface-page)" so one themeless file handles both
-// light (#f7f4ec) and dark (#1a1814) by CSS custom-property resolution.
-
-// Per-line cycle period: uniform 35s. A fixed cycle is required to keep worst-
-// case concurrent fades ≤ 3. Analysis: with delay spacing = 2.5s and cycle = 35s,
-// at any instant at most ceil(7/2.5) = 3 lines can be mid-fade simultaneously
-// (verified by exhaustive 2000s simulation at 0.01s resolution). Mixed cycle
-// lengths cause lines to drift into resonance and cluster — uniform cycle prevents
-// this. 35s gives a gentle, unhurried breathing cadence.
-const cyclePeriod = (_idx) => 35;
-
-// Per-line scatter delay (seconds): idx * 2.5.
-// 14 lines * 2.5s = 35s total span = exactly one cycle → lines are evenly
-// distributed through the cycle on load. Spacing > fw/3 (= 7/3 ≈ 2.33s) ensures
-// worst-case concurrent fades = 3, not 4.
-const lineDelay = (idx) => idx * 2.5;
+// The glow file is a FULL TWIN of the plate (user spec: "render the SVG twice
+// on top of itself") — every contour path, verbatim geometry, stroke =
+// var(--surface-page). Paths are grouped into GLOW_BANDS elevation bands by
+// stroke-colour luminance (contours are level sets; the hypsometric ramp IS
+// the elevation key). The runtime sweeps a wave of erasure through the bands:
+// each band fades toward the page background and back, in elevation order —
+// the terrain visibly "breathes" while registration stays pixel-perfect.
+// Timing constants (step/fade/hold/peak) live in AnimatedContourBackground.tsx
+// so they can be tuned without regenerating assets.
+const GLOW_BANDS = 9;
 
 // ---------------------------------------------------------------------------
 // Colour helpers
@@ -437,68 +418,26 @@ function decimate(paths) {
 }
 
 // ---------------------------------------------------------------------------
-// Glow line selection (v3 — reverse-glow overlay)
+// Elevation banding (v4 — full-twin wave)
 // ---------------------------------------------------------------------------
-
-// Pick GLOW_LINES overlay paths from the N longest paths, keeping every other
-// one for spatial spread. Selection is deterministic (sort by path length
-// desc, keep every other one up to GLOW_LINES). Paths whose `d` exceeds
-// GLOW_MAX_PATH_BYTES are skipped (svgo mega-paths) so single large strings
-// don't dominate the glow file. The path objects returned have the EXACT `d`,
-// `stroke`, `width` as they appear in `paths` — the SAME strings the plate
-// emits, guaranteeing bit-identical geometry.
-function pickGlowLines(paths) {
-  if (paths.length === 0) return [];
-
-  // Estimate length from d-string byte length as a fast proxy (no full flatten).
-  // Sort descending by d.length (longer d string ≈ longer/more-complex path).
-  // Skip mega-paths whose d string exceeds GLOW_MAX_PATH_BYTES to keep file small.
-  const eligible = paths.filter((p) => Buffer.byteLength(p.d, 'utf8') <= GLOW_MAX_PATH_BYTES);
-  const sorted = [...eligible].sort((a, b) => b.d.length - a.d.length);
-
-  // Keep every other one from the sorted list for spatial spread, up to GLOW_LINES.
-  const spread = [];
-  for (let i = 0; i < sorted.length && spread.length < GLOW_LINES * 2; i += 2) {
-    spread.push(sorted[i]);
-  }
-
-  return spread.slice(0, GLOW_LINES);
+// Contour stroke colours encode elevation (hypsometric ramp). Rank the unique
+// colours by relative luminance and bucket them into GLOW_BANDS bands, so each
+// band is a contiguous range of elevations. Deterministic: same input → same
+// banding (no randomness, no time dependence).
+function assignBands(paths) {
+  const lum = (hex) => {
+    const h = hex.replace('#', '');
+    const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+    const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const colors = [...new Set(paths.map((p) => p.stroke))].sort((a, b) => lum(a) - lum(b));
+  const bandOf = new Map(colors.map((c, rank) => [c, Math.min(GLOW_BANDS - 1, Math.floor((rank / colors.length) * GLOW_BANDS))]));
+  const bands = Array.from({ length: GLOW_BANDS }, () => []);
+  for (const p of paths) bands[bandOf.get(p.stroke)].push(p);
+  return bands.filter((b) => b.length > 0);
 }
 
-// ---------------------------------------------------------------------------
-// Concurrent-fade analysis (verification)
-// ---------------------------------------------------------------------------
-// Fade window: 7s total (2.5s fade-in + 2s hold + 2.5s fade-out).
-// Samples at t in [0, SAMPLE_DURATION] at fine granularity.
-// Returns max simultaneous fades observed.
-function computeMaxConcurrentFades(n) {
-  const FADE_WINDOW = 7; // 2.5s in + 2s hold + 2.5s out
-  const SAMPLE_STEP = 0.01; // fine resolution
-  const SAMPLE_DURATION = 2000; // sample over 2000s to capture all resonance patterns
-
-  let maxSimultaneous = 0;
-  for (let t = 0; t <= SAMPLE_DURATION; t += SAMPLE_STEP) {
-    let active = 0;
-    for (let idx = 0; idx < n; idx++) {
-      const cycle = cyclePeriod(idx);
-      const delay = lineDelay(idx);
-      // Phase at time t: the line's position within its cycle (accounting for delay)
-      const phase = ((t - delay) % cycle + cycle) % cycle;
-      if (phase < FADE_WINDOW) active++;
-    }
-    if (active > maxSimultaneous) maxSimultaneous = active;
-  }
-  return maxSimultaneous;
-}
-
-// ---------------------------------------------------------------------------
-// Assembly
-// ---------------------------------------------------------------------------
-
-// --- Static plate file: contours ONLY ------------------------------------
-// Consumed as a CSS background-image, so it must be fully static: the plate
-// group with its opacity knob BAKED into the group (no <style>), clipPath,
-// same viewBox/preserveAspectRatio. No keyframes, no sprites, no gradients.
 function buildPlateSvg(paths, theme, viewBox) {
   const vb = viewBox ?? VIEWBOX;
   // Parse inner rect dimensions from viewBox "x y w h".
@@ -545,11 +484,12 @@ function buildPlateSvg(paths, theme, viewBox) {
 // (initial phase scatter in seconds). All animation is driven by GSAP at
 // runtime via AnimatedContourBackground. Re-theming is instant — var() resolves
 // live; no refetch required on theme toggle.
+
 function buildGlowSvg(paths, page, viewBox) {
   const vb = viewBox ?? VIEWBOX;
   const [vbX, vbY, vbW, vbH] = vb.split(' ').map(Number);
 
-  const glowLines = pickGlowLines(paths);
+  const bands = assignBands(paths);
 
   // Scope the clip id per page: glows are inlined into a shared document, so
   // `url(#mc)` must not collide across pages.
@@ -557,40 +497,29 @@ function buildGlowSvg(paths, page, viewBox) {
   const defsBlock =
     `<defs><clipPath id="${clipId}"><rect x="${vbX}" y="${vbY}" width="${vbW}" height="${vbH}"/></clipPath></defs>`;
 
-  // Each glow path: verbatim d and stroke-width from the plate, but
-  // style="stroke:var(--surface-page)" (CSS custom property, NOT a presentation
-  // attribute — var() only works in style), fill none, opacity 0 at rest,
-  // and data-* for GSAP.
-  // We use the plate's stroke-width (not the native stroke colour) for thickness —
-  // the overlay must cover exactly the same pixels the plate line occupies.
-  const glowBody = glowLines
-    .map((p, idx) => {
-      const cycle = cyclePeriod(idx).toFixed(2);
-      const delay = lineDelay(idx).toFixed(2);
-      return (
-        `<path` +
-        ` d="${p.d}"` +
-        ` style="stroke:var(--surface-page)"` +
-        ` stroke-width="${p.width}"` +
-        ` fill="none"` +
-        ` stroke-linecap="round"` +
-        ` stroke-linejoin="round"` +
-        ` opacity="0"` +
-        ` data-line="${idx}"` +
-        ` data-cycle="${cycle}"` +
-        ` data-delay="${delay}"` +
-        `/>`
-      );
+  // One <g data-band> per elevation band, opacity 0 at rest. Paths inside are
+  // verbatim plate geometry (exact d + stroke-width — the overlay must cover
+  // exactly the pixels the plate line occupies). stroke comes from the CSS
+  // custom property so one themeless file serves both themes and re-themes
+  // live with zero refetch. NOTE: no plate-style 0.35/0.30 group opacity here —
+  // a band at animated opacity α erases its lines by factor α (full-strength
+  // background-colour cover is what makes the erase reach the page colour).
+  const bandBody = bands
+    .map((bandPaths, b) => {
+      const body = bandPaths
+        .map((p) => `<path d="${p.d}" stroke-width="${p.width}"/>`)
+        .join('');
+      return `<g data-band="${b}" opacity="0">${body}</g>`;
     })
     .join('');
 
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid slice">` +
     defsBlock +
-    `<g clip-path="url(#${clipId})" fill="none">${glowBody}</g>` +
+    `<g clip-path="url(#${clipId})" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--surface-page)">${bandBody}</g>` +
     `</svg>`;
 
-  return { svg, lineCount: glowLines.length };
+  return { svg, bandCount: bands.length, pathCount: paths.length };
 }
 
 // ---------------------------------------------------------------------------
@@ -666,7 +595,7 @@ function buildPageOrientation(page, srcPath, viewBox, suffix, rawSizeMB, emitGlo
     fs.writeFileSync(glowPath, glow.svg);
     const glowKB = (glowBytes / 1024).toFixed(1);
     console.log(
-      `[${page}${suffix}/glow] lines: ${glow.lineCount}, glow: ${glowKB}KB (themeless — var(--surface-page))\n    -> ${glowPath}`,
+      `[${page}${suffix}/glow] bands: ${glow.bandCount}, paths: ${glow.pathCount}, glow: ${glowKB}KB (themeless full twin)\n    -> ${glowPath}`,
     );
     rows.push({
       page: page + suffix,
@@ -719,18 +648,8 @@ function main() {
     }
   }
 
-  // Concurrent-fade analysis: compute worst-case overlapping fade windows.
-  const maxConcurrent = computeMaxConcurrentFades(GLOW_LINES);
-  console.log(`\nConcurrent-fade analysis (GLOW_LINES=${GLOW_LINES}):`);
-  console.log(`  Fade window per line: 7s (2.5s in + 2s hold + 2.5s out)`);
-  console.log(`  Cycle periods: ${Array.from({length: GLOW_LINES}, (_, i) => cyclePeriod(i).toFixed(1)).join(', ')}s`);
-  console.log(`  Delays: ${Array.from({length: GLOW_LINES}, (_, i) => lineDelay(i).toFixed(2)).join(', ')}s`);
-  console.log(`  Worst-case simultaneous fades: ${maxConcurrent}`);
-  if (maxConcurrent > 3) {
-    console.warn(`  WARNING: max concurrent fades (${maxConcurrent}) exceeds budget of 3!`);
-  } else {
-    console.log(`  OK: within the ≤3 simultaneous budget.`);
-  }
+  // Wave concurrency: window 5.6s / step 2s -> at most 3 bands mid-transition
+  // (timing lives in AnimatedContourBackground.tsx; assets carry no timing).
 
   const plateFiles = sizeTable.filter((r) => r.theme !== '(glow)').length;
   const glowFiles = sizeTable.filter((r) => r.theme === '(glow)').length;

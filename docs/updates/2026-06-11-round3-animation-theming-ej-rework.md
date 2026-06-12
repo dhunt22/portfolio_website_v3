@@ -180,3 +180,60 @@ Dark plates were baked against the old `#14130f` ground; verified legible on sto
 Build 8/8 static pages · jest 19/19 (13 + 6 filter tests) · first-load JS 88–113KB (GSAP and
 maplibre both lazy) · plates: desktop ~0.3–2.5MB each, home mobile plate 1.7MB, glows 54–59KB ·
 out/ grew ~3.5MB for the 4 mobile-variant files.
+
+---
+
+# ROUND 4 ADDENDUM (2026-06-12) — reverse-glow, px-pin, spacing
+
+User feedback after R3: glows still off the lines on real devices (root cause: comet routes were
+140-pt RESAMPLED polylines — they deviate from the true curves between samples even when "on
+route"); scroll scale-bounce persisted; footer needed contrast; card spacing too large. The comet
+system is GONE. Superseding sections 1/3 above where they conflict:
+
+## R4.1 Reverse-glow (glow v4 — full-twin elevation-band wave) — CURRENT SYSTEM
+- User spec: "render the SVG twice on top of itself; top copy opacity 0; fade lines in/out with
+  the theme background color (paper or stone) — reverse glow, scales with the SVG, no spill."
+- Emission (`scripts/build-plates.mjs`): per page ONE themeless glow file (`{page}_glow.svg` +
+  `home_glow_mobile.svg`) = a FULL TWIN of the plate: every path verbatim (bit-identical post-svgo
+  `d` + stroke-width), grouped into `GLOW_BANDS = 9` elevation bands by stroke-colour LUMINANCE
+  (the hypsometric ramp encodes elevation; contour lines never cross, so covering one can't cut
+  others). Band groups: `<g data-band="b" opacity="0">`; outer group carries
+  `style="stroke:var(--surface-page)"` → one file serves both themes, re-themes LIVE with zero
+  refetch (inline SVG resolves CSS custom properties). NO plate-style 0.35 wrapper opacity in the
+  glow — full-strength bg cover is what makes the erase reach the page colour.
+- Runtime (`AnimatedContourBackground.tsx`): a wave sweeps the bands in elevation order — per band
+  timeline: fade to PEAK 0.9 over 2.2s (sine.inOut), hold 1.2s, fade out 2.2s, dead until cycle.
+  STEP 2s between bands; CYCLE = bands×STEP (18s) → perpetual sweep; ≤3 bands mid-transition
+  (compositor budget; willChange toggled around the active window via .call). Phase-seeded via
+  totalTime so the wave is mid-travel on load. ALL timing constants live in the component — assets
+  carry no timing. Registration is pixel-perfect BY CONSTRUCTION (same d, same viewBox, slice ==
+  cover); verify with: every glow `d` is a substring of the plate file.
+- WHY v3 failed perceptually: 14 individual lines fading one-at-a-time among ~900 at 0.35 plate
+  opacity is invisible at a glance. Banding whole elevation terraces is unmissable.
+- Cost: glow ≈ plate size (full twin; home 2.3MB desktop / 1.7MB mobile raw, ~4-500KB brotli).
+  This is the user-specified double-render; knob = GLOW_BANDS / band thinning if ever needed.
+
+## R4.2 Scroll scale-bounce — REAL root cause + fix (supersedes the lvh approach)
+- `h-lvh` was NOT stable: iOS re-resolves lvh frame-by-frame during URL-bar collapse (WebKit bugs
+  255708, 261185 — at load lvh≈svh, grows as chrome retracts). And Chrome's
+  `interactive-widget=resizes-visual` governs ONLY the virtual keyboard, not the URL bar.
+- Fix: px-pin. On touch-primary devices (`innerWidth < 768` OR `(pointer: coarse)` — iPads are
+  ≥768 but their chrome collapses too) measure once at mount and set inline height:
+  `portrait ? max(screen.width, screen.height) : min(...)` — screen.* are CSS px,
+  orientation-FIXED on iOS, rotating on Android; min/max normalizes both. Constant small overdraw
+  (screen includes system bars), zero rescale. Desktop keeps `h-lvh` (no collapsing chrome).
+  Re-pin only on width-change resizes (debounced 150ms); height-only resizes ignored.
+  SSR fallback stays `h-lvh` (no inline height in server HTML).
+
+## R4.3/4 Cosmetics
+Footer: `bg-[color-mix(in_srgb,var(--surface-header)_30%,transparent)]`. Cards: `.panel`
+p-4 md:p-5 (was p-8/p-10); inter-panel mb-8→mb-4; project list space-y-8→space-y-4; home section
+paddings halved. `scroll-mt-16` anchors are NOT margins — untouched.
+
+## R4 verification notes
+- The visibility failure mode to test for: an effect can be mechanically correct (opacities cycle
+  in computed style) yet perceptually invisible. Verify perceptibility, not just mechanics.
+- Erase-registration test: force all band groups to opacity 1 → the covered lines must VANISH
+  cleanly (any misalignment shows doubled lines).
+- PR #8 was closed and superseded by PR #9 (same branch) because Netlify would not rebuild the
+  preview on the old PR. New pushes to the branch update PR #9 and trigger fresh previews.

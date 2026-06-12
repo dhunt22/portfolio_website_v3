@@ -106,7 +106,13 @@ export function AnimatedContourBackground({
 
   const applyPin = useCallback((el: HTMLDivElement) => {
     const w = window.innerWidth;
-    if (w >= 768) {
+    // Touch-primary devices (phones AND tablets — iPads are ≥768px wide but
+    // their Safari chrome still collapses) get the px pin. True desktops
+    // (fine primary pointer, no collapsing chrome) keep h-lvh.
+    const coarse =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(pointer: coarse)').matches;
+    if (w >= 768 && !coarse) {
       // Desktop: remove any previously set inline height; h-lvh takes over.
       if (el.style.height) el.style.height = '';
       pinHeightRef.current = null;
@@ -187,6 +193,14 @@ export function AnimatedContourBackground({
   }, [shouldAnimate, glowSrc]);
 
   // Build GSAP timelines after the glow markup is injected into the DOM.
+  //
+  // v4 — elevation-band wave. The glow SVG is a full twin of the plate whose
+  // paths are grouped into <g data-band> elevation bands (banded by the
+  // hypsometric ramp in the build script). A wave of erasure sweeps through
+  // the bands in elevation order: each band fades toward the page background
+  // (its strokes ARE the page colour) and back. Whole terraces of the terrain
+  // visibly breathe — unmissable, yet registration is pixel-perfect because
+  // the twin shares the plate's exact geometry, viewBox, and cover/slice math.
   useEffect(() => {
     const container = glowDivRef.current;
     if (!glowMarkup || !container) return;
@@ -203,57 +217,45 @@ export function AnimatedContourBackground({
         const svgEl = container.querySelector('svg');
         if (!svgEl) return;
 
-        const mobile = isMobile;
+        const bands = Array.from(
+          svgEl.querySelectorAll<SVGGElement>('g[data-band]'),
+        );
+        if (bands.length === 0) return;
 
-        // Iterate over every glow overlay path in the inlined SVG.
-        const paths = svgEl.querySelectorAll<SVGPathElement>('path[data-line]');
+        // ── Wave tuning (single source of truth; assets carry no timing) ──
+        // Window = IN + HOLD + OUT = 5.6s. STEP = 2s between adjacent bands →
+        // at most ceil(5.6 / 2) = 3 bands mid-transition at any instant
+        // (compositor-layer budget: willChange is toggled around the active
+        // window, so ≤ 3 transient layers exist, none at rest).
+        const FADE_IN = 2.2;
+        const HOLD = 1.2;
+        const FADE_OUT = 2.2;
+        const STEP = 2.0;
+        // Erase depth: 0.9 leaves a faint ghost of the band so the artwork
+        // never looks broken while a band is "out".
+        const PEAK = 0.9;
+        const WINDOW = FADE_IN + HOLD + FADE_OUT;
+        // The wave is perpetual: band b starts at b*STEP and the cycle length
+        // is bands*STEP, so band 0 re-ignites right as the wave wraps.
+        const CYCLE = Math.max(bands.length * STEP, WINDOW + STEP);
+        const DEAD = CYCLE - WINDOW;
 
-        paths.forEach((pathEl) => {
-          const lineIdx = Number(pathEl.getAttribute('data-line') ?? '0');
-          const cycle = Number(pathEl.getAttribute('data-cycle') ?? '35');
-          const delay = Number(pathEl.getAttribute('data-delay') ?? '0');
-
-          // Mobile budget: only animate lines 0–7; hide the rest before creating tweens.
-          if (mobile && lineIdx >= 8) {
-            gsap.set(pathEl, { display: 'none' });
-            return;
-          }
-
-          // Fade timeline: per-line repeating breathe sequence.
-          //   - hold at 0 for the scatter delay (handled via phase seeding)
-          //   - fade IN over 2.5s (sine.inOut)
-          //   - hold at 1 for 2s
-          //   - fade OUT over 2.5s (sine.inOut)
-          //   - hold at 0 for remainder of cycle
-          // Total active fade window = 7s; remainder = cycle - 7s (dead time).
-          const FADE_IN = 2.5;
-          const HOLD = 2.0;
-          const FADE_OUT = 2.5;
-          const FADE_WINDOW = FADE_IN + HOLD + FADE_OUT; // 7s
-          const DEAD = cycle - FADE_WINDOW; // 28s at 35s cycle
-
-          // willChange is toggled on/off per-leg to avoid static compositor layers.
-          // At most ~3 lines are mid-fade at any instant (verified: worst-case 3
-          // with cycle=35, delay spacing=2.5s, fade_window=7s over 2000s simulation).
+        bands.forEach((bandEl, b) => {
           const tl = gsap.timeline({ repeat: -1 });
           tl
-            .set(pathEl, { opacity: 0 })
-            // Fade-in leg: promote to compositor layer only while animating.
-            .call(() => { gsap.set(pathEl, { willChange: 'opacity' }); })
-            .to(pathEl, { opacity: 1, duration: FADE_IN, ease: 'sine.inOut' })
-            // Hold at full opacity (still compositor layer).
-            .to(pathEl, { opacity: 1, duration: HOLD, ease: 'none' })
-            // Fade-out leg.
-            .to(pathEl, { opacity: 0, duration: FADE_OUT, ease: 'sine.inOut' })
-            // Demote compositor layer during dead time.
-            .call(() => { gsap.set(pathEl, { willChange: 'auto' }); })
-            // Hold at 0 for the remainder of the cycle.
-            .to(pathEl, { opacity: 0, duration: DEAD, ease: 'none' });
+            .set(bandEl, { opacity: 0 })
+            // Promote to a compositor layer only while the band animates.
+            .call(() => { gsap.set(bandEl, { willChange: 'opacity' }); })
+            .to(bandEl, { opacity: PEAK, duration: FADE_IN, ease: 'sine.inOut' })
+            .to(bandEl, { opacity: PEAK, duration: HOLD, ease: 'none' })
+            .to(bandEl, { opacity: 0, duration: FADE_OUT, ease: 'sine.inOut' })
+            .call(() => { gsap.set(bandEl, { willChange: 'auto' }); })
+            .to(bandEl, { opacity: 0, duration: DEAD, ease: 'none' });
 
-          // Seed the phase so lines are mid-cycle on load (no synchronized start).
-          // delay = initial scatter offset in seconds; phase within the cycle.
-          const phase = ((delay % cycle) + cycle) % cycle;
-          tl.totalTime(phase + 10 * cycle);
+          // Phase-seed so the wave is already travelling on load: band b sits
+          // b*STEP into the cycle (+10 cycles keeps totalTime positive).
+          const phase = ((b * STEP) % CYCLE + CYCLE) % CYCLE;
+          tl.totalTime(phase + 10 * CYCLE);
         });
       }, container);
     });
