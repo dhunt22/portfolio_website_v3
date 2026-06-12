@@ -26,7 +26,7 @@ function ProjectRow({ project }: { project: Project }) {
   const displayType = project.displayType ?? 'map';
 
   return (
-    <article className="border-t border-border py-12 first:border-t-0 first:pt-4">
+    <article className="panel">
       <p className="eyebrow mb-2">{project.description} · {project.year}</p>
       <h2 className="mb-4 font-display text-2xl text-ink-strong">{project.title}</h2>
 
@@ -37,7 +37,7 @@ function ProjectRow({ project }: { project: Project }) {
       ))}
 
       {project.technologies && project.technologies.length > 0 && (
-        <p className="mb-4 font-mono text-xs tracking-mono text-ink-muted">
+        <p className="mb-4 font-sans text-xs tracking-mono text-ink-muted">
           {project.technologies.join(' · ')}
         </p>
       )}
@@ -144,7 +144,7 @@ export function ProjectIndex({ projects }: ProjectIndexProps) {
           <TabsContent
             key={tab.value}
             value={tab.value}
-            className="mt-0"
+            className="mt-0 space-y-8"
           >
             {categoryProjects.length > 0 ? (
               categoryProjects.map((project) => (

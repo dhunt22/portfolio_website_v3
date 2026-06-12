@@ -236,7 +236,7 @@ export function IndicatorBrowser(): JSX.Element {
                       onClick={() => handleComponentClick(component.id)}
                       aria-label={`View ${component.name} on map`}
                       aria-pressed={isActive}
-                      className={`block w-full text-left py-2 font-mono text-xs uppercase tracking-caps ${
+                      className={`block w-full text-left py-2 font-sans font-medium text-xs uppercase tracking-caps ${
                         isActive
                           ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-4'
                           : 'text-ink-muted hover:text-ink-strong'

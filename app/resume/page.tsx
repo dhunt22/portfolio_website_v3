@@ -54,9 +54,10 @@ export default function ResumePage() {
           </a>
         </header>
 
-        <div className="mt-10">
+        <div className="panel mt-8">
+        <div>
           <h2 className="font-display text-2xl text-ink-strong">Devin Hunt</h2>
-          <p className="mt-1 font-mono text-xs uppercase tracking-caps text-ink-muted">Water Resources Engineer</p>
+          <p className="mt-1 font-sans font-medium text-xs uppercase tracking-caps text-ink-muted">Water Resources Engineer</p>
           <p className="mt-4 max-w-[40rem] font-display italic text-xl leading-snug text-ink-strong">
             Hydrologist passionate about understanding and solving water resource challenges in California through data-driven approaches. Skilled in leveraging open-source data, spatial analysis, and modeling to support sustainable water management. Committed to applying technical expertise to develop innovative solutions for complex hydrologic issues.
           </p>
@@ -145,6 +146,7 @@ export default function ResumePage() {
             <p>WILDERNESS FIRST AID, NOLS Wilderness Medicine, May 2016</p>
           </div>
         </ResumeSection>
+        </div>
       </div>
     </div>
   );

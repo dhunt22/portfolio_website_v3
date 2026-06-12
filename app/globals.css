@@ -48,10 +48,13 @@
 }
 
 @layer components {
-  .eyebrow { @apply font-mono text-xs font-normal uppercase tracking-caps text-eyebrow; }
+  .panel { @apply border border-border bg-card p-8 md:p-10; }
+  .eyebrow { @apply font-sans font-medium text-xs uppercase tracking-caps text-eyebrow; }
+  .eyebrow-mono { @apply font-mono text-xs font-normal uppercase tracking-caps text-eyebrow; }
   .display { @apply font-display font-medium tracking-display leading-tight-display text-ink-strong; }
   .lead { @apply text-lg leading-relaxed text-ink-body; }
-  .link-quiet { @apply font-mono text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
+  .link-quiet { @apply font-sans font-medium text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
+  .link-quiet-mono { @apply font-mono text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
 }
 
 /* Focus visible improvements */

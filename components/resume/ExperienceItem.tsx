@@ -33,7 +33,7 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
   return (
     <div className="mb-10 last:mb-0 max-w-[40rem]">
       <h3 className="font-display text-xl text-ink-strong">{title}</h3>
-      <p className="mt-1 font-mono text-xs tracking-mono text-ink-muted">
+      <p className="mt-1 font-sans text-xs tracking-mono text-ink-muted">
         {company} · {period}
       </p>
       <ul className="mt-3 list-disc space-y-1 pl-5 leading-relaxed text-ink-body marker:text-eyebrow">

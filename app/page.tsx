@@ -17,7 +17,7 @@ export default function Home() {
 
       <div className="container relative z-10 mx-auto px-6">
         <section className="flex min-h-[82vh] max-w-3xl flex-col justify-center">
-          <p className="eyebrow mb-6 animate-rise opacity-0 motion-reduce:animate-none motion-reduce:opacity-100">
+          <p className="eyebrow-mono mb-6 animate-rise opacity-0 motion-reduce:animate-none motion-reduce:opacity-100">
             Water Resources Engineer &amp; Explorer
           </p>
           <h1 className="display mb-9 text-[clamp(3rem,7vw,5.25rem)] animate-rise opacity-0 [animation-delay:120ms] motion-reduce:animate-none motion-reduce:opacity-100">
@@ -29,8 +29,8 @@ export default function Home() {
             analysis, and groundwater modeling to support sustainable water management.
           </p>
           <nav aria-label="Hero" className="flex gap-12 animate-rise opacity-0 [animation-delay:400ms] motion-reduce:animate-none motion-reduce:opacity-100">
-            <Link href="/portfolio" className="link-quiet">Explore Portfolio</Link>
-            <Link href="/resume" className="link-quiet">View Resume</Link>
+            <Link href="/portfolio" className="link-quiet-mono">Explore Portfolio</Link>
+            <Link href="/resume" className="link-quiet-mono">View Resume</Link>
           </nav>
         </section>
 
@@ -55,60 +55,64 @@ export default function Home() {
         </section>
 
         <section className="py-12">
-          <h2 className="eyebrow mb-10">Professional Expertise</h2>
-          <div className="grid gap-12 md:grid-cols-3">
-            <div>
-              <h3 className="mb-3 font-display text-xl text-ink-strong">Water Resources Engineering</h3>
-              <p className="leading-relaxed text-ink-body">
-                Development of CA SGMA Groundwater Sustainability Plans (GSPs), groundwater budgets,
-                and optimization of recharge and extraction through geospatial analyses.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-3 font-display text-xl text-ink-strong">Geospatial Analysis</h3>
-              <p className="leading-relaxed text-ink-body">
-                Expertise in ArcGIS Pro, QGIS, and cartography. Creating innovative solutions
-                to visualize and analyze water resource data.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-3 font-display text-xl text-ink-strong">Data-Driven Approaches</h3>
-              <p className="leading-relaxed text-ink-body">
-                Utilization of Python, R, and SQL to process large datasets and develop
-                automated workflows for water resource management.
-              </p>
+          <div className="panel">
+            <h2 className="eyebrow mb-10">Professional Expertise</h2>
+            <div className="grid gap-12 md:grid-cols-3">
+              <div>
+                <h3 className="mb-3 font-display text-xl text-ink-strong">Water Resources Engineering</h3>
+                <p className="leading-relaxed text-ink-body">
+                  Development of CA SGMA Groundwater Sustainability Plans (GSPs), groundwater budgets,
+                  and optimization of recharge and extraction through geospatial analyses.
+                </p>
+              </div>
+              <div>
+                <h3 className="mb-3 font-display text-xl text-ink-strong">Geospatial Analysis</h3>
+                <p className="leading-relaxed text-ink-body">
+                  Expertise in ArcGIS Pro, QGIS, and cartography. Creating innovative solutions
+                  to visualize and analyze water resource data.
+                </p>
+              </div>
+              <div>
+                <h3 className="mb-3 font-display text-xl text-ink-strong">Data-Driven Approaches</h3>
+                <p className="leading-relaxed text-ink-body">
+                  Utilization of Python, R, and SQL to process large datasets and develop
+                  automated workflows for water resource management.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
         <section className="pt-12 pb-12">
-          <h2 className="eyebrow mb-10">Personal Passions</h2>
-          <div className="grid gap-12 md:grid-cols-2">
-            <Link href="/interests#exploration" className="group block">
-              <h3 className="mb-1 font-display text-xl text-ink-strong transition-colors group-hover:text-eyebrow">
-                Exploration
-              </h3>
-              <p className="mb-3 font-mono text-xs tracking-mono text-ink-muted">
-                Discovering remote natural places
-              </p>
-              <p className="leading-relaxed text-ink-body">
-                Traveling in my First Generation Tundra to reach desolate areas, always in search of
-                quieter places to fully immerse in nature.
-              </p>
-            </Link>
+          <div className="panel">
+            <h2 className="eyebrow mb-10">Personal Passions</h2>
+            <div className="grid gap-12 md:grid-cols-2">
+              <Link href="/interests#exploration" className="group block">
+                <h3 className="mb-1 font-display text-xl text-ink-strong transition-colors group-hover:text-eyebrow">
+                  Exploration
+                </h3>
+                <p className="mb-3 font-sans text-xs tracking-mono text-ink-muted">
+                  Discovering remote natural places
+                </p>
+                <p className="leading-relaxed text-ink-body">
+                  Traveling in my First Generation Tundra to reach desolate areas, always in search of
+                  quieter places to fully immerse in nature.
+                </p>
+              </Link>
 
-            <Link href="/interests#fishing" className="group block">
-              <h3 className="mb-1 font-display text-xl text-ink-strong transition-colors group-hover:text-eyebrow">
-                Fishing
-              </h3>
-              <p className="mb-3 font-mono text-xs tracking-mono text-ink-muted">
-                Learning about streams from within
-              </p>
-              <p className="leading-relaxed text-ink-body">
-                Fishing nearly all water features encountered, understanding how fish tell stories
-                about water quality, color, cover types, and food sources.
-              </p>
-            </Link>
+              <Link href="/interests#fishing" className="group block">
+                <h3 className="mb-1 font-display text-xl text-ink-strong transition-colors group-hover:text-eyebrow">
+                  Fishing
+                </h3>
+                <p className="mb-3 font-sans text-xs tracking-mono text-ink-muted">
+                  Learning about streams from within
+                </p>
+                <p className="leading-relaxed text-ink-body">
+                  Fishing nearly all water features encountered, understanding how fish tell stories
+                  about water quality, color, cover types, and food sources.
+                </p>
+              </Link>
+            </div>
           </div>
         </section>
       </div>

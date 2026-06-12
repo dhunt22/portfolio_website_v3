@@ -48,7 +48,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </header>
 
         {/* Project Overview */}
-        <section className="py-12" aria-labelledby="overview-heading">
+        <section className="panel mb-8" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className="eyebrow mb-6">Project Overview</h2>
           <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body">
             <p>
@@ -75,13 +75,13 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Interactive Indicator Browser */}
-        <section className="py-12" aria-labelledby="indicators-heading">
+        <section className="panel mb-8" aria-labelledby="indicators-heading">
           <h2 id="indicators-heading" className="eyebrow mb-6">Environmental Risk Indicators</h2>
           <IndicatorBrowser />
         </section>
 
         {/* Project Team */}
-        <section className="py-12" aria-labelledby="team-heading">
+        <section className="panel mb-8" aria-labelledby="team-heading">
           <h2 id="team-heading" className="eyebrow mb-6">Project Team &amp; My Contribution</h2>
 
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
@@ -151,7 +151,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Call to Action */}
-        <section className="py-12" aria-labelledby="cta-heading">
+        <section className="panel" aria-labelledby="cta-heading">
           <h2 id="cta-heading" className="eyebrow mb-6">Explore the Research</h2>
           <p className="max-w-[40rem] leading-relaxed text-ink-body">
             Access the open-source code, data, and methodology of this environmental justice research.

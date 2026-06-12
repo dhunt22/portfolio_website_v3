@@ -78,7 +78,7 @@ export default function Footer() {
         </div>
 
         <div className="pb-10">
-          <p className="font-mono text-[0.6875rem] text-ink-faint">&copy; {currentYear} Devin Hunt. All rights reserved.</p>
+          <p className="font-sans text-[0.6875rem] text-ink-faint">&copy; {currentYear} Devin Hunt. All rights reserved.</p>
         </div>
       </div>
     </footer>

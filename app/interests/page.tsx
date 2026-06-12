@@ -133,7 +133,7 @@ export default function InterestsPage() {
       <ContourBackdrop page="interests" />
 
       <div className="container relative z-10 mx-auto px-6">
-        <header className="pt-16">
+        <header className="pt-16 pb-8">
           <h1 className="display text-4xl">Personal Interests</h1>
         </header>
 
@@ -142,7 +142,7 @@ export default function InterestsPage() {
         ))}
 
         {/* GIS Section - topographic vectors shown plainly */}
-        <section id="gis" className="py-16 scroll-mt-16">
+        <section id="gis" className="panel mb-8 scroll-mt-16">
           <h2 className="font-display text-2xl text-ink-strong">GIS</h2>
           <p className="mt-4 max-w-[40rem] leading-relaxed text-ink-body">
             I love data visualization and deriving digital beauty from the physical world.
