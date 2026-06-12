@@ -57,6 +57,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Add `js` class to <html> synchronously before first paint so
+            HeroLoadIn's CSS selector `html.js [data-hero-loadin] > *` can
+            hide children before GSAP runs — prevents FOUC on JS-enabled
+            browsers while keeping elements visible for no-JS. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>

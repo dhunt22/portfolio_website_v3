@@ -5,6 +5,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
+import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
 
 /**
  * Home page component displaying introduction and highlights
@@ -17,21 +18,23 @@ export default function Home() {
 
       <div className="container relative z-10 mx-auto px-6">
         <section className="flex min-h-[82svh] max-w-3xl flex-col justify-center">
-          <p className="eyebrow-mono mb-6 animate-rise opacity-0 motion-reduce:animate-none motion-reduce:opacity-100">
-            Water Resources Engineer &amp; Explorer
-          </p>
-          <h1 className="display mb-9 text-[clamp(3rem,7vw,5.25rem)] animate-rise opacity-0 [animation-delay:120ms] motion-reduce:animate-none motion-reduce:opacity-100">
-            Devin Hunt
-          </h1>
-          <p className="lead mb-12 max-w-[34rem] animate-rise opacity-0 [animation-delay:260ms] motion-reduce:animate-none motion-reduce:opacity-100">
-            Passionate about understanding and solving water resource challenges in California
-            through data-driven approaches. Skilled in leveraging open-source data, spatial
-            analysis, and groundwater modeling to support sustainable water management.
-          </p>
-          <nav aria-label="Hero" className="flex gap-12 animate-rise opacity-0 [animation-delay:400ms] motion-reduce:animate-none motion-reduce:opacity-100">
-            <Link href="/portfolio" className="link-quiet-mono">Explore Portfolio</Link>
-            <Link href="/resume" className="link-quiet-mono">View Resume</Link>
-          </nav>
+          <HeroLoadIn>
+            <p className="eyebrow-mono mb-6">
+              Water Resources Engineer &amp; Explorer
+            </p>
+            <h1 className="display mb-9 text-[clamp(3rem,7vw,5.25rem)]">
+              Devin Hunt
+            </h1>
+            <p className="lead mb-12 max-w-[34rem]">
+              Passionate about understanding and solving water resource challenges in California
+              through data-driven approaches. Skilled in leveraging open-source data, spatial
+              analysis, and groundwater modeling to support sustainable water management.
+            </p>
+            <nav aria-label="Hero" className="flex gap-12">
+              <Link href="/portfolio" className="link-quiet-mono">Explore Portfolio</Link>
+              <Link href="/resume" className="link-quiet-mono">View Resume</Link>
+            </nav>
+          </HeroLoadIn>
         </section>
 
         <section className="grid gap-12 py-12 md:grid-cols-2 md:items-center">
