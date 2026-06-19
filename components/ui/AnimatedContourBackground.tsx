@@ -42,6 +42,12 @@ interface AnimatedContourBackgroundProps {
   /** Whether the viewport is mobile-width (< 768 px by default). */
   isMobile?: boolean;
   /**
+   * Resolved dark theme (post-mount). Only used to pick WHICH plate to preload
+   * for the load-gated fade-in; the painted plate itself is chosen by the
+   * `.dark` CSS class, not this flag.
+   */
+  isDark?: boolean;
+  /**
    * Delay (ms) after motion is first allowed before the animated glow layer is
    * fetched, inlined and started. The static plate paints immediately; holding
    * the glow back keeps its fetch + GSAP init off the first-paint path so the
@@ -82,6 +88,7 @@ export function AnimatedContourBackground({
   glowSrc,
   mounted,
   isMobile = false,
+  isDark = false,
   glowDelayMs = 2000,
 }: AnimatedContourBackgroundProps) {
   const reducedMotion = useReducedMotion();
@@ -95,6 +102,10 @@ export function AnimatedContourBackground({
   // the breathe rolls in smoothly instead of competing with the initial plate
   // raster on load (which read as an animation hitch / "lag" at first paint).
   const [glowReady, setGlowReady] = useState(false);
+  // Load-gated fade-in: the fixed plate is held transparent (CSS `html.js`
+  // gate) until the active plate image is decoded and ready, then it fades in
+  // over ~0.5s — a clean reveal on every page load instead of an abrupt pop.
+  const [plateRevealed, setPlateRevealed] = useState(false);
   const glowDivRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -328,6 +339,46 @@ export function AnimatedContourBackground({
   // Whether this page has portrait (mobile) plate variants.
   const hasMobilePlates = !!(lightPlateMobile && darkPlateMobile);
 
+  // The plate actually painted for this visitor: theme picks light/dark, and
+  // (when the page has portrait variants) width picks landscape/portrait. This
+  // mirrors the CSS gating so we preload exactly the one the browser fetches.
+  const activePlateSrc =
+    hasMobilePlates && isMobile
+      ? isDark
+        ? (darkPlateMobile as string)
+        : (lightPlateMobile as string)
+      : isDark
+        ? darkPlate
+        : lightPlate;
+
+  // ── Load-gated fade-in ───────────────────────────────────────────────────────
+  // Preload the active plate; once it is decoded (or already cached) flip
+  // data-plate-ready so the CSS fade-in runs. onerror and a safety timeout also
+  // reveal it, so a missing/slow asset can never strand the backdrop invisible.
+  // Fires once per load: once revealed we stay revealed, so a theme toggle or
+  // orientation flip never re-hides the backdrop (the crossfade handles those).
+  useEffect(() => {
+    if (!mounted || plateRevealed || !activePlateSrc) return;
+    let cancelled = false;
+    const reveal = () => {
+      if (!cancelled) setPlateRevealed(true);
+    };
+    const img = new Image();
+    img.onload = reveal;
+    img.onerror = reveal;
+    img.src = activePlateSrc;
+    // Cached images may already be complete before handlers attach.
+    if (img.complete) reveal();
+    // Safety net: decode stalls / no events — reveal anyway after 1.5s.
+    const fallback = setTimeout(reveal, 1500);
+    return () => {
+      cancelled = true;
+      clearTimeout(fallback);
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [mounted, plateRevealed, activePlateSrc]);
+
   // ── Theme-toggle crossfade upgrade ──────────────────────────────────────────
   // First paint keeps display-gating (lazy: only the active theme's plate is
   // fetched). A few seconds after mount we prefetch the OPPOSITE theme's plate
@@ -384,6 +435,7 @@ export function AnimatedContourBackground({
     <div
       ref={containerRef}
       data-contour-plate
+      data-plate-ready={plateRevealed ? 'true' : undefined}
       data-light-src={lightPlate}
       data-dark-src={darkPlate}
       data-glow={shouldAnimate ? glowSrc : undefined}

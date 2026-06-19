@@ -237,3 +237,38 @@ test('defers the glow fetch until glowDelayMs elapses (static plate renders firs
     jest.useRealTimers();
   }
 });
+
+test('flips data-plate-ready once the active plate image loads (fade-in gate)', async () => {
+  // Mock Image so setting src resolves onload on the next tick (jsdom does not
+  // load images). The component preloads the active plate, then reveals.
+  const OriginalImage = global.Image;
+  class MockImage {
+    onload: (() => void) | null = null;
+    onerror: (() => void) | null = null;
+    complete = false;
+    private _src = '';
+    set src(v: string) {
+      this._src = v;
+      setTimeout(() => this.onload?.(), 0);
+    }
+    get src() {
+      return this._src;
+    }
+  }
+  // @ts-expect-error — minimal Image stand-in for the preload path.
+  global.Image = MockImage;
+  try {
+    const { container } = render(
+      <AnimatedContourBackground {...base} mounted={true} isDark={false} />,
+    );
+    const layer = container.querySelector('[data-contour-plate]');
+    // Before the image resolves, the ready flag is absent (backdrop held hidden).
+    expect(layer).not.toHaveAttribute('data-plate-ready');
+    // Once the (light) plate image loads, the ready flag flips → CSS fades it in.
+    await waitFor(() =>
+      expect(layer).toHaveAttribute('data-plate-ready', 'true'),
+    );
+  } finally {
+    global.Image = OriginalImage;
+  }
+});

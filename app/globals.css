@@ -115,6 +115,20 @@ html.js [data-hero-loadin] > * {
   }
 }
 
+/* Contour backdrop fade-in: the fixed plate starts transparent and fades in
+   over ~0.5s once JS has confirmed the active plate image is loaded and ready
+   (the component flips data-plate-ready). Same no-JS-safe gate as the hero —
+   without the `html.js` class the rule never applies, so the backdrop is
+   visible at full opacity. Under reduced motion the global transition override
+   below snaps it in instead of fading. */
+html.js [data-contour-plate] {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+html.js [data-contour-plate][data-plate-ready='true'] {
+  opacity: 1;
+}
+
 /* Hide scrollbar for mobile chip rail while preserving scroll */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

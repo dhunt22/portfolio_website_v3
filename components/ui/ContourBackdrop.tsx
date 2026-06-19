@@ -18,7 +18,7 @@ interface ContourBackdropProps {
  * and hands it to the fixed inlining layer.
  */
 export function ContourBackdrop({ page }: ContourBackdropProps) {
-  const { lightPlate, darkPlate, lightPlateMobile, darkPlateMobile, glowSrc, mounted, isMobile } =
+  const { lightPlate, darkPlate, lightPlateMobile, darkPlateMobile, glowSrc, mounted, isMobile, isDark } =
     useThemeBackground(PLATE_PRESETS[page]);
   return (
     <AnimatedContourBackground
@@ -29,6 +29,7 @@ export function ContourBackdrop({ page }: ContourBackdropProps) {
       glowSrc={glowSrc}
       mounted={mounted}
       isMobile={isMobile}
+      isDark={isDark}
     />
   );
 }
