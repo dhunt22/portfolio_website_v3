@@ -18,6 +18,10 @@ const base = {
   lightPlate: '/images/plates/home_light_plate.svg',
   darkPlate: '/images/plates/home_dark_plate.svg',
   glowSrc: '/images/plates/home_glow.svg',
+  // Most tests assert the glow fetch fires promptly; disable the reveal delay
+  // so they don't have to drive fake timers. The deferral itself is covered by
+  // its own dedicated test below.
+  glowDelayMs: 0,
 };
 
 beforeEach(() => {
@@ -99,6 +103,7 @@ test('themeless glow src + keeps both plate srcs', async () => {
       darkPlate="/images/plates/home_dark_plate.svg"
       glowSrc="/images/plates/home_glow.svg"
       mounted={true}
+      glowDelayMs={0}
     />,
   );
   const layer = container.querySelector('[data-contour-plate]');
@@ -181,6 +186,7 @@ it('refetches the glow when glowSrc changes (orientation flip: desktop → mobil
       darkPlate="/images/plates/home_dark_plate.svg"
       glowSrc="/images/plates/home_glow.svg"
       mounted
+      glowDelayMs={0}
     />,
   );
   await waitFor(() =>
@@ -192,9 +198,42 @@ it('refetches the glow when glowSrc changes (orientation flip: desktop → mobil
       darkPlate="/images/plates/home_dark_plate_mobile.svg"
       glowSrc="/images/plates/home_glow_mobile.svg"
       mounted
+      glowDelayMs={0}
     />,
   );
   await waitFor(() =>
     expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_glow_mobile.svg'),
   );
+});
+
+test('defers the glow fetch until glowDelayMs elapses (static plate renders first)', async () => {
+  jest.useFakeTimers();
+  try {
+    const fetchMock = global.fetch as jest.Mock;
+    const { container } = render(
+      <AnimatedContourBackground {...base} mounted={true} glowDelayMs={2000} />,
+    );
+
+    // The static plates are present from the first render...
+    const layer = container.querySelector('[data-contour-plate]');
+    const lightBg = layer?.querySelector<HTMLDivElement>(
+      'div.dark\\:hidden[style*="background-image"]',
+    );
+    expect(lightBg?.style.backgroundImage).toContain(
+      '/images/plates/home_light_plate.svg',
+    );
+    // ...but the glow is NOT fetched yet, and no overlay div is rendered.
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(
+      layer?.querySelector('div[style*="pointer-events"]'),
+    ).toBeNull();
+
+    // Advancing past the reveal delay lets the glow layer fetch + mount.
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
+    expect(fetchMock).toHaveBeenCalledWith('/images/plates/home_glow.svg');
+  } finally {
+    jest.useRealTimers();
+  }
 });

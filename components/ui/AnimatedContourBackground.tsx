@@ -41,6 +41,13 @@ interface AnimatedContourBackgroundProps {
   mounted: boolean;
   /** Whether the viewport is mobile-width (< 768 px by default). */
   isMobile?: boolean;
+  /**
+   * Delay (ms) after motion is first allowed before the animated glow layer is
+   * fetched, inlined and started. The static plate paints immediately; holding
+   * the glow back keeps its fetch + GSAP init off the first-paint path so the
+   * breathe rolls in smoothly from a settled backdrop. Defaults to 2000 ms.
+   */
+  glowDelayMs?: number;
 }
 
 /**
@@ -75,6 +82,7 @@ export function AnimatedContourBackground({
   glowSrc,
   mounted,
   isMobile = false,
+  glowDelayMs = 2000,
 }: AnimatedContourBackgroundProps) {
   const reducedMotion = useReducedMotion();
   const [glowMarkup, setGlowMarkup] = useState<string | null>(null);
@@ -82,10 +90,37 @@ export function AnimatedContourBackground({
   // (idle, post-load), plate gating upgrades from display (lazy first fetch) to
   // opacity + transition (smooth toggle, contours persistent).
   const [xfade, setXfade] = useState(false);
+  // Deferred breath layer: the static contour plate must paint and settle on
+  // its own FIRST, then the animated glow is introduced after a short delay so
+  // the breathe rolls in smoothly instead of competing with the initial plate
+  // raster on load (which read as an animation hitch / "lag" at first paint).
+  const [glowReady, setGlowReady] = useState(false);
   const glowDivRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const shouldAnimate = mounted && !reducedMotion;
+
+  // Hold the glow back for glowDelayMs after motion is first allowed. The
+  // static plate is a pure CSS background-image with no JS dependency, so it is
+  // already on screen; deferring the glow fetch + inline + GSAP init keeps the
+  // heavy work off the critical first-paint path and lets the wave start from
+  // a clean, fully-painted backdrop. Resets if motion is disabled at runtime.
+  useEffect(() => {
+    if (!shouldAnimate) {
+      setGlowReady(false);
+      return;
+    }
+    if (glowDelayMs <= 0) {
+      setGlowReady(true);
+      return;
+    }
+    const t = setTimeout(() => setGlowReady(true), glowDelayMs);
+    return () => clearTimeout(t);
+  }, [shouldAnimate, glowDelayMs]);
+
+  // The glow layer is live only once it is both allowed AND past the reveal
+  // delay — gates the fetch, the inlined markup, and the rendered overlay div.
+  const glowActive = shouldAnimate && glowReady;
 
   // CRITICAL: the dangerouslySetInnerHTML wrapper object MUST be referentially
   // stable across re-renders. Next 14's React canary re-applies innerHTML when
@@ -183,8 +218,10 @@ export function AnimatedContourBackground({
   }, [applyPin]);
 
   // Fetch + clean the glow SVG whenever the source or motion preference changes.
+  // Gated on glowActive so the fetch itself is deferred past the reveal delay —
+  // the glow asset never competes with the initial plate paint.
   useEffect(() => {
-    if (!shouldAnimate || !glowSrc || typeof fetch === 'undefined') {
+    if (!glowActive || !glowSrc || typeof fetch === 'undefined') {
       setGlowMarkup(null);
       return;
     }
@@ -209,7 +246,7 @@ export function AnimatedContourBackground({
     return () => {
       cancelled = true;
     };
-  }, [shouldAnimate, glowSrc]);
+  }, [glowActive, glowSrc]);
 
   // Build GSAP timelines after the glow markup is injected into the DOM.
   //
@@ -260,7 +297,15 @@ export function AnimatedContourBackground({
         const DEAD = CYCLE - WINDOW;
 
         bands.forEach((bandEl, b) => {
-          const tl = gsap.timeline({ repeat: -1 });
+          // Smooth start: instead of phase-seeding the wave into mid-travel
+          // (which popped several bands in already half-erased the instant the
+          // glow appeared), each band's looping timeline is simply DELAYED by
+          // b*STEP. Bands rest at opacity 0 (their SVG default) during the
+          // delay, so the wave rolls in cleanly from the first band and reaches
+          // a continuous steady state after bands*STEP. `delay` applies only to
+          // the first iteration of a repeating timeline, so the loop stays gap-
+          // free thereafter.
+          const tl = gsap.timeline({ repeat: -1, delay: b * STEP });
           tl
             .set(bandEl, { opacity: 0 })
             // Promote to a compositor layer only while the band animates.
@@ -270,11 +315,6 @@ export function AnimatedContourBackground({
             .to(bandEl, { opacity: 0, duration: FADE_OUT, ease: 'sine.inOut' })
             .call(() => { gsap.set(bandEl, { willChange: 'auto' }); })
             .to(bandEl, { opacity: 0, duration: DEAD, ease: 'none' });
-
-          // Phase-seed so the wave is already travelling on load: band b sits
-          // b*STEP into the cycle (+10 cycles keeps totalTime positive).
-          const phase = ((b * STEP) % CYCLE + CYCLE) % CYCLE;
-          tl.totalTime(phase + 10 * CYCLE);
         });
       }, container);
     });
@@ -376,10 +416,11 @@ export function AnimatedContourBackground({
           <div className={plateClass('dark')} style={plateStyle(darkPlate)} />
         </>
       )}
-      {/* Animated glow — inlined on top only when motion is allowed.
+      {/* Animated glow — inlined on top only when motion is allowed AND the
+          reveal delay has elapsed, so the static plate owns the first frames.
           glowHtml is memoized: a fresh wrapper object per render makes React
           re-apply innerHTML, destroying the GSAP-animated DOM (see above). */}
-      {shouldAnimate ? (
+      {glowActive ? (
         <div
           ref={glowDivRef}
           style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
