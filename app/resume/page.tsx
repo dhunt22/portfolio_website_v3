@@ -44,11 +44,11 @@ export default function ResumePage() {
 
       <div className="container relative z-10 mx-auto px-6">
         <header className="flex flex-wrap items-baseline justify-between gap-4 pt-16">
-          <h1 className="display text-4xl">Resume</h1>
+          <p className="eyebrow">Resume</p>
           <a
             href="/data/devin_hunt_resume_june2025.pdf"
-            download
-            className="link-quiet"
+            download="Devin-Hunt-Resume.pdf"
+            className="link-quiet print:hidden"
           >
             Download PDF
           </a>
@@ -56,7 +56,7 @@ export default function ResumePage() {
 
         <div className="panel mt-4">
         <div>
-          <h2 className="font-display text-2xl text-ink-strong">Devin Hunt</h2>
+          <h1 className="display text-4xl">Devin Hunt</h1>
           <p className="mt-1 font-sans font-medium text-xs uppercase tracking-caps text-ink-muted">Water Resources Engineer</p>
           <p className="mt-4 max-w-[40rem] font-display italic text-xl leading-snug text-ink-strong">
             Hydrologist passionate about understanding and solving water resource challenges in California through data-driven approaches. Skilled in leveraging open-source data, spatial analysis, and modeling to support sustainable water management. Committed to applying technical expertise to develop innovative solutions for complex hydrologic issues.
@@ -67,7 +67,7 @@ export default function ResumePage() {
           <ExperienceItem
             title="Water Resources Engineer II"
             company="Woodard & Curran"
-            period="June 2023 - Present"
+            period="June 2023 – Present"
             responsibilities={[
               "Engineer 2 involved in the development of CA SGMA Groundwater Sustainability Plans (GSPs), groundwater budgets through CA IWFM modeling, and recharge and extraction optimization through geospatial analyses.",
               "Developed new figures, basemap, and layout templates for the Cuyama 2025 GSP using Esri ArcGIS Pro",
@@ -82,7 +82,7 @@ export default function ResumePage() {
           <ExperienceItem
             title="Geospatial Analyst and Programmer"
             company="Geospatial Centroid at Colorado State University"
-            period="October 2022 - May 2023"
+            period="October 2022 – May 2023"
             responsibilities={[
               "Involved in various spatial projects in Colorado and CONUS. Also provided project planning and technical tutoring for students.",
               "Developed R-Spatial scripts for NASA-Equity and Environmental Justice Grant project: Environmental Justice for Prisons",
@@ -97,7 +97,7 @@ export default function ResumePage() {
           <ExperienceItem
             title="Undergraduate Research Assistant"
             company="Colorado State University"
-            period="January 2022 - October 2022"
+            period="January 2022 – October 2022"
             responsibilities={[
               "Field researcher and data analyst supporting a PhD Dissertation on stream metabolism. Study area was Fraser Experimental Forest, CO across four catchment basins. (Project Lead Lauren Kremer in Watershed Analysis Group)",
               "Constructed Campbell Scientific stream gauges and planned on-site solar panel locations",

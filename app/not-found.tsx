@@ -16,26 +16,20 @@ export default function NotFound() {
 
       <div className="container relative z-10 mx-auto px-6">
         <section className="flex min-h-[82svh] max-w-3xl flex-col justify-center">
-          <h1 className="display mb-8 text-[clamp(3rem,7vw,5.25rem)]">404</h1>
+          {/* Decorative error code — not a heading, so AT lands on the real h1 below. */}
+          <p className="display mb-8 text-[clamp(3rem,7vw,5.25rem)]">404</p>
 
           <div className="panel">
-            <h2 className="display mb-10 text-3xl">Page Not Found</h2>
+            <h1 className="display mb-4 text-3xl">Page Not Found</h1>
 
-            <p className="mb-6 font-display text-xl text-ink-strong">
-              Looks like this stream dried up!
+            <p className="mb-8 max-w-[40rem] leading-relaxed text-ink-body">
+              Looks like this stream dried up &mdash; the page wandered off like water finding
+              a new path. Here&apos;s the way back to familiar waters.
             </p>
 
-            <p className="mb-4 max-w-[40rem] leading-relaxed text-ink-body">
-              The page you&apos;re looking for seems to have wandered off like water finding a new path.
-              Let&apos;s get you back to familiar waters.
-            </p>
-            <p className="mb-12 max-w-[40rem] leading-relaxed text-ink-body">
-              Don&apos;t worry &ndash; even the best explorers sometimes take unexpected detours.
-              Every watershed eventually finds its way back to the main channel.
-            </p>
-
-            <nav aria-label="Site links" className="mb-16 flex flex-wrap gap-x-12 gap-y-4">
-              <Link href="/" className="link-quiet">Return Home</Link>
+            {/* Recovery first, before the closing flourish. Return Home is the primary path. */}
+            <nav aria-label="Site links" className="mb-12 flex flex-wrap items-center gap-x-8 gap-y-3">
+              <Link href="/" className="link-quiet text-ink-strong">Return Home</Link>
               <Link href="/portfolio" className="link-quiet">View Portfolio</Link>
               <Link href="/resume" className="link-quiet">Resume</Link>
               <Link href="/interests" className="link-quiet">Interests</Link>

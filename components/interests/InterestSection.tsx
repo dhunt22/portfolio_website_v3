@@ -42,26 +42,16 @@ export function InterestSection({
   return (
     <section
       id={id}
-      className={`panel mb-4 flex flex-col gap-10 md:items-center ${imagePosition === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'} scroll-mt-16`}
+      className="panel mb-4 flex flex-col gap-10 md:flex-row md:items-center scroll-mt-16"
     >
-      <figure className="md:w-5/12">
-        <img
-          src={image.src}
-          alt={image.alt}
-          loading="lazy"
-          className={`w-full aspect-[4/3] object-cover ${image.objectPosition === 'bottom' ? 'object-bottom' : 'object-center'}`}
-        />
-        {image.caption && (
-          <figcaption className="mt-3 max-w-[40rem] text-sm text-ink-muted">{image.caption}</figcaption>
-        )}
-      </figure>
-
-      <div className="md:w-7/12">
+      {/* Text block is ALWAYS first in the DOM so the <h2> leads reading/tab order;
+          the image's visual side is set with `order` utilities, not flex-row-reverse. */}
+      <div className={`md:w-7/12 ${imagePosition === 'left' ? 'md:order-last' : ''}`}>
         <h2 className="font-display text-2xl text-ink-strong">{title}</h2>
 
         {quote && (
-          <figure className="mt-4">
-            <blockquote className="font-display italic text-xl leading-snug text-ink-strong">
+          <figure className="mt-4 border-l-2 border-border pl-5">
+            <blockquote className="max-w-[34rem] font-display italic text-xl leading-snug text-ink-strong">
               “{quote.text}”
             </blockquote>
             <figcaption className="eyebrow mt-2">{quote.author}</figcaption>
@@ -79,13 +69,25 @@ export function InterestSection({
             href={externalLink.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="link-quiet mt-6 inline-block"
+            className="link-quiet mt-6"
             aria-label={externalLink.ariaLabel || `${externalLink.label} - Open in new tab`}
           >
             {externalLink.label}
           </a>
         )}
       </div>
+
+      <figure className={`md:w-5/12 ${imagePosition === 'left' ? 'md:order-first' : ''}`}>
+        <img
+          src={image.src}
+          alt={image.alt}
+          loading="lazy"
+          className={`w-full aspect-[4/3] object-cover ${image.objectPosition === 'bottom' ? 'object-bottom' : 'object-center'}`}
+        />
+        {image.caption && (
+          <figcaption className="mt-3 max-w-[40rem] text-sm text-ink-muted">{image.caption}</figcaption>
+        )}
+      </figure>
     </section>
   );
 }

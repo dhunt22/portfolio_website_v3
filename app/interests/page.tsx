@@ -113,7 +113,7 @@ const interestSections: InterestSectionProps[] = [
     image: {
       src: '/images/photography.webp',
       alt: 'Wood texture captured during a hike',
-      caption: 'One of my first first long-exposure captures',
+      caption: 'One of my first long-exposure captures',
       objectPosition: 'bottom',
     },
     paragraphs: [
@@ -153,32 +153,32 @@ export default function InterestsPage() {
           </p>
 
           <div className="mt-6 grid gap-6 md:grid-cols-2">
-            <div className="border border-border bg-background">
+            <div className="overflow-hidden rounded border border-border bg-card">
               <img
                 src="/images/american_river_contour_bwn.svg"
                 alt="American River Contour Map"
                 loading="lazy"
-                className="block w-full max-h-[420px] object-cover object-top dark:hidden"
+                className="block w-full aspect-[16/10] object-cover object-top dark:hidden"
               />
               <img
                 src="/images/american_river_contour_dark.svg"
                 alt="American River Contour Map"
                 loading="lazy"
-                className="hidden w-full max-h-[420px] object-cover object-top dark:block"
+                className="hidden w-full aspect-[16/10] object-cover object-top dark:block"
               />
             </div>
-            <div className="border border-border bg-background">
+            <div className="overflow-hidden rounded border border-border bg-card">
               <img
                 src="/images/upper_folsom_contour_bwn.svg"
                 alt="Upper Folsom Contour Map"
                 loading="lazy"
-                className="block w-full max-h-[420px] object-cover object-top dark:hidden"
+                className="block w-full aspect-[16/10] object-cover object-top dark:hidden"
               />
               <img
                 src="/images/upper_folsom_contour_dark.svg"
                 alt="Upper Folsom Contour Map"
                 loading="lazy"
-                className="hidden w-full max-h-[420px] object-cover object-top dark:block"
+                className="hidden w-full aspect-[16/10] object-cover object-top dark:block"
               />
             </div>
           </div>

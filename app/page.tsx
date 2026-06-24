@@ -59,7 +59,7 @@ export default function Home() {
 
         <section className="pt-6 pb-0">
           <div className="panel">
-            <h2 className="eyebrow mb-10">Professional Expertise</h2>
+            <h2 className="section-title mb-8">Professional Expertise</h2>
             <div className="grid gap-12 md:grid-cols-3">
               <div>
                 <h3 className="mb-3 font-display text-xl text-ink-strong">Water Resources Engineering</h3>
@@ -88,32 +88,38 @@ export default function Home() {
 
         <section className="pt-4 pb-6">
           <div className="panel">
-            <h2 className="eyebrow mb-10">Personal Passions</h2>
+            <h2 className="section-title mb-8">Personal Passions</h2>
             <div className="grid gap-12 md:grid-cols-2">
               <Link href="/interests#exploration" className="group block">
                 <h3 className="mb-1 font-display text-xl text-ink-strong transition-colors group-hover:text-eyebrow">
                   Exploration
                 </h3>
-                <p className="mb-3 font-sans text-xs tracking-mono text-ink-muted">
+                <p className="mb-3 text-sm text-ink-muted">
                   Discovering remote natural places
                 </p>
                 <p className="leading-relaxed text-ink-body">
                   Traveling in my First Generation Tundra to reach desolate areas, always in search of
                   quieter places to fully immerse in nature.
                 </p>
+                <span className="mt-4 inline-flex items-center gap-1.5 text-xs uppercase tracking-caps text-link transition-all group-hover:gap-2.5">
+                  Read more <span aria-hidden="true">→</span>
+                </span>
               </Link>
 
               <Link href="/interests#fishing" className="group block">
                 <h3 className="mb-1 font-display text-xl text-ink-strong transition-colors group-hover:text-eyebrow">
                   Fishing
                 </h3>
-                <p className="mb-3 font-sans text-xs tracking-mono text-ink-muted">
+                <p className="mb-3 text-sm text-ink-muted">
                   Learning about streams from within
                 </p>
                 <p className="leading-relaxed text-ink-body">
                   Fishing nearly all water features encountered, understanding how fish tell stories
                   about water quality, color, cover types, and food sources.
                 </p>
+                <span className="mt-4 inline-flex items-center gap-1.5 text-xs uppercase tracking-caps text-link transition-all group-hover:gap-2.5">
+                  Read more <span aria-hidden="true">→</span>
+                </span>
               </Link>
             </div>
           </div>

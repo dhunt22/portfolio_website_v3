@@ -49,13 +49,13 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
         {/* Dashboard — map leads as the primary element */}
         <section className="panel mb-4" aria-labelledby="indicators-heading">
-          <h2 id="indicators-heading" className="eyebrow mb-6">Environmental Risk Indicators</h2>
+          <h2 id="indicators-heading" className="section-title mb-6">Environmental Risk Indicators</h2>
           <IndicatorBrowser />
         </section>
 
         {/* About — Project Overview */}
         <section id="about" className="panel mb-4" aria-labelledby="overview-heading">
-          <h2 id="overview-heading" className="eyebrow mb-6">Project Overview</h2>
+          <h2 id="overview-heading" className="section-title mb-6">Project Overview</h2>
           <div className="xl:grid xl:grid-cols-[minmax(0,40rem)_1fr] xl:gap-10 xl:items-start">
             {/* Overview paragraphs (left column on xl; single column below) */}
             <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body xl:max-w-none">
@@ -86,7 +86,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
         {/* Long-form read — Project Team & Impact */}
         <section className="panel mb-4" aria-labelledby="team-heading">
-          <h2 id="team-heading" className="eyebrow mb-6">Project Team &amp; My Contribution</h2>
+          <h2 id="team-heading" className="section-title mb-6">Project Team &amp; My Contribution</h2>
 
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
             <div>
@@ -156,7 +156,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
         {/* Call to Action */}
         <section className="panel" aria-labelledby="cta-heading">
-          <h2 id="cta-heading" className="eyebrow mb-6">Explore the Research</h2>
+          <h2 id="cta-heading" className="section-title mb-6">Explore the Research</h2>
           <p className="max-w-[40rem] leading-relaxed text-ink-body">
             Access the open-source code, data, and methodology of this environmental justice research.
           </p>

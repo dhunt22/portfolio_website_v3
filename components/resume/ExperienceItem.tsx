@@ -31,10 +31,11 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
   responsibilities,
 }) => {
   return (
-    <div className="mb-10 last:mb-0 max-w-[40rem]">
+    <div className="resume-item mb-10 last:mb-0 max-w-[40rem]">
       <h3 className="font-display text-xl text-ink-strong">{title}</h3>
-      <p className="mt-1 font-sans text-xs tracking-mono text-ink-muted">
-        {company} · {period}
+      <p className="mt-1 text-sm text-ink-body">
+        <span className="font-medium">{company}</span>
+        <span className="text-ink-muted"> · {period}</span>
       </p>
       <ul className="mt-3 list-disc space-y-1 pl-5 leading-relaxed text-ink-body marker:text-eyebrow">
         {responsibilities.map((responsibility, index) => (
