@@ -17,7 +17,7 @@ export default function Home() {
       <ContourBackdrop page="home" />
 
       <div className="container relative z-10 mx-auto px-6">
-        <section className="flex min-h-[82svh] max-w-3xl flex-col justify-center">
+        <section className="grid items-center gap-10 py-16 sm:gap-12 lg:min-h-[82svh] lg:grid-cols-[minmax(0,36rem)_1fr] lg:gap-12 lg:py-0">
           <HeroLoadIn>
             <p className="eyebrow-mono mb-6">
               Water Resources Engineer &amp; Explorer
@@ -35,20 +35,20 @@ export default function Home() {
               <Link href="/resume" className="link-quiet-mono">View Resume</Link>
             </nav>
           </HeroLoadIn>
-        </section>
 
-        <section className="py-12">
-          <figure className="grid items-center gap-12 md:grid-cols-2">
-            <div className="relative mx-auto aspect-[3/4] w-full max-w-[20rem] overflow-hidden rounded md:mx-0">
+          {/* Headshot framed with a caption plate beneath it. Sits to the right of the
+              hero text on desktop (lg); stacks below it on mobile. */}
+          <figure className="mx-auto w-full max-w-[20rem] lg:mx-0 lg:justify-self-end">
+            <div className="relative aspect-[3/4] w-full overflow-hidden rounded border border-border">
               <Image
                 src="/images/devin_businessCasualCrag.webp"
                 alt="Devin Hunt smiling in a knit tie and short-sleeve shirt against a sandstone crag"
                 fill
                 className="object-cover object-top"
-                sizes="(max-width: 768px) 100vw, 320px"
+                sizes="(max-width: 1024px) 20rem, 320px"
               />
             </div>
-            <figcaption className="max-w-[34rem] font-display text-xl italic leading-snug text-ink-strong">
+            <figcaption className="mt-3 rounded border border-border bg-card px-4 py-3 text-sm italic leading-snug text-ink-body">
               This photo was taken at the Mill climbing area near Chico, CA. I find it fun
               to climb in business casual.
             </figcaption>
