@@ -49,8 +49,7 @@ export default function Home() {
               />
             </div>
             <figcaption className="mt-3 rounded border border-border bg-card px-4 py-3 text-sm italic leading-snug text-ink-body">
-              This photo was taken at the Mill climbing area near Chico, CA. I find it fun
-              to climb in business casual.
+              Business casual climbing at The Mill Climbing Area near Chico, CA — October 2023
             </figcaption>
           </figure>
         </section>
