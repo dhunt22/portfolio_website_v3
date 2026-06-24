@@ -84,8 +84,15 @@ export default function RootLayout({
         >
           <ErrorBoundary>
             <div className="min-h-svh flex flex-col">
+              {/* Skip link — first focusable element; visually hidden until focused. */}
+              <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:border focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:text-ink-strong focus:shadow-lg"
+              >
+                Skip to content
+              </a>
               <Header />
-              <main className="flex-grow pt-16">
+              <main id="main" className="flex-grow pt-16">
                 {children}
               </main>
               <Footer />

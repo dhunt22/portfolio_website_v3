@@ -113,12 +113,15 @@ const MapControls: React.FC<MapControlsProps> = ({
   return (
     <>
       {/* ── Toolbar row: compact control group at the bottom-left of the map ── */}
-      <div className="absolute bottom-2 left-2 right-2 sm:right-auto z-30 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 px-3 py-1.5 rounded border border-border bg-card/80 backdrop-blur-sm">
+      {/* color-mix gives a real translucent fill: bg-card/80 is dead on a hex token
+          (--surface-card has no <alpha-value> slot), so the bar would otherwise be
+          fill-less and the controls would float, unreadable, over the bare basemap. */}
+      <div className="absolute bottom-2 left-2 right-2 sm:right-auto z-30 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 px-3 py-1.5 rounded border border-border bg-[color-mix(in_srgb,var(--surface-card)_88%,transparent)] backdrop-blur-sm">
         {/* Percentile segmented control (desktop+) — plain buttons with aria-pressed.
             Hidden below `sm`, where the collapsing disclosure below takes over. */}
         <div
           aria-label="Percentile threshold"
-          className="hidden sm:flex items-center rounded border border-white/20 overflow-hidden"
+          className="hidden sm:flex items-center rounded border border-border overflow-hidden"
         >
           {PERCENTILE_OPTIONS.map((opt) => {
             const isSelected = percentileThreshold === opt.value;
@@ -153,9 +156,9 @@ const MapControls: React.FC<MapControlsProps> = ({
             {...(percentileMenuOpen ? { 'aria-controls': 'percentile-menu-stack' } : {})}
             aria-label={`Percentile threshold, currently ${currentPercentileLabel}`}
             onClick={() => setPercentileMenuOpen((open) => !open)}
-            // Solid bg-card (not bg-card/80, which is dead on a hex token): the trigger shows
-            // dynamic state text over a variable basemap, so it needs a real surface to read.
-            className="flex items-center gap-1.5 min-h-[44px] px-2.5 py-1 text-xs font-sans font-medium rounded border border-border bg-card text-ink-muted hover:text-ink-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            // Transparent over the filled toolbar bar (matches the sibling toggles); the bar's
+            // color-mix surface gives the trigger's state text its contrast floor over the map.
+            className="flex items-center gap-1.5 min-h-[44px] px-2.5 py-1 text-xs font-sans font-medium rounded border border-border text-ink-muted hover:text-ink-strong hover:bg-card transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <span className="text-ink-muted">Percentile:</span>
             <span className="text-ink-strong">{currentPercentileLabel}</span>
@@ -211,7 +214,7 @@ const MapControls: React.FC<MapControlsProps> = ({
         </div>
 
         {/* Divider */}
-        <span className="hidden sm:inline-block h-4 w-px bg-white/20" aria-hidden />
+        <span className="hidden sm:inline-block h-4 w-px bg-border" aria-hidden />
 
         {/* Facility type toggles */}
         <div className="flex items-center gap-1.5" aria-label="Facility type filter">
@@ -227,7 +230,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                   'px-2.5 py-1 text-xs font-sans font-medium rounded border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   isActive
                     ? 'bg-ink-strong text-card border-ink-strong'
-                    : 'text-ink-muted border-white/20 bg-card/80 backdrop-blur-sm hover:text-ink-strong hover:bg-card',
+                    : 'text-ink-muted border-border hover:text-ink-strong hover:bg-card',
                 ].join(' ')}
               >
                 {ft.label}
@@ -237,7 +240,7 @@ const MapControls: React.FC<MapControlsProps> = ({
         </div>
 
         {/* Divider */}
-        <span className="hidden sm:inline-block h-4 w-px bg-white/20" aria-hidden />
+        <span className="hidden sm:inline-block h-4 w-px bg-border" aria-hidden />
 
         {/* Reset view button */}
         {onResetView && (
@@ -246,7 +249,7 @@ const MapControls: React.FC<MapControlsProps> = ({
             onClick={onResetView}
             title="Reset map view to US extent"
             aria-label="Reset map view"
-            className="flex items-center gap-1 px-2.5 py-1 text-xs font-sans font-medium text-ink-muted rounded border border-white/20 bg-card/80 backdrop-blur-sm hover:text-ink-strong hover:bg-card transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex items-center gap-1 px-2.5 py-1 text-xs font-sans font-medium text-ink-muted rounded border border-border hover:text-ink-strong hover:bg-card transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {/* Home/reset icon */}
             <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

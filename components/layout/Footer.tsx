@@ -54,12 +54,12 @@ export default function Footer() {
               <EmailIcon className="w-4 h-4" aria-hidden={true} />
               contact@devinhunt.com
             </a>
-            <div className="flex gap-5 mt-5">
+            <div className="flex gap-2 mt-5 -ml-2">
               <a
                 href="https://github.com/dhunt22"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-ink-muted hover:text-ink-strong transition-colors"
+                className="inline-flex p-2 rounded text-ink-muted hover:text-ink-strong transition-colors"
                 aria-label="GitHub Profile"
               >
                 <GitHubIcon className="w-5 h-5" aria-hidden={true} />
@@ -68,7 +68,7 @@ export default function Footer() {
                 href="https://www.linkedin.com/in/devinthunt"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-ink-muted hover:text-ink-strong transition-colors"
+                className="inline-flex p-2 rounded text-ink-muted hover:text-ink-strong transition-colors"
                 aria-label="LinkedIn Profile"
               >
                 <LinkedInIcon className="w-5 h-5" aria-hidden={true} />

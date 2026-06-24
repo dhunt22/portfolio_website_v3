@@ -251,7 +251,7 @@ function MobileChip({ component, isActive, onClick }: MobileChipProps) {
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         isActive
           ? 'bg-[var(--surface-sunken)]'
-          : 'border-border text-ink-muted bg-card/40 hover:text-ink-body hover:bg-[color-mix(in_srgb,var(--surface-sunken)_55%,transparent)]',
+          : 'border-border text-ink-muted bg-[color-mix(in_srgb,var(--surface-card)_50%,transparent)] hover:text-ink-body hover:bg-[color-mix(in_srgb,var(--surface-sunken)_55%,transparent)]',
       ].join(' ')}
     >
       {component.name}
@@ -299,7 +299,7 @@ export function IndicatorBrowser(): JSX.Element {
               className={[
                 'eyebrow whitespace-nowrap px-0 py-1 transition-colors hover:text-ink-strong',
                 isActive
-                  ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+                  ? 'text-ink-strong underline decoration-eyebrow decoration-2 underline-offset-8'
                   : '',
               ].join(' ')}
             >
@@ -386,14 +386,14 @@ export function IndicatorBrowser(): JSX.Element {
 
           {currentComponent.detailedDescription && (
             <div className="mt-6">
-              <h4 className="eyebrow mb-2">Data Source Description</h4>
+              <p className="eyebrow mb-2">Data Source Description</p>
               <p className="leading-relaxed text-ink-body">{currentComponent.detailedDescription}</p>
             </div>
           )}
 
           {currentComponent.methodology && (
             <div className="mt-6">
-              <h4 className="eyebrow mb-2">Processing &amp; Methodology</h4>
+              <p className="eyebrow mb-2">Processing &amp; Methodology</p>
               <p className="leading-relaxed text-ink-body">{currentComponent.methodology}</p>
             </div>
           )}

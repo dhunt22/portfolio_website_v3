@@ -30,7 +30,7 @@ function NavLink({ href, children, currentPath }: {
       href={href}
       className={`eyebrow transition-colors duration-200 hover:text-ink-strong ${
         isActive
-          ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+          ? 'text-ink-strong underline decoration-eyebrow decoration-2 underline-offset-8'
           : ''
       }`}
       aria-current={isActive ? 'page' : undefined}
@@ -57,7 +57,7 @@ function NavLinkWithDropdown({ href, children, currentPath, dropdownItems }: {
         href={href}
         className={`eyebrow transition-colors duration-200 hover:text-ink-strong ${
           isActive
-            ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+            ? 'text-ink-strong underline decoration-eyebrow decoration-2 underline-offset-8'
             : ''
         }`}
         aria-current={isActive ? 'page' : undefined}
@@ -109,7 +109,7 @@ function MobileNavLink({
       href={href}
       className={`block px-2 py-1 eyebrow transition-colors duration-200 hover:text-ink-strong ${
         isActive
-          ? 'text-ink-strong underline decoration-accent decoration-2 underline-offset-8'
+          ? 'text-ink-strong underline decoration-eyebrow decoration-2 underline-offset-8'
           : ''
       }`}
       onClick={onClick}
