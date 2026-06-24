@@ -54,7 +54,44 @@ const MapControls: React.FC<MapControlsProps> = ({
   setFacilityTypes,
   onResetView,
 }) => {
+  // Mobile-only collapsing percentile disclosure. The inline 4-button segment
+  // overflows a narrow mobile map pane, so below `sm` it is replaced by one
+  // trigger that opens an upward vertical stack. These hooks precede the
+  // projectId guard below to satisfy the rules of hooks.
+  const [percentileMenuOpen, setPercentileMenuOpen] = React.useState(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+
+  // Close on outside tap — mirrors the proven pointerdown idiom in ProjectMap's
+  // legend click-away, scoped to this menu's own marker class. `pointerdown`
+  // (not click) so taps never fall through to the maplibre canvas; the early
+  // return keeps no document listener attached while the menu is closed.
+  React.useEffect(() => {
+    if (!percentileMenuOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target as Element | null;
+      if (!target?.closest('.percentile-menu')) setPercentileMenuOpen(false);
+    };
+    // Escape closes and returns focus to the trigger (a disclosure norm the
+    // legend lacks). A document listener catches it from anywhere in the menu.
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setPercentileMenuOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [percentileMenuOpen]);
+
   if (projectId !== 'prison-ej') return null;
+
+  const currentPercentileLabel = (
+    PERCENTILE_OPTIONS.find((o) => o.value === percentileThreshold) ?? PERCENTILE_OPTIONS[0]
+  ).label;
 
   const handleTypeToggle = (type: FacilityType) => {
     if (!setFacilityTypes) return;
@@ -76,11 +113,12 @@ const MapControls: React.FC<MapControlsProps> = ({
   return (
     <>
       {/* ── Toolbar row: compact control group at the bottom-left of the map ── */}
-      <div className="absolute bottom-2 left-2 z-30 flex items-center gap-3 px-3 py-1.5 rounded border border-border bg-card/80 backdrop-blur-sm">
-        {/* Percentile segmented control — plain buttons with aria-pressed */}
+      <div className="absolute bottom-2 left-2 right-2 sm:right-auto z-30 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 px-3 py-1.5 rounded border border-border bg-card/80 backdrop-blur-sm">
+        {/* Percentile segmented control (desktop+) — plain buttons with aria-pressed.
+            Hidden below `sm`, where the collapsing disclosure below takes over. */}
         <div
           aria-label="Percentile threshold"
-          className="flex items-center rounded border border-white/20 overflow-hidden"
+          className="hidden sm:flex items-center rounded border border-white/20 overflow-hidden"
         >
           {PERCENTILE_OPTIONS.map((opt) => {
             const isSelected = percentileThreshold === opt.value;
@@ -103,8 +141,77 @@ const MapControls: React.FC<MapControlsProps> = ({
           })}
         </div>
 
+        {/* Percentile collapsing disclosure (mobile) — one trigger showing the
+            current selection; tapping opens an upward vertical stack of options.
+            Selecting one, tapping away, or pressing Escape collapses it. */}
+        <div className="relative sm:hidden percentile-menu">
+          <button
+            ref={triggerRef}
+            type="button"
+            aria-expanded={percentileMenuOpen}
+            // aria-controls only while the stack is rendered — else it's a dangling IDREF.
+            {...(percentileMenuOpen ? { 'aria-controls': 'percentile-menu-stack' } : {})}
+            aria-label={`Percentile threshold, currently ${currentPercentileLabel}`}
+            onClick={() => setPercentileMenuOpen((open) => !open)}
+            // Solid bg-card (not bg-card/80, which is dead on a hex token): the trigger shows
+            // dynamic state text over a variable basemap, so it needs a real surface to read.
+            className="flex items-center gap-1.5 min-h-[44px] px-2.5 py-1 text-xs font-sans font-medium rounded border border-border bg-card text-ink-muted hover:text-ink-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="text-ink-muted">Percentile:</span>
+            <span className="text-ink-strong">{currentPercentileLabel}</span>
+            <svg
+              className={['w-3 h-3 transition-transform', percentileMenuOpen ? 'rotate-180' : ''].join(' ')}
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M4 6l4 4 4-4" />
+            </svg>
+          </button>
+          {percentileMenuOpen && (
+            <div
+              id="percentile-menu-stack"
+              role="group"
+              aria-label="Percentile threshold"
+              // Solid bg-card (not bg-card/95): --surface-card is a hex, so Tailwind's
+              // /opacity modifier compiles to an invalid color → a transparent panel the
+              // busy map bleeds through. The legend's .panel uses the same solid fill; the
+              // border defines the edge and the shadow adds a light lift over the map.
+              className="absolute bottom-full left-0 mb-1 z-30 flex flex-col w-36 rounded border border-border bg-card shadow-xl overflow-hidden animate-rise"
+            >
+              {PERCENTILE_OPTIONS.map((opt) => {
+                const isSelected = percentileThreshold === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    aria-pressed={isSelected}
+                    onClick={() => {
+                      handlePercentileChange(opt.value);
+                      setPercentileMenuOpen(false);
+                      triggerRef.current?.focus();
+                    }}
+                    className={[
+                      'w-full min-h-[44px] px-3 py-2.5 text-sm font-sans font-medium text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                      isSelected
+                        ? 'bg-ink-strong text-card'
+                        : 'text-ink-muted hover:text-ink-strong hover:bg-card',
+                    ].join(' ')}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         {/* Divider */}
-        <span className="h-4 w-px bg-white/20" aria-hidden />
+        <span className="hidden sm:inline-block h-4 w-px bg-white/20" aria-hidden />
 
         {/* Facility type toggles */}
         <div className="flex items-center gap-1.5" aria-label="Facility type filter">
@@ -130,7 +237,7 @@ const MapControls: React.FC<MapControlsProps> = ({
         </div>
 
         {/* Divider */}
-        <span className="h-4 w-px bg-white/20" aria-hidden />
+        <span className="hidden sm:inline-block h-4 w-px bg-white/20" aria-hidden />
 
         {/* Reset view button */}
         {onResetView && (
