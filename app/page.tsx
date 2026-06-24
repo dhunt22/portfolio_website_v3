@@ -37,23 +37,21 @@ export default function Home() {
           </HeroLoadIn>
         </section>
 
-        <section className="grid gap-12 py-12 md:grid-cols-2 md:items-center">
-          <div className="relative aspect-[4/3] md:aspect-auto md:h-[380px]">
-            <Image
-              src="/images/profile.jpg"
-              alt="Devin Hunt exploring nature - a water resources engineer in his element"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-            />
-          </div>
-          <figure>
-            <blockquote className="font-display italic text-xl leading-snug text-ink-strong">
-              &ldquo;The world is big, and I want to have a good look at it before it gets dark.&rdquo;
-            </blockquote>
-            <figcaption className="eyebrow mt-4">John Muir</figcaption>
+        <section className="py-12">
+          <figure className="grid items-center gap-12 md:grid-cols-2">
+            <div className="relative mx-auto aspect-[3/4] w-full max-w-[20rem] overflow-hidden rounded md:mx-0">
+              <Image
+                src="/images/devin_businessCasualCrag.webp"
+                alt="Devin Hunt smiling in a knit tie and short-sleeve shirt against a sandstone crag"
+                fill
+                className="object-cover object-top"
+                sizes="(max-width: 768px) 100vw, 320px"
+              />
+            </div>
+            <figcaption className="max-w-[34rem] font-display text-xl italic leading-snug text-ink-strong">
+              This photo was taken at the Mill climbing area near Chico, CA. I find it fun
+              to climb in business casual.
+            </figcaption>
           </figure>
         </section>
 
