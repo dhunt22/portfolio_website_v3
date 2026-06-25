@@ -72,14 +72,23 @@ function ProjectRow({ project }: { project: Project }) {
       <LazyProjectMap projectId={project.id} />
     </div>
   ) : displayType === 'image' && project.imagePath ? (
-    <div>
-      <figure>
-        <img
-          src={project.imagePath}
-          alt={project.imageAlt || `${project.title} visualization`}
-          loading="lazy"
-          className="w-auto max-w-full"
-        />
+    // At lg the media cell stretches to the text column's height; the image box
+    // flexes to fill the space left above the (optional) caption/secondary text
+    // and object-covers, so the image tracks the text height (~1/2–2/3 of its old
+    // size) instead of its own intrinsic dimensions. Mobile keeps it full-width.
+    <div className="lg:flex lg:h-full lg:flex-col">
+      <figure className="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+        <div className="relative w-full overflow-hidden lg:min-h-0 lg:flex-1">
+          <img
+            src={project.imagePath}
+            alt={project.imageAlt || `${project.title} visualization`}
+            loading="lazy"
+            className={[
+              'block w-full lg:absolute lg:inset-0 lg:h-full lg:w-full',
+              project.imageFit === 'contain' ? 'object-contain lg:p-6' : 'object-cover',
+            ].join(' ')}
+          />
+        </div>
         {project.imageCaption && (
           <figcaption className="eyebrow mt-2">{project.imageCaption}</figcaption>
         )}
@@ -112,7 +121,7 @@ function ProjectRow({ project }: { project: Project }) {
   // is `1fr` so it absorbs free height and the links land pinned at the column bottom. The
   // single (heavy) map island renders once — no per-breakpoint duplication.
   return (
-    <article className="panel flex flex-col lg:grid lg:grid-cols-[minmax(0,26rem)_1fr] lg:grid-rows-[1fr_auto] lg:gap-x-10 lg:items-start">
+    <article className="panel flex flex-col lg:grid lg:grid-cols-[minmax(0,26rem)_1fr] lg:grid-rows-[1fr_auto] lg:gap-x-10">
       <div className="lg:col-start-1 lg:row-start-1">
         {eyebrow}
         {title}

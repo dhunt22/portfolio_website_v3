@@ -24,6 +24,7 @@ export interface Project {
   imageAlt?: string; // Alt text for image accessibility
   imageCaption?: string; // Caption for the image (e.g., "NASA, 2001")
   imageSecondaryText?: string; // Secondary descriptive text for the image
+  imageFit?: 'cover' | 'contain'; // desktop object-fit (default 'cover'); 'contain' preserves full image edges (e.g. logos)
 }
 
 /**
@@ -196,7 +197,8 @@ export const PROJECTS: Project[] = [
     technologies: ['Water Quality Analysis', 'Regulatory Compliance', 'Data Visualization'],
     displayType: 'image',
     imagePath: '/images/npdes_logo_up.jpg',
-    imageAlt: 'Quarterly Groundwater Conditions Reports visualization',
+    imageAlt: 'NPDES "Protecting Water Quality" logo',
+    imageFit: 'contain',
     content: [
       'Produce quarterly National Pollutant Discharge Elimination System (NPDES) groundwater conditions reports from client-collected monitoring data across six wells.',
       'Analyze depth to water measurements to estimate groundwater elevation and horizontal gradient. Use data interpolation and visualization techniques to provide comprehensive descriptions of water characteristics and constituent distributions.'
