@@ -31,7 +31,7 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
   responsibilities,
 }) => {
   return (
-    <div className="resume-item mb-10 last:mb-0 max-w-[40rem]">
+    <div className="resume-item mb-10 last:mb-0">
       <h3 className="font-display text-xl text-ink-strong">{title}</h3>
       <p className="mt-1 text-sm text-ink-body">
         <span className="font-medium">{company}</span>

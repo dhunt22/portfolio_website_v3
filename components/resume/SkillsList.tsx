@@ -20,7 +20,7 @@ interface SkillsListProps {
  */
 const SkillsList: React.FC<SkillsListProps> = ({ skills }) => {
   return (
-    <ul className="list-disc space-y-1 pl-5 leading-relaxed text-ink-body marker:text-eyebrow">
+    <ul className="list-disc pl-5 leading-relaxed text-ink-body marker:text-eyebrow sm:columns-2 sm:gap-x-10 [&>li]:mb-1 [&>li]:break-inside-avoid">
       {skills.map((skill, index) => (
         <li key={index}>{skill}</li>
       ))}
