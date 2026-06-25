@@ -25,7 +25,7 @@ export default function Home() {
             <h1 className="display mb-9 text-[clamp(3rem,7vw,5.25rem)]">
               Devin Hunt
             </h1>
-            <p className="lead mb-12 max-w-[34rem]">
+            <p className="lead mb-12 max-w-[34rem] font-medium">
               Passionate about understanding and solving water resource challenges in California
               through data-driven approaches. Skilled in leveraging open-source data, spatial
               analysis, and groundwater modeling to support sustainable water management.
