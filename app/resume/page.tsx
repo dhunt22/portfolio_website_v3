@@ -51,10 +51,12 @@ export default function ResumePage() {
           <p className="eyebrow">Resume</p>
           <a
             href="/data/Resume_DevinHunt_Jun2026.pdf"
-            download="Devin-Hunt-Resume-June2026.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View résumé PDF (opens in a new tab)"
             className="link-quiet print:hidden"
           >
-            Download PDF
+            View PDF
           </a>
         </header>
 
