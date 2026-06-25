@@ -1,66 +1,79 @@
-/* Loading states */
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 1;
+/* Copyright (c) 2025 Devin Hunt contact@devinhunt.com */
+/* app/globals.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Paper (light) — design_system/tokens/colors.css */
+    --paper-base: #f7f4ec; --paper-raised: #fdfbf6; --paper-sunken: #efe9dc;
+    --surface-page: var(--paper-base);
+    --surface-card: var(--paper-raised);
+    --surface-sunken: var(--paper-sunken);
+    --surface-header: var(--paper-base); /* light: same as page (header is translucent over page) */
+    --text-strong: #122114;        /* forest-950 */
+    --text-body: #3f3a30;          /* stone-800 */
+    --text-muted: #6a624f;         /* stone-600 */
+    --text-faint: #6f6650;         /* darkened from stone-500 #847b64 to clear WCAG AA (4.5:1) on paper */
+    --text-link: #495f74;          /* river-700 */
+    --text-link-hover: #2f3a47;    /* river-900 */
+    --text-eyebrow: #8f5732;       /* earth-700 */
+    --brand-primary: #315a34;      /* forest-700 */
+    --brand-accent: #c08843;       /* earth-500 */
+    --border-hairline: #ddd9cc;    /* stone-200 */
+    --border-default: #c4bda9;     /* stone-300 */
+    --border-contour: rgba(143, 87, 50, 0.35);
+    --ring-focus: #3d733f;         /* forest-600 */
   }
-  50% {
-    opacity: 0.5;
+  .dark {
+    /* Stone palette — topo-at-dusk (2026-06 brief) */
+    --stone-925: #221f1b; /* new token: interpolated stone-950↔900 for the header layer (2026-06 brief) */
+    --surface-page:   #1a1814; /* stone-950 */
+    --surface-card:   #2b2822; /* stone-900 */
+    --surface-sunken: #15130f; /* derived well — darker than page, stone hue */
+    --surface-header: var(--stone-925); /* stone-925: distinct step between page and card */
+    --text-strong: #f3f1e8;
+    --text-body: #c4bda9;          /* stone-300 — approved DS-6 (deliberate one-step deviation from DS stone-200) */
+    --text-muted: #a39a82;         /* stone-400 */
+    --text-faint: #938a72;         /* lightened from #847b64 to clear WCAG AA (4.5:1) on stone surfaces */
+    --text-link: #b3c2cf;          /* river-300 */
+    --text-link-hover: #d2dbe3;    /* river-200 */
+    --text-eyebrow: #cb9a59;       /* earth-400 */
+    --brand-primary: #57935c;      /* forest-500 */
+    --brand-accent: #cb9a59;
+    --border-hairline: #3a372c;    /* stepped up from #2c2a22 — old value was near-flush with stone-900 card */
+    --border-default: #4a4437;     /* stepped up proportionally */
+    --border-contour: rgba(203, 154, 89, 0.3);
+    --ring-focus: #7bb17f;         /* forest-400 */
   }
+  html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+  :where(a, button, [role="button"]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
 }
 
-.loading-pulse {
-  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Skeleton loading */
-.skeleton {
-  @apply animate-pulse bg-gray-200 rounded;
-}
-
-.dark .skeleton {
-  @apply bg-gray-700;
+@layer components {
+  .panel { @apply border bg-card p-4 md:p-5; border-color: var(--border-default); }
+  /* Dark: the stone surface steps (page→header→card) carry the layer
+     separation, so panel outlines recede to the hairline (brief: layers
+     read as distinct WITHOUT hard borders). Light is untouched. */
+  .dark .panel { border-color: var(--border-hairline); }
+  .eyebrow { @apply font-sans font-medium text-xs uppercase tracking-caps text-eyebrow; }
+  .eyebrow-mono { @apply font-mono text-xs font-normal uppercase tracking-caps text-eyebrow; }
+  /* Section heading — a real mid-tier between the display h1 and the text-xl
+     subheads, so a section <h2> out-ranks the serif <h3>s beneath it instead of
+     sitting at eyebrow-label weight (which inverted the visual hierarchy). */
+  .section-title { @apply font-display text-2xl tracking-display text-ink-strong; }
+  .display { @apply font-display font-medium tracking-display leading-tight-display text-ink-strong; }
+  .lead { @apply text-lg leading-relaxed text-ink-body; }
+  /* inline-block + py keeps these small-caps links at a ≥24px (WCAG 2.5.8) tap target. */
+  .link-quiet { @apply inline-block py-1.5 font-sans font-medium text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
+  .link-quiet-mono { @apply inline-block py-1.5 font-mono text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
 }
 
 /* Focus visible improvements */
 .focus-ring {
   @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
-}
-
-/* Smooth animations */
-.animate-in {
-  animation-duration: 0.5s;
-  animation-fill-mode: both;
-}
-
-.slide-in-from-top-2 {
-  animation-name: slide-in-from-top-2;
-}
-
-@keyframes slide-in-from-top-2 {
-  from {
-    transform: translateY(-8px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Improved hover effects */
-.hover-lift {
-  @apply transition-transform duration-200 ease-out;
-}
-
-.hover-lift:hover {
-  @apply transform -translate-y-1;
-}
-
-/* Better text rendering */
-html {
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Improved scrollbar */
@@ -69,23 +82,61 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-stone-100;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full;
+  @apply bg-stone-300 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400;
+  @apply bg-stone-400;
 }
 
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .ripple-hover::after {
-    background: rgba(0, 0, 0, 0.9);
+/* Dark theme scrollbar */
+.dark ::-webkit-scrollbar-track {
+  @apply bg-stone-900;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-stone-700;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-stone-600;
+}
+
+/* Hero load-in: hide children until GSAP runs (no-FOUC + no-JS-safe).
+   The `html.js` class is set by an inline script in <head> before first paint.
+   Without JS the class is never added, so children remain visible (opacity
+   unset = 1). Under reduced-motion, immediately override back to visible so
+   GSAP never needs to touch them. */
+html.js [data-hero-loadin] > * {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-hero-loadin] > * {
+    opacity: 1;
   }
 }
+
+/* Contour backdrop fade-in: the fixed plate starts transparent and fades in
+   over ~0.5s once JS has confirmed the active plate image is loaded and ready
+   (the component flips data-plate-ready). Same no-JS-safe gate as the hero —
+   without the `html.js` class the rule never applies, so the backdrop is
+   visible at full opacity. Under reduced motion the global transition override
+   below snaps it in instead of fading. */
+html.js [data-contour-plate] {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+html.js [data-contour-plate][data-plate-ready='true'] {
+  opacity: 1;
+}
+
+/* Hide scrollbar for mobile chip rail while preserving scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
@@ -96,128 +147,21 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-
-  .ripple-hover:hover::after {
-    animation: none;
-  }
 }
 
-/* MapLibre Popup Customization */
-.maplibregl-popup.custom-popup .maplibregl-popup-close-button {
-  font-size: 24px;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  padding: 0;
-  color: #374151;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.maplibregl-popup.custom-popup .maplibregl-popup-close-button:hover {
-  color: #1f2937;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-}
-
-/* Prevent scrolling on MapLibre popups */
-.maplibregl-popup-content {
-  overflow: hidden !important;
-  pointer-events: auto !important;
-}
-
-/* Ensure popup doesn't capture scroll events */
-.maplibregl-popup {
-  pointer-events: none !important;
-}
-
-/* Allow interaction with popup content and close button */
-.maplibregl-popup-content,
-.maplibregl-popup-close-button {
-  pointer-events: auto !important;
-}/* Copyright (c) 2025 Devin Hunt contact@devinhunt.com */
-/* app/globals.css */
-/* Styling the waters of our site - flowing smoothly from page to page! */
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 210 100% 35%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 120 50% 20%;
-    --secondary-foreground: 120 30% 96%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 35 91% 55%;
-    --accent-foreground: 0 0% 9%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-  }
-
+/* Print: force a clean light document (the resume page advertises a PDF and is
+   print-like). Force light tokens regardless of theme, drop the fixed contour
+   backdrop, flatten panels, and avoid breaking inside experience entries. */
+@media print {
+  :root,
   .dark {
-    --background: 0 0% 25%;
-    --foreground: 120 30% 96%;
-
-    --card: 0 0% 27%;
-    --card-foreground: 120 30% 96%;
-
-    --popover: 0 0% 26%;
-    --popover-foreground: 120 30% 96%;
-
-    --primary: 210 100% 50%;
-    --primary-foreground: 120 30% 96%;
-
-    --secondary: 120 40% 30%;
-    --secondary-foreground: 120 30% 96%;
-
-    --muted: 120 5% 32%;
-    --muted-foreground: 120 20% 70%;
-
-    --accent: 35 91% 60%;
-    --accent-foreground: 120 5% 26%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 120 30% 96%;
-
-    --border: 120 5% 35%;
-    --input: 120 5% 35%;
-    --ring: 210 100% 50%;
+    --surface-page: #ffffff; --surface-card: #ffffff; --surface-sunken: #ffffff;
+    --surface-header: #ffffff;
+    --text-strong: #111111; --text-body: #222222; --text-muted: #444444;
+    --text-faint: #555555; --text-eyebrow: #555555;
+    --border-hairline: #cccccc; --border-default: #bbbbbb;
   }
-}
-
-/* Dark theme scrollbar */
-.dark ::-webkit-scrollbar-track {
-  @apply bg-gray-900;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  @apply bg-gray-600;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500;
+  [data-contour-plate] { display: none !important; }
+  .panel { border: none !important; padding: 0 !important; }
+  .resume-item { break-inside: avoid; }
 }

@@ -3,15 +3,27 @@
 // The topographic map that guides all other components - hope it doesn't lead us off a cliff!
 
 import './globals.css';
-import { Inter } from 'next/font/google';
+import { newsreader, hanken, jetbrains } from './fonts';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
-import { Metadata } from 'next';
-import Script from 'next/script';
+import { Metadata, Viewport } from 'next';
 
-const inter = Inter({ subsets: ['latin'] });
+// Viewport export — kept separate from metadata (Next 14 requirement).
+// interactiveWidget: 'resizes-visual' tells mobile browsers that the on-screen
+// keyboard resizes only the visual viewport, not the layout viewport, preventing
+// layout reflows when the keyboard appears or dismisses. NOTE: this setting does
+// NOT prevent the URL-bar from resizing fixed elements or viewport units (lvh).
+// iOS WebKit re-resolves lvh frame-by-frame as the address bar retracts (bugs
+// 255708 / 261185), and Chrome Android's interactive-widget only governs the
+// virtual keyboard — the URL bar still causes height changes. The backdrop
+// component handles this separately via a px-pinned inline height on mobile.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  interactiveWidget: 'resizes-visual',
+};
 
 // Define the metadata for the application
 export const metadata: Metadata = {
@@ -50,24 +62,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Pre-paint bootstrap, runs synchronously before first paint:
+            1. `js` class — HeroLoadIn's CSS selector `html.js [data-hero-loadin] > *`
+               hides children before GSAP runs (no FOUC, no-JS users keep content).
+            2. `--backdrop-h` — px-pins the contour backdrop height on touch-primary
+               devices BEFORE the first paint, so the plate's cover scale never
+               changes afterwards (useEffect pinning was post-paint and caused a
+               one-time rescale that read as a first-scroll glitch on iOS, where
+               lvh resolves small until the URL bar first collapses). screen.* are
+               CSS px; min/max normalizes iOS (orientation-fixed) vs Android. */}
+        <script dangerouslySetInnerHTML={{ __html: "(function(){var d=document.documentElement;d.classList.add('js');try{var w=innerWidth,c=matchMedia('(pointer: coarse)').matches;if(w<768||c){var p=innerHeight>=w?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);d.style.setProperty('--backdrop-h',p+'px');}}catch(e){}})()" }} />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
-        <meta httpEquiv="Content-Security-Policy" content="
-          default-src 'self';
-          script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.netlify.com;
-          style-src 'self' 'unsafe-inline' https://*.openstreetmap.org https://*.openfreemap.org;
-          img-src 'self' data: blob: https://*.openstreetmap.org https://*.openfreemap.org;
-          font-src 'self';
-          connect-src 'self' https://app.netlify.com https://*.openstreetmap.org https://*.openfreemap.org;
-          frame-src 'self' https://app.netlify.com;
-          worker-src 'self' blob:;
-          manifest-src 'self';
-        " />
-        <Script src="/netlify-config.js" strategy="beforeInteractive" />
-        <Script src="/map-proxy.js" strategy="beforeInteractive" />
-        <Script src="/map-library-helper.js" strategy="afterInteractive" />
       </head>
-      <body className={`${inter.className} overflow-x-hidden bg-background text-foreground`}>
+      <body className={`${newsreader.variable} ${hanken.variable} ${jetbrains.variable} font-sans overflow-x-hidden bg-background text-foreground antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -75,9 +83,16 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ErrorBoundary>
-            <div className="min-h-screen flex flex-col">
+            <div className="min-h-svh flex flex-col">
+              {/* Skip link — first focusable element; visually hidden until focused. */}
+              <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:border focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:text-ink-strong focus:shadow-lg"
+              >
+                Skip to content
+              </a>
               <Header />
-              <main className="flex-grow pt-16">
+              <main id="main" className="flex-grow pt-16">
                 {children}
               </main>
               <Footer />

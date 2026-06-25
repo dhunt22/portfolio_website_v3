@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treatment B — Night Hydrology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — from tailwind.config.js / globals.css.
+     FLAG: page ground uses forest-950 (an existing palette token) instead of the
+     current dark-theme --background (0 0% 25% gray). Proposed change, not silent. */
+  :root {
+    --ground: #122114;            /* forest-950 */
+    --ink: #f2f7f2;               /* forest-50 */
+    --muted-dark: hsl(120 20% 70%);  /* dark --muted-foreground */
+    --river-300: #7dd3fc;
+    --river-400: #38bdf8;
+  }
+
+  * { margin: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--ground);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  /* ---- Contour layers ---- */
+  .contours {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .contours .static {
+    position: absolute;
+    inset: 0;
+    background-image: url("../public/images/american_river_contour_dark.svg");
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    opacity: 0.22;
+  }
+  .contours .pulses {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 clamp(1.5rem, 9vw, 9rem);
+    max-width: 60rem;
+  }
+
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    font-size: 0.8rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--river-300);
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-weight: 300;
+    font-size: clamp(3.5rem, 10vw, 8.5rem);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 2.5rem;
+  }
+
+  .hero p {
+    font-weight: 300;
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--muted-dark);
+    max-width: 34rem;
+    margin-bottom: 3.5rem;
+  }
+
+  nav { display: flex; gap: 3rem; }
+
+  nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--river-300);
+    text-decoration: underline;
+    text-underline-offset: 0.5em;
+    text-decoration-thickness: 1px;
+    transition: color 0.2s ease-out;
+  }
+  nav a:hover { color: var(--river-400); }
+
+  /* ---- Load-in: one staggered reveal ---- */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; animation: rise 0.9s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+  .reveal:nth-child(2) { animation-delay: 0.12s; }
+  .reveal:nth-child(3) { animation-delay: 0.26s; }
+  .reveal:nth-child(4) { animation-delay: 0.4s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: none; opacity: 1; transform: none; }
+    .pulse { animation: none !important; opacity: 0 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="contours" aria-hidden="true">
+  <div class="static"></div>
+  <div class="pulses"><!--PULSE--></div>
+</div>
+
+<main class="hero">
+  <p class="kicker reveal">Water Resources Engineer &amp; Explorer</p>
+  <h1 class="reveal">Devin Hunt</h1>
+  <p class="reveal">Passionate about understanding and solving water resource challenges in California
+    through data-driven approaches. Skilled in leveraging open-source data, spatial
+    analysis, and groundwater modeling to support sustainable water management.</p>
+  <nav class="reveal">
+    <a href="#">Explore Portfolio</a>
+    <a href="#">View Resume</a>
+  </nav>
+</main>
+
+</body>
+</html>

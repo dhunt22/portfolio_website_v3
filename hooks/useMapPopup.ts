@@ -316,7 +316,7 @@ export const useMapPopup = (
   const setupPopupHandlers = () => {
     if (projectId === 'prison-ej') {
       setupPrisonPopupHandlers();
-    } else if (projectId === 'cuyama-basin' || projectId === 'yuba-recharge' || projectId === 'watershed-hub') {
+    } else if (projectId === 'watershed-hub') {
       setupSubbasinPopupHandlers();
     }
   };

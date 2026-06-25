@@ -19,11 +19,12 @@ export interface Project {
   featured?: boolean;
   year?: string;
   technologies?: string[];
-  displayType?: 'map' | 'image'; // Type of visual display (defaults to 'map')
+  displayType?: 'map' | 'image' | 'none'; // Type of visual display (defaults to 'map')
   imagePath?: string; // Path to image file if displayType is 'image'
   imageAlt?: string; // Alt text for image accessibility
   imageCaption?: string; // Caption for the image (e.g., "NASA, 2001")
   imageSecondaryText?: string; // Secondary descriptive text for the image
+  imageFit?: 'cover' | 'contain'; // desktop object-fit (default 'cover'); 'contain' preserves full image edges (e.g. logos)
 }
 
 /**
@@ -89,7 +90,7 @@ export const PROJECTS: Project[] = [
     year: '2023',
     technologies: ['GIS', 'Spatial Analysis', 'Hydrology'],
     displayType: 'image',
-    imagePath: '/images/yuba_recharge_suitability_index_preview.png',
+    imagePath: '/images/yuba_recharge_suitability_index_preview.webp',
     imageAlt: 'Yuba Subbasins Recharge Analysis visualization',
     content: [
       'Computed Recharge Suitability Index (RSI) scores using open-source geospatial data for the Yuba Subbasins. This analysis identified optimal locations for groundwater recharge projects.',
@@ -131,6 +132,7 @@ export const PROJECTS: Project[] = [
     categories: ['all', 'water', 'geospatial'],
     year: '2024',
     technologies: ['GIS', 'Contract Management', 'Water Law'],
+    displayType: 'none',
     content: [
       'Updated project figures and managed geospatial data for the Sacramento Sewer District\'s Harvest Water Program.',
       'Created advanced plots for legal OFCA supply contracts, supporting implementation of Title 22 water delivery to local farmers within the study area.'
@@ -144,7 +146,7 @@ export const PROJECTS: Project[] = [
     year: '2024',
     technologies: ['Field Testing', 'Soil Analysis', 'GIS'],
     displayType: 'image',
-    imagePath: '/images/modesto_infiltration_snyderWest.jpg',
+    imagePath: '/images/modesto_infiltration_snyderWest.webp',
     imageAlt: 'Infiltration Feasibility Study visualization',
     content: [
       'Conducted initial identification of existing drainage basins for percolation field tests, including spatial analysis of soil profiles and infiltration scores using SAGBI and SSURGO data.',
@@ -159,7 +161,7 @@ export const PROJECTS: Project[] = [
     year: '2024-Present',
     technologies: ['GIS', 'Suitability Analysis', 'Water Infrastructure'],
     displayType: 'image',
-    imagePath: '/images/antelope_valley_LACPW_district40.png',
+    imagePath: '/images/antelope_valley_LACPW_district40.webp',
     imageAlt: 'Antelope Valley Well Resilience Study visualization',
     imageSecondaryText: 'This is the westernmost portion of District 40, spanning Palmdale and Lancaster.',
     content: [
@@ -195,7 +197,8 @@ export const PROJECTS: Project[] = [
     technologies: ['Water Quality Analysis', 'Regulatory Compliance', 'Data Visualization'],
     displayType: 'image',
     imagePath: '/images/npdes_logo_up.jpg',
-    imageAlt: 'Quarterly Groundwater Conditions Reports visualization',
+    imageAlt: 'NPDES "Protecting Water Quality" logo',
+    imageFit: 'contain',
     content: [
       'Produce quarterly National Pollutant Discharge Elimination System (NPDES) groundwater conditions reports from client-collected monitoring data across six wells.',
       'Analyze depth to water measurements to estimate groundwater elevation and horizontal gradient. Use data interpolation and visualization techniques to provide comprehensive descriptions of water characteristics and constituent distributions.'

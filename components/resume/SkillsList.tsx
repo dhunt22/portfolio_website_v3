@@ -20,12 +20,9 @@ interface SkillsListProps {
  */
 const SkillsList: React.FC<SkillsListProps> = ({ skills }) => {
   return (
-    <ul className="grid grid-cols-1 gap-2">
+    <ul className="list-disc pl-5 leading-relaxed text-ink-body marker:text-eyebrow sm:columns-2 sm:gap-x-10 [&>li]:mb-1 [&>li]:break-inside-avoid">
       {skills.map((skill, index) => (
-        <li key={index} className="flex items-start">
-          <span className="text-forest-600 dark:text-forest-400 mr-2">•</span>
-          <span className="text-forest-800 dark:text-white">{skill}</span>
-        </li>
+        <li key={index}>{skill}</li>
       ))}
     </ul>
   );

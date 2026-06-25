@@ -1,11 +1,18 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/portfolio/LazyProjectMap.tsx
-// Error boundary wrapper for ProjectMap with immediate loading
+// Error boundary wrapper for the dynamically code-split ProjectMap
 
 'use client';
 
 import React from 'react';
-import ProjectMap from './ProjectMap';
+import dynamic from 'next/dynamic';
+
+// Code-split maplibre out of the main bundle: ProjectMap (and its maplibre-gl
+// import) only loads in the browser when a map row mounts.
+const ProjectMap = dynamic(() => import('./ProjectMap'), {
+  ssr: false,
+  loading: () => <div className="h-full min-h-[280px] w-full bg-muted" aria-label="Loading map" />,
+});
 
 interface ProjectMapWrapperProps {
   projectId: string;

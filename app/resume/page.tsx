@@ -2,217 +2,152 @@
 // app/resume/page.tsx
 // A resume as flowing as a river - hopefully it doesn't run dry during interviews!
 
-'use client';
-
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import ResumeSection from '@/components/resume/ResumeSection';
 import ExperienceItem from '@/components/resume/ExperienceItem';
 import SkillsList from '@/components/resume/SkillsList';
-import { DownloadIcon } from '@/components/ui/icons/common-icons';
 
 /**
  * Resume page component showing professional experience, education, and skills
  * @returns {React.JSX.Element} The rendered resume page
  */
 export default function ResumePage() {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Avoid hydration mismatch by only rendering theme-dependent content after mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const backgroundImage = mounted && resolvedTheme === 'dark'
-    ? 'url(/images/american_river_contour_dark.svg)'
-    : 'url(/images/american_river_contour_bwn.svg)';
 
   // Professional skills data
   const professionalSkills = [
-    "Teamwork",
-    "Multi-project management",
-    "Deadline management",
-    "Deliverables coordination",
-    "Project scope & budget management",
-    "Workflow & task planning",
-    "In-person collaboration"
+    "AI enablement and technical mentoring",
+    "Stakeholder and leadership communication",
+    "Concurrent multi-project management",
+    "Cross-functional technical collaboration"
   ];
 
   // Technical skills data
   const technicalSkills = [
-    "Integrated Water Flow Model (IWFM)",
-    "ArcGIS Pro and Online",
-    "Python",
-    "QGIS",
-    "R",
-    "SQL (Postgres & PostGIS)",
+    "IWFM and C2VSimFG",
     "Groundwater Interpolation",
+    "Python",
+    "AI Agent Orchestration with Claude Code",
+    "Test-Driven Development",
+    "Git",
+    "GeoPandas, GDAL",
+    "SQL",
+    "RESTful APIs",
+    "Node.js and Full-Stack Web",
+    "ArcGIS Pro and Online",
+    "QGIS",
+    "Leaflet and MaplibreGL",
+    "Cartography",
+    "R",
     "Excel LET and LAMBDA",
-    "Field Documentation",
-    "Cartography"
+    "Field Documentation"
   ];
 
   return (
-    <div className="relative min-h-screen">
-      {/* Background SVG */}
-      <div className="absolute -top-[200px] -bottom-[200px] left-0 right-0 -z-10 overflow-hidden">
-        {/* Normal orientation - single instance from top */}
-        <div
-          className="w-full opacity-10 dark:opacity-15 absolute top-0 left-0 right-0"
-          style={{
-            backgroundImage,
-            backgroundSize: '100% auto',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'no-repeat',
-            height: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
-          }}
-        />
-        {/* Flipped SVG positioned where first instance ends */}
-        <div
-          className="w-full opacity-10 dark:opacity-10 absolute left-0 right-0"
-          style={{
-            top: '56.25%', // Start where first SVG ends
-            backgroundImage,
-            backgroundSize: '100% auto',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'repeat-y',
-            transform: 'scaleY(-1)',
-            height: 'calc(100% - 56.25%)',
-          }}
-        />
-      </div>
+    <div className="relative min-h-svh">
+      <ContourBackdrop page="resume" />
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-forest-800 dark:text-forest-200">Resume</h1>
-          <Button className="bg-river-600 hover:bg-river-700">
-            <a
-              href="/data/devin_hunt_resume_june2025.pdf"
-              download="devin_hunt_resume_june2025.pdf"
-              className="flex items-center gap-2"
-            >
-              <DownloadIcon aria-hidden={true} />
-              Download PDF
-            </a>
-          </Button>
+      <div className="container relative z-10 mx-auto max-w-3xl px-6">
+        <header className="flex flex-wrap items-baseline justify-between gap-4 pt-16">
+          <p className="eyebrow">Resume</p>
+          <a
+            href="/data/Resume_DevinHunt_Jun2026.pdf"
+            download="Devin-Hunt-Resume-June2026.pdf"
+            className="link-quiet print:hidden"
+          >
+            Download PDF
+          </a>
+        </header>
+
+        <div className="panel mt-4">
+        <div>
+          <h1 className="display text-4xl">Devin Hunt</h1>
+          <p className="mt-1 font-sans font-medium text-xs uppercase tracking-caps text-ink-muted">AI Automation Engineer and Groundwater Modeler</p>
+          <p className="mt-2 text-sm text-ink-muted">
+            Sacramento, CA &middot; contact@devinhunt.com &middot; devinhunt.com &middot; github.com/dhunt22
+          </p>
+          <p className="mt-4 font-display text-xl leading-snug text-ink-strong">
+            Engineer who builds tested Python automation, AI-grounded applications, and agent workflows, with California SGMA groundwater modeling in IWFM as the proving ground. Turns slow, manual modeling and GIS work into reusable, tested tools, and develops AI-assisted toolkits grounded in modeling theory and documentation. Leads firm-wide adoption of AI-enriched workflows, and advises staff across practice areas on using AI for development — guiding their early ideas toward production-ready solutions.
+          </p>
         </div>
 
-      <Card className="p-6 mb-8 bg-white/80 dark:bg-[#404040]/80 backdrop-blur-sm print:shadow-none">
-        <section
-          className="mb-6 print:mb-4 p-4 -m-4 rounded-lg transition-all duration-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-river-300"
-          tabIndex={0}
-          aria-label="Professional summary section"
-        >
-          <h2 className="text-3xl font-semibold text-forest-700 dark:text-forest-200 mb-2 print:text-2xl">Devin Hunt</h2>
-          <h3 className="text-xl text-forest-600 dark:text-forest-300 mb-4 print:text-lg">Water Resources Engineer</h3>
-          <div className="mb-4">
-            <p className="italic dark:text-white">
-              Hydrologist passionate about understanding and solving water resource challenges in California through data-driven approaches. Skilled in leveraging open-source data, spatial analysis, and modeling to support sustainable water management. Committed to applying technical expertise to develop innovative solutions for complex hydrologic issues.
-            </p>
-          </div>
-        </section>
-
         <ResumeSection title="Professional Experience">
-          <ExperienceItem 
-            title="Water Resources Engineer II"
+          <ExperienceItem
+            title="Water Resources Engineer I to II"
             company="Woodard & Curran"
-            period="June 2023 - Present"
+            period="June 2023 – Present"
             responsibilities={[
-              "Engineer 2 involved in the development of CA SGMA Groundwater Sustainability Plans (GSPs), groundwater budgets through CA IWFM modeling, and recharge and extraction optimization through geospatial analyses.",
-              "Developed new figures, basemap, and layout templates for the Cuyama 2025 GSP using Esri ArcGIS Pro",
-              "Performed annual updates for the CoSANA Model and Cuyama Basin Water Resources Model (CBWRM)",
-              "Utilized python, arcpy, and open-source geospatial libraries to automate large dataset processing",
-              "Computed Recharge Suitability Index (RSI) scores using open-source geospatial data for the Yuba Subbasins",
-              "Executed independent analysis of well sites in Southern California that provide reliable, clean water for future development",
-              "Wrote technical memorandums and deliverable packages for clients"
+              "Develop and maintain AIIWFM, an internal AI application that grounds language models in the IWFM user manual and modeling theory to answer groundwater modeling questions accurately.",
+              "Build a Python suite of tools that automates common IWFM model workflows, including sub-setting a model domain and running automated file linting, QA/QC, and water-budget reporting.",
+              "Automate post-processing of IWFM groundwater models, replacing slow manual steps with tested, reusable tools.",
+              "Develop PyPEST, a Python port of the DWR IWFM PEST calibration suite, validated against the original Fortran tools to support automated model calibration.",
+              "Lead the firm's monthly AI Innovators forum, a company-wide group that helps staff at any skill level learn AI and build their own tools — drawing over 100 staff and supporting several new tools.",
+              "Advise staff across practice areas on AI-assisted engineering, sharing advanced Claude Code and Copilot workflows in agents, subagents, skills, and context management.",
+              "Run an internal workflow that audits, refactors, and documents early-stage AI tools and returns a handoff report so staff can continue their own development — applied across five projects to date.",
+              "Perform annual updates for the CoSANA Model and the Cuyama Basin Water Resources Model.",
+              "Compute Recharge Suitability Index scores from open-source geospatial data for the Yuba Subbasins."
             ]}
           />
-          
-          <ExperienceItem 
+
+          <ExperienceItem
             title="Geospatial Analyst and Programmer"
             company="Geospatial Centroid at Colorado State University"
-            period="October 2022 - May 2023"
+            period="October 2022 – May 2023"
             responsibilities={[
-              "Involved in various spatial projects in Colorado and CONUS. Also provided project planning and technical tutoring for students.",
-              "Developed R-Spatial scripts for NASA-Equity and Environmental Justice Grant project: Environmental Justice for Prisons",
-              "Held office hours and supported students with any spatial project needs",
-              "Utilize R and geospatial libraries to support project work",
-              "Designed hexagonal project spotlight decorations for Centroid office",
-              "Executed independent analysis of well sites in Southern California that provide reliable, clean water for future development",
-              "Wrote technical memorandums and deliverable packages for clients"
+              "Developed R-Spatial scripts supporting the NASA Equity and Environmental Justice grant project, Environmental Justice for Prisons.",
+              "Applied R and geospatial libraries across spatial projects spanning Colorado and the continental United States.",
+              "Provided project planning and technical tutoring, holding office hours to support students with spatial project needs.",
+              "Designed hexagonal project-spotlight displays for the Centroid office."
             ]}
           />
-          
-          <ExperienceItem 
+
+          <ExperienceItem
             title="Undergraduate Research Assistant"
             company="Colorado State University"
-            period="January 2022 - October 2022"
+            period="January 2022 – October 2022"
             responsibilities={[
-              "Field researcher and data analyst supporting a PhD Dissertation on stream metabolism. Study area was Fraser Experimental Forest, CO across four catchment basins. (Project Lead Lauren Kremer in Watershed Analysis Group)",
-              "Constructed Campbell Scientific stream gauges and planned on-site solar panel locations",
-              "Installed Campbell Scientific, HOBO, and other in-situ sensors",
-              "Collected stream geomorphology, velocity-area, and groundwater level measurements",
-              "Read data and maintained sensors",
-              "Processed water samples for Dissolved Organic Carbon (DOC), and Inorganic Carbon (IC)",
-              "Documented all actions taken in the field and laboratory"
+              "Supported a PhD dissertation on stream metabolism as field researcher and data analyst across four catchment basins in the Fraser Experimental Forest, Colorado.",
+              "Constructed Campbell Scientific stream gauges and installed Campbell, HOBO, and other in-situ sensors.",
+              "Collected stream geomorphology, velocity-area, and groundwater-level measurements and processed water samples for dissolved organic and inorganic carbon.",
+              "Maintained sensors, retrieved field data, and documented all field and laboratory work."
             ]}
           />
         </ResumeSection>
 
         <ResumeSection title="Education">
-          <div className="mb-4">
-            <h4 className="text-lg font-semibold text-forest-700 dark:text-forest-300">Colorado State University</h4>
-            <p className="text-forest-600 dark:text-white italic">BS in Watershed Science, Hydrology and Water Resources Science</p>
-            <p className="text-forest-600 dark:text-white italic">Minor in Geospatial Information Systems (GIS)</p>
-            <p className="mt-2 dark:text-white">
+          <div>
+            <h3 className="font-display text-xl text-ink-strong">Colorado State University</h3>
+            <p className="mt-1 text-ink-body">Bachelor of Science in Watershed Science, Hydrology and Water Resources Science</p>
+            <p className="text-ink-body">Minor in Geospatial Information Systems</p>
+            <p className="mt-3 leading-relaxed text-ink-body">
               A multi-disciplinary education that enabled me to remotely sense and quantify my favorite natural resource: water.
             </p>
-            <div className="mt-3">
-              <h5 className="font-medium text-forest-700 dark:text-forest-300">Relevant coursework:</h5>
-              <ul className="space-y-1 mt-1 ml-2">
-                <li className="flex items-start">
-                  <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
-                  <span className="text-forest-800 dark:text-white">Hydraulics and Groundwater flow; Hydrogeology, Soil Physics, Physics I & II</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
-                  <span className="text-forest-800 dark:text-white">Data Science; Programming for GIS I & II, Watershed Analysis for Env. Data Science, Watershed Problem Analysis</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
-                  <span className="text-forest-800 dark:text-white">Remote Sensing; Geodetic and Near-surface Geophysical Methods, Remote Sensing and Image Interpretation</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-forest-600 dark:text-forest-400 mr-2 mt-1">•</span>
-                  <span className="text-forest-800 dark:text-white">Niche Subjects; Snow Hydrology, Field Measurements in Snow Hydrology</span>
-                </li>
+            <div className="mt-4">
+              <h4 className="font-display text-base text-ink-strong">Relevant coursework:</h4>
+              <ul className="mt-2 list-disc space-y-1 pl-5 leading-relaxed text-ink-body marker:text-eyebrow">
+                <li>Hydraulics and Groundwater Flow; Hydrogeology, Soil Physics, Physics I and II</li>
+                <li>Data Science; Programming for GIS I and II, Watershed Analysis for Environmental Data Science, Watershed Problem Analysis</li>
+                <li>Remote Sensing; Geodetic and Near-surface Geophysical Methods, Remote Sensing and Image Interpretation</li>
+                <li>Niche Subjects; Snow Hydrology, Field Measurements in Snow Hydrology</li>
               </ul>
             </div>
           </div>
         </ResumeSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ResumeSection title="Professional Skills">
-            <SkillsList skills={professionalSkills} />
-          </ResumeSection>
-          
-          <ResumeSection title="Technical Skills">
-            <SkillsList skills={technicalSkills} />
-          </ResumeSection>
-        </div>
+        <ResumeSection title="Professional Skills">
+          <SkillsList skills={professionalSkills} />
+        </ResumeSection>
+
+        <ResumeSection title="Technical Skills">
+          <SkillsList skills={technicalSkills} />
+        </ResumeSection>
 
         <ResumeSection title="Additional Achievements">
-          <div className="mb-2">
-            <p className="font-medium">EAGLE SCOUT AWARD, Boy Scouts of America, August 2018</p>
-          </div>
-          <div>
-            <p className="font-medium">WILDERNESS FIRST AID, NOLS Wilderness Medicine, May 2016</p>
+          <div className="space-y-2 leading-relaxed text-ink-body">
+            <p>Eagle Scout Award, Boy Scouts of America, August 2018</p>
+            <p>Wilderness First Aid, NOLS Wilderness Medicine, May 2016</p>
           </div>
         </ResumeSection>
-      </Card>
+        </div>
       </div>
     </div>
   );
