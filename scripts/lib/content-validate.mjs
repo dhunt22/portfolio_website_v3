@@ -16,6 +16,11 @@ export function validatePage(name, page, config = {}) {
     }
     if (sec.minCards && block.children.length < sec.minCards)
       E(`section "${sec.key}" needs >=${sec.minCards} cards, has ${block.children.length}`);
+    const seen = new Set();
+    for (const c of block.children) {
+      if (seen.has(c.id)) E(`section "${sec.key}" has duplicate card "${c.id}"`);
+      seen.add(c.id);
+    }
   }
 
   if (name === 'portfolio') validatePortfolio(page, config.portfolio || [], E);
