@@ -5,12 +5,22 @@
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { IndicatorBrowser } from '@/components/portfolio/IndicatorBrowser';
+import { portfolioEjPrisons as ej } from '@/content/generated/portfolioEjPrisons';
+import { child } from '@/content/_helpers';
+import type { Block } from '@/content/_types';
 
 /**
  * Environmental Justice For Prisons - Dedicated Project Page
  * A comprehensive overview of the NASA-funded research project
  */
 export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
+  const overview = ej.projectOverview as Block;
+  const objectives = child(overview, 'key-project-objectives');
+  const team = ej.projectTeamAndMyContribution as Block;
+  const research = child(team, 'research-team');
+  const role = child(team, 'my-role-and-contributions');
+  const impact = child(team, 'project-impact-and-recognition');
+
   return (
     <div className="relative min-h-svh">
       <ContourBackdrop page="ej" />
@@ -18,67 +28,59 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       <div className="container relative z-10 mx-auto px-6">
         {/* Hero — compact so the dashboard enters the first viewport on desktop */}
         <header className="pt-8 pb-8">
-          <p className="eyebrow mb-6">Geospatial Analysis, NASA Grant Project · 2022-2023</p>
+          <p className="eyebrow mb-6">{ej.header.fields.eyebrow}</p>
           <h1 className="display text-4xl">
-            Environmental Justice For Prisons
+            {ej.header.fields.heading}
           </h1>
           <p className="lead mt-6 max-w-[40rem]">
-            Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons
+            {ej.header.body[0]}
           </p>
           <nav aria-label="Project links" className="mt-8 flex flex-wrap gap-8">
             <a
-              href="https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1"
+              href={ej.header.links[0].href}
               target="_blank"
               rel="noopener noreferrer"
               className="link-quiet"
               aria-label="View GitHub repository for NASA Prison Environmental Justice project"
             >
-              Published Dataset
+              {ej.header.links[0].label}
             </a>
             <a
-              href="https://ui.adsabs.harvard.edu/abs/2023AGUFMINV31C0.1M/abstract"
+              href={ej.header.links[1].href}
               target="_blank"
               rel="noopener noreferrer"
               className="link-quiet"
               aria-label="Visit NASA Applied Sciences project page"
             >
-              Publication
+              {ej.header.links[1].label}
             </a>
           </nav>
         </header>
 
         {/* Dashboard — map leads as the primary element */}
         <section className="panel mb-4" aria-labelledby="indicators-heading">
-          <h2 id="indicators-heading" className="section-title mb-6">Environmental Risk Indicators</h2>
+          <h2 id="indicators-heading" className="section-title mb-6">{ej.environmentalRiskIndicators.title}</h2>
           <IndicatorBrowser />
         </section>
 
         {/* About — Project Overview */}
         <section id="about" className="panel mb-4" aria-labelledby="overview-heading">
-          <h2 id="overview-heading" className="section-title mb-6">Project Overview</h2>
+          <h2 id="overview-heading" className="section-title mb-6">{overview.title}</h2>
           <div className="xl:grid xl:grid-cols-[minmax(0,40rem)_1fr] xl:gap-10 xl:items-start">
             {/* Overview paragraphs (left column on xl; single column below) */}
             <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body xl:max-w-none">
-              <p>
-                Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition&mdash;overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats. This groundbreaking research initiative was funded by NASA&apos;s $100,000 Equity and Environmental Justice Grant to address this critical gap.
-              </p>
-
-              <p>
-                This research leverages NASA&apos;s Earth science data&mdash;including satellite, land cover, climate, and air quality datasets&mdash;to characterize environmental harms faced by incarcerated people across all U.S. state and federal prisons. The method incorporates 11 environmental indicators grouped into three components: climate risk (heat index, canopy cover, wildfire risk and flood hazard), environmental exposures (ozone, PM 2.5, pesticide use, and traffic density), and environmental effects (proximity to superfund sites, risk management plan facilities and hazardous waste sites).
-              </p>
-
-              <p>
-                Explore the interactive map below to visualize how these environmental factors impact prisons across the United States.
-              </p>
+              {overview.body.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
             </div>
 
             {/* Key Project Objectives (right column on xl) */}
             <div className="mt-6 leading-relaxed text-ink-body xl:mt-0">
-              <h3 className="mb-3 font-display text-xl text-ink-strong">Key Project Objectives</h3>
+              <h3 className="mb-3 font-display text-xl text-ink-strong">{objectives.title}</h3>
               <ul className="list-disc space-y-2 pl-5 marker:text-eyebrow">
-                <li>Quantify environmental conditions at all 1,865 state and federal prisons in the U.S.</li>
-                <li>Calculate a standardized vulnerability index for each prison</li>
-                <li>Create an open-access geospatial dataset and reproducible code base</li>
+                {objectives.items.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -86,82 +88,66 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
 
         {/* Long-form read — Project Team & Impact */}
         <section className="panel mb-4" aria-labelledby="team-heading">
-          <h2 id="team-heading" className="section-title mb-6">Project Team &amp; My Contribution</h2>
+          <h2 id="team-heading" className="section-title mb-6">{team.title}</h2>
 
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
             <div>
-              <h3 className="mb-4 font-display text-xl text-ink-strong">Research Team</h3>
+              <h3 className="mb-4 font-display text-xl text-ink-strong">{research.title}</h3>
               <div className="space-y-4 leading-relaxed text-ink-body">
-                <div>
-                  <p className="text-ink-strong">Dr. Caitlin Mothes</p>
-                  <p className="text-sm">Principal Investigator, Research and Program Coordinator</p>
-                  <p className="text-sm">Geospatial Centroid, Colorado State University</p>
-                </div>
-                <div>
-                  <p className="text-ink-strong">Dan Carver</p>
-                  <p className="text-sm">Geospatial Technical Manager</p>
-                  <p className="text-sm">Geospatial Centroid, Colorado State University</p>
-                </div>
-                <div>
-                  <p className="text-ink-strong">Dr. Carrie Chennault</p>
-                  <p className="text-sm">Assistant Professor of Geography</p>
-                  <p className="text-sm">Prison Agriculture Lab, Colorado State University</p>
-                </div>
+                {research.children.map((person) => (
+                  <div key={person.id}>
+                    <p className="text-ink-strong">{person.title}</p>
+                    <p className="text-sm">{person.body[0]}</p>
+                    <p className="text-sm">{person.body[1]}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
             <div>
-              <h3 className="mb-4 font-display text-xl text-ink-strong">My Role &amp; Contributions</h3>
+              <h3 className="mb-4 font-display text-xl text-ink-strong">{role.title}</h3>
               <div className="space-y-4 leading-relaxed text-ink-body">
                 <p>
-                  As a Geospatial Analyst and Programmer at the Geospatial Centroid, I worked closely with
-                  Caitlin Mothes to develop R-spatial scripts for data processing and analysis.
+                  {role.body[0]}
                 </p>
                 <ul className="list-disc space-y-2 pl-5 marker:text-eyebrow">
-                  <li>Processed open-source datasets for environmental indicators</li>
-                  <li>Calculated percentile scores for climate, exposure, and effects categories</li>
-                  <li>Developed vulnerability scoring algorithms combining all risk factors</li>
-                  <li>Contributed to repository management and large dataset processing workflows</li>
+                  {role.items.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </div>
           </div>
 
           <div className="mt-12 max-w-[40rem]">
-            <h3 className="mb-4 font-display text-xl text-ink-strong">Project Impact &amp; Recognition</h3>
+            <h3 className="mb-4 font-display text-xl text-ink-strong">{impact.title}</h3>
             <div className="space-y-6 leading-relaxed text-ink-body">
-              <p>
-                The main deliverables of our project are 1) an open-access geospatial dataset with calculated values for each environmental indicator and a final environmental vulnerability index for 1,865 U.S. prisons and 2) an open-access, reproducible code base for every step of our analysis to promote the application of these assessments to other institutions and make our data and methods transparent.
-              </p>
-              <p>
-                This research has provided critical data for activists, researchers, policy makers,
-                and government agencies to understand and address environmental injustices in the prison system.
-                The work represents a significant contribution to both environmental justice and geospatial science.
-              </p>
+              {impact.body.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
             </div>
 
             <figure className="mt-8">
               <blockquote className="font-display italic text-xl leading-snug text-ink-strong">
-                &ldquo;This project taught me about managing a repository and working with large data, and using multiple datasets to contribute to environmental justice research that highlights the intersection of incarceration and environmental harm.&rdquo;
+                &ldquo;{impact.quote!.text}&rdquo;
               </blockquote>
-              <figcaption className="eyebrow mt-4">&mdash; Devin Hunt, Project Contributor</figcaption>
+              <figcaption className="eyebrow mt-4">&mdash; {impact.quote!.author}</figcaption>
             </figure>
 
             <p className="mt-8 text-sm text-ink-muted">
-              Special thanks to the Geospatial Centroid at Colorado State University and NASA&apos;s Equity and Environmental Justice Grant program
-              for making this critical research possible.
+              {impact.fields.thanks}
             </p>
           </div>
         </section>
 
         {/* Call to Action */}
         <section className="panel" aria-labelledby="cta-heading">
-          <h2 id="cta-heading" className="section-title mb-6">Explore the Research</h2>
+          <h2 id="cta-heading" className="section-title mb-6">{ej.exploreTheResearch.title}</h2>
           <p className="max-w-[40rem] leading-relaxed text-ink-body">
-            Access the open-source code, data, and methodology of this environmental justice research.
+            {ej.exploreTheResearch.body[0]}
           </p>
           <nav aria-label="Research links" className="mt-8 flex flex-wrap gap-8">
-            <Link href="/portfolio" className="link-quiet">Back to Portfolio</Link>
+            <Link href={ej.exploreTheResearch.links[0].href} className="link-quiet">{ej.exploreTheResearch.links[0].label}</Link>
           </nav>
         </section>
       </div>
