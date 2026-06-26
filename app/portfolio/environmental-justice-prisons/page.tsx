@@ -14,7 +14,7 @@ import type { Block } from '@/content/_types';
  * A comprehensive overview of the NASA-funded research project
  */
 export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
-  const overview = ej.projectOverview as Block;
+  const overview = ej.projectOverview;
   const objectives = child(overview, 'key-project-objectives');
   const team = ej.projectTeamAndMyContribution as Block;
   const research = child(team, 'research-team');

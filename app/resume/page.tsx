@@ -8,14 +8,13 @@ import ExperienceItem from '@/components/resume/ExperienceItem';
 import SkillsList from '@/components/resume/SkillsList';
 import { resume } from '@/content/generated/resume';
 import { child } from '@/content/_helpers';
-import type { Block } from '@/content/_types';
 
 /**
  * Resume page component showing professional experience, education, and skills
  * @returns {React.JSX.Element} The rendered resume page
  */
 export default function ResumePage() {
-  const edu = child(resume.education as Block, 'colorado-state-university');
+  const edu = child(resume.education, 'colorado-state-university');
 
   return (
     <div className="relative min-h-svh">
