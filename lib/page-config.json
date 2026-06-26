@@ -1,0 +1,25 @@
+{
+  "portfolio": [
+    { "id": "prison-ej", "categories": ["all", "geospatial", "research"], "year": "2022-2023", "featured": true, "technologies": ["R", "GIS", "Data Analysis"], "displayType": "map",
+      "links": [ { "href": "https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1", "iconType": "github" }, { "href": "/portfolio/environmental-justice-prisons", "iconType": "external" } ] },
+    { "id": "cuyama-basin", "categories": ["all", "water"], "year": "2023-Present", "featured": true, "technologies": ["ArcGIS Pro", "QGIS", "IWFM", "Python"], "displayType": "image",
+      "links": [ { "href": "https://sgma.water.ca.gov/portal/gsppe/update/29F7AB43D49C0C73E06350C29E0AC15F", "iconType": "document" } ] },
+    { "id": "yuba-recharge", "categories": ["all", "water", "geospatial"], "year": "2023", "technologies": ["GIS", "Spatial Analysis", "Hydrology"], "displayType": "image",
+      "links": [ { "href": "https://sgma.water.ca.gov/portal/service/gspdocument/download/10541", "iconType": "document" }, { "href": "https://sgma.water.ca.gov/portal/gsp/periodiceval/preview/25", "iconType": "external" } ] },
+    { "id": "seasonal-population", "categories": ["all", "water"], "year": "2024", "technologies": ["R", "Data Processing", "Statistical Analysis"], "displayType": "image", "links": [] },
+    { "id": "harvest-water", "categories": ["all", "water", "geospatial"], "year": "2024", "technologies": ["GIS", "Contract Management", "Water Law"], "displayType": "none", "links": [] },
+    { "id": "modesto-infiltration", "categories": ["all", "water", "geospatial"], "year": "2024", "technologies": ["Field Testing", "Soil Analysis", "GIS"], "displayType": "image", "links": [] },
+    { "id": "antelope-wells", "categories": ["all", "water", "geospatial"], "year": "2024-Present", "technologies": ["GIS", "Suitability Analysis", "Water Infrastructure"], "displayType": "image",
+      "links": [ { "href": "https://pw.lacounty.gov/core-service-areas/water-resources/waterworks-districts/district-overview/", "iconType": "external" } ] },
+    { "id": "watershed-hub", "categories": ["all", "water", "geospatial"], "year": "2024-Present", "technologies": ["APIs", "Data Processing", "Dashboard Development", "ArcGIS Online"], "displayType": "map", "links": [] },
+    { "id": "sanitary-district", "categories": ["all", "water"], "year": "2024-Present", "technologies": ["Water Quality Analysis", "Regulatory Compliance", "Data Visualization"], "displayType": "image", "imageFit": "contain", "links": [] }
+  ],
+  "interests": [
+    { "id": "exploration", "imagePosition": "right", "objectPosition": "bottom" },
+    { "id": "fishing", "imagePosition": "left", "objectPosition": "center" },
+    { "id": "bicycles", "imagePosition": "right", "objectPosition": "bottom" },
+    { "id": "community", "imagePosition": "left", "objectPosition": "center" },
+    { "id": "mycology", "imagePosition": "right", "objectPosition": "bottom" },
+    { "id": "photography", "imagePosition": "left", "objectPosition": "bottom" }
+  ]
+}
