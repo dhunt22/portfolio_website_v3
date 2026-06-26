@@ -1,0 +1,4 @@
+# Deterministic LF for the content pipeline (generated + source + tooling)
+content/** text eol=lf
+scripts/** text eol=lf
+lib/page-config.json text eol=lf

@@ -7,12 +7,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "export": "next build",
+    "content:sync": "node scripts/sync-content.mjs",
+    "test:content": "node --test scripts/lib/content-parse.test.mjs scripts/lib/content-emit.test.mjs scripts/lib/content-validate.test.mjs scripts/sync-content.test.mjs",
+    "build": "npm run content:sync && next build",
+    "export": "npm run content:sync && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "netlify-build": "next build",
+    "netlify-build": "npm run content:sync && next build",
     "build:plates": "node scripts/build-plates.mjs"
   },
   "dependencies": {

@@ -27,3 +27,7 @@ bash.exe.stackdump
 /.tmp_review/
 tmp-*.mjs
 /style-explorations/bigsur_p*.svg
+
+# Editable site copy — un-ignore content markdown from the global *.md rule
+!/content/
+!/content/**/*.md
