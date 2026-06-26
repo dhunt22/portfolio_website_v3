@@ -4,6 +4,7 @@
 
 import Link from 'next/link';
 import { GitHubIcon, LinkedInIcon, EmailIcon } from '@/components/ui/icons/common-icons';
+import { site } from '@/content/generated/site';
 
 /**
  * Footer component with contact information and site links
@@ -19,13 +20,11 @@ export default function Footer() {
           {/* Block 1: About */}
           <div>
             <h3 className="font-display text-ink-strong">Devin Hunt</h3>
-            <p className="text-sm text-ink-muted max-w-xs mt-3">
-              Water Resources Engineer with a passion for sustainable water management and
-              outdoor exploration.
-            </p>
-            <p className="text-sm text-ink-muted max-w-xs mt-3">
-              Based in California, working across multiple groundwater basins to address water resource challenges.
-            </p>
+            {site.footer.body.map((paragraph, index) => (
+              <p key={index} className="text-sm text-ink-muted max-w-xs mt-3">
+                {paragraph}
+              </p>
+            ))}
           </div>
 
           {/* Block 2: Quick Links */}

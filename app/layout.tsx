@@ -9,6 +9,7 @@ import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Metadata, Viewport } from 'next';
+import { site } from '@/content/generated/site';
 
 // Viewport export — kept separate from metadata (Next 14 requirement).
 // interactiveWidget: 'resizes-visual' tells mobile browsers that the on-screen
@@ -25,25 +26,28 @@ export const viewport: Viewport = {
   interactiveWidget: 'resizes-visual',
 };
 
+const seoTitle = site.seo.fields.title;
+const seoDescription = site.seo.fields.description;
+
 // Define the metadata for the application
 export const metadata: Metadata = {
-  title: 'Devin Hunt - Water Resources Engineer & Explorer',
-  description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
-  keywords: ['hydrologist', 'water resources', 'engineer', 'IWFM', 'geospatial', 'exploration', 'fishing', 'mycology'],
+  title: seoTitle,
+  description: seoDescription,
+  keywords: site.seo.items,
   authors: [{ name: 'Devin Hunt', url: 'https://devinhunt.com' }],
   creator: 'Devin Hunt',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://devinhunt.com',
-    title: 'Devin Hunt - Water Resources Engineer & Explorer',
-    description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
+    title: seoTitle,
+    description: seoDescription,
     siteName: 'Devin Hunt Portfolio',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Devin Hunt - Water Resources Engineer & Explorer',
-    description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
+    title: seoTitle,
+    description: seoDescription,
     creator: '@devinhunt',
   },
 };
