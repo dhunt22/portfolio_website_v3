@@ -73,3 +73,47 @@ test('collectAnchors merges content ids + EXTRA_ANCHORS', () => {
   assert.ok(interests.has('main'));        // '*' JSX extra
   assert.equal(anchors.has(null), false);  // site (routeless) pages contribute no route
 });
+
+test('content ids do NOT create anchors on non-rendering routes', () => {
+  const pages = fixture();
+  pages.push({ name: 'portfolio', file: 'portfolio.md', page: pageOf({
+    projects: blk({ id: 'projects', children: [blk({ id: 'cuyama-basin' })] }),
+  }) });
+  pages[0].page.sections.hero.links.push({ label: 'bad', href: '/portfolio#cuyama-basin' });
+  const errs = checkIntegrity(pages, envFor(pages));
+  assert.ok(errs.some((e) => /unknown anchor "#cuyama-basin" on \/portfolio/.test(e)));
+});
+
+test('mailto/tel links pass; fragment on a public file passes', () => {
+  const pages = fixture();
+  pages[0].page.sections.hero.links.push(
+    { label: 'm', href: 'mailto:contact@devinhunt.com' },
+    { label: 't', href: 'tel:+15555555555' },
+    { label: 'pdf2', href: '/data/resume.pdf#page=2' },
+  );
+  assert.deepEqual(checkIntegrity(pages, envFor(pages)), []);
+});
+
+test('same-page #fragment validated against own route anchors', () => {
+  const pages = fixture();
+  pages[1].page.sections.interests.links = [
+    { label: 'ok', href: '#exploration' },
+    { label: 'bad', href: '#nope2' },
+  ];
+  const errs = checkIntegrity(pages, envFor(pages));
+  assert.equal(errs.some((e) => /unknown same-page anchor #exploration/.test(e)), false);
+  assert.ok(errs.some((e) => /unknown same-page anchor #nope2/.test(e)));
+});
+
+test('multi-# fragment, protocol-relative, and unknown page name all error', () => {
+  const pages = fixture();
+  pages[0].page.sections.hero.links.push(
+    { label: 'mh', href: '/interests#exploration#x' },
+    { label: 'pr', href: '//example.com/x' },
+  );
+  pages.push({ name: 'blog', file: 'blog.md', page: pageOf({ b: blk({ id: 'b' }) }) });
+  const errs = checkIntegrity(pages, envFor(pages));
+  assert.ok(errs.some((e) => /unknown anchor "#exploration#x"/.test(e)));
+  assert.ok(errs.some((e) => /protocol-relative link/.test(e)));
+  assert.ok(errs.some((e) => /page "blog" is not in ROUTE_BY_PAGE/.test(e)));
+});
