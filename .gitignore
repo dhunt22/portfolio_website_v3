@@ -31,3 +31,6 @@ tmp-*.mjs
 # Editable site copy — un-ignore content markdown from the global *.md rule
 !/content/
 !/content/**/*.md
+
+# Local planning artifacts (auto-checkpoint once committed one by mistake)
+docs/superpowers/**/*.tasks.json

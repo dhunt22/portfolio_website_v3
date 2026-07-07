@@ -13,10 +13,10 @@ export function runSync({
   outDir = join(ROOT, 'content', 'generated'),
   configPath = join(ROOT, 'lib', 'page-config.json'),
 } = {}) {
-  if (!existsSync(contentDir)) return { ok: true, errors: [], written: [], note: 'no content dir' };
+  if (!existsSync(contentDir)) return { ok: true, errors: [], written: [], pages: [], note: 'no content dir' };
   const config = existsSync(configPath) ? JSON.parse(readFileSync(configPath, 'utf8')) : {};
   const files = readdirSync(contentDir).filter((f) => f.endsWith('.md')).sort();
-  if (files.length === 0) return { ok: true, errors: [], written: [], note: 'no content files' };
+  if (files.length === 0) return { ok: true, errors: [], written: [], pages: [], note: 'no content files' };
 
   const parsed = [];
   const errors = [];
@@ -26,7 +26,7 @@ export function runSync({
     parsed.push({ name, file, page });
     errors.push(...validatePage(name, page, config));
   }
-  if (errors.length) return { ok: false, errors, written: [] };
+  if (errors.length) return { ok: false, errors, written: [], pages: parsed };
 
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
   const written = [];
@@ -35,7 +35,7 @@ export function runSync({
     writeFileSync(dest, emitPage(name, file, page.sections));
     written.push(dest);
   }
-  return { ok: true, errors: [], written };
+  return { ok: true, errors: [], written, pages: parsed };
 }
 
 const invokedDirectly = process.argv[1] && basename(process.argv[1]) === 'sync-content.mjs';

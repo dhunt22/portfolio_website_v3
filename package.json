@@ -8,13 +8,14 @@
   "scripts": {
     "dev": "next dev",
     "content:sync": "node scripts/sync-content.mjs",
-    "test:content": "node --test scripts/lib/content-parse.test.mjs scripts/lib/content-emit.test.mjs scripts/lib/content-validate.test.mjs scripts/sync-content.test.mjs",
-    "build": "npm run content:sync && next build",
-    "export": "npm run content:sync && next build",
+    "content:check": "node scripts/check-content.mjs",
+    "test:content": "node --test scripts/lib/content-parse.test.mjs scripts/lib/content-emit.test.mjs scripts/lib/content-validate.test.mjs scripts/lib/content-check.test.mjs scripts/sync-content.test.mjs scripts/check-content.test.mjs",
+    "build": "npm run content:check && next build",
+    "export": "npm run content:check && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "netlify-build": "npm run content:sync && next build",
+    "netlify-build": "npm run content:check && next build",
     "build:plates": "node scripts/build-plates.mjs"
   },
   "dependencies": {
