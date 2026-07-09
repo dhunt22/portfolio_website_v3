@@ -307,6 +307,7 @@ export function AnimatedContourBackground({
         const CYCLE = Math.max(bands.length * STEP, WINDOW + STEP);
         const DEAD = CYCLE - WINDOW;
 
+        const timelines: gsap.core.Timeline[] = [];
         bands.forEach((bandEl, b) => {
           // Smooth start: instead of phase-seeding the wave into mid-travel
           // (which popped several bands in already half-erased the instant the
@@ -326,7 +327,35 @@ export function AnimatedContourBackground({
             .to(bandEl, { opacity: 0, duration: FADE_OUT, ease: 'sine.inOut' })
             .call(() => { gsap.set(bandEl, { willChange: 'auto' }); })
             .to(bandEl, { opacity: 0, duration: DEAD, ease: 'none' });
+          timelines.push(tl);
         });
+
+        // ── Zoom-raster truce ────────────────────────────────────────────
+        // Browser zoom (pinch or Ctrl+wheel) re-rasterizes BOTH giant vector
+        // layers (plate background + this inline glow) at the new device
+        // scale. Keeping the wave tweening through that piles repeated full-
+        // layer invalidations on top of the re-raster — the observed zoom
+        // jank. visualViewport fires resize for pinch AND layout zoom (and
+        // window resizes); pause every band timeline immediately and resume
+        // 300 ms after the last event so the re-raster gets the main thread
+        // to itself.
+        const vv = typeof window !== 'undefined' ? window.visualViewport : null;
+        let resumeTimer: ReturnType<typeof setTimeout> | null = null;
+        const onViewportChange = () => {
+          timelines.forEach((tl) => tl.pause());
+          if (resumeTimer !== null) clearTimeout(resumeTimer);
+          resumeTimer = setTimeout(() => {
+            timelines.forEach((tl) => tl.resume());
+            resumeTimer = null;
+          }, 300);
+        };
+        vv?.addEventListener('resize', onViewportChange);
+
+        // Cleanup registered INSIDE the context so ctx.revert() runs it.
+        return () => {
+          vv?.removeEventListener('resize', onViewportChange);
+          if (resumeTimer !== null) clearTimeout(resumeTimer);
+        };
       }, container);
     });
 
