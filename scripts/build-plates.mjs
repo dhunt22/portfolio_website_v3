@@ -93,11 +93,28 @@ const PLATE_OPACITY = { light: 0.35, dark: 0.30 };
 const MAX_BYTES = 2.5 * 1024 * 1024;
 
 // Vertex decimation tolerance (SVG user units; viewBox is ~406x254 shown at
-// ~1440px, so 0.2 ≈ 0.7 display px — invisible at 0.30–0.35 plate opacity).
-// Evidence + Skia benchmarks: docs/superpowers/plans/2026-07-06-plate-simplification.md.
-// 0 disables. Applied ONCE after parsePaths so plate and glow twins stay
-// bit-identical (registration).
-const SIMPLIFY_TOLERANCE = 0.2;
+// ~1440px). Lower tolerance keeps MORE vertices — smoother curves and, crucially,
+// no adjacent-contour crossings (Douglas-Peucker can displace a vertex up to the
+// tolerance, so where contours pack tightly a too-large tolerance pushes a line
+// across its neighbour — contours are level sets and must never cross). Chosen
+// per page as the LOWEST tolerance that keeps the plate under MAX_PLATE_BYTES, so
+// curvature is maximised within the size budget. Evidence + Skia benchmarks:
+// docs/superpowers/plans/2026-07-06-plate-simplification.md. 0 disables. Applied
+// ONCE after parsePaths so plate and glow twins stay bit-identical (registration).
+const SIMPLIFY_TOLERANCE_DEFAULT = 0.1;
+// interests (Badlands) is the one terrain dense enough that tol 0.1 overshoots
+// the budget (2.48MB), so it gets the lowest tolerance that still fits under
+// MAX_PLATE_BYTES (0.17 → ~1.77MB). Every other page fits at 0.1. All are well
+// below the old 0.2, so curvature is smoother and adjacent-contour crossings are
+// eliminated (a plate's contours must be within 2·tol to cross at all).
+const SIMPLIFY_TOLERANCE_BY_PAGE = { interests: 0.17 };
+// Per-page soft ceiling: keep every plate under this. Was an implicit ~900KB
+// proxy; relaxed to 1800KB so we can afford the extra vertices that fix crossings.
+const MAX_PLATE_BYTES = 1800 * 1024;
+// Tuning override: PLATE_TOL=<n> forces one tolerance for every page.
+const PLATE_TOL_OVERRIDE = process.env.PLATE_TOL ? parseFloat(process.env.PLATE_TOL) : null;
+const tolFor = (page) =>
+  PLATE_TOL_OVERRIDE ?? SIMPLIFY_TOLERANCE_BY_PAGE[page] ?? SIMPLIFY_TOLERANCE_DEFAULT;
 
 // ---------------------------------------------------------------------------
 // Reverse-glow knobs (v4 — full-twin elevation-band wave)
@@ -428,7 +445,7 @@ function buildPageOrientation(page, srcPath, viewBox, suffix, rawSizeMB, emitGlo
   }
 
   // Decimate vertex density ONCE, before the plate/glow builders, so plate and
-  // glow carry bit-identical `d` (registration). See SIMPLIFY_TOLERANCE.
+  // glow carry bit-identical `d` (registration). Tolerance is per page (tolFor).
   //
   // Two guards keep this a pure non-regression:
   //   • arc commands (A/a): the flattener throws loudly rather than mis-sample
@@ -439,13 +456,14 @@ function buildPageOrientation(page, srcPath, viewBox, suffix, rawSizeMB, emitGlo
   //     like Badlands). Accept the simplified `d` only when it is actually
   //     shorter; otherwise keep the original. Simplification can never grow a
   //     plate (which would otherwise trip the MAX_BYTES path-decimation cap).
-  if (SIMPLIFY_TOLERANCE > 0) {
+  const tol = tolFor(page);
+  if (tol > 0) {
     let keptExact = 0;
     let keptLarger = 0;
     paths = paths.map((p) => {
       let simplified;
       try {
-        simplified = simplifyPathData(p.d, SIMPLIFY_TOLERANCE);
+        simplified = simplifyPathData(p.d, tol);
       } catch (err) {
         if (/arc/i.test(err.message)) {
           keptExact++;
@@ -461,7 +479,7 @@ function buildPageOrientation(page, srcPath, viewBox, suffix, rawSizeMB, emitGlo
     });
     if (keptExact > 0 || keptLarger > 0) {
       console.log(
-        `    (${page}${suffix}: kept ${keptExact} arc-path(s) + ${keptLarger} already-compact path(s) as-is)`,
+        `    (${page}${suffix} tol ${tol}: kept ${keptExact} arc-path(s) + ${keptLarger} already-compact path(s) as-is)`,
       );
     }
   }
@@ -494,6 +512,11 @@ function buildPageOrientation(page, srcPath, viewBox, suffix, rawSizeMB, emitGlo
     console.log(
       `[${page}${suffix}/${theme}] paths: ${working.length}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}`,
     );
+    if (plateBytes > MAX_PLATE_BYTES) {
+      console.warn(
+        `    ⚠ ${page}${suffix}_${theme} is ${plateKB}KB > ${(MAX_PLATE_BYTES / 1024).toFixed(0)}KB budget — raise SIMPLIFY_TOLERANCE_BY_PAGE['${page}'] (currently ${tol}).`,
+      );
+    }
     rows.push({
       page: page + suffix,
       theme,
