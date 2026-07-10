@@ -41,6 +41,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { simplifyPathData } from './lib/simplify-path.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Local svgo JS entry — invoked via the current node binary so there is no
@@ -55,13 +56,20 @@ const SRC_DIR = 'C:/Users/devin/Desktop/Claude/minicontour_gis/exports/svg/11x17
 const SRC_DIR_PORTRAIT = 'C:/Users/devin/Desktop/Claude/minicontour_gis/exports/svg/8.5x11';
 const OUT_DIR = path.join('public', 'images', 'plates');
 
-// page key -> source landscape median file
+// page key -> source landscape file. Most pages use the `median` contour
+// render. ej (Great Smoky) and interests (Badlands) are the two densest
+// terrains: even after tol-0.2 vertex simplification their `median` plates stay
+// well over the size budget (Badlands erosion contours are too high-frequency
+// to decimate without visible damage). They instead use the sparser `iqr3`
+// render (~half the contour lines — the same variant the mobile home plate
+// already ships), then get simplified on top. NB: `iqr1` is the DENSEST variant,
+// not the sparsest — `iqr3` is the one that reduces contour count.
 const PAGES = {
   home: 'california_big-sur-landscape_median_11x17.svg',
   portfolio: 'national-parks_grand-canyon-landscape_median_11x17.svg',
-  ej: 'national-parks_great-smoky-mountains-landscape_median_11x17.svg',
+  ej: 'national-parks_great-smoky-mountains-landscape_iqr3_11x17.svg',
   resume: 'world_geiranger-fjord-landscape_median_11x17.svg',
-  interests: 'usa_badlands-landscape_median_11x17.svg',
+  interests: 'usa_badlands-landscape_iqr3_11x17.svg',
   notFound: 'world_santorini-landscape_median_11x17.svg',
 };
 
@@ -83,6 +91,30 @@ const PLATE_OPACITY = { light: 0.35, dark: 0.30 };
 
 // Output hard cap; engage decimation (drop every 4th path) and retry if exceeded.
 const MAX_BYTES = 2.5 * 1024 * 1024;
+
+// Vertex decimation tolerance (SVG user units; viewBox is ~406x254 shown at
+// ~1440px). Lower tolerance keeps MORE vertices — smoother curves and, crucially,
+// no adjacent-contour crossings (Douglas-Peucker can displace a vertex up to the
+// tolerance, so where contours pack tightly a too-large tolerance pushes a line
+// across its neighbour — contours are level sets and must never cross). Chosen
+// per page as the LOWEST tolerance that keeps the plate under MAX_PLATE_BYTES, so
+// curvature is maximised within the size budget. Evidence + Skia benchmarks:
+// docs/superpowers/plans/2026-07-06-plate-simplification.md. 0 disables. Applied
+// ONCE after parsePaths so plate and glow twins stay bit-identical (registration).
+const SIMPLIFY_TOLERANCE_DEFAULT = 0.1;
+// interests (Badlands) is the one terrain dense enough that tol 0.1 overshoots
+// the budget (2.48MB), so it gets the lowest tolerance that still fits under
+// MAX_PLATE_BYTES (0.17 → ~1.77MB). Every other page fits at 0.1. All are well
+// below the old 0.2, so curvature is smoother and adjacent-contour crossings are
+// eliminated (a plate's contours must be within 2·tol to cross at all).
+const SIMPLIFY_TOLERANCE_BY_PAGE = { interests: 0.17 };
+// Per-page soft ceiling: keep every plate under this. Was an implicit ~900KB
+// proxy; relaxed to 1800KB so we can afford the extra vertices that fix crossings.
+const MAX_PLATE_BYTES = 1800 * 1024;
+// Tuning override: PLATE_TOL=<n> forces one tolerance for every page.
+const PLATE_TOL_OVERRIDE = process.env.PLATE_TOL ? parseFloat(process.env.PLATE_TOL) : null;
+const tolFor = (page) =>
+  PLATE_TOL_OVERRIDE ?? SIMPLIFY_TOLERANCE_BY_PAGE[page] ?? SIMPLIFY_TOLERANCE_DEFAULT;
 
 // ---------------------------------------------------------------------------
 // Reverse-glow knobs (v4 — full-twin elevation-band wave)
@@ -188,133 +220,6 @@ function darkVariant(hex) {
   const [h, s, l] = hexToHsl(hex);
   const lp = Math.min(88, 100 - l * 0.72);
   return hslToHex(h, s, lp);
-}
-
-// ---------------------------------------------------------------------------
-// Path geometry helpers (used only for selecting the longest paths)
-// ---------------------------------------------------------------------------
-
-// Parse a path `d` into a flat list of absolute points by tracking the pen and
-// evaluating each command's endpoint (and sampling cubic segments). The source
-// paths are absolute M / C cubics (verified), but we handle the common subset
-// defensively. svgo's mergePaths fuses disconnected contours into one `d` with
-// multiple M/m subpath starts; `starts` records the index in `points` where each
-// new subpath begins so callers can avoid sampling across a contour gap.
-// Returns { points: [[x,y],...], starts: [0,...], length }.
-function flattenPath(d) {
-  const tokens = d.match(/[a-zA-Z]|-?\d*\.?\d+(?:e-?\d+)?/g) || [];
-  const points = [];
-  const starts = [];
-  let i = 0;
-  let cmd = '';
-  let cx = 0;
-  let cy = 0;
-  let sx = 0;
-  let sy = 0;
-
-  const num = () => parseFloat(tokens[i++]);
-  const sampleCubic = (x0, y0, x1, y1, x2, y2, x3, y3) => {
-    const N = 8;
-    for (let k = 1; k <= N; k++) {
-      const t = k / N;
-      const mt = 1 - t;
-      const a = mt * mt * mt;
-      const b = 3 * mt * mt * t;
-      const c = 3 * mt * t * t;
-      const e = t * t * t;
-      points.push([
-        a * x0 + b * x1 + c * x2 + e * x3,
-        a * y0 + b * y1 + c * y2 + e * y3,
-      ]);
-    }
-  };
-
-  while (i < tokens.length) {
-    if (/[a-zA-Z]/.test(tokens[i])) {
-      cmd = tokens[i++];
-    }
-    switch (cmd) {
-      case 'M':
-        cx = num();
-        cy = num();
-        sx = cx;
-        sy = cy;
-        starts.push(points.length); // new subpath begins here
-        points.push([cx, cy]);
-        cmd = 'L'; // implicit lineto for subsequent coordinate pairs
-        break;
-      case 'm':
-        cx += num();
-        cy += num();
-        sx = cx;
-        sy = cy;
-        starts.push(points.length); // new subpath begins here
-        points.push([cx, cy]);
-        cmd = 'l';
-        break;
-      case 'L':
-        cx = num();
-        cy = num();
-        points.push([cx, cy]);
-        break;
-      case 'l':
-        cx += num();
-        cy += num();
-        points.push([cx, cy]);
-        break;
-      case 'H':
-        cx = num();
-        points.push([cx, cy]);
-        break;
-      case 'h':
-        cx += num();
-        points.push([cx, cy]);
-        break;
-      case 'V':
-        cy = num();
-        points.push([cx, cy]);
-        break;
-      case 'v':
-        cy += num();
-        points.push([cx, cy]);
-        break;
-      case 'C': {
-        const x1 = num(), y1 = num(), x2 = num(), y2 = num(), x3 = num(), y3 = num();
-        sampleCubic(cx, cy, x1, y1, x2, y2, x3, y3);
-        cx = x3;
-        cy = y3;
-        break;
-      }
-      case 'c': {
-        const x1 = cx + num(), y1 = cy + num();
-        const x2 = cx + num(), y2 = cy + num();
-        const x3 = cx + num(), y3 = cy + num();
-        sampleCubic(cx, cy, x1, y1, x2, y2, x3, y3);
-        cx = x3;
-        cy = y3;
-        break;
-      }
-      case 'Z':
-      case 'z':
-        points.push([sx, sy]);
-        cx = sx;
-        cy = sy;
-        break;
-      default:
-        // Unknown command token — consume one number to avoid an infinite loop.
-        i++;
-        break;
-    }
-  }
-
-  let length = 0;
-  for (let k = 1; k < points.length; k++) {
-    length += Math.hypot(
-      points[k][0] - points[k - 1][0],
-      points[k][1] - points[k - 1][1],
-    );
-  }
-  return { points, starts, length };
 }
 
 // ---------------------------------------------------------------------------
@@ -539,6 +444,46 @@ function buildPageOrientation(page, srcPath, viewBox, suffix, rawSizeMB, emitGlo
     );
   }
 
+  // Decimate vertex density ONCE, before the plate/glow builders, so plate and
+  // glow carry bit-identical `d` (registration). Tolerance is per page (tolFor).
+  //
+  // Two guards keep this a pure non-regression:
+  //   • arc commands (A/a): the flattener throws loudly rather than mis-sample
+  //     them; a few source contours (e.g. santorini/notFound) carry arcs, so we
+  //     keep those paths' EXACT geometry. Only the arc error is swallowed.
+  //   • size gate: flattening a cubic into line segments then Douglas-Peucker
+  //     can INFLATE an already-compact wiggly contour (high-frequency terrain
+  //     like Badlands). Accept the simplified `d` only when it is actually
+  //     shorter; otherwise keep the original. Simplification can never grow a
+  //     plate (which would otherwise trip the MAX_BYTES path-decimation cap).
+  const tol = tolFor(page);
+  if (tol > 0) {
+    let keptExact = 0;
+    let keptLarger = 0;
+    paths = paths.map((p) => {
+      let simplified;
+      try {
+        simplified = simplifyPathData(p.d, tol);
+      } catch (err) {
+        if (/arc/i.test(err.message)) {
+          keptExact++;
+          return p; // keep exact geometry (renders correctly, just undecimated)
+        }
+        throw err;
+      }
+      if (simplified.length >= p.d.length) {
+        keptLarger++;
+        return p; // simplification did not help this path — keep the compact original
+      }
+      return { ...p, d: simplified };
+    });
+    if (keptExact > 0 || keptLarger > 0) {
+      console.log(
+        `    (${page}${suffix} tol ${tol}: kept ${keptExact} arc-path(s) + ${keptLarger} already-compact path(s) as-is)`,
+      );
+    }
+  }
+
   // Build both theme plates from the same parsed paths.
   const rows = [];
   let sharedWorking = null;
@@ -567,6 +512,11 @@ function buildPageOrientation(page, srcPath, viewBox, suffix, rawSizeMB, emitGlo
     console.log(
       `[${page}${suffix}/${theme}] paths: ${working.length}, raw: ${rawSizeMB}MB, plate: ${plateKB}KB${decimations ? ` (decimated x${decimations})` : ''}\n    -> ${platePath}`,
     );
+    if (plateBytes > MAX_PLATE_BYTES) {
+      console.warn(
+        `    ⚠ ${page}${suffix}_${theme} is ${plateKB}KB > ${(MAX_PLATE_BYTES / 1024).toFixed(0)}KB budget — raise SIMPLIFY_TOLERANCE_BY_PAGE['${page}'] (currently ${tol}).`,
+      );
+    }
     rows.push({
       page: page + suffix,
       theme,
