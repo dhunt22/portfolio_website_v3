@@ -1,0 +1,26 @@
+{
+  "planPath": "docs/superpowers/plans/2026-07-06-content-integrity-gate.md",
+  "tasks": [
+    {
+      "id": 16,
+      "subject": "Task 1: Pure integrity checker",
+      "status": "completed",
+      "description": "**Goal:** checkIntegrity(pages, env) → precise error strings for missing images, dead internal links, unknown anchors, malformed external URLs; collectAnchors derives fragments from content + EXTRA_ANCHORS; ROUTE_BY_PAGE maps page names to routes.\n\n**Files:** Create scripts/lib/content-check.mjs; Test scripts/lib/content-check.test.mjs\n\n**Acceptance Criteria:** valid fixture → []; missing image/dead route/unknown fragment/malformed external each error with path+file; collectAnchors merges content ids + EXTRA_ANCHORS; no node:fs import.\n\n**Verify:** node --test scripts/lib/content-check.test.mjs (6 tests)\n\n```json:metadata\n{\"files\": [\"scripts/lib/content-check.mjs\", \"scripts/lib/content-check.test.mjs\"], \"verifyCommand\": \"node --test scripts/lib/content-check.test.mjs\", \"acceptanceCriteria\": [\"valid → []\", \"each breakage errors with path+file\", \"anchors merged\", \"pure module\"]}\n```"
+    },
+    {
+      "id": 17,
+      "subject": "Task 2: CLI gate + wiring",
+      "status": "completed",
+      "blockedBy": [16],
+      "description": "**Goal:** npm run content:check composes sync → integrity with fs-derived env (public/ listing, app/**/page.tsx route discovery); builds run it automatically; stray .tasks.json untracked.\n\n**Files:** Create scripts/check-content.mjs, scripts/check-content.test.mjs; Modify scripts/sync-content.mjs (additive pages key), package.json, .gitignore\n\n**Acceptance Criteria:** runCheck ok/stage semantics with sync short-circuit; CLI non-zero + all errors, Windows-safe; runSync existing tests pass unmodified; build/export/netlify-build wired + test:content extended; git ls-files docs/superpowers empty.\n\n**Verify:** node --test scripts/check-content.test.mjs && npm run test:content && npm run content:check\n\n```json:metadata\n{\"files\": [\"scripts/check-content.mjs\", \"scripts/check-content.test.mjs\", \"scripts/sync-content.mjs\", \"package.json\", \".gitignore\"], \"verifyCommand\": \"node --test scripts/check-content.test.mjs && npm run test:content && npm run content:check\", \"acceptanceCriteria\": [\"ok/stage semantics\", \"CLI exit codes\", \"runSync additive\", \"wiring\", \"tasks.json untracked\"]}\n```"
+    },
+    {
+      "id": 18,
+      "subject": "Task 3: End-to-end verification of the gate",
+      "status": "completed",
+      "blockedBy": [17],
+      "description": "**Goal:** Prove the gate is green on real content, fails loudly on live negative tests (broken image path, broken anchor), and the repo stays healthy.\n\n**Files:** none (verification; local continuation.md note).\n\n**Acceptance Criteria:** build 8/8 via content:check; negative A (image typo in interests.md) exits 1 naming file+path then restores green; negative B (#explor anchor in home.md) exits 1 with unknown-anchor then restores green; Jest 36/36 + test:content pass; clean tree.\n\n**Verify:** npm run build && npm test && npm run test:content && npm run content:check && git diff --quiet content/\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"npm run build && npm test && npm run test:content && npm run content:check && git diff --quiet content/\", \"acceptanceCriteria\": [\"build 8/8\", \"negative A loud fail + restore\", \"negative B loud fail + restore\", \"suites green\", \"clean tree\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-07-06"
+}

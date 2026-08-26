@@ -1,0 +1,32 @@
+{
+  "planPath": "docs/superpowers/plans/2026-07-06-plate-simplification.md",
+  "tasks": [
+    {
+      "id": 19,
+      "subject": "Task 1: simplify-path module (TDD)",
+      "status": "completed",
+      "description": "**Goal:** Pure tested simplifyPathData(d, tolerance) + flattenToSubpaths/dpSimplify/emitD.\n\n**Files:** Create scripts/lib/simplify-path.mjs; Test scripts/lib/simplify-path.test.mjs\n\n**Acceptance Criteria:** flattener M/L/H/V/C/S/Q/T/Z + arc throws; DP endpoint/collinear semantics; emitD no error accumulation + z on closed; 8/8 tests.\n\n**Verify:** node --test scripts/lib/simplify-path.test.mjs\n\n```json:metadata\n{\"files\": [\"scripts/lib/simplify-path.mjs\", \"scripts/lib/simplify-path.test.mjs\"], \"verifyCommand\": \"node --test scripts/lib/simplify-path.test.mjs\", \"acceptanceCriteria\": [\"flattener coverage\", \"DP semantics\", \"emitD accuracy\", \"8/8\"]}\n```"
+    },
+    {
+      "id": 20,
+      "subject": "Task 2: integrate into build-plates + regenerate",
+      "status": "completed",
+      "blockedBy": [19],
+      "description": "**Goal:** Rebuild all plates at SIMPLIFY_TOLERANCE=0.2 (~3× smaller, ~7× fewer vertices, registration preserved).\n\n**Files:** Modify scripts/build-plates.mjs (knob + map after parsePaths; remove dead flattenPath); regenerate public/images/plates/*.svg.\n\n**Acceptance Criteria:** simplify once post-parsePaths; plates ≤900KB and ≤100k cmds; flattenPath gone; registration light[0]==dark[0] + glow⊂plate; jest 32/32; build 8/8.\n\n**Verify:** node scripts/build-plates.mjs && npm run build && npx jest\n\n```json:metadata\n{\"files\": [\"scripts/build-plates.mjs\", \"public/images/plates/\"], \"verifyCommand\": \"node scripts/build-plates.mjs && npm run build && npx jest\", \"acceptanceCriteria\": [\"once post-parsePaths\", \"≤900KB ≤100k cmds\", \"flattenPath removed\", \"registration\", \"jest+build green\"]}\n```"
+    },
+    {
+      "id": 21,
+      "subject": "Task 3: pause breathe-wave during zoom",
+      "status": "completed",
+      "description": "**Goal:** Pause GSAP band timelines on visualViewport resize; debounced 300ms resume; cleanup inside gsap.context.\n\n**Files:** Modify components/ui/AnimatedContourBackground.tsx (GSAP effect).\n\n**Acceptance Criteria:** pause/resume wiring per plan §Task 3; visualViewport guard; reduced-motion unchanged; jest 32/32; build 8/8.\n\n**Verify:** npx jest && npm run build\n\n```json:metadata\n{\"files\": [\"components/ui/AnimatedContourBackground.tsx\"], \"verifyCommand\": \"npx jest && npm run build\", \"acceptanceCriteria\": [\"pause+debounced resume\", \"context cleanup\", \"vv guard\", \"green gates\"]}\n```"
+    },
+    {
+      "id": 22,
+      "subject": "Task 4: verify — Skia re-bench + visual + interests SVGs",
+      "status": "completed",
+      "blockedBy": [20, 21],
+      "description": "**Goal:** Rebuilt plates hit bench targets (scratchpad/bench-baseline.json), both themes visually intact, 4 interests contour SVGs simplified.\n\n**Files:** Modify public/images/{american_river_contour_bwn,american_river_contour_dark,upper_folsom_contour_bwn,upper_folsom_contour_dark}.svg\n\n**Acceptance Criteria:** bench ≤30ms@1440 ≤145ms@2880; visual both themes + wave registration; 4 SVGs ≥40% smaller; build 8/8 + jest 32/32; clean status.\n\n**Verify:** bench vs baseline; npm run build && npx jest\n\n```json:metadata\n{\"files\": [\"public/images/american_river_contour_bwn.svg\", \"public/images/american_river_contour_dark.svg\", \"public/images/upper_folsom_contour_bwn.svg\", \"public/images/upper_folsom_contour_dark.svg\"], \"verifyCommand\": \"npm run build && npx jest\", \"acceptanceCriteria\": [\"bench targets\", \"visual intact\", \"≥40% smaller\", \"green gates\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-07-08"
+}
