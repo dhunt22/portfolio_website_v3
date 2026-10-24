@@ -6,6 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
+import { PhoneShot } from '@/components/stanscribe/PhoneShot';
+import { SHOTS } from '@/lib/stanscribe';
 
 /**
  * Home page component displaying introduction and highlights
@@ -54,7 +56,26 @@ export default function Home() {
           </figure>
         </section>
 
-        <section className="pt-6 pb-0">
+        <section aria-labelledby="stanscribe-feature-title" className="pt-6 pb-0">
+          <div className="panel">
+            <div className="grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,15rem)] md:gap-12">
+              <div>
+                <p className="eyebrow-mono mb-4">An app for my grandpa</p>
+                <h2 id="stanscribe-feature-title" className="section-title mb-4">Stan Scribe</h2>
+                <p className="mb-6 max-w-[34rem] leading-relaxed text-ink-body">
+                  Live captions for the conversation in front of you, with a color for each speaker. Built for my
+                  grandpa Stan, who is hard of hearing.
+                </p>
+                <Link href="/stanscribe" className="link-quiet-mono">
+                  Meet Stan Scribe <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+              <PhoneShot image={SHOTS.bothApps} className="mx-auto max-w-[15rem]" />
+            </div>
+          </div>
+        </section>
+
+        <section className="pt-4 pb-0">
           <div className="panel">
             <h2 className="section-title mb-8">Professional Expertise</h2>
             <div className="grid gap-12 md:grid-cols-3">
