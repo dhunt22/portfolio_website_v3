@@ -1,6 +1,6 @@
 /** @jest-environment node */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -8,12 +8,22 @@ const ROOT = join(__dirname, '..', '..');
 const APPS = ['stanscribe', 'stanscribe-light'];
 const PAGES = ['privacy', 'terms', 'acknowledgements'];
 
+const tempDirs: string[] = [];
+const tempDir = (prefix: string) => {
+  const dir = mkdtempSync(join(tmpdir(), prefix));
+  tempDirs.push(dir);
+  return dir;
+};
+afterAll(() => {
+  for (const dir of tempDirs) rmSync(dir, { recursive: true, force: true });
+});
+
 const run = (script: string, args: string[]) =>
   spawnSync(process.execPath, [join(ROOT, 'scripts', script), ...args], { encoding: 'utf8' });
 
 /** A fake app-repo site/ folder, optionally missing one "<app>/<page>". */
 function makeSite(skip?: string): string {
-  const dir = mkdtempSync(join(tmpdir(), 'legal-src-'));
+  const dir = tempDir('legal-src-');
   for (const app of APPS) {
     mkdirSync(join(dir, app), { recursive: true });
     writeFileSync(join(dir, app, 'index.html'), `plain generated index for ${app}`);
@@ -28,7 +38,7 @@ function makeSite(skip?: string): string {
 
 describe('sync-stanscribe-legal', () => {
   test('copies the six legal pages byte for byte, never the generated index.html', () => {
-    const dest = mkdtempSync(join(tmpdir(), 'legal-dest-'));
+    const dest = tempDir('legal-dest-');
     const result = run('sync-stanscribe-legal.mjs', ['--src', makeSite(), '--dest', dest]);
     expect(result.status).toBe(0);
     for (const app of APPS) {
@@ -40,7 +50,7 @@ describe('sync-stanscribe-legal', () => {
   });
 
   test('copies nothing when a generated page is missing', () => {
-    const dest = mkdtempSync(join(tmpdir(), 'legal-dest-'));
+    const dest = tempDir('legal-dest-');
     const result = run('sync-stanscribe-legal.mjs', ['--src', makeSite('stanscribe-light/terms'), '--dest', dest]);
     expect(result.status).toBe(1);
     expect(result.stderr).toMatch(/stanscribe-light\/terms\/index\.html/);
@@ -50,7 +60,7 @@ describe('sync-stanscribe-legal', () => {
 
 describe('stanscribe-index', () => {
   test('gives each page a real index.html beside its legal folders', () => {
-    const out = mkdtempSync(join(tmpdir(), 'out-'));
+    const out = tempDir('out-');
     writeFileSync(join(out, 'stanscribe.html'), 'scribe page');
     writeFileSync(join(out, 'stanscribe-light.html'), 'light page');
     mkdirSync(join(out, 'stanscribe', 'privacy'), { recursive: true });
@@ -63,11 +73,23 @@ describe('stanscribe-index', () => {
   });
 
   test('fails the build when a page was not exported', () => {
-    const out = mkdtempSync(join(tmpdir(), 'out-'));
+    const out = tempDir('out-');
     writeFileSync(join(out, 'stanscribe.html'), 'scribe page');
     const result = run('stanscribe-index.mjs', ['--out', out]);
     expect(result.status).toBe(1);
     expect(result.stderr).toMatch(/stanscribe-light\.html/);
+  });
+
+  test('fails the build when the page links the App Store badge but the file is missing', () => {
+    const out = tempDir('out-');
+    writeFileSync(join(out, 'stanscribe.html'), '<img src="/images/stanscribe/app-store-badge.svg">');
+    writeFileSync(join(out, 'stanscribe-light.html'), 'light page');
+    const missing = run('stanscribe-index.mjs', ['--out', out]);
+    expect(missing.status).toBe(1);
+    expect(missing.stderr).toMatch(/app-store-badge\.svg/);
+    mkdirSync(join(out, 'images', 'stanscribe'), { recursive: true });
+    writeFileSync(join(out, 'images', 'stanscribe', 'app-store-badge.svg'), '<svg/>');
+    expect(run('stanscribe-index.mjs', ['--out', out]).status).toBe(0);
   });
 });
 

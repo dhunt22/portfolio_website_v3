@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
 
+jest.mock('@/lib/stanscribe', () => ({ ...jest.requireActual('@/lib/stanscribe'), RELEASED: false }));
+
 describe('DownloadBlock before release', () => {
   test('Stan Scribe: coming soon, with the public beta', () => {
     const { container } = render(<DownloadBlock app="scribe" />);

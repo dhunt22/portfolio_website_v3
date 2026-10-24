@@ -4,6 +4,7 @@ import { APPS } from '@/lib/stanscribe';
 import { findCopyViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 
 // The backdrop fetches SVG and GSAP needs matchMedia; neither matters to the page's content.
+jest.mock('@/lib/stanscribe', () => ({ ...jest.requireActual('@/lib/stanscribe'), RELEASED: false }));
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
 jest.mock('@/components/ui/HeroLoadIn', () => ({ HeroLoadIn: ({ children }: { children: unknown }) => children }));
 
@@ -39,7 +40,8 @@ test('images have alt text and headings are in order', () => {
   const page = renderPage();
   const images = Array.from(page.querySelectorAll('img'));
   expect(images.length).toBeGreaterThanOrEqual(8);
-  for (const img of images) expect(img.getAttribute('alt')?.trim()).toBeTruthy();
+  for (const img of Array.from(page.querySelectorAll('img:not([alt=""])'))) expect(img.getAttribute('alt')?.trim()).toBeTruthy();
+  for (const img of Array.from(page.querySelectorAll('img[alt=""]'))) expect(img.closest('a[aria-label]')).not.toBeNull();
   const levels = headingLevels(page);
   expect(levels[0]).toBe(1);
   expect(levels.filter((l) => l === 1)).toHaveLength(1);

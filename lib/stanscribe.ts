@@ -8,7 +8,9 @@
  * 1. Download Apple's black "Download on the App Store" badge (SVG) from
  *    https://developer.apple.com/app-store/marketing/guidelines/ and save it as
  *    public/images/stanscribe/app-store-badge.svg.
- * 2. Set RELEASED to true. Every download tile becomes a badge link to the App Store, and the
+ * 2. Check the Apple trademark line in components/stanscribe/HelpBlock.tsx against the wording on
+ *    Apple's badge page.
+ * 3. Set RELEASED to true. Every download tile becomes a badge link to the App Store, and the
  *    TestFlight link goes away.
  */
 export const RELEASED = false;

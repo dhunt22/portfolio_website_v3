@@ -22,8 +22,9 @@ const PAGE_URL = 'https://devinhunt.com/stanscribe-light/';
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  keywords: null,
   alternates: { canonical: PAGE_URL },
-  openGraph: { type: 'website', url: PAGE_URL, siteName: 'Devin Hunt', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
+  openGraph: { type: 'website', locale: 'en_US', url: PAGE_URL, siteName: 'Devin Hunt', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
 };
 

@@ -8,19 +8,17 @@
 
 import { cpSync, existsSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
 const APPS = ['stanscribe', 'stanscribe-light'];
 const PAGES = ['privacy', 'terms', 'acknowledgements'];
 
-const { values } = parseArgs({
-  options: {
-    src: { type: 'string', default: '../transcript_stan/site' },
-    dest: { type: 'string', default: 'public' },
-  },
-});
-const src = resolve(values.src);
-const dest = resolve(values.dest);
+// Defaults resolve against this file, so the script works from any directory. Explicit arguments
+// resolve against the cwd.
+const { values } = parseArgs({ options: { src: { type: 'string' }, dest: { type: 'string' } } });
+const src = values.src ? resolve(values.src) : fileURLToPath(new URL('../../transcript_stan/site', import.meta.url));
+const dest = values.dest ? resolve(values.dest) : fileURLToPath(new URL('../public', import.meta.url));
 
 // Check everything first so a half-generated site never lands half-copied.
 const missing = APPS.flatMap((app) => PAGES.map((page) => join(src, app, page, 'index.html'))).filter(

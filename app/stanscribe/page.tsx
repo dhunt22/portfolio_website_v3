@@ -23,8 +23,9 @@ const PAGE_URL = 'https://devinhunt.com/stanscribe/';
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  keywords: null,
   alternates: { canonical: PAGE_URL },
-  openGraph: { type: 'website', url: PAGE_URL, siteName: 'Devin Hunt', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
+  openGraph: { type: 'website', locale: 'en_US', url: PAGE_URL, siteName: 'Devin Hunt', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
 };
 
@@ -222,7 +223,7 @@ export default function StanScribePage() {
             </div>
           </div>
           <p className="mt-10 text-lg text-ink-body">
-            Read the <a href={APPS.scribe.legal[0].href} className={LINK}>Privacy Policy</a>.
+            Read the <a href={APPS.scribe.legal.find((l) => l.label === 'Privacy Policy')!.href} className={LINK}>Privacy Policy</a>.
           </p>
         </Section>
 
