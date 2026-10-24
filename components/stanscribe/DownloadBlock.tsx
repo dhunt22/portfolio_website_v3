@@ -24,8 +24,8 @@ export function DownloadBlock({ app, className }: DownloadBlockProps) {
         </a>
       ) : (
         <>
-          <p className="mt-1 inline-flex items-center gap-2 rounded-full border border-input px-3 py-1.5 text-base font-medium text-ink-strong">
-            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />
+          <p className="mt-1 inline-flex items-start gap-2 rounded-lg border border-input px-3 py-1.5 text-base font-medium text-ink-strong">
+            <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" />
             Coming soon to the App Store
           </p>
           {info.betaUrl && (

@@ -23,7 +23,7 @@ const ROWS: [feature: string, scribe: string, light: string][] = [
   ['In-app purchases', 'None', 'None'],
 ];
 
-const CELL = 'p-3 align-top hyphens-auto md:px-5 md:py-4';
+const CELL = 'px-2 py-3 align-top hyphens-auto sm:p-3 md:px-5 md:py-4';
 
 export function ComparisonTable({ className }: { className?: string }) {
   return (
@@ -40,10 +40,10 @@ export function ComparisonTable({ className }: { className?: string }) {
         <thead className="bg-muted">
           <tr>
             <td className={CELL} />
-            <th scope="col" className={cn(CELL, 'font-display text-lg font-medium text-ink-strong md:text-xl')}>
+            <th scope="col" className={cn(CELL, 'font-display text-base font-medium text-ink-strong sm:text-lg md:text-xl')}>
               Stan Scribe
             </th>
-            <th scope="col" className={cn(CELL, 'font-display text-lg font-medium text-ink-strong md:text-xl')}>
+            <th scope="col" className={cn(CELL, 'font-display text-base font-medium text-ink-strong sm:text-lg md:text-xl')}>
               Stan Scribe Light
             </th>
           </tr>

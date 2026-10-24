@@ -117,11 +117,11 @@ export default function StanScribePage() {
     <div className="relative min-h-svh">
       <ContourBackdrop page="interests" />
 
-      <div className="container relative z-10 mx-auto space-y-8 px-6 pb-8 text-lg md:space-y-12">
+      <div className="container relative z-10 mx-auto space-y-8 px-4 pb-8 text-lg sm:px-6 md:space-y-12">
         {/* 1. Hero */}
         <section aria-labelledby="stanscribe-title" className="grid items-center gap-12 py-12 md:py-16 lg:min-h-[78svh] lg:grid-cols-[minmax(0,36rem)_1fr] lg:gap-16">
           <HeroLoadIn>
-            <p className="eyebrow-mono mb-6 normal-case">For iPhone and iPad</p>
+            <p className="eyebrow-mono mb-6 text-sm normal-case">For iPhone and iPad</p>
             <h1 id="stanscribe-title" className="display mb-4 text-[clamp(3rem,7vw,5.25rem)]">
               Stan Scribe
             </h1>
@@ -148,7 +148,7 @@ export default function StanScribePage() {
         </section>
 
         {/* 2. The story */}
-        <Section id="story" eyebrow="Why it exists" title="Built as a scribe for my grandpa Stan">
+        <Section id="story" eyebrow="Why it exists" title="Built as a scribe for my grandpa Stan" className="mx-auto max-w-4xl">
           <div className="max-w-[44rem] space-y-5 font-display text-[clamp(1.375rem,2.6vw,1.75rem)] leading-relaxed text-ink-strong">
             <p>
               My grandpa is hard of hearing. At the table, the conversation moves faster than he can catch it. So I made

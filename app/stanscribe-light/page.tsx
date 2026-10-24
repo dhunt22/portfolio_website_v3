@@ -32,10 +32,10 @@ export default function StanScribeLightPage() {
     <div className="relative min-h-svh">
       <ContourBackdrop page="interests" />
 
-      <div className="container relative z-10 mx-auto space-y-8 px-6 pb-8 text-lg md:space-y-12">
+      <div className="container relative z-10 mx-auto space-y-8 px-4 pb-8 text-lg sm:px-6 md:space-y-12">
         <section aria-labelledby="light-page-title" className="grid items-center gap-12 py-12 md:py-16 lg:grid-cols-[minmax(0,36rem)_1fr] lg:gap-16">
           <HeroLoadIn>
-            <p className="eyebrow-mono mb-6 normal-case">For iPhone and iPad</p>
+            <p className="eyebrow-mono mb-6 text-sm normal-case">For iPhone and iPad</p>
             <h1 id="light-page-title" className="display mb-4 text-[clamp(2.75rem,6.5vw,4.75rem)]">
               Stan Scribe Light
             </h1>

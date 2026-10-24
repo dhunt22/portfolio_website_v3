@@ -20,7 +20,7 @@ interface SectionProps {
 
 export function Section({ id, eyebrow, title, children, className }: SectionProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={cn('panel scroll-mt-24 md:p-10', className)}>
+    <section id={id} aria-labelledby={`${id}-title`} className={cn('panel scroll-mt-24 p-3 sm:p-4 md:p-10', className)}>
       <p className="eyebrow-mono mb-4">{eyebrow}</p>
       <h2 id={`${id}-title`} className={SECTION_TITLE}>
         {title}
