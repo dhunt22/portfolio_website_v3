@@ -131,6 +131,9 @@
 
   /* The wrapper: a stacking context so the fixed contour plate paints above its ground, below content. */
   .site { isolation: isolate; display: flex; flex: 1 1 auto; min-height: 100svh; flex-direction: column; background: var(--surface-page); color: var(--text-body); font-family: var(--font-site), system-ui, sans-serif; }
+  /* Headings and names balance their lines; paragraphs avoid a one-word last line (as the C3 prototype did). */
+  .site :is(h1, h2, h3, h4, .entry-name) { text-wrap: balance; }
+  .site p { text-wrap: pretty; }
   /* The Band Rule: below the first screen, content sits on a near-opaque full-width band. */
   .site .band { background: var(--site-band); padding-block: clamp(64px, 9vw, 128px); }
   .site .band + .band { padding-top: 0; }

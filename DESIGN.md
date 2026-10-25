@@ -197,6 +197,9 @@ filled buttons, never below the first screen.
 **The Plain Words Rule.** Sentence case everywhere. Coordinates and numbers in tabular figures. No
 monospace (it was the June 2026 site's eyebrow costume).
 
+**The Even Lines Rule.** Headings and project names balance their lines (`text-wrap: balance`);
+paragraphs avoid a one-word last line (`text-wrap: pretty`).
+
 ## Layout
 
 - **Frame:** one pair of outer margins, `clamp(16px, 3vw, 40px)`, on every element that touches an edge

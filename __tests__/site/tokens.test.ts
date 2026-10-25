@@ -50,3 +50,8 @@ test('every focus ring on a portfolio page is Water Blue: skip link, map and Map
 test('the map attribution reads as ink on a light label in both themes', () => {
   expect(css).toMatch(/\.site \.maplibregl-map \.maplibregl-ctrl\.maplibregl-ctrl-attrib \{ background-color: rgb\(255 255 255 \/ 0\.88\); color: #0d1114; \}/);
 });
+
+test('headings balance and paragraphs avoid orphans inside .site', () => {
+  expect(css).toContain('.site :is(h1, h2, h3, h4, .entry-name) { text-wrap: balance; }');
+  expect(css).toContain('.site p { text-wrap: pretty; }');
+});
