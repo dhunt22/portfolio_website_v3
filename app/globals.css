@@ -125,8 +125,6 @@
      read as distinct WITHOUT hard borders). Light is untouched. */
   .dark .panel { border-color: var(--border-hairline); }
   .eyebrow { @apply font-sans font-medium text-xs uppercase tracking-caps text-eyebrow; }
-  .display { @apply font-display font-medium tracking-display leading-tight-display text-ink-strong; }
-  .lead { @apply text-lg leading-relaxed text-ink-body; }
   /* inline-block + py keeps these small-caps links at a ≥24px (WCAG 2.5.8) tap target. */
   .link-quiet { @apply inline-block py-1.5 font-sans font-medium text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
 
