@@ -119,7 +119,7 @@ export default function ResumePage() {
           />
           </ResumeSection>
           <ResumeSection title="Education">
-          <div>
+          <div className="max-w-[70ch]">
             <h3 className={SITE_TYPE.title}>Colorado State University</h3>
             <p className={SITE_TYPE.body}>Bachelor of Science in Watershed Science, Hydrology and Water Resources Science</p>
             <p className={SITE_TYPE.body}>Minor in Geospatial Information Systems</p>

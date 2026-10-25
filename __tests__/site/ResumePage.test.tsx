@@ -74,3 +74,8 @@ test('a sliver between basins is still California; open water or a state line is
   const coast = (x: number) => (x > 11 ? 'B' : null);
   expect(basinAcross(10, 50, (x) => coast(x))).toBeNull();
 });
+
+test('education keeps the body measure, like the experience bullets', () => {
+  renderPage();
+  expect(screen.getByRole('heading', { level: 3, name: 'Colorado State University' }).parentElement).toHaveClass('max-w-[70ch]');
+});
