@@ -1,0 +1,56 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".taste-skill/proto/a-figure/index.html",
+          ".taste-skill/proto/c-map/index.html"
+        ],
+        "createdAt": "2026-10-25T07:32:50.607Z",
+        "reason": "Claude triage: static scan cannot resolve clamp()/var() padding; rendered-URL scan of both pages reports no cramped padding"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          ".taste-skill/proto/b-plate/index.html"
+        ],
+        "createdAt": "2026-10-25T07:32:50.621Z",
+        "reason": "Claude triage: static scan reads var()-based font shorthand as 16px; rendered page measures h1 80px, h2 38px, body 19px"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          ".taste-skill/proto/directions.html"
+        ],
+        "createdAt": "2026-10-25T07:50:40.034Z",
+        "reason": "Claude triage: static scan pairs one theme's text token with the other theme's background; the rendered-URL scan of this page reports no low-contrast text"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".taste-skill/proto/c2-contour-map/index.html"
+        ],
+        "createdAt": "2026-10-25T07:52:20.302Z",
+        "reason": "Claude triage: static scan cannot resolve var(--margin)=clamp(16px,3vw,40px) padding on .readout and .band; rendered-URL scans (light, dark, 390px) report no cramped padding"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".taste-skill/proto/c3/index.html",
+          ".taste-skill/proto/c3/portfolio.html",
+          ".taste-skill/proto/c3/resume.html"
+        ],
+        "createdAt": "2026-10-25T08:12:40.179Z",
+        "reason": "Claude triage: .band padding lives in the external c3/site.css, which the static scan of each HTML file does not load; rendered-URL scans at 1440 and 390px report no cramped padding"
+      }
+    ]
+  }
+}
