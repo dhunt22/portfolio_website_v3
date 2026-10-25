@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import ResumePage from '@/app/(site)/resume/page';
+import { basinAcross } from '@/components/site/WatershedMap';
 import { ReadoutProvider, ReadoutStrip } from '@/components/site/Readout';
 
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
@@ -63,4 +64,13 @@ test('each project pin carries its own focus ring; the home ring is not a button
     expect(pin.querySelector('circle.pin-ring')).not.toBeNull();
   }
   expect(container.querySelector('.pin-home .pin-ring')).toBeNull();
+});
+
+test('a sliver between basins is still California; open water or a state line is not', () => {
+  // A 2px sliver at x = 10–11 between basin A (left) and basin B (right).
+  const inState = (x: number) => (x < 10 ? 'A' : x > 11 ? 'B' : null);
+  expect(basinAcross(10, 50, (x) => inState(x))).toBe('A');
+  // The coast: basin to the east, open ocean to the west.
+  const coast = (x: number) => (x > 11 ? 'B' : null);
+  expect(basinAcross(10, 50, (x) => coast(x))).toBeNull();
 });

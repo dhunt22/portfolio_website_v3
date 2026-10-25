@@ -16,6 +16,18 @@ import { cn } from '@/lib/utils';
 
 const LABEL = { right: [10, 5, 'start'], left: [-10, 5, 'end'], below: [8, 22, 'start'] } as const;
 
+/**
+ * The simplified basins leave hairline slivers between neighbours. A point in one is still in California,
+ * so it takes the basin it borders: when basins lie `reach` px away on both sides (left and right, or above
+ * and below), the first of them. Off the coast or past the state line one side is open, and it stays outside.
+ */
+export function basinAcross(x: number, y: number, hucAt: (x: number, y: number) => string | null, reach = 4): string | null {
+  const [left, right, up, down] = [[-reach, 0], [reach, 0], [0, -reach], [0, reach]].map(([dx, dy]) => hucAt(x + dx, y + dy));
+  if (left && right) return left;
+  if (up && down) return up;
+  return null;
+}
+
 export function WatershedMap({ basins, pins, viewBox }: { basins: MapBasin[]; pins: MapPin[]; viewBox: [number, number, number, number] }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const { show, clear } = useReadout();
@@ -53,7 +65,10 @@ export function WatershedMap({ basins, pins, viewBox }: { basins: MapBasin[]; pi
     if (!m) return;
     const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
     const [lon, lat] = unproject([pt.x, pt.y]);
-    const huc = (e.target as Element).getAttribute?.('data-huc');
+    let huc = (e.target as Element).getAttribute?.('data-huc') ?? null;
+    if (!huc && typeof document.elementFromPoint === 'function') {
+      huc = basinAcross(e.clientX, e.clientY, (px, py) => document.elementFromPoint(px, py)?.getAttribute('data-huc') ?? null);
+    }
     const basin = huc ? basins.find((b) => b.huc === huc) : undefined;
     show({
       fields: [
