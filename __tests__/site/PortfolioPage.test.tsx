@@ -55,9 +55,23 @@ test('pointing at a project reads its place', () => {
   expect(strip).toHaveTextContent('3-013');
 });
 
+afterEach(() => {
+  window.location.hash = '';
+});
+
 test('a hash opens its entry', () => {
   window.location.hash = '#yuba-recharge';
   const { container } = renderPage();
   expect(container.querySelector('#yuba-recharge details')).toHaveAttribute('open');
-  window.location.hash = '';
+});
+
+test('a hash that is not an entry opens nothing', () => {
+  window.location.hash = '#tools';
+  const { container } = renderPage();
+  expect(container.querySelectorAll('details[open]')).toHaveLength(0);
+});
+
+test('a malformed hash renders without throwing', () => {
+  window.location.hash = '#%';
+  expect(() => renderPage()).not.toThrow();
 });

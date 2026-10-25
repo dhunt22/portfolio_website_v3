@@ -216,8 +216,8 @@ monospace (it was the June 2026 site's eyebrow costume).
   clearing · band "Selected work": the lead project (Environmental Justice for Prisons, drawn large
   from its prison points, 7/5 split with its text) then a two-column list of four highlights (Yuba
   Subbasins Recharge Analysis, AIIWFM, ZBudget Dashboards "Coming soon", Stan Scribe) · footer. No map.
-- **Portfolio:** display title "Where the work is", lead line, filters (All, Water resources,
-  Geospatial, Research, with counts) · band "Projects": every project as a glyph entry · band "Tools".
+- **Portfolio:** display title "Where the work is", lead line · band "Projects": its filters (All, Water
+  resources, Geospatial, Research, with counts), then every project as a glyph entry · band "Tools".
   Project detail pages (EEJ) keep their working MapLibre map.
 - **Résumé:** header row with the résumé's opening (display name, title, contact, summary, "Download
   PDF") beside the interactive California watershed map with project pins; the strip follows the map ·
@@ -261,10 +261,10 @@ wordmark and the theme toggle, still on one line; the button hides under 520px.
   `aria-hidden`.
 
 ### Project entry (glyph list)
-A link spanning the row: 72px glyph (52px on phones) · name in Title · meta in Label (place · years,
+A row spanning the page: 72px glyph (52px on phones) · name in Title · meta in Label (place · years,
 right-aligned on desktop, under the name on phones) · one line of Body, max 56ch. Hover or focus
 underlines the name (2px) and fills the glyph with Water Blue at 45%, and updates the strip. Coming-soon
-entries carry a Water Blue "Coming soon" label after the name and no link target until they launch.
+entries carry a Water Blue "Coming soon" label after the name and no link target until they launch. On the portfolio each entry is a disclosure: the row is its summary, and opening it shows the full description, any figure and the links. On the home page the highlights are links to their entries.
 
 ### Glyphs
 Each project is drawn from its own geometry or from the thing it measured, in a 72×72 box:

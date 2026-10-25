@@ -66,10 +66,16 @@ function Entry({ entry, hidden }: { entry: WorkEntry; hidden?: boolean }) {
 export function WorkList({ entries, id, isHidden }: { entries: WorkEntry[]; id: string; isHidden?: (e: WorkEntry) => boolean }) {
   // A link like /portfolio#yuba-recharge opens that entry.
   useEffect(() => {
-    const target = decodeURIComponent(window.location.hash.slice(1));
-    const details = target ? document.getElementById(target)?.querySelector('details') : null;
+    let target: string;
+    try {
+      target = decodeURIComponent(window.location.hash.slice(1));
+    } catch {
+      return;
+    }
+    if (!entries.some((e) => e.id === target)) return;
+    const details = document.getElementById(target)?.querySelector('details');
     if (details) details.open = true;
-  }, []);
+  }, [entries]);
   return (
     <ul id={id} className="m-0 mt-10 grid max-w-[72rem] list-none gap-2 p-0">
       {entries.map((e) => <Entry key={e.id} entry={e} hidden={isHidden?.(e)} />)}
