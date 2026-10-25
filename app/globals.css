@@ -111,11 +111,12 @@
     --border-contour: rgb(111 177 222 / 0.3);
     --ring-focus: #6fb1de;
   }
-  /* Overscroll and the area outside the wrapper match the portfolio ground. */
-  body:has(.site) { background-color: #eef1f3; }
-  .dark body:has(.site) { background-color: #111517; }
+  /* Overscroll and the area outside the wrapper match the portfolio ground. The focus ring is Water Blue
+     for the whole page, so the root layout's skip link (outside .site) matches the rest. */
+  body:has(.site) { background-color: #eef1f3; --ring-focus: #1c5a85; }
+  .dark body:has(.site) { background-color: #111517; --ring-focus: #6fb1de; }
   html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
-  :where(a, button, summary, [role="button"], [role="region"][tabindex]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
+  :where(a, button, summary, [role="button"], [role="region"][tabindex], [role="application"][tabindex]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
 }
 
 @layer components {
@@ -176,6 +177,12 @@
   .site .pin-selected circle { fill: var(--site-selected); }
   .site .pin:focus-visible circle { stroke: var(--site-selected); stroke-width: 4; }
   .site .pin text { font-family: var(--font-site), system-ui, sans-serif; font-weight: 600; fill: var(--text-strong); paint-order: stroke; stroke: var(--surface-page); stroke-linejoin: round; }
+
+  /* MapLibre's own buttons take the site's focus ring instead of their blue glow. The map surface sits in a
+     clipping frame, so its ring is drawn just inside the edge, where it can be seen. */
+  .site .maplibregl-map .maplibregl-ctrl button:focus { box-shadow: none; }
+  .site .maplibregl-map .maplibregl-ctrl button:focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
+  .site :is([role="application"], .maplibregl-canvas):focus-visible { outline-offset: -4px; }
 }
 
 /* Focus visible improvements */

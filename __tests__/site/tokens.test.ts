@@ -37,3 +37,12 @@ test('printing from either theme resets the portfolio tokens to a clean light do
   expect(print).toContain('--text-link: #1c5a85');
   expect(print).toContain('--site-worked: #e6eef4');
 });
+
+test('every focus ring on a portfolio page is Water Blue: skip link, map and MapLibre buttons', () => {
+  expect(css).toMatch(/body:has\(\.site\) \{[^}]*--ring-focus: #1c5a85/);
+  expect(css).toMatch(/\.dark body:has\(\.site\) \{[^}]*--ring-focus: #6fb1de/);
+  expect(css).toMatch(/:where\([^)]*\[role="application"\]\[tabindex\][^)]*\):focus-visible \{ outline: 2px solid var\(--ring-focus\); outline-offset: 3px; \}/);
+  expect(css).toMatch(/\.site \.maplibregl-map \.maplibregl-ctrl button:focus-visible \{ outline: 2px solid var\(--ring-focus\)/);
+  // The map surface is clipped by its frame, so its ring sits inside the edge.
+  expect(css).toMatch(/\.site :is\(\[role="application"\], \.maplibregl-canvas\):focus-visible \{ outline-offset: -4px; \}/);
+});
