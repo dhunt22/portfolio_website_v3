@@ -2,6 +2,11 @@
 // app/(site)/interests/page.tsx
 // Exploring personal interests like a river finds its path - always curious about where it leads!
 
+import type { Metadata } from 'next';
+import { ReadoutDefault } from '@/components/site/Readout';
+import { SITE_TYPE } from '@/components/site/type';
+import { plateReading } from '@/lib/site/reading';
+import { cn } from '@/lib/utils';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { InterestSection, InterestSectionProps } from '@/components/interests/InterestSection';
 
@@ -123,67 +128,71 @@ const interestSections: InterestSectionProps[] = [
   },
 ];
 
+export const metadata: Metadata = {
+  title: 'Outdoors · Devin Hunt',
+  description: 'Exploration, fishing, bicycles, community, mycology and photography, in Devin Hunt’s own photos.',
+};
+
 /**
- * Personal interests page component showcasing hobbies and passions
- * @returns {React.JSX.Element} The rendered interests page
+ * Outdoors page: the one page where photographs lead
+ * @returns {React.JSX.Element} The rendered outdoors page
  */
 export default function InterestsPage() {
   return (
-    <div className="relative min-h-svh">
+    <>
       <ContourBackdrop page="interests" />
-
-      <div className="container relative z-10 mx-auto px-6">
-        <header className="pt-16 pb-8">
-          <h1 className="display text-4xl">Personal Interests</h1>
-        </header>
-
-        {interestSections.map((section) => (
-          <InterestSection key={section.id} {...section} />
-        ))}
-
-        {/* GIS Section - topographic vectors shown plainly */}
-        <section id="gis" className="panel mb-4 scroll-mt-16">
-          <h2 className="font-display text-2xl text-ink-strong">GIS</h2>
-          <p className="mt-4 leading-relaxed text-ink-body">
-            I love data visualization and deriving digital beauty from the physical world.
-            See these topographic vectors I made for the website backgrounds.
-          </p>
-          <p className="mt-4 leading-relaxed text-ink-body">
-            Contact me if you are planning a community event or share an interest in GIS- lets collaborate!
-          </p>
-
-          <div className="mt-6 grid gap-6 md:grid-cols-2">
-            <div className="overflow-hidden rounded border border-border bg-card">
-              <img
-                src="/images/american_river_contour_bwn.svg"
-                alt="American River Contour Map"
-                loading="lazy"
-                className="block w-full aspect-[16/10] object-cover object-top dark:hidden"
-              />
-              <img
-                src="/images/american_river_contour_dark.svg"
-                alt="American River Contour Map"
-                loading="lazy"
-                className="hidden w-full aspect-[16/10] object-cover object-top dark:block"
-              />
-            </div>
-            <div className="overflow-hidden rounded border border-border bg-card">
-              <img
-                src="/images/upper_folsom_contour_bwn.svg"
-                alt="Upper Folsom Contour Map"
-                loading="lazy"
-                className="block w-full aspect-[16/10] object-cover object-top dark:hidden"
-              />
-              <img
-                src="/images/upper_folsom_contour_dark.svg"
-                alt="Upper Folsom Contour Map"
-                loading="lazy"
-                className="hidden w-full aspect-[16/10] object-cover object-top dark:block"
-              />
-            </div>
-          </div>
-        </section>
+      <ReadoutDefault reading={plateReading('interests')} />
+      <section aria-labelledby="page-title" className="grid gap-[22px] px-gutter pb-14 pt-[clamp(40px,9vh,104px)]">
+        <h1 id="page-title" className={cn(SITE_TYPE.display, 'halo')}>Outdoors</h1>
+        <p className={cn(SITE_TYPE.lead, 'halo max-w-[30ch]')}>
+          What I do outside work, in my own photos.
+        </p>
+      </section>
+      <div className="band px-gutter">
+        <div className="max-w-[76rem]">
+          {interestSections.map((section) => <InterestSection key={section.id} {...section} />)}
+          <section id="gis" className="scroll-mt-24 py-10">
+            <h2 className={SITE_TYPE.headline}>GIS</h2>
+            <p className={cn(SITE_TYPE.body, 'mt-4 max-w-[60ch]')}>
+              I love data visualization and deriving digital beauty from the physical world.
+              See these topographic vectors I made for the website backgrounds.
+            </p>
+            <p className={cn(SITE_TYPE.body, 'mt-4 max-w-[60ch]')}>
+              Contact me if you are planning a community event or share an interest in GIS- lets collaborate!
+            </p>
+      <div className="mt-6 grid gap-6 min-[861px]:grid-cols-2">
+        <div className="overflow-hidden bg-card">
+          <img
+            src="/images/american_river_contour_bwn.svg"
+            alt="American River Contour Map"
+            loading="lazy"
+            className="block w-full aspect-[16/10] object-cover object-top dark:hidden"
+          />
+          <img
+            src="/images/american_river_contour_dark.svg"
+            alt="American River Contour Map"
+            loading="lazy"
+            className="hidden w-full aspect-[16/10] object-cover object-top dark:block"
+          />
+        </div>
+        <div className="overflow-hidden bg-card">
+          <img
+            src="/images/upper_folsom_contour_bwn.svg"
+            alt="Upper Folsom Contour Map"
+            loading="lazy"
+            className="block w-full aspect-[16/10] object-cover object-top dark:hidden"
+          />
+          <img
+            src="/images/upper_folsom_contour_dark.svg"
+            alt="Upper Folsom Contour Map"
+            loading="lazy"
+            className="hidden w-full aspect-[16/10] object-cover object-top dark:block"
+          />
+        </div>
       </div>
-    </div>
+          </section>
+        </div>
+      </div>
+    </>
   );
 }

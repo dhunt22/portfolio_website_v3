@@ -5,6 +5,10 @@
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { IndicatorBrowser } from '@/components/portfolio/IndicatorBrowser';
+import { ReadoutDefault } from '@/components/site/Readout';
+import { SITE_LINK, SITE_TYPE } from '@/components/site/type';
+import { labelReading } from '@/lib/site/reading';
+import { cn } from '@/lib/utils';
 
 /**
  * Environmental Justice For Prisons - Dedicated Project Page
@@ -12,25 +16,24 @@ import { IndicatorBrowser } from '@/components/portfolio/IndicatorBrowser';
  */
 export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
   return (
-    <div className="relative min-h-svh">
+    <>
       <ContourBackdrop page="ej" />
-
-      <div className="container relative z-10 mx-auto px-6">
+      <ReadoutDefault reading={labelReading('Prisons', '1,865 across the United States')} />
         {/* Hero — compact so the dashboard enters the first viewport on desktop */}
-        <header className="pt-8 pb-8">
-          <p className="eyebrow mb-6">Geospatial Analysis, NASA Grant Project · 2022-2023</p>
-          <h1 className="display text-4xl">
+        <header className="grid gap-5 px-gutter pb-12 pt-[clamp(32px,6vh,72px)]">
+          <h1 className={cn(SITE_TYPE.display, 'halo max-w-[18ch]')}>
             Environmental Justice For Prisons
           </h1>
-          <p className="lead mt-6 max-w-[40rem]">
+          <p className={cn(SITE_TYPE.label, 'halo')}>Geospatial analysis · NASA grant project · 2022 to 2023</p>
+          <p className={cn(SITE_TYPE.lead, 'halo max-w-[40rem]')}>
             Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons
           </p>
-          <nav aria-label="Project links" className="mt-8 flex flex-wrap gap-8">
+          <nav aria-label="Project links" className="halo flex flex-wrap gap-8">
             <a
               href="https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1"
               target="_blank"
               rel="noopener noreferrer"
-              className="link-quiet"
+              className={cn(SITE_LINK, 'font-site text-site-body')}
               aria-label="View GitHub repository for NASA Prison Environmental Justice project"
             >
               Published Dataset
@@ -39,7 +42,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               href="https://ui.adsabs.harvard.edu/abs/2023AGUFMINV31C0.1M/abstract"
               target="_blank"
               rel="noopener noreferrer"
-              className="link-quiet"
+              className={cn(SITE_LINK, 'font-site text-site-body')}
               aria-label="Visit NASA Applied Sciences project page"
             >
               Publication
@@ -48,17 +51,17 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </header>
 
         {/* Dashboard — map leads as the primary element */}
-        <section className="panel mb-4" aria-labelledby="indicators-heading">
-          <h2 id="indicators-heading" className="section-title mb-6">Environmental Risk Indicators</h2>
+        <section className="band px-gutter" aria-labelledby="indicators-heading">
+          <h2 id="indicators-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Environmental Risk Indicators</h2>
           <IndicatorBrowser />
         </section>
 
         {/* About — Project Overview */}
-        <section id="about" className="panel mb-4" aria-labelledby="overview-heading">
-          <h2 id="overview-heading" className="section-title mb-6">Project Overview</h2>
+        <section id="about" className="band px-gutter" aria-labelledby="overview-heading">
+          <h2 id="overview-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Project Overview</h2>
           <div className="xl:grid xl:grid-cols-[minmax(0,40rem)_1fr] xl:gap-10 xl:items-start">
             {/* Overview paragraphs (left column on xl; single column below) */}
-            <div className="max-w-[40rem] space-y-6 leading-relaxed text-ink-body xl:max-w-none">
+            <div className={cn(SITE_TYPE.body, 'max-w-[40rem] space-y-6 xl:max-w-none')}>
               <p>
                 Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition&mdash;overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats. This groundbreaking research initiative was funded by NASA&apos;s $100,000 Equity and Environmental Justice Grant to address this critical gap.
               </p>
@@ -73,9 +76,9 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </div>
 
             {/* Key Project Objectives (right column on xl) */}
-            <div className="mt-6 leading-relaxed text-ink-body xl:mt-0">
-              <h3 className="mb-3 font-display text-xl text-ink-strong">Key Project Objectives</h3>
-              <ul className="list-disc space-y-2 pl-5 marker:text-eyebrow">
+            <div className={cn(SITE_TYPE.body, 'mt-6 xl:mt-0')}>
+              <h3 className={cn(SITE_TYPE.title, 'mb-3')}>Key Project Objectives</h3>
+              <ul className="list-disc space-y-2 pl-5">
                 <li>Quantify environmental conditions at all 1,865 state and federal prisons in the U.S.</li>
                 <li>Calculate a standardized vulnerability index for each prison</li>
                 <li>Create an open-access geospatial dataset and reproducible code base</li>
@@ -85,39 +88,39 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Long-form read — Project Team & Impact */}
-        <section className="panel mb-4" aria-labelledby="team-heading">
-          <h2 id="team-heading" className="section-title mb-6">Project Team &amp; My Contribution</h2>
+        <section className="band px-gutter" aria-labelledby="team-heading">
+          <h2 id="team-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Project Team &amp; My Contribution</h2>
 
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
             <div>
-              <h3 className="mb-4 font-display text-xl text-ink-strong">Research Team</h3>
-              <div className="space-y-4 leading-relaxed text-ink-body">
+              <h3 className={cn(SITE_TYPE.title, 'mb-4')}>Research Team</h3>
+              <div className={cn(SITE_TYPE.body, 'space-y-4')}>
                 <div>
                   <p className="text-ink-strong">Dr. Caitlin Mothes</p>
-                  <p className="text-sm">Principal Investigator, Research and Program Coordinator</p>
-                  <p className="text-sm">Geospatial Centroid, Colorado State University</p>
+                  <p className={SITE_TYPE.label}>Principal Investigator, Research and Program Coordinator</p>
+                  <p className={SITE_TYPE.label}>Geospatial Centroid, Colorado State University</p>
                 </div>
                 <div>
                   <p className="text-ink-strong">Dan Carver</p>
-                  <p className="text-sm">Geospatial Technical Manager</p>
-                  <p className="text-sm">Geospatial Centroid, Colorado State University</p>
+                  <p className={SITE_TYPE.label}>Geospatial Technical Manager</p>
+                  <p className={SITE_TYPE.label}>Geospatial Centroid, Colorado State University</p>
                 </div>
                 <div>
                   <p className="text-ink-strong">Dr. Carrie Chennault</p>
-                  <p className="text-sm">Assistant Professor of Geography</p>
-                  <p className="text-sm">Prison Agriculture Lab, Colorado State University</p>
+                  <p className={SITE_TYPE.label}>Assistant Professor of Geography</p>
+                  <p className={SITE_TYPE.label}>Prison Agriculture Lab, Colorado State University</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 className="mb-4 font-display text-xl text-ink-strong">My Role &amp; Contributions</h3>
-              <div className="space-y-4 leading-relaxed text-ink-body">
+              <h3 className={cn(SITE_TYPE.title, 'mb-4')}>My Role &amp; Contributions</h3>
+              <div className={cn(SITE_TYPE.body, 'space-y-4')}>
                 <p>
                   As a Geospatial Analyst and Programmer at the Geospatial Centroid, I worked closely with
                   Caitlin Mothes to develop R-spatial scripts for data processing and analysis.
                 </p>
-                <ul className="list-disc space-y-2 pl-5 marker:text-eyebrow">
+                <ul className="list-disc space-y-2 pl-5">
                   <li>Processed open-source datasets for environmental indicators</li>
                   <li>Calculated percentile scores for climate, exposure, and effects categories</li>
                   <li>Developed vulnerability scoring algorithms combining all risk factors</li>
@@ -128,8 +131,8 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
           </div>
 
           <div className="mt-12 max-w-[40rem]">
-            <h3 className="mb-4 font-display text-xl text-ink-strong">Project Impact &amp; Recognition</h3>
-            <div className="space-y-6 leading-relaxed text-ink-body">
+            <h3 className={cn(SITE_TYPE.title, 'mb-4')}>Project Impact &amp; Recognition</h3>
+            <div className={cn(SITE_TYPE.body, 'space-y-6')}>
               <p>
                 The main deliverables of our project are 1) an open-access geospatial dataset with calculated values for each environmental indicator and a final environmental vulnerability index for 1,865 U.S. prisons and 2) an open-access, reproducible code base for every step of our analysis to promote the application of these assessments to other institutions and make our data and methods transparent.
               </p>
@@ -141,13 +144,13 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </div>
 
             <figure className="mt-8">
-              <blockquote className="font-display italic text-xl leading-snug text-ink-strong">
+              <blockquote className={cn(SITE_TYPE.lead, 'm-0 text-ink-strong')}>
                 &ldquo;This project taught me about managing a repository and working with large data, and using multiple datasets to contribute to environmental justice research that highlights the intersection of incarceration and environmental harm.&rdquo;
               </blockquote>
-              <figcaption className="eyebrow mt-4">&mdash; Devin Hunt, Project Contributor</figcaption>
+              <figcaption className={cn(SITE_TYPE.label, 'mt-4')}>&mdash; Devin Hunt, Project Contributor</figcaption>
             </figure>
 
-            <p className="mt-8 text-sm text-ink-muted">
+            <p className={cn(SITE_TYPE.label, 'mt-8')}>
               Special thanks to the Geospatial Centroid at Colorado State University and NASA&apos;s Equity and Environmental Justice Grant program
               for making this critical research possible.
             </p>
@@ -155,16 +158,15 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Call to Action */}
-        <section className="panel" aria-labelledby="cta-heading">
-          <h2 id="cta-heading" className="section-title mb-6">Explore the Research</h2>
-          <p className="max-w-[40rem] leading-relaxed text-ink-body">
+        <section className="band px-gutter" aria-labelledby="cta-heading">
+          <h2 id="cta-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Explore the Research</h2>
+          <p className={cn(SITE_TYPE.body, 'max-w-[40rem]')}>
             Access the open-source code, data, and methodology of this environmental justice research.
           </p>
           <nav aria-label="Research links" className="mt-8 flex flex-wrap gap-8">
-            <Link href="/portfolio" className="link-quiet">Back to Portfolio</Link>
+            <Link href="/portfolio" className={cn(SITE_LINK, 'font-site text-site-body')}>Back to Portfolio</Link>
           </nav>
         </section>
-      </div>
-    </div>
+    </>
   );
 }
