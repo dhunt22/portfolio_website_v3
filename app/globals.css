@@ -119,6 +119,10 @@
      label over the dark strip it appears on, instead of the Stan Scribe pages' Hanken, rounded paper card. */
   body:has(.site) a[href="#main"]:focus { font-family: var(--font-site), system-ui, sans-serif; border-radius: 0; border-color: transparent; background-color: #eef1f3; color: #0d1114; box-shadow: none; }
   .dark body:has(.site) a[href="#main"]:focus { background-color: #e9edef; color: #111517; }
+  /* Scrollbars on portfolio pages come from the palette. Setting scrollbar-color also retires the global
+     stone-coloured, rounded ::-webkit-scrollbar below (Chrome 121+ prefers the standard property). */
+  html:has(.site) { scrollbar-color: #9aa7b1 #eef1f3; }
+  html.dark:has(.site) { scrollbar-color: #4d5962 #111517; }
   html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
   :where(a, button, summary, [role="button"], [role="region"][tabindex], [role="application"][tabindex]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
 }

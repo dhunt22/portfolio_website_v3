@@ -59,3 +59,8 @@ test('headings balance and paragraphs avoid orphans inside .site', () => {
 test('on portfolio pages the skip link wears Public Sans, square and light over the strip, not the legacy card', () => {
   expect(css).toMatch(/body:has\(\.site\) a\[href="#main"\]:focus \{ font-family: var\(--font-site\)[^}]*border-radius: 0;[^}]*background-color: #eef1f3;/);
 });
+
+test('portfolio scrollbars take the palette, not the legacy stone', () => {
+  expect(css).toContain('html:has(.site) { scrollbar-color: #9aa7b1 #eef1f3; }');
+  expect(css).toContain('html.dark:has(.site) { scrollbar-color: #4d5962 #111517; }');
+});
