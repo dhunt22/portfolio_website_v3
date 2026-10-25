@@ -25,8 +25,8 @@ export const viewport: Viewport = {
 
 // Define the metadata for the application
 export const metadata: Metadata = {
-  title: 'Devin Hunt - Water Resources Engineer & Explorer',
-  description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
+  title: 'Devin Hunt · Water resources engineering and AI tools',
+  description: 'Devin Hunt models California’s groundwater and builds the Python and AI tools around that work.',
   keywords: ['hydrologist', 'water resources', 'engineer', 'IWFM', 'geospatial', 'exploration', 'fishing', 'mycology'],
   authors: [{ name: 'Devin Hunt', url: 'https://devinhunt.com' }],
   creator: 'Devin Hunt',
@@ -34,14 +34,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://devinhunt.com',
-    title: 'Devin Hunt - Water Resources Engineer & Explorer',
-    description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
+    title: 'Devin Hunt · Water resources engineering and AI tools',
+    description: 'Devin Hunt models California’s groundwater and builds the Python and AI tools around that work.',
     siteName: 'Devin Hunt Portfolio',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Devin Hunt - Water Resources Engineer & Explorer',
-    description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
+    title: 'Devin Hunt · Water resources engineering and AI tools',
+    description: 'Devin Hunt models California’s groundwater and builds the Python and AI tools around that work.',
     creator: '@devinhunt',
   },
 };

@@ -1,154 +1,47 @@
-// Copyright (c) 2025 Devin Hunt contact@devinhunt.com
+// Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // app/(site)/page.tsx
-// The home page - where the watershed of information begins
+// Home (DESIGN.md › Page blueprints › Home): the name on the breathing plate, then Selected work.
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
-import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
-import { PhoneShot } from '@/components/stanscribe/PhoneShot';
-import { SHOTS } from '@/lib/stanscribe';
+import { HighlightList, LeadProject } from '@/components/site/Highlights';
+import { ReadoutDefault } from '@/components/site/Readout';
+import { SITE_BUTTON, SITE_LINK, SITE_TYPE } from '@/components/site/type';
+import { plateReading } from '@/lib/site/reading';
+import { highlightEntries, prisonsFigure } from '@/lib/site/work';
+import { cn } from '@/lib/utils';
 
-/**
- * Home page component displaying introduction and highlights
- * @returns {React.JSX.Element} The rendered home page
- */
 export default function Home() {
+  const [lead, ...highlights] = highlightEntries();
   return (
-    <div className="relative min-h-svh">
+    <>
       <ContourBackdrop page="home" />
+      <ReadoutDefault reading={plateReading('home')} />
 
-      <div className="container relative z-10 mx-auto px-6">
-        <section className="grid items-center gap-10 py-16 sm:gap-12 lg:min-h-[82svh] lg:grid-cols-[minmax(0,36rem)_1fr] lg:gap-12 lg:py-0">
-          <HeroLoadIn>
-            <p className="eyebrow-mono mb-6">
-              Water Resources Engineer &amp; Explorer
-            </p>
-            <h1 className="display mb-9 text-[clamp(3rem,7vw,5.25rem)]">
-              Devin Hunt
-            </h1>
-            <p className="lead mb-12 max-w-[34rem] font-medium">
-              Passionate about understanding and solving water resource challenges in California
-              through data-driven approaches. Skilled in leveraging open-source data, spatial
-              analysis, and groundwater modeling to support sustainable water management.
-            </p>
-            <nav aria-label="Hero" className="flex gap-12">
-              <Link href="/portfolio" className="link-quiet-mono">Explore Portfolio</Link>
-              <Link href="/resume" className="link-quiet-mono">View Resume</Link>
-            </nav>
-          </HeroLoadIn>
+      <section aria-labelledby="name" className="grid min-h-[min(76svh,760px)] content-start gap-7 px-gutter pb-16 pt-[clamp(40px,10vh,120px)]">
+        <h1 id="name" className={cn(SITE_TYPE.display, 'halo')}>Devin Hunt</h1>
+        <p className={cn(SITE_TYPE.lead, 'halo max-w-[30ch]')}>
+          Water resources engineer in Sacramento. I model California’s groundwater and turn the slow, manual parts of
+          that work into tested Python and AI tools.
+        </p>
+        <div className="halo flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link href="/portfolio" className={SITE_BUTTON}>See the work</Link>
+          <Link href="/resume" className={cn(SITE_LINK, 'font-site text-site-body')}>Résumé</Link>
+        </div>
+      </section>
 
-          {/* Headshot framed with a caption plate beneath it. Sits to the right of the
-              hero text on desktop (lg); stacks below it on mobile. */}
-          <figure className="mx-auto w-full max-w-[20rem] lg:mx-0 lg:justify-self-end">
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded border border-border">
-              <Image
-                src="/images/devin_businessCasualCrag.webp"
-                alt="Devin Hunt smiling in a knit tie and short-sleeve shirt against a sandstone crag"
-                fill
-                className="object-cover object-top"
-                sizes="(max-width: 1024px) 20rem, 320px"
-              />
-            </div>
-            <figcaption className="mt-3 rounded border border-border bg-card px-4 py-3 text-sm italic leading-snug text-ink-body">
-              Business casual climbing at The Mill Climbing Area near Chico, CA — October 2023
-            </figcaption>
-          </figure>
-        </section>
-
-        <section aria-labelledby="stanscribe-feature-title" className="pt-6 pb-0">
-          <div className="panel">
-            <div className="grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,15rem)] md:gap-12">
-              <div>
-                <p className="eyebrow-mono mb-4">An app for my grandpa</p>
-                <h2 id="stanscribe-feature-title" className="section-title mb-4">Stan Scribe</h2>
-                <p className="mb-6 max-w-[38rem] leading-relaxed text-ink-body">
-                  My grandpa Stan is hard of hearing. Live captions changed the conversations my family could have
-                  with him, but the apps we found all charged a monthly fee. So I used AI to build one that reaches as
-                  many people as possible: live captions in color, a free edition, and no subscription.
-                </p>
-                <nav aria-label="Stan Scribe" className="flex flex-wrap gap-x-10 gap-y-2">
-                  <Link href="/stanscribe" className="link-quiet-mono">
-                    Meet Stan Scribe <span aria-hidden="true">→</span>
-                  </Link>
-                  <Link href="/stanscribe#story" className="link-quiet-mono">
-                    How I built it <span aria-hidden="true">→</span>
-                  </Link>
-                </nav>
-              </div>
-              <PhoneShot image={SHOTS.bothApps} className="mx-auto max-w-[15rem]" />
-            </div>
-          </div>
-        </section>
-
-        <section className="pt-4 pb-0">
-          <div className="panel">
-            <h2 className="section-title mb-8">Professional Expertise</h2>
-            <div className="grid gap-12 md:grid-cols-3">
-              <div>
-                <h3 className="mb-3 font-display text-xl text-ink-strong">Water Resources Engineering</h3>
-                <p className="leading-relaxed text-ink-body">
-                  Development of CA SGMA Groundwater Sustainability Plans (GSPs), groundwater budgets,
-                  and optimization of recharge and extraction through geospatial analyses.
-                </p>
-              </div>
-              <div>
-                <h3 className="mb-3 font-display text-xl text-ink-strong">Geospatial Analysis</h3>
-                <p className="leading-relaxed text-ink-body">
-                  Expertise in ArcGIS Pro, QGIS, and cartography. Creating innovative solutions
-                  to visualize and analyze water resource data.
-                </p>
-              </div>
-              <div>
-                <h3 className="mb-3 font-display text-xl text-ink-strong">Data-Driven Approaches</h3>
-                <p className="leading-relaxed text-ink-body">
-                  Utilization of Python, R, and SQL to process large datasets and develop
-                  automated workflows for water resource management.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="pt-4 pb-6">
-          <div className="panel">
-            <h2 className="section-title mb-8">Personal Passions</h2>
-            <div className="grid gap-12 md:grid-cols-2">
-              <Link href="/interests#exploration" className="group block">
-                <h3 className="mb-1 font-display text-xl text-ink-strong transition-colors group-hover:text-eyebrow">
-                  Exploration
-                </h3>
-                <p className="mb-3 text-sm text-ink-muted">
-                  Discovering remote natural places
-                </p>
-                <p className="leading-relaxed text-ink-body">
-                  Traveling in my First Generation Tundra to reach desolate areas, always in search of
-                  quieter places to fully immerse in nature.
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-xs uppercase tracking-caps text-link transition-all group-hover:gap-2.5">
-                  Read more <span aria-hidden="true">→</span>
-                </span>
-              </Link>
-
-              <Link href="/interests#fishing" className="group block">
-                <h3 className="mb-1 font-display text-xl text-ink-strong transition-colors group-hover:text-eyebrow">
-                  Fishing
-                </h3>
-                <p className="mb-3 text-sm text-ink-muted">
-                  Learning about streams from within
-                </p>
-                <p className="leading-relaxed text-ink-body">
-                  Fishing nearly all water features encountered, understanding how fish tell stories
-                  about water quality, color, cover types, and food sources.
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-xs uppercase tracking-caps text-link transition-all group-hover:gap-2.5">
-                  Read more <span aria-hidden="true">→</span>
-                </span>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
+      <section aria-labelledby="selected-title" className="band px-gutter">
+        <h2 id="selected-title" className={SITE_TYPE.headline}>Selected work</h2>
+        <p className={cn(SITE_TYPE.label, 'mt-2')}>
+          Two projects, two tools, and an app. More on the <Link href="/portfolio" className={SITE_LINK}>portfolio</Link>.
+        </p>
+        <LeadProject
+          entry={lead}
+          figure={prisonsFigure()}
+          description="Climate, exposure and proximity percentile scores for every prison in the study, combined into one vulnerability score per facility. Each dot is a prison."
+        />
+        <HighlightList entries={highlights} />
+      </section>
+    </>
   );
 }
