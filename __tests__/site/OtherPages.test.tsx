@@ -15,6 +15,9 @@ test('Outdoors keeps every interest and photo', () => {
   }
   expect(screen.getByAltText('A calm alpine lake at dusk near Winter Park, Colorado')).toBeInTheDocument();
   expect(container.querySelector('.panel, .italic, .eyebrow')).toBeNull();
+  // Photos crop to 4:3; the Vacancy Fee screenshot shows whole, so its words are not cut.
+  expect(screen.getByAltText('A calm alpine lake at dusk near Winter Park, Colorado')).toHaveClass('aspect-[4/3]');
+  expect(screen.getByAltText('Vacancy Fee organization logo')).not.toHaveClass('aspect-[4/3]');
 });
 
 test('the EEJ page keeps its map and links', () => {

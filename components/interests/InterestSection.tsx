@@ -10,6 +10,8 @@ interface InterestImageConfig {
   alt: string;
   caption: string;
   objectPosition?: 'bottom' | 'center';
+  /** Show the whole image at its own ratio instead of a 4:3 crop (a screenshot: its words must not be cut). */
+  whole?: boolean;
 }
 
 interface InterestQuoteConfig {
@@ -75,7 +77,10 @@ export function InterestSection({
           src={image.src}
           alt={image.alt}
           loading="lazy"
-          className={cn('block aspect-[4/3] w-full object-cover', image.objectPosition === 'bottom' ? 'object-bottom' : 'object-center')}
+          className={cn(
+            'block w-full',
+            image.whole ? 'h-auto' : cn('aspect-[4/3] object-cover', image.objectPosition === 'bottom' ? 'object-bottom' : 'object-center'),
+          )}
         />
         {image.caption && <figcaption className={cn(SITE_TYPE.label, 'mt-3 max-w-[40rem]')}>{image.caption}</figcaption>}
       </figure>

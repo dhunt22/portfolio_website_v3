@@ -82,6 +82,7 @@ const interestSections: InterestSectionProps[] = [
       alt: 'Vacancy Fee organization logo',
       caption: 'An organization I have joined to support the city!',
       objectPosition: 'center',
+      whole: true,
     },
     paragraphs: [
       'Sacramento is full of opportunities for civic engagement and community involvement.',
