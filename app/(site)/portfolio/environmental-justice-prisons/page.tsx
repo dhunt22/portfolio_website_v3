@@ -59,7 +59,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         {/* About — Project Overview */}
         <section id="about" className="band px-gutter" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Project Overview</h2>
-          <div className="xl:grid xl:grid-cols-[minmax(0,40rem)_1fr] xl:gap-10 xl:items-start">
+          <div className="max-w-[76rem] xl:grid xl:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] xl:items-start xl:gap-10">
             {/* Overview paragraphs (left column on xl; single column below) */}
             <div className={cn(SITE_TYPE.body, 'max-w-[40rem] space-y-6 xl:max-w-none')}>
               <p>
@@ -76,7 +76,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </div>
 
             {/* Key Project Objectives (right column on xl) */}
-            <div className={cn(SITE_TYPE.body, 'mt-6 xl:mt-0')}>
+            <div className={cn(SITE_TYPE.body, 'mt-6 max-w-[40rem] xl:mt-0')}>
               <h3 className={cn(SITE_TYPE.title, 'mb-3')}>Key Project Objectives</h3>
               <ul className="list-disc space-y-2 pl-5">
                 <li>Quantify environmental conditions at all 1,865 state and federal prisons in the U.S.</li>
@@ -91,7 +91,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         <section className="band px-gutter" aria-labelledby="team-heading">
           <h2 id="team-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Project Team &amp; My Contribution</h2>
 
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+          <div className="grid max-w-[76rem] grid-cols-1 gap-12 md:grid-cols-2">
             <div>
               <h3 className={cn(SITE_TYPE.title, 'mb-4')}>Research Team</h3>
               <div className={cn(SITE_TYPE.body, 'space-y-4')}>

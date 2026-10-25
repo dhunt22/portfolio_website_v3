@@ -23,6 +23,10 @@ test('the EEJ page keeps its map and links', () => {
   expect(screen.getByText('Geospatial analysis · NASA grant project · 2022 to 2023')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /GitHub repository/ })).toHaveAttribute('href', 'https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1');
   expect(screen.getByTestId('indicators')).toBeInTheDocument();
+  // Bands keep the site's content width; nothing runs the full 1440px.
+  for (const name of ['Project Overview', 'Project Team & My Contribution']) {
+    expect(screen.getByRole('heading', { level: 2, name }).nextElementSibling).toHaveClass('max-w-[76rem]');
+  }
 });
 
 test('the 404 sits in the site frame with ways back', () => {
