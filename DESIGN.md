@@ -286,8 +286,9 @@ Glyphs are `aria-hidden`; the entry's text carries the meaning.
 California's 140 HUC8 watersheds from `public/data/HUC8_CA_simple.geojson`, equirectangular at 37.5°N,
 Basin White fills at 94% so the plate ghosts through, Worked Tint where work happened, Water Blue at
 45% for the selection. Pins: 5px ink dots with 15px labels haloed in the ground colour, sized in screen
-pixels at any scale; Sacramento as an open ring (home). Pins are focusable buttons; Enter or Space
-selects; the caption under the map names the selected project. The map is the résumé's header only.
+pixels at any scale; Sacramento as an open ring (home). Pins are focusable buttons; focus draws the
+site's 2px Water Blue ring around the dot at 3px; Enter or Space selects; the caption under the map names
+the selected project. The map is the résumé's header only.
 
 ### Lead project (home)
 The Environmental Justice for Prisons points drawn large (about 640×380) beside its text in a 7/5

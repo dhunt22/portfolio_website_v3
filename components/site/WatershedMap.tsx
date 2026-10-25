@@ -110,6 +110,8 @@ export function WatershedMap({ basins, pins, viewBox }: { basins: MapBasin[]; pi
                 })}
               >
                 <circle cx={p.x} cy={p.y} r={5 * unit} />
+                {/* The focus ring: 2px at 3px beyond the dot's 6px edge (DESIGN.md › Buttons and links). */}
+                {interactive && <circle className="pin-ring" cx={p.x} cy={p.y} r={10 * unit} />}
                 <text x={p.x + dx * unit} y={p.y + dy * unit} fontSize={15 * unit} textAnchor={anchor} style={{ strokeWidth: 4 * unit }}>
                   {p.label}
                 </text>

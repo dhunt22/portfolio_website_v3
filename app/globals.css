@@ -175,7 +175,8 @@
   .site .pin-home { cursor: default; }
   .site .pin-home circle { fill: var(--surface-page); stroke: var(--text-strong); }
   .site .pin-selected circle { fill: var(--site-selected); }
-  .site .pin:focus-visible circle { stroke: var(--site-selected); stroke-width: 4; }
+  .site .pin .pin-ring { fill: none; stroke: none; }
+  .site .pin:focus-visible .pin-ring { stroke: var(--ring-focus); stroke-width: 2; }
   .site .pin text { font-family: var(--font-site), system-ui, sans-serif; font-weight: 600; fill: var(--text-strong); paint-order: stroke; stroke: var(--surface-page); stroke-linejoin: round; }
 
   /* MapLibre's own buttons take the site's focus ring instead of their blue glow. The map surface sits in a

@@ -56,3 +56,11 @@ test('pointing at a pin reports its place, not the empty map', () => {
   expect(screen.getByTestId('readout')).toHaveTextContent('Cuyama Valley');
   expect(screen.getByTestId('readout')).not.toHaveTextContent('Outside California');
 });
+
+test('each project pin carries its own focus ring; the home ring is not a button', () => {
+  const { container } = renderPage();
+  for (const pin of screen.getAllByRole('button', { name: /, / })) {
+    expect(pin.querySelector('circle.pin-ring')).not.toBeNull();
+  }
+  expect(container.querySelector('.pin-home .pin-ring')).toBeNull();
+});
