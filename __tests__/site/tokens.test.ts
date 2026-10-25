@@ -46,3 +46,7 @@ test('every focus ring on a portfolio page is Water Blue: skip link, map and Map
   // The map surface is clipped by its frame, so its ring sits inside the edge.
   expect(css).toMatch(/\.site :is\(\[role="application"\], \.maplibregl-canvas\):focus-visible \{ outline-offset: -4px; \}/);
 });
+
+test('the map attribution reads as ink on a light label in both themes', () => {
+  expect(css).toMatch(/\.site \.maplibregl-map \.maplibregl-ctrl\.maplibregl-ctrl-attrib \{ background-color: rgb\(255 255 255 \/ 0\.88\); color: #0d1114; \}/);
+});

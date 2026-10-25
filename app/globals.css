@@ -183,6 +183,15 @@
   .site .maplibregl-map .maplibregl-ctrl button:focus { box-shadow: none; }
   .site .maplibregl-map .maplibregl-ctrl button:focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
   .site :is([role="application"], .maplibregl-canvas):focus-visible { outline-offset: -4px; }
+  /* MapLibre's chrome on the site system: Public Sans, square, and the float shadow for its control group.
+     The attribution keeps MapLibre's own compact size but sits on a near-opaque light label with ink text
+     in both themes (inside .site it inherited the night ink and fell to 2.9:1 on the dark basemap). */
+  .site .maplibregl-map { font-family: var(--font-site), system-ui, sans-serif; }
+  .site .maplibregl-map .maplibregl-ctrl-group:not(:empty) { border-radius: 0; box-shadow: 0 1px 2px rgba(13, 17, 20, 0.08), 0 8px 24px rgba(13, 17, 20, 0.12); }
+  .site .maplibregl-map .maplibregl-ctrl-group button, .site .maplibregl-map .maplibregl-ctrl-group button:focus { border-radius: 0; }
+  .site .maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-attrib { background-color: rgb(255 255 255 / 0.88); color: #0d1114; }
+  .site .maplibregl-map .maplibregl-ctrl-attrib.maplibregl-compact { border-radius: 0; }
+  .site .maplibregl-map .maplibregl-ctrl-attrib a { color: #1c5a85; }
 }
 
 /* Focus visible improvements */
