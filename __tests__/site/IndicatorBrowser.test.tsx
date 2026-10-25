@@ -34,3 +34,8 @@ test('a category selects its first indicator, and an indicator selects its categ
   expect(within(categories).getByRole('button', { name: 'Proximity' })).toHaveAttribute('aria-pressed', 'true');
   expect(screen.getByRole('heading', { level: 3, name: 'Superfund Sites' })).toBeInTheDocument();
 });
+
+test('the map frame is its own stacking context, so its controls never ride over the readout strip', () => {
+  render(<IndicatorBrowser />);
+  expect(screen.getByTestId('map').parentElement).toHaveClass('isolate');
+});

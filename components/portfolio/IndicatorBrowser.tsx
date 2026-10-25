@@ -328,7 +328,8 @@ export function IndicatorBrowser(): JSX.Element {
           {/* Phone and tablet indicator title */}
           <p className={cn(SITE_TYPE.body, 'mb-3 font-semibold text-ink-strong lg:hidden')}>{currentComponent.name}</p>
 
-          <div className="h-[60svh] min-h-[320px] md:h-[500px] lg:h-full">
+          {/* isolate: the map's floating controls stack inside this frame, never over the sticky strip */}
+          <div className="isolate h-[60svh] min-h-[320px] md:h-[500px] lg:h-full">
             <LazyProjectMap
               projectId="prison-ej"
               selectedComponent={selectedComponent}
