@@ -333,18 +333,33 @@ no labels.
 
 | Piece | Decision |
 | --- | --- |
-| `ContourBackdrop`, `AnimatedContourBackground`, plates, `useThemeBackground` | Keep. Add the clearing mask and bands. |
-| `app/(site)/`, `app/(stanscribe)/` | Route groups (no URL change): the portfolio pages get `SiteChrome`; Stan Scribe keeps the legacy `Header`/`Footer`. |
-| `app/fonts.ts` | Add Public Sans as `--font-site`. Keep Newsreader and Hanken for Stan Scribe; drop JetBrains Mono once nothing uses it. |
-| `app/globals.css`, `tailwind.config.js` | A `.site` scope adds `--site-*` tokens and remaps the existing semantic tokens (`--surface-page`, `--text-*`, `--font-*`…) to this system, so existing components and the glow follow it inside the portfolio while Stan Scribe keeps the legacy values. Tailwind gains `site` colours, `font-site`, `text-site-*` roles, `gutter`/`section` spacing. Remove `.eyebrow-mono`, `.link-quiet-mono`, `.section-title` once unused. |
-| `components/site/SiteHeader.tsx`, `SiteFooter.tsx`, `SiteChrome.tsx`, `Readout.tsx` | New: readout strip, wordmark + Portfolio/Résumé/Outdoors + theme toggle + Email me (no dropdown), one-line footer. The legacy `components/layout/Header.tsx` and `Footer.tsx` stay for Stan Scribe. |
-| `app/page.tsx` | Rebuild to the home blueprint. Remove `HeroLoadIn` and the panels. |
-| `app/portfolio/page.tsx`, `ProjectIndex`, `ProjectMap` | Replace the index with glyph entries and filters; the EEJ map stays on its project page. |
-| `app/resume/page.tsx`, `components/resume/*` | Restyle to entries; add the watershed map header (new `WatershedMap`). |
-| `app/interests/page.tsx`, `InterestSection` | Restyle to bands; photos stay. Rename the nav label to Outdoors. |
-| `lib/portfolio-data.ts` | Add glyph type, place, coordinates or boundary per project; add the tools. |
-| `public/data/` | Restore `cuyama_subbasin.geojson` and `yuba_subbasins.geojson` (B118) from git history. |
-| Stan Scribe pages and components | Untouched until their own direction. |
+| `app/(site)/`, `app/(stanscribe)/` | Route groups (no URL change). `app/(site)/layout.tsx` wraps home, `portfolio/`, `portfolio/environmental-justice-prisons/`, `resume/` and `interests/` in `SiteChrome`. `app/(stanscribe)/layout.tsx` gives `stanscribe/` and `stanscribe-light/` the legacy `components/layout/Header.tsx` and `Footer.tsx`. |
+| `app/layout.tsx` | Root layout: loads `newsreader`, `hanken` and `publicSans`, then `ThemeProvider`, `ErrorBoundary` and the skip link. It has no header or footer; each group's layout, and the 404, renders `<main id="main">`. |
+| `app/not-found.tsx` | The 404 sits outside both route groups, so it wraps itself in `SiteChrome` and uses the `notFound` plate. |
+| `app/fonts.ts` | `publicSans` loads Public Sans as `--font-site`. `newsreader` (`--font-display`) and `hanken` (`--font-sans`) stay for Stan Scribe. JetBrains Mono is removed. |
+| `app/globals.css` | `.site` (and `.dark .site`) adds the `--site-*` tokens and remaps the legacy semantic tokens (`--surface-*`, `--text-*`, `--brand-*`, `--border-*`, `--ring-focus`, and `--font-display`/`--font-sans`/`--font-mono` to `--font-site`), so the glow and the reused components follow this system inside the portfolio while Stan Scribe keeps the legacy values. `body:has(.site)` and `html:has(.site)` reach what sits outside the wrapper: the page ground, the Water Blue focus ring, the skip link and the scrollbars. The same file holds `.band`, `.halo`, the clearing mask on `[data-contour-plate]`, the Even Lines rules, the `.glyph` tones, the résumé map's basins and pins, the MapLibre controls and the print reset. `.eyebrow-mono`, `.link-quiet-mono` and `.section-title` are removed; `.panel`, `.eyebrow` and `.link-quiet` stay for the Stan Scribe pages. |
+| `tailwind.config.js` | Adds the `site` colours (`site-band`, `site-basin`, `site-edge`, `site-worked`, `site-worked-deep`, `site-selected`, `site-strip`, `site-strip-ink`, `site-strip-label`), `font-site`, the six `text-site-*` roles and `gutter`/`section` spacing. |
+| `lib/utils.ts` | `cn()` uses `extendTailwindMerge` so tailwind-merge keeps the `text-site-*` sizes. Without it they read as colours and get dropped. |
+| `components/site/SiteChrome.tsx` | `SiteChrome`: the `.site` wrapper around `ReadoutProvider`, `ReadoutStrip`, `SiteHeader`, `<main id="main">` and `SiteFooter`. |
+| `components/site/Readout.tsx` | `ReadoutProvider`, `useReadout`, `ReadoutStrip` (the sticky strip), `ReadoutDefault` (sets a page's resting reading) and `useReadingHandlers` (pointer and focus handlers). A route change clears back to the resting reading. |
+| `components/site/SiteHeader.tsx`, `SiteFooter.tsx` | `SiteHeader`: wordmark, Portfolio/Résumé/Outdoors, `ThemeToggle` (now takes a `className`) and Email me; no dropdown. `SiteFooter`: one line on a band. |
+| `components/site/type.ts` | `SITE_TYPE` (the six roles), `SITE_BUTTON`, `SITE_LINK`, `SITE_SOON`. |
+| `components/site/Glyph.tsx` | `Glyph`: draws a `GlyphShape` as an `aria-hidden` SVG. |
+| `components/site/Highlights.tsx` | Home's Selected work: `LeadProject` (the EEJ prison points drawn large, 7/5 split) and `HighlightList`. |
+| `components/site/ProjectsIndex.tsx`, `WorkList.tsx` | `ProjectsIndex`: the portfolio filters (All, Water resources, Geospatial, Research, with counts) over a `WorkList`. `WorkList`: glyph entries, each a `<details>` disclosure. They replace `components/portfolio/ProjectIndex.tsx` and `components/ui/tabs.tsx`, both deleted. |
+| `components/site/WatershedMap.tsx` | `WatershedMap`: the résumé header map, pins as focusable `role="button"` groups. `basinAcross` assigns the slivers between simplified basins to a neighbour. |
+| `lib/site/work.ts`, `map.ts`, `geodata.ts` | Server only: `geodata.ts` reads `public/data` with `node:fs` at build time, and the other two import it. Client components import only their types. `geodata.ts`: `huc8Features`, `b118Features`, `contiguousPrisonPoints`. `work.ts`: `WorkEntry`, `glyphFor`, `projectEntries`, `toolEntries`, `highlightEntries`, `prisonsFigure`. `map.ts`: `resumeMap` (basins, pins, viewBox). |
+| `lib/site/geo.ts`, `glyphs.ts`, `reading.ts` | Pure, safe on the client. `geo.ts`: the projection at 37.5°N, point-in-polygon, `fitTo`, `pathData`. `glyphs.ts`: `outlineGlyph`, `pointsGlyph`, `meshGlyph`, `calibrationGlyph`, `captionsGlyph`, `boreholesGlyph`, `wellsGlyph`, `householdsGlyph`. `reading.ts`: `Reading`, `placeReading`, `labelReading`, `plateReading`, `PLATES`, `HOME_BASE`, `formatLat`, `formatLon`. |
+| `app/(site)/page.tsx` | The home blueprint: hero, then `LeadProject` and `HighlightList`. `HeroLoadIn` and the panels are gone from home. |
+| `app/(site)/portfolio/page.tsx` | `ProjectsIndex` over `projectEntries()`, then a `WorkList` of `toolEntries()`. No map on the index. |
+| `app/(site)/portfolio/environmental-justice-prisons/page.tsx`, `IndicatorBrowser`, `LazyProjectMap`, `ProjectMap`, `MapControls` | The EEJ page keeps its MapLibre map (`IndicatorBrowser` → `LazyProjectMap` → `ProjectMap` with `MapControls`), restyled to the six roles; the controls carry the one float shadow. It is the only MapLibre map on the site. |
+| `app/(site)/resume/page.tsx`, `components/resume/*` | The résumé opening beside `WatershedMap` (fed by `resumeMap()`), then the rest on a band. `ResumeSection`, `ExperienceItem` and `SkillsList` are restyled to entries. |
+| `app/(site)/interests/page.tsx`, `InterestSection` | Restyled to bands; photos stay. The nav label is Outdoors; the URL stays `/interests`. |
+| `ContourBackdrop`, `AnimatedContourBackground`, plates, `useThemeBackground` | Kept unchanged; each page passes its plate. The clearing mask and the bands live in `globals.css` under `.site`. |
+| `lib/portfolio-data.ts` | Each project gained `summary`, `place`, `glyph` (`GlyphSpec`), and a `location` (approximate) or a `readout`. Adds `TOOLS` and `HIGHLIGHTS`. |
+| `public/data/` | `cuyama_subbasin.geojson` and `yuba_subbasins.geojson` (B118) restored from git history. |
+| `__tests__/site/` | Tests for the chrome, each portfolio page, the readout, geometry, glyphs, entries, the map, `cn()` and the tokens; `tokens.test.ts` reads `globals.css` and `fonts.ts`. |
+| Stan Scribe pages and components | Untouched apart from the move into `app/(stanscribe)/`: `components/stanscribe/*`, `lib/stanscribe.ts`, the legacy `Header`/`Footer`, `HeroLoadIn` and `ContourBackdrop`'s `quiet` veil. They wait for their own direction. |
 
 ## Decision log
 

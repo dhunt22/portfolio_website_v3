@@ -53,7 +53,8 @@ it (AIIWFM, tested Python automation for IWFM workflows, the firm's AI Innovator
 - Next.js 14 App Router, static export (`output: 'export'`), Tailwind 3 on CSS-variable tokens,
   light and dark themes. The live site is served by Netlify (`netlify.toml`); a GitHub Pages workflow
   also runs on pushes to `main`.
-- The portfolio and EEJ pages carry live MapLibre maps with filters; they must keep working.
+- The EEJ project page carries a live MapLibre map with filters; it must keep working. The portfolio
+  index draws projects as glyphs and has no map.
 - Factual copy (projects, roles, dates, the Stan Scribe story) is not rewritten or extended with new
   claims without asking.
 - **Decided: Stan Scribe becomes its own product site at `stanscribe.devinhunt.com`**, with its own
@@ -68,15 +69,16 @@ it (AIIWFM, tested Python automation for IWFM workflows, the firm's AI Innovator
   dashboard with interactive map and charts. Streamlining model review and report generation." (owner's
   words, 2026-10-25; project in `~/dev/ZBudget_dashboard`).
 - Geometry on hand: DWR Bulletin 118 polygons for Cuyama Valley (3-013) and North/South Yuba
-  (5-021.60/.61) in git history (`public/data/cuyama_subbasin.geojson`, `yuba_subbasins.geojson`,
-  removed in 7d9b0b9); California HUC8 watersheds; EEJ prison points. Not on hand: B118 polygons for
+  (5-021.60/.61) in `public/data/cuyama_subbasin.geojson` and `yuba_subbasins.geojson` (restored
+  from git history); California HUC8 watersheds; EEJ prison points. Not on hand: B118 polygons for
   Antelope Valley (6-044) and South American (5-021.65).
 
 ## Brand Commitments
 
 - The portfolio introduces Devin as water and AI combined, not one or the other.
-- The résumé title may mix the two and should include "AI Specialist" (owner, 2026-10-25); today it
-  reads "AI Automation Engineer and Groundwater Modeler".
+- The résumé title may mix the two and should include "AI Specialist" (owner, 2026-10-25). The page
+  reads "AI Specialist and Groundwater Modeler"; the PDF still reads "AI Automation Engineer and
+  Groundwater Modeler".
 - Stan Scribe is presented as its own product, not a page of the portfolio. Its voice is plain and says
   each thing once.
 
