@@ -152,6 +152,12 @@
     -webkit-mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
             mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
   }
+  /* Below 380px a display word wider than the viewport ("Environmental" at 56px is ~362px plus the gutter)
+     hyphenates instead of pushing the page sideways; only words of 12+ letters break, and where a browser has
+     no hyphenation dictionary the word still wraps rather than overflowing. */
+  @media (max-width: 380px) {
+    .site h1 { -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 12 6 6; overflow-wrap: anywhere; }
+  }
   @media (max-width: 860px) {
     .site [data-contour-plate] {
       -webkit-mask-image: linear-gradient(to bottom, transparent 0 34%, #000 62%);

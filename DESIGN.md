@@ -198,7 +198,8 @@ filled buttons, never below the first screen.
 monospace (it was the June 2026 site's eyebrow costume).
 
 **The Even Lines Rule.** Headings and project names balance their lines (`text-wrap: balance`);
-paragraphs avoid a one-word last line (`text-wrap: pretty`).
+paragraphs avoid a one-word last line (`text-wrap: pretty`). A page title too wide for a narrow phone
+hyphenates rather than pushing the page sideways.
 
 ## Layout
 

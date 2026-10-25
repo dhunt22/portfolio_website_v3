@@ -64,3 +64,7 @@ test('portfolio scrollbars take the palette, not the legacy stone', () => {
   expect(css).toContain('html:has(.site) { scrollbar-color: #9aa7b1 #eef1f3; }');
   expect(css).toContain('html.dark:has(.site) { scrollbar-color: #4d5962 #111517; }');
 });
+
+test('a page title too wide for a narrow phone hyphenates rather than overflowing', () => {
+  expect(css).toMatch(/@media \(max-width: 380px\) \{\s*\.site h1 \{ -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 12 6 6; overflow-wrap: anywhere; \}/);
+});
