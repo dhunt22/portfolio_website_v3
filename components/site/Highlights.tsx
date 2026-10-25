@@ -20,9 +20,10 @@ export function LeadProject({ entry, figure, description }: { entry: WorkEntry; 
         <Glyph shape={figure} className="h-auto w-full" />
       </a>
       <div>
-        <p className={SITE_TYPE.label}>{entry.meta}</p>
-        <h3 className={cn(SITE_TYPE.headline, 'mb-3.5 mt-1.5')}>{entry.name}</h3>
-        <p className={cn(SITE_TYPE.body, 'max-w-[42ch]')}>{description}</p>
+        {/* Name first, then its meta, as in every entry: a label above a heading would be an eyebrow. */}
+        <h3 className={SITE_TYPE.headline}>{entry.name}</h3>
+        {entry.meta && <p className={cn(SITE_TYPE.label, 'mt-1.5')}>{entry.meta}</p>}
+        <p className={cn(SITE_TYPE.body, 'mt-3.5 max-w-[42ch]')}>{description}</p>
         <a href={entry.href} className={cn(SITE_LINK, 'mt-[18px] inline-block')}>
           Explore the map <span aria-hidden="true">→</span>
         </a>

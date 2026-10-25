@@ -1,5 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import Home from '@/app/(site)/page';
+import { LeadProject } from '@/components/site/Highlights';
+import { prisonsFigure, highlightEntries } from '@/lib/site/work';
 import { findCopyViolations } from '@/test-utils/stanscribe';
 
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
@@ -34,4 +36,17 @@ test('no map, no expertise columns, no photos', () => {
   expect(screen.queryByRole('heading', { name: 'Professional Expertise' })).toBeNull();
   expect(container.querySelector('img')).toBeNull();
   expect(container.querySelector('path.basin')).toBeNull();
+});
+
+test('the lead names the project, then its meta: no label above the heading', () => {
+  render(<Home />);
+  const name = screen.getByRole('heading', { level: 3, name: 'Environmental Justice For Prisons' });
+  expect(name.previousElementSibling).toBeNull();
+  expect(name.nextElementSibling).toHaveTextContent('United States · 2022 to 2023');
+});
+
+test('a lead without meta renders no empty line', () => {
+  const [lead] = highlightEntries();
+  const { container } = render(<LeadProject entry={{ ...lead, meta: '' }} figure={prisonsFigure()} description="Each dot is a prison." />);
+  expect([...container.querySelectorAll('p')].filter((p) => !p.textContent?.trim())).toHaveLength(0);
 });

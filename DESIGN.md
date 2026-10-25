@@ -292,7 +292,8 @@ the selected project. The map is the résumé's header only.
 
 ### Lead project (home)
 The Environmental Justice for Prisons points drawn large (about 640×380) beside its text in a 7/5
-split; the dots turn Water Blue on hover or focus.
+split; the dots turn Water Blue on hover or focus. The text reads name (Headline), meta (Label), one
+paragraph and the link, in the order every entry uses; the meta never sits above the name as an eyebrow.
 
 ### Backdrop
 `ContourBackdrop` / `AnimatedContourBackground` are kept: per-page plates, pre-paint height pin,
