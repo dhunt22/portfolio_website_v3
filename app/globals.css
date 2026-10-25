@@ -282,5 +282,10 @@ html.js [data-contour-plate][data-plate-ready='true'] {
   .site, .dark .site {
     --surface-page: #ffffff; --surface-card: #ffffff; --site-band: #ffffff;
     --text-strong: #111111; --text-body: #222222; --text-muted: #444444;
+    --surface-sunken: #ffffff; --text-faint: #555555; --text-eyebrow: #555555;
+    --text-link: #1c5a85; --text-link-hover: #123d5c;
+    --border-hairline: #cccccc; --border-default: #bbbbbb;
+    --site-basin: #ffffff; --site-basin-edge: #cccccc;
+    --site-worked: #e6eef4; --site-worked-deep: #c6dcec; --site-selected: #1c5a85;
   }
 }

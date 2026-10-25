@@ -32,3 +32,9 @@ test('portfolio pages render inside the .site scope', () => {
   const { container } = render(createElement(SiteLayout, null, createElement('p', null, 'page')));
   expect(container.querySelector('.site')).not.toBeNull();
 });
+
+test('printing from either theme resets the portfolio tokens to a clean light document', () => {
+  const print = css.slice(css.indexOf('@media print'));
+  expect(print).toContain('--text-link: #1c5a85');
+  expect(print).toContain('--site-worked: #e6eef4');
+});
