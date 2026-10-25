@@ -275,10 +275,6 @@ html.js [data-contour-plate][data-plate-ready='true'] {
   opacity: 1;
 }
 
-/* Hide scrollbar for mobile chip rail while preserving scroll */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -132,6 +132,8 @@ const interestSections: InterestSectionProps[] = [
 export const metadata: Metadata = {
   title: 'Outdoors · Devin Hunt',
   description: 'Exploration, fishing, bicycles, community, mycology and photography, in Devin Hunt’s own photos.',
+  openGraph: { title: 'Outdoors · Devin Hunt', description: 'Exploration, fishing, bicycles, community, mycology and photography, in Devin Hunt’s own photos.', url: 'https://devinhunt.com/interests' },
+  twitter: { title: 'Outdoors · Devin Hunt', description: 'Exploration, fishing, bicycles, community, mycology and photography, in Devin Hunt’s own photos.' },
 };
 
 /**

@@ -12,7 +12,7 @@ import { highlightEntries, prisonsFigure } from '@/lib/site/work';
 import { cn } from '@/lib/utils';
 
 export default function Home() {
-  const [lead, ...highlights] = highlightEntries();
+  const [{ glyph: _glyph, ...lead }, ...highlights] = highlightEntries();
   return (
     <>
       <ContourBackdrop page="home" />

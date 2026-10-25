@@ -17,6 +17,8 @@ import { cn } from '@/lib/utils';
 export const metadata: Metadata = {
   title: 'Résumé · Devin Hunt',
   description: 'AI specialist and groundwater modeler in Sacramento: tested Python automation, AI-grounded applications and IWFM modeling.',
+  openGraph: { title: 'Résumé · Devin Hunt', description: 'AI specialist and groundwater modeler in Sacramento: tested Python automation, AI-grounded applications and IWFM modeling.', url: 'https://devinhunt.com/resume' },
+  twitter: { title: 'Résumé · Devin Hunt', description: 'AI specialist and groundwater modeler in Sacramento: tested Python automation, AI-grounded applications and IWFM modeling.' },
 };
 
 export default function ResumePage() {

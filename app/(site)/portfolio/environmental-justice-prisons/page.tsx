@@ -2,6 +2,7 @@
 // app/(site)/portfolio/environmental-justice-prisons/page.tsx
 // Environmental Justice For Prisons - dedicated project page (server shell)
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { IndicatorBrowser } from '@/components/portfolio/IndicatorBrowser';
@@ -9,6 +10,13 @@ import { ReadoutDefault } from '@/components/site/Readout';
 import { SITE_LINK, SITE_TYPE } from '@/components/site/type';
 import { labelReading } from '@/lib/site/reading';
 import { cn } from '@/lib/utils';
+
+export const metadata: Metadata = {
+  title: 'Environmental Justice For Prisons · Devin Hunt',
+  description: 'Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons',
+  openGraph: { title: 'Environmental Justice For Prisons · Devin Hunt', description: 'Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons', url: 'https://devinhunt.com/portfolio/environmental-justice-prisons' },
+  twitter: { title: 'Environmental Justice For Prisons · Devin Hunt', description: 'Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons' },
+};
 
 /**
  * Environmental Justice For Prisons - Dedicated Project Page

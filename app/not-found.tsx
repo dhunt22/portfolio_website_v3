@@ -2,6 +2,7 @@
 // app/not-found.tsx
 // A 404 page inside the site chrome
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { ReadoutDefault } from '@/components/site/Readout';
@@ -9,6 +10,8 @@ import { SiteChrome } from '@/components/site/SiteChrome';
 import { SITE_BUTTON, SITE_LINK, SITE_TYPE } from '@/components/site/type';
 import { plateReading } from '@/lib/site/reading';
 import { cn } from '@/lib/utils';
+
+export const metadata: Metadata = { title: 'Page not found · Devin Hunt' };
 
 /**
  * 404 Not Found page component

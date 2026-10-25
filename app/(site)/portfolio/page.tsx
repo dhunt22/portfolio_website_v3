@@ -15,6 +15,8 @@ import { cn } from '@/lib/utils';
 export const metadata: Metadata = {
   title: 'Portfolio · Devin Hunt',
   description: 'Groundwater, recharge and geospatial projects, most of them in California, and the tools Devin Hunt builds around them.',
+  openGraph: { title: 'Portfolio · Devin Hunt', description: 'Groundwater, recharge and geospatial projects, most of them in California, and the tools Devin Hunt builds around them.', url: 'https://devinhunt.com/portfolio' },
+  twitter: { title: 'Portfolio · Devin Hunt', description: 'Groundwater, recharge and geospatial projects, most of them in California, and the tools Devin Hunt builds around them.' },
 };
 
 export default function PortfolioPage() {

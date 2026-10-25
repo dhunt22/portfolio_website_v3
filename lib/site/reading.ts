@@ -65,12 +65,15 @@ export function plateReading(page: keyof typeof PLATES): Reading {
   };
 }
 
+/** Approximate centre of Sacramento. */
+export const HOME = { lat: 38.58, lon: -121.49 };
+
 /** The résumé's resting reading. */
 export const HOME_BASE: Reading = {
   fields: [
     { label: 'Home base', value: 'Sacramento, California' },
-    { label: 'Lat', value: formatLat(38.58), wide: true },
-    { label: 'Lon', value: formatLon(-121.49), wide: true },
+    { label: 'Lat', value: formatLat(HOME.lat), wide: true },
+    { label: 'Lon', value: formatLon(HOME.lon), wide: true },
   ],
   note: 'California watersheds · USGS HUC8',
 };
