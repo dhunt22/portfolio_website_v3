@@ -50,6 +50,17 @@
         ],
         "createdAt": "2026-10-25T08:12:40.179Z",
         "reason": "Claude triage: .band padding lives in the external c3/site.css, which the static scan of each HTML file does not load; rendered-URL scans at 1440 and 390px report no cramped padding"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".taste-skill/proto/a-figure/index.html",
+          ".taste-skill/proto/b-plate/index.html",
+          ".taste-skill/proto/directions.html"
+        ],
+        "createdAt": "2026-10-25T17:48:58.756Z",
+        "reason": "Claude triage: gitignored round-1 prototypes of the directions the owner rejected (A, B) and the decision page itself; they show other type systems on purpose and are not app code"
       }
     ]
   }
