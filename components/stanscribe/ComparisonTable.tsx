@@ -1,29 +1,22 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/ComparisonTable.tsx
-// "Which one is for you?": the two apps side by side as a real table (th scope), "Yes" as text.
-// Rows are copy.md's table verbatim. Cells hyphenate so the table fits 320px; the focusable region
-// is the keyboard fallback if a very large text size still overflows.
+// "Which one is for you?": only the rows where the two apps differ, in copy.md's words, as a real
+// table (th scope). What they share is one line above it (BOTH_APPS_SHARE). Cells hyphenate and drop
+// to 16px below sm so the table fits 320px; the focusable region is the fallback at larger text sizes.
 
 import { cn } from '@/lib/utils';
 
 const ROWS: [feature: string, scribe: string, light: string][] = [
   ['Price', 'Pay once', 'Free'],
-  ['Live captions, offline', 'Yes', 'Yes'],
-  ['Speaker colors and names', 'Yes', 'Yes, or turn them off'],
-  ['Voices it knows', 'Yes', 'Yes'],
-  ['25 languages', 'Yes', 'Yes'],
-  ['Big text and labeled buttons', 'Yes', 'Yes'],
-  ['Keeps listening in the background', 'Yes', 'Yes'],
-  ['Saved conversations, search, summaries', 'Yes', 'Yes'],
-  ['Export, Obsidian, iCloud backup', 'Yes', 'Yes'],
   ['Speech models', 'Advanced and Basic', 'Basic'],
   ['Looks', '28 themes, painted ones, and your own photos', 'Black or white'],
+  ['Speaker colors', 'Yes', 'Yes, or turn them off'],
   ['Motion', "Follows your iPhone's Reduce Motion setting", 'Always calm'],
   ['Download', 'Larger', 'Smaller'],
-  ['In-app purchases', 'None', 'None'],
 ];
 
 const CELL = 'px-2 py-3 align-top hyphens-auto sm:p-3 md:px-5 md:py-4';
+const HEADER = 'font-semibold text-ink-strong';
 
 export function ComparisonTable({ className }: { className?: string }) {
   return (
@@ -31,19 +24,19 @@ export function ComparisonTable({ className }: { className?: string }) {
       role="region"
       aria-labelledby="compare-caption"
       tabIndex={0}
-      className={cn('overflow-x-auto rounded-lg border border-border bg-card', className)}
+      className={cn('overflow-x-auto rounded-lg border border-border', className)}
     >
-      <table className="w-full border-collapse text-left text-base md:text-lg">
+      <table className="w-full border-collapse text-left text-base leading-relaxed sm:text-lg">
         <caption id="compare-caption" className="sr-only">
-          Stan Scribe and Stan Scribe Light compared
+          How Stan Scribe and Stan Scribe Light differ
         </caption>
         <thead className="bg-muted">
           <tr>
             <td className={CELL} />
-            <th scope="col" className={cn(CELL, 'font-display text-base font-medium text-ink-strong sm:text-lg md:text-xl')}>
+            <th scope="col" className={cn(CELL, HEADER)}>
               Stan Scribe
             </th>
-            <th scope="col" className={cn(CELL, 'font-display text-base font-medium text-ink-strong sm:text-lg md:text-xl')}>
+            <th scope="col" className={cn(CELL, HEADER)}>
               Stan Scribe Light
             </th>
           </tr>
@@ -51,7 +44,7 @@ export function ComparisonTable({ className }: { className?: string }) {
         <tbody>
           {ROWS.map(([feature, scribe, light]) => (
             <tr key={feature} className="border-t border-border">
-              <th scope="row" className={cn(CELL, 'font-medium text-ink-strong')}>
+              <th scope="row" className={cn(CELL, HEADER)}>
                 {feature}
               </th>
               <td className={cn(CELL, 'text-ink-body')}>{scribe}</td>

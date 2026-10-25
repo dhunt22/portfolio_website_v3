@@ -5,19 +5,21 @@
 
 import { LegalLinks } from '@/components/stanscribe/LegalLinks';
 import { Section } from '@/components/stanscribe/Section';
+import { TYPE } from '@/components/stanscribe/type';
 import { SUPPORT_EMAIL, type AppKey } from '@/lib/stanscribe';
+import { cn } from '@/lib/utils';
 
 export function HelpBlock({ apps }: { apps: AppKey[] }) {
   return (
-    <Section id="help" eyebrow="Support" title="Help">
-      <p className="text-xl leading-relaxed text-ink-body">Questions, problems or ideas? Email</p>
+    <Section id="help" title="Help">
+      <p className={TYPE.lead}>Questions, problems or ideas? Email</p>
       <a
         href={`mailto:${SUPPORT_EMAIL}`}
-        className="mt-1 inline-block max-w-full font-display text-[clamp(1.5rem,5vw,2.5rem)] text-link underline decoration-1 underline-offset-[0.18em] transition-colors [overflow-wrap:anywhere] hover:text-link-hover"
+        className={cn(TYPE.heading, TYPE.link, 'mt-1 inline-block max-w-full [overflow-wrap:anywhere]')}
       >
         {SUPPORT_EMAIL}
       </a>
-      <div className="mt-12 space-y-4 border-t border-border pt-8 text-base leading-relaxed text-ink-muted">
+      <div className={cn(TYPE.small, 'mt-10 space-y-3 border-t border-border pt-8')}>
         {apps.map((app) => (
           <LegalLinks key={app} app={app} />
         ))}

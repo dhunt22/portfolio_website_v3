@@ -3,6 +3,7 @@
 // One app's download tile: name and offer, then "Coming soon" (plus the public beta, where there is
 // one) before launch, or Apple's badge after. RELEASED in lib/stanscribe.ts flips every tile at once.
 
+import { TYPE } from '@/components/stanscribe/type';
 import { APPS, APP_STORE_BADGE, RELEASED, type AppKey } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
@@ -14,22 +15,22 @@ interface DownloadBlockProps {
 export function DownloadBlock({ app, className }: DownloadBlockProps) {
   const info = APPS[app];
   return (
-    <div className={cn('panel flex flex-col items-start gap-3 rounded-lg md:p-6', className)}>
-      <p className="font-display text-2xl leading-tight text-ink-strong">{info.name}</p>
-      <p className="text-lg text-ink-body">{info.offer}</p>
+    <div className={cn('flex flex-col items-start gap-2 rounded-lg border border-border bg-muted p-5', className)}>
+      <p className={TYPE.heading}>{info.name}</p>
+      <p className={TYPE.body}>{info.offer}</p>
       {RELEASED ? (
-        <a href={info.appStoreUrl} aria-label={`Download ${info.name} on the App Store`} className="mt-1 inline-block rounded-[10px]">
+        <a href={info.appStoreUrl} aria-label={`Download ${info.name} on the App Store`} className="mt-2 inline-block rounded-[10px]">
           {/* eslint-disable-next-line @next/next/no-img-element -- Apple's badge is used exactly as supplied */}
           <img src={APP_STORE_BADGE.src} alt="" width={APP_STORE_BADGE.width} height={APP_STORE_BADGE.height} className="h-10 w-auto" />
         </a>
       ) : (
         <>
-          <p className="mt-1 inline-flex items-start gap-2 rounded-lg border border-input px-3 py-1.5 text-base font-medium text-ink-strong">
-            <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" />
+          <p className={cn(TYPE.body, 'mt-2 flex items-baseline gap-2 font-semibold text-ink-strong')}>
+            <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-accent" />
             Coming soon to the App Store
           </p>
           {info.betaUrl && (
-            <a href={info.betaUrl} className="inline-block py-1 text-lg text-link underline decoration-1 underline-offset-4 transition-colors hover:text-link-hover">
+            <a href={info.betaUrl} className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
               Try the public beta on TestFlight
             </a>
           )}

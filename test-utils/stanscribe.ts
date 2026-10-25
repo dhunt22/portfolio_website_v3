@@ -40,6 +40,13 @@ export function pageText(root: HTMLElement): string {
   return parts.join(' ').replace(/\s+/g, ' ');
 }
 
+/** Classes that break the pages' type scale (two faces, no mono, tracked caps or italics). */
+export function findTypeViolations(root: HTMLElement): string[] {
+  return Array.from(root.querySelectorAll('[class]'))
+    .flatMap((el) => (el.getAttribute('class') ?? '').split(/\s+/))
+    .filter((c) => /^(font-mono|eyebrow.*|italic|uppercase|tracking-caps|tracking-mono)$/.test(c));
+}
+
 /** Heading levels in document order, e.g. [1, 2, 3, 3, 2]. */
 export function headingLevels(root: HTMLElement): number[] {
   return Array.from(root.querySelectorAll('h1, h2, h3, h4, h5, h6')).map((h) => Number(h.tagName[1]));

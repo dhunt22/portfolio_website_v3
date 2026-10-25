@@ -10,11 +10,11 @@ test('HelpBlock shows the support email and only the named apps’ legal links',
   for (const { href } of APPS.scribe.legal) expect(container.querySelector(`a[href="${href}"]`)).toBeNull();
 });
 
-test('ComparisonTable has real column and row headers', () => {
+test('ComparisonTable has real headers, one row per difference', () => {
   render(<ComparisonTable />);
   const table = screen.getByRole('table');
   expect(within(table).getAllByRole('columnheader').map((th) => th.textContent)).toEqual(
     expect.arrayContaining(['Stan Scribe', 'Stan Scribe Light']),
   );
-  expect(within(table).getAllByRole('rowheader')).toHaveLength(14);
+  expect(within(table).getAllByRole('rowheader')).toHaveLength(6);
 });

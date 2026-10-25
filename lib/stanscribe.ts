@@ -98,6 +98,10 @@ export const SOCIAL_IMAGE = {
 export const LIGHT_SUMMARY =
   'Stan Scribe Light has the same live captions, speaker colors and voices it knows, in a simpler package: one speech model, a black or a white page, and calm motion, so it is a smaller download. Want plain captions? Turn speaker colors off.';
 
+/** Above the comparison table, which lists only the differences. */
+export const BOTH_APPS_SHARE =
+  'Both apps have live captions that work offline, speaker colors and names, voices it knows, 25 languages, big text, and saved conversations you can search and export. Neither has in-app purchases.';
+
 /** Follows a bold "Not sure?". */
 export const LIGHT_NOT_SURE =
   'Start with Light. If you want the Advanced speech model, the painted themes or themes from your own photos, choose Stan Scribe.';

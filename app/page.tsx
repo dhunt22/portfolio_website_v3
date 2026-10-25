@@ -62,13 +62,19 @@ export default function Home() {
               <div>
                 <p className="eyebrow-mono mb-4">An app for my grandpa</p>
                 <h2 id="stanscribe-feature-title" className="section-title mb-4">Stan Scribe</h2>
-                <p className="mb-6 max-w-[34rem] leading-relaxed text-ink-body">
-                  Live captions for the conversation in front of you, with a color for each speaker. Built for my
-                  grandpa Stan, who is hard of hearing.
+                <p className="mb-6 max-w-[38rem] leading-relaxed text-ink-body">
+                  My grandpa Stan is hard of hearing. Live captions changed the conversations my family could have
+                  with him, but the apps we found all charged a monthly fee. So I used AI to build one that reaches as
+                  many people as possible: live captions in color, a free edition, and no subscription.
                 </p>
-                <Link href="/stanscribe" className="link-quiet-mono">
-                  Meet Stan Scribe <span aria-hidden="true">→</span>
-                </Link>
+                <nav aria-label="Stan Scribe" className="flex flex-wrap gap-x-10 gap-y-2">
+                  <Link href="/stanscribe" className="link-quiet-mono">
+                    Meet Stan Scribe <span aria-hidden="true">→</span>
+                  </Link>
+                  <Link href="/stanscribe#story" className="link-quiet-mono">
+                    How I built it <span aria-hidden="true">→</span>
+                  </Link>
+                </nav>
               </div>
               <PhoneShot image={SHOTS.bothApps} className="mx-auto max-w-[15rem]" />
             </div>

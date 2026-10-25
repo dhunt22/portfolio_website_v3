@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import StanScribeLightPage, { metadata } from '@/app/stanscribe-light/page';
 import { APPS } from '@/lib/stanscribe';
-import { findCopyViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
+import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 
 jest.mock('@/lib/stanscribe', () => ({ ...jest.requireActual('@/lib/stanscribe'), RELEASED: false }));
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
@@ -26,6 +26,7 @@ test('Help comes right after the hero, before the comparison', () => {
 test('links back to Stan Scribe; alt text and heading order', () => {
   const page = renderPage();
   expect(page.querySelector('a[href="/stanscribe"]')).not.toBeNull();
+  expect(screen.getByRole('link', { name: /Why I built Stan Scribe/ })).toHaveAttribute('href', '/stanscribe#story');
   for (const img of Array.from(page.querySelectorAll('img:not([alt=""])'))) expect(img.getAttribute('alt')?.trim()).toBeTruthy();
   for (const img of Array.from(page.querySelectorAll('img[alt=""]'))) expect(img.closest('a[aria-label]')).not.toBeNull();
   const levels = headingLevels(page);
@@ -34,6 +35,10 @@ test('links back to Stan Scribe; alt text and heading order', () => {
   levels.forEach((level, i) => {
     if (i > 0) expect(level - levels[i - 1]).toBeLessThanOrEqual(1);
   });
+});
+
+test('one type scale: no mono, tracked caps or italics', () => {
+  expect(findTypeViolations(renderPage())).toEqual([]);
 });
 
 test('words follow the brief, metadata included', () => {
