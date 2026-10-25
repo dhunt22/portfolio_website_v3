@@ -5,6 +5,8 @@
 // The home page's Selected work (DESIGN.md › Lead project, Project entry): the lead drawn large beside
 // its text, then the highlights as glyph entries. Pointing at one puts it in the readout.
 
+import Link from 'next/link';
+import type { ComponentProps } from 'react';
 import { Glyph } from '@/components/site/Glyph';
 import { useReadingHandlers } from '@/components/site/Readout';
 import { SITE_LINK, SITE_SOON, SITE_TYPE } from '@/components/site/type';
@@ -12,21 +14,26 @@ import type { GlyphShape } from '@/lib/site/glyphs';
 import type { WorkEntry } from '@/lib/site/work';
 import { cn } from '@/lib/utils';
 
+/** Portfolio routes navigate in place (no full reload); Stan Scribe is its own product and loads as its own site. */
+function EntryLink({ href, ...rest }: ComponentProps<'a'>) {
+  return href?.startsWith('/') && !href.startsWith('/stanscribe') ? <Link href={href} {...rest} /> : <a href={href} {...rest} />;
+}
+
 export function LeadProject({ entry, figure, description }: { entry: WorkEntry; figure: GlyphShape; description: string }) {
   const handlers = useReadingHandlers(entry.reading);
   return (
     <div className="mt-12 grid max-w-[76rem] items-center gap-[clamp(28px,5vw,72px)] min-[861px]:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
-      <a href={entry.href} {...handlers} className="lead-figure block" aria-label={`${entry.name}: every prison in the study`}>
+      <EntryLink href={entry.href} {...handlers} className="lead-figure block" aria-label={`${entry.name}: every prison in the study`}>
         <Glyph shape={figure} className="h-auto w-full" />
-      </a>
+      </EntryLink>
       <div>
         {/* Name first, then its meta, as in every entry: a label above a heading would be an eyebrow. */}
         <h3 className={SITE_TYPE.headline}>{entry.name}</h3>
         {entry.meta && <p className={cn(SITE_TYPE.label, 'mt-1.5')}>{entry.meta}</p>}
         <p className={cn(SITE_TYPE.body, 'mt-3.5 max-w-[42ch]')}>{description}</p>
-        <a href={entry.href} className={cn(SITE_LINK, 'mt-[18px] inline-block')}>
+        <EntryLink href={entry.href} className={cn(SITE_LINK, 'mt-[18px] inline-block')}>
           Explore the map <span aria-hidden="true">→</span>
-        </a>
+        </EntryLink>
       </div>
     </div>
   );
@@ -50,7 +57,7 @@ function Highlight({ entry }: { entry: WorkEntry }) {
   return (
     <li>
       {entry.href ? (
-        <a href={entry.href} {...handlers} className={ITEM}>{body}</a>
+        <EntryLink href={entry.href} {...handlers} className={ITEM}>{body}</EntryLink>
       ) : (
         <div {...handlers} className={ITEM}>{body}</div>
       )}

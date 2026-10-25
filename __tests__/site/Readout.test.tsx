@@ -2,6 +2,9 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { ReadoutDefault, ReadoutProvider, ReadoutStrip, useReadingHandlers } from '@/components/site/Readout';
 import { labelReading, plateReading } from '@/lib/site/reading';
 
+let mockPath = '/';
+jest.mock('next/navigation', () => ({ usePathname: () => mockPath }));
+
 function Pointer() {
   const handlers = useReadingHandlers(labelReading('Tool', 'PyPEST'));
   return <button {...handlers}>PyPEST</button>;
@@ -44,4 +47,15 @@ test('wide fields hide on phones', () => {
 test('handlers are inert without a provider', () => {
   render(<Pointer />);
   fireEvent.mouseEnter(screen.getByRole('button', { name: 'PyPEST' }));
+});
+
+test('following a link in place drops what was pointed at: the new page starts from its default', () => {
+  mockPath = '/';
+  const { rerender } = render(<Harness />);
+  fireEvent.mouseEnter(screen.getByRole('button', { name: 'PyPEST' }));
+  expect(screen.getByTestId('readout')).toHaveTextContent('PyPEST');
+  mockPath = '/portfolio';
+  rerender(<Harness />);
+  expect(screen.getByTestId('readout')).toHaveTextContent('Grand Canyon, Arizona');
+  expect(screen.getByTestId('readout')).not.toHaveTextContent('PyPEST');
 });

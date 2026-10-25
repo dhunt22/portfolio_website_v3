@@ -5,6 +5,7 @@
 // The readout strip (DESIGN.md › Readout strip): a context any entry, pin or map can feed, the sticky
 // strip that shows it, and the page's resting reading. aria-live is off: the same facts are on the page.
 
+import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Reading } from '@/lib/site/reading';
 
@@ -24,6 +25,10 @@ export function ReadoutProvider({ children }: { children: ReactNode }) {
   const show = useCallback((r: Reading) => setCurrent(r), []);
   const clear = useCallback(() => setCurrent(null), []);
   const setDefault = useCallback((r: Reading) => setResting(r), []);
+  // A link followed in place unmounts what was pointed at without a leave or blur; the new page starts
+  // from its own resting reading.
+  const pathname = usePathname();
+  useEffect(() => setCurrent(null), [pathname]);
   const api = useMemo(() => ({ reading: current ?? resting, show, clear, setDefault }), [current, resting, show, clear, setDefault]);
   return <ReadoutContext.Provider value={api}>{children}</ReadoutContext.Provider>;
 }

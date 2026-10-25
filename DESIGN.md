@@ -245,7 +245,8 @@ Sticky at the top of every page, `var(--strip)` ground, label type, tabular figu
 overflow hidden. Fields are `Label value` pairs with the label in Strip Label. Default content is the
 page's plate ("Plate · Big Sur, California · Lat · Lon", right side "Contours drawn by Devin Hunt"); on
 the résumé, "Home base · Sacramento". Pointing at or focusing a project, watershed or pin replaces it
-with that place's Lat, Lon, Watershed (or Subbasin) and code; leaving restores the default. Not a live
+with that place's Lat, Lon, Watershed (or Subbasin) and code; leaving, or following a link to another
+page, restores the default. Not a live
 region (`aria-live="off"`): the same facts are on the page in text. Hidden in print.
 
 ### Navigation
