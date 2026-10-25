@@ -345,3 +345,27 @@ no labels.
 | `lib/portfolio-data.ts` | Add glyph type, place, coordinates or boundary per project; add the tools. |
 | `public/data/` | Restore `cuyama_subbasin.geojson` and `yuba_subbasins.geojson` (B118) from git history. |
 | Stan Scribe pages and components | Untouched until their own direction. |
+
+## Decision log
+
+What the critique pass of 2026-10-25 (Task 13) kept on purpose. "Inspector" is Taste-Skill's
+`inspect.mjs`; "detector" is Impeccable's `detect`. After the pass the detector reports no findings on
+any portfolio page at 1280 and 390, so there are no detector ignores. The inspector has no persistent
+ignore; its remaining findings are listed here.
+
+| Finding | Where | Decision and reason |
+| --- | --- | --- |
+| Inspector `text-shadow` (FAIL) | Hero words on every page | The Label Halo Rule: text over contours gets a ground-coloured halo, the way a map haloes its labels. It is not a legibility scrim and never appears below the first screen or on filled buttons. |
+| Inspector `few-pictures` (FAIL), `no-footage` (WARN) | Home, portfolio, résumé, EEJ, 404 | The owner rejected photo-led project presentation. Work is drawn as glyphs from its own geometry; there is no video by choice. Outdoors is the one page where photographs lead, and project figures open inside portfolio entries. |
+| Inspector `still-page` (FAIL) | Every page | Motion is the plate's breathe plus 120-200ms state changes (Backdrop; Do's). No entrance animations, by design. |
+| Inspector `off-centre` (WARN; FAIL on portfolio at 1440 and 768, EEJ at 1440) | Every page | The editorial column is left-set on purpose ("nothing is centred except inside the map"); the strip and header close both margins. |
+| Inspector `first-action` (WARN at 390) | Portfolio, Outdoors, EEJ | The header's Email me button hides under 520px (Navigation); these pages have no hero action. Email stays in the footer. |
+| Inspector `shadow` (FAIL) | EEJ map: MapLibre control group, toolbar, legend, percentile menu | They float over the map, so they carry the one float shadow (Elevation & Depth). Nothing at rest has one. |
+| Inspector `small-text` (WARN, 3 blocks) | EEJ map attribution | MapLibre's attribution keeps its compact 12px so the legal line stays one row over the map. It is third-party chrome, now ink on a light label in both themes; the six roles govern the site's own text. |
+| Inspector `headline-lines` (FAIL at 390) | EEJ h1 | "Environmental Justice For Prisons" is the project's name; it takes three lines at the Display size on phones. Copy and the role stay; below 380px the title hyphenates (Even Lines Rule) so it never pushes the page sideways. |
+| Inspector `eyebrow` (FAIL, false positive) | Résumé skills | The last item of a two-column skills list sits within 72px above the next section heading. It is a list item, not a label. |
+| Map focus ring drawn inside the edge | EEJ map surface | The map sits in a clipping frame, so its 2px Water Blue ring is drawn 4px inside the edge instead of 3px outside; every other stop keeps the 3px offset. |
+| Lead project meta under the name | Home | The C3 prototype set the lead's meta above its name. That is an eyebrow, so the lead now uses the entry order (name, meta, paragraph, link). |
+| Stan Scribe link stays a plain link | Home highlights | Portfolio routes navigate in place; Stan Scribe is its own product and is moving to its own site, so it loads as a page of its own. |
+| Phone plate position | Inspector shots at 390 | Not a defect: headless Chrome reports the host screen (1440x900), so the phone height pin makes the plate 1440px tall and the clearing sits low. With a phone-sized screen the plate sits where C3 put it. |
+| Serif fallback after `--font-display` | `.site` | Not a defect: `--font-site` already carries next/font's metric-matched fallback, so the serif names after it are never reached, and no element inside `.site` uses `font-display`, `font-sans` or `font-mono` (tests guard the EEJ components). |
