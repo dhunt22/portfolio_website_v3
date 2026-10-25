@@ -160,8 +160,8 @@ const MapControls: React.FC<MapControlsProps> = ({
             {...(percentileMenuOpen ? { 'aria-controls': 'percentile-menu-stack' } : {})}
             aria-label={`Percentile threshold, currently ${currentPercentileLabel}`}
             onClick={() => setPercentileMenuOpen((open) => !open)}
-            // Transparent over the filled toolbar bar (matches the sibling toggles); the bar's
-            // color-mix surface gives the trigger's state text its contrast floor over the map.
+            // Transparent over the toolbar (matches the sibling toggles); the toolbar's solid fill gives
+            // the trigger's state text its contrast floor over the map.
             className={cn(CONTROL, 'flex min-h-[44px] items-center gap-1.5 px-1')}
           >
             <span>Percentile:</span>
