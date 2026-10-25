@@ -48,8 +48,74 @@
     --border-contour: rgba(203, 154, 89, 0.3);
     --ring-focus: #7bb17f;         /* forest-400 */
   }
+
+  /* ── The portfolio system (DESIGN.md, "The Working Map") ─────────────────────
+     Scoped to .site, the wrapper the portfolio pages render in, so the Stan Scribe pages keep the June
+     2026 tokens. Inside .site the existing semantic tokens are remapped, so every component already
+     built on them (the backdrop's glow strokes in var(--surface-page)) takes the new palette and type. */
+  .site {
+    --site-ground: #eef1f3;
+    --site-band: rgb(238 241 243 / 0.92);
+    --site-basin: #ffffff;
+    --site-basin-edge: #cdd6dd;
+    --site-hover: #e2edf5;
+    --site-worked: #c6dcec;
+    --site-worked-deep: #9cc1dc;
+    --site-selected: #1c5a85;
+    --site-strip: #0d1114;
+    --site-strip-ink: #e6eaed;
+    --site-strip-label: #9aa7b1;
+    --surface-page: var(--site-ground);
+    --surface-card: var(--site-basin);
+    --surface-sunken: #e3e8eb;
+    --surface-header: var(--site-ground);
+    --text-strong: #0d1114;
+    --text-body: #0d1114;
+    --text-muted: #4d5962;
+    --text-faint: #4d5962;
+    --text-link: #1c5a85;
+    --text-link-hover: #123d5c;
+    --text-eyebrow: #4d5962;
+    --brand-primary: #0d1114;
+    --brand-accent: #1c5a85;
+    --border-hairline: #cdd6dd;
+    --border-default: #cdd6dd;
+    --border-contour: rgb(28 90 133 / 0.3);
+    --ring-focus: #1c5a85;
+    --font-display: var(--font-site);
+    --font-sans: var(--font-site);
+    --font-mono: var(--font-site);
+  }
+  .dark .site {
+    --site-ground: #111517;
+    --site-band: rgb(17 21 23 / 0.9);
+    --site-basin: #1c2429;
+    --site-basin-edge: #3a4851;
+    --site-hover: #243440;
+    --site-worked: #1f3a4f;
+    --site-worked-deep: #2f5a7a;
+    --site-selected: #6fb1de;
+    --site-strip: #06090b;
+    --surface-sunken: #0b0e10;
+    --text-strong: #e9edef;
+    --text-body: #e9edef;
+    --text-muted: #a2adb5;
+    --text-faint: #a2adb5;
+    --text-link: #6fb1de;
+    --text-link-hover: #a9d2ee;
+    --text-eyebrow: #a2adb5;
+    --brand-primary: #e9edef;
+    --brand-accent: #6fb1de;
+    --border-hairline: #3a4851;
+    --border-default: #3a4851;
+    --border-contour: rgb(111 177 222 / 0.3);
+    --ring-focus: #6fb1de;
+  }
+  /* Overscroll and the area outside the wrapper match the portfolio ground. */
+  body:has(.site) { background-color: #eef1f3; }
+  .dark body:has(.site) { background-color: #111517; }
   html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
-  :where(a, button, [role="button"], [role="region"][tabindex]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
+  :where(a, button, summary, [role="button"], [role="region"][tabindex]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
 }
 
 @layer components {
@@ -69,6 +135,55 @@
   /* inline-block + py keeps these small-caps links at a ≥24px (WCAG 2.5.8) tap target. */
   .link-quiet { @apply inline-block py-1.5 font-sans font-medium text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
   .link-quiet-mono { @apply inline-block py-1.5 font-mono text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
+
+  /* The wrapper: a stacking context so the fixed contour plate paints above its ground, below content. */
+  .site { isolation: isolate; display: flex; flex: 1 1 auto; min-height: 100svh; flex-direction: column; background: var(--surface-page); color: var(--text-body); font-family: var(--font-site), system-ui, sans-serif; }
+  /* The Band Rule: below the first screen, content sits on a near-opaque full-width band. */
+  .site .band { background: var(--site-band); padding-block: clamp(64px, 9vw, 128px); }
+  .site .band + .band { padding-top: 0; }
+  /* The Label Halo Rule: a ground-coloured halo for text over contours (hero only). */
+  .site .halo { text-shadow: 0 0 3px var(--surface-page), 0 0 10px var(--surface-page); }
+  /* The clearing: contours fade out behind the hero words, as a map clears lines behind a label. */
+  .site [data-contour-plate] {
+    -webkit-mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
+            mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
+  }
+  @media (max-width: 860px) {
+    .site [data-contour-plate] {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0 34%, #000 62%);
+              mask-image: linear-gradient(to bottom, transparent 0 34%, #000 62%);
+    }
+  }
+
+  /* Glyphs (DESIGN.md › Glyphs). Tones are set per part by components/site/Glyph.tsx. */
+  .glyph { display: block; overflow: visible; }
+  .glyph .g-fill { fill: var(--site-worked); transition: fill 150ms; }
+  .glyph .g-deep { fill: var(--site-worked-deep); }
+  .glyph .g-zone { fill: var(--site-selected); fill-opacity: 0.4; }
+  .glyph .g-strong { fill: var(--site-selected); fill-opacity: 0.9; }
+  .glyph :is(.g-fill, .g-deep, .g-zone, .g-strong, .g-line) { stroke: var(--text-strong); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
+  .glyph .g-line { fill: none; }
+  .glyph :is(.g-thin, .g-ghost) { fill: none; stroke: var(--text-muted); stroke-width: 0.75; vector-effect: non-scaling-stroke; }
+  .glyph .g-dot { fill: var(--text-strong); transition: fill 200ms; }
+  .glyph .g-accent { fill: var(--site-selected); }
+  .glyph-dense .g-fill { stroke-width: 0.5; }
+  /* A glyph's host (an entry or a link) lights the glyph and underlines its name when pointed at. */
+  .glyph-host:is(:hover, :focus-visible, [data-active='true']) .glyph .g-fill { fill: var(--site-selected); fill-opacity: 0.45; }
+  .glyph-host:is(:hover, :focus-visible) .entry-name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.18em; }
+  .lead-figure:is(:hover, :focus-visible) .glyph .g-dot { fill: var(--site-selected); }
+
+  /* The résumé's watershed map (DESIGN.md › Watershed map). */
+  .site path.basin { fill: var(--site-basin); fill-opacity: 0.94; stroke: var(--site-basin-edge); stroke-width: 0.6; vector-effect: non-scaling-stroke; transition: fill 120ms; }
+  .site path.basin-worked { fill: var(--site-worked); fill-opacity: 1; }
+  .site path.basin:hover { fill: var(--site-hover); fill-opacity: 1; }
+  .site path.basin-selected { fill: var(--site-selected); fill-opacity: 0.45; stroke: var(--site-selected); }
+  .site .pin { cursor: pointer; outline: none; }
+  .site .pin circle { fill: var(--text-strong); stroke: var(--surface-page); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  .site .pin-home { cursor: default; }
+  .site .pin-home circle { fill: var(--surface-page); stroke: var(--text-strong); }
+  .site .pin-selected circle { fill: var(--site-selected); }
+  .site .pin:focus-visible circle { stroke: var(--site-selected); stroke-width: 4; }
+  .site .pin text { font-family: var(--font-site), system-ui, sans-serif; font-weight: 600; fill: var(--text-strong); paint-order: stroke; stroke: var(--surface-page); stroke-linejoin: round; }
 }
 
 /* Focus visible improvements */
@@ -164,4 +279,8 @@ html.js [data-contour-plate][data-plate-ready='true'] {
   [data-contour-plate] { display: none !important; }
   .panel { border: none !important; padding: 0 !important; }
   .resume-item { break-inside: avoid; }
+  .site, .dark .site {
+    --surface-page: #ffffff; --surface-card: #ffffff; --site-band: #ffffff;
+    --text-strong: #111111; --text-body: #222222; --text-muted: #444444;
+  }
 }

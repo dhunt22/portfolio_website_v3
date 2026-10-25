@@ -3,7 +3,7 @@
 // The topographic map that guides all other components - hope it doesn't lead us off a cliff!
 
 import './globals.css';
-import { newsreader, hanken, jetbrains } from './fonts';
+import { newsreader, hanken, jetbrains, publicSans } from './fonts';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Metadata, Viewport } from 'next';
@@ -73,7 +73,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
-      <body className={`${newsreader.variable} ${hanken.variable} ${jetbrains.variable} font-sans overflow-x-hidden bg-background text-foreground antialiased`}>
+      <body className={`${newsreader.variable} ${hanken.variable} ${jetbrains.variable} ${publicSans.variable} font-sans overflow-x-hidden bg-background text-foreground antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

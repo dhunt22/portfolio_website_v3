@@ -8,12 +8,12 @@ import Footer from '@/components/layout/Footer';
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
-    <>
+    <div className="site">
       <Header />
       <main id="main" className="flex-grow pt-16">
         {children}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
