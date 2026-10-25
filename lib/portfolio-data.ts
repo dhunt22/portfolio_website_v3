@@ -2,6 +2,19 @@
 // lib/portfolio-data.ts
 // Portfolio project data separated for better maintainability
 
+/** How a project or tool is drawn (DESIGN.md › Glyphs). */
+export type GlyphSpec =
+  | { kind: 'subbasin'; file: string } // DWR Bulletin 118 polygons in public/data
+  | { kind: 'watershed' } // the HUC8 watershed under `location`
+  | { kind: 'statewide' } // every California HUC8 watershed
+  | { kind: 'prisons' } // the EEJ prison points
+  | { kind: 'mesh'; variant: 'plain' | 'zoned' | 'subset' }
+  | { kind: 'calibration' }
+  | { kind: 'captions' }
+  | { kind: 'boreholes' }
+  | { kind: 'wells' }
+  | { kind: 'households' };
+
 /**
  * Interface for portfolio project data
  */
@@ -25,6 +38,15 @@ export interface Project {
   imageCaption?: string; // Caption for the image (e.g., "NASA, 2001")
   imageSecondaryText?: string; // Secondary descriptive text for the image
   imageFit?: 'cover' | 'contain'; // desktop object-fit (default 'cover'); 'contain' preserves full image edges (e.g. logos)
+  /** One line for lists. */
+  summary: string;
+  /** Where the work is, for the meta line; omitted when the place isn't stated. */
+  place?: string;
+  glyph: GlyphSpec;
+  /** A point inside the project's area, for the readout and the résumé map. Approximate. */
+  location?: { lat: number; lon: number };
+  /** What the readout says for a project without a location. */
+  readout?: { label: string; value: string };
 }
 
 /**
@@ -33,6 +55,7 @@ export interface Project {
 export const PROJECTS: Project[] = [
   {
     id: 'prison-ej',
+    summary: 'Climate, exposure and proximity percentile scores for U.S. prisons, combined into one vulnerability score each, for a NASA grant.', place: 'United States', glyph: { kind: 'prisons' }, readout: { label: 'Prisons', value: '1,865 across the United States' },
     title: 'Environmental Justice For Prisons',
     description: 'Geospatial Analysis, NASA Grant Project',
     categories: ['all', 'geospatial', 'research'],
@@ -58,6 +81,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'cuyama-basin',
+    summary: 'Figures for the 2025 Groundwater Sustainability Plan, and yearly land use and ET updates to the basin’s IWFM model.', place: 'Cuyama Valley', glyph: { kind: 'subbasin', file: 'cuyama_subbasin.geojson' }, location: { lat: 34.95, lon: -119.7 },
     title: 'Cuyama Valley Groundwater Basin',
     description: 'Groundwater Sustainability, Cartography',
     categories: ['all', 'water'],
@@ -84,6 +108,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'yuba-recharge',
+    summary: 'A Recharge Suitability Index showing where recharge projects would work best.', place: 'Yuba County', glyph: { kind: 'subbasin', file: 'yuba_subbasins.geojson' }, location: { lat: 39.13, lon: -121.49 },
     title: 'Yuba Subbasins Recharge Analysis',
     description: 'Groundwater Management, Spatial Analysis',
     categories: ['all', 'water', 'geospatial'],
@@ -112,6 +137,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'seasonal-population',
+    summary: 'An R script that estimated seasonal populations from over 8 million metering records across 21,000 households.', glyph: { kind: 'households' }, readout: { label: 'Records', value: 'Over 8 million, from 21,000 households' },
     title: 'Urban Water Use Objective Reporting',
     description: 'Groundwater Management, Large-data Analysis',
     categories: ['all', 'water'],
@@ -127,6 +153,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'harvest-water',
+    summary: 'Project figures and geospatial data for Title 22 water delivery to local farmers.', place: 'Sacramento County', glyph: { kind: 'watershed' }, location: { lat: 38.33, lon: -121.3 }, // approximate: a point in the program area until the South American subbasin, B118 5-021.65, is added
     title: 'Harvest Water Program',
     description: 'Geospatial Management, Contract Support',
     categories: ['all', 'water', 'geospatial'],
@@ -140,6 +167,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'modesto-infiltration',
+    summary: 'Drainage basins screened with SAGBI and SSURGO soil data, then three boreholes logged to find the layers that stop deep percolation.', glyph: { kind: 'boreholes' }, readout: { label: 'Boreholes', value: 'Three, logged at 5-foot intervals' },
     title: 'Infiltration Feasibility Study',
     description: 'Soil Analysis, Field Testing',
     categories: ['all', 'water', 'geospatial'],
@@ -155,6 +183,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'antelope-wells',
+    summary: 'Parcel-level suitability scores for new well sites, from over ten weighted datasets.', place: 'Palmdale and Lancaster', glyph: { kind: 'watershed' }, location: { lat: 34.65, lon: -118.15 }, // approximate until Antelope Valley, B118 6-044, is added
     title: 'Antelope Valley Well Resilience Study',
     description: 'Suitability Analysis, Water Infrastructure',
     categories: ['all', 'water', 'geospatial'],
@@ -178,6 +207,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'watershed-hub',
+    summary: 'Watershed metrics fetched from public APIs, cleaned and processed for upload to ArcGIS Online.', place: 'California', glyph: { kind: 'statewide' }, readout: { label: 'Extent', value: 'California, 140 HUC8 watersheds' },
     title: 'Watershed Hub Dashboard',
     description: 'Data Processing, Dashboard Development',
     categories: ['all', 'water', 'geospatial'],
@@ -190,6 +220,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'sanitary-district',
+    summary: 'NPDES groundwater conditions reports from monitoring data at six wells: groundwater elevation and horizontal gradient.', glyph: { kind: 'wells' }, readout: { label: 'Monitoring', value: 'Six wells, every quarter' },
     title: 'Quarterly Groundwater Conditions Reports',
     description: 'Water Quality Monitoring, Regulatory Compliance',
     categories: ['all', 'water'],
@@ -205,6 +236,75 @@ export const PROJECTS: Project[] = [
     ]
   }
 ];
+
+/** Software Devin builds around the models, and one app outside them. Copy from the résumé and PRODUCT.md. */
+export interface Tool {
+  id: string;
+  title: string;
+  meta: string;
+  summary: string;
+  content: string[];
+  glyph: GlyphSpec;
+  readout: { label: string; value: string };
+  href?: string;
+  soon?: boolean;
+}
+
+export const TOOLS: Tool[] = [
+  {
+    id: 'aiiwfm',
+    title: 'AIIWFM',
+    meta: 'Woodard & Curran · 2023 to present',
+    summary: 'An internal AI application that grounds language models in the IWFM user manual and modeling theory, to answer groundwater modeling questions accurately.',
+    content: ['Develop and maintain AIIWFM, an internal AI application that grounds language models in the IWFM user manual and modeling theory to answer groundwater modeling questions accurately.'],
+    glyph: { kind: 'mesh', variant: 'plain' },
+    readout: { label: 'Tool', value: 'AIIWFM, grounded in the IWFM manual and modeling theory' },
+  },
+  {
+    id: 'zbudget-dashboards',
+    title: 'ZBudget Dashboards',
+    meta: '',
+    summary: 'A fast, powerful IWFM model diagnostic and results viewing dashboard with interactive map and charts. Streamlining model review and report generation.',
+    content: [],
+    glyph: { kind: 'mesh', variant: 'zoned' },
+    readout: { label: 'Tool', value: 'ZBudget Dashboards, coming soon' },
+    soon: true,
+  },
+  {
+    id: 'iwfm-workflows',
+    title: 'IWFM workflow suite',
+    meta: 'Woodard & Curran',
+    summary: 'Python tools that subset a model domain and run automated file linting, QA/QC and water-budget reporting.',
+    content: [
+      'Build a Python suite of tools that automates common IWFM model workflows, including sub-setting a model domain and running automated file linting, QA/QC, and water-budget reporting.',
+      'Automate post-processing of IWFM groundwater models, replacing slow manual steps with tested, reusable tools.',
+    ],
+    glyph: { kind: 'mesh', variant: 'subset' },
+    readout: { label: 'Tool', value: 'IWFM workflow suite, sub-setting a model domain' },
+  },
+  {
+    id: 'pypest',
+    title: 'PyPEST',
+    meta: 'Woodard & Curran',
+    summary: 'A Python port of DWR’s IWFM PEST calibration suite, validated against the original Fortran tools.',
+    content: ['Develop PyPEST, a Python port of the DWR IWFM PEST calibration suite, validated against the original Fortran tools to support automated model calibration.'],
+    glyph: { kind: 'calibration' },
+    readout: { label: 'Tool', value: 'PyPEST, validated against the Fortran tools' },
+  },
+  {
+    id: 'stan-scribe',
+    title: 'Stan Scribe',
+    meta: 'iPhone and iPad',
+    summary: 'Live captions in color, built for my grandpa, who is hard of hearing, and for anyone who needs them.',
+    content: ['My grandpa Stan is hard of hearing. Live captions changed the conversations my family could have with him, but the apps we found all charged a monthly fee. So I used AI to build one that reaches as many people as possible: live captions in color, a free edition, and no subscription.'],
+    glyph: { kind: 'captions' },
+    readout: { label: 'App', value: 'Stan Scribe, on its own site' },
+    href: '/stanscribe',
+  },
+];
+
+/** The home page's Selected work, in order (owner, 2026-10-25). */
+export const HIGHLIGHTS = ['prison-ej', 'yuba-recharge', 'aiiwfm', 'zbudget-dashboards', 'stan-scribe'] as const;
 
 /**
  * Get projects filtered by category
