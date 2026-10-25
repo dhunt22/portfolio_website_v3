@@ -1,0 +1,122 @@
+'use client';
+
+// Copyright (c) 2026 Devin Hunt contact@devinhunt.com
+// components/site/WatershedMap.tsx
+// The résumé header map (DESIGN.md › Watershed map). Pointing reports the coordinates and watershed in the
+// readout; pins are buttons (Enter or Space selects) and the caption names the selected project. Pins and
+// labels keep a fixed screen size at any map scale.
+
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { useReadout } from '@/components/site/Readout';
+import { SITE_TYPE } from '@/components/site/type';
+import { unproject } from '@/lib/site/geo';
+import type { MapBasin, MapPin } from '@/lib/site/map';
+import { formatLat, formatLon } from '@/lib/site/reading';
+import { cn } from '@/lib/utils';
+
+const LABEL = { right: [10, 5, 'start'], left: [-10, 5, 'end'], below: [8, 22, 'start'] } as const;
+
+export function WatershedMap({ basins, pins, viewBox }: { basins: MapBasin[]; pins: MapPin[]; viewBox: [number, number, number, number] }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const { show, clear } = useReadout();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Map units per screen pixel; jsdom has no layout, so it keeps a sane default there.
+  const [unit, setUnit] = useState(0.016);
+  const selected = pins.find((p) => p.id === selectedId);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    const measure = () => {
+      const m = typeof svg?.getScreenCTM === 'function' ? svg.getScreenCTM() : null;
+      if (m && m.a) setUnit(1 / m.a);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  const select = (pin: MapPin) => {
+    setSelectedId(pin.id);
+    show(pin.reading);
+  };
+
+  const onMove = (e: PointerEvent<SVGSVGElement>) => {
+    const m = svgRef.current?.getScreenCTM?.();
+    if (!m) return;
+    const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
+    const [lon, lat] = unproject([pt.x, pt.y]);
+    const huc = (e.target as Element).getAttribute?.('data-huc');
+    const basin = huc ? basins.find((b) => b.huc === huc) : undefined;
+    show({
+      fields: [
+        { label: 'Lat', value: formatLat(lat) },
+        { label: 'Lon', value: formatLon(lon) },
+        { label: 'Watershed', value: basin ? basin.name : 'Outside California' },
+        { label: 'HUC8', value: basin ? basin.huc : '—', wide: true },
+      ],
+      note: 'California watersheds · USGS HUC8',
+    });
+  };
+
+  const onLeave = () => (selected ? show(selected.reading) : clear());
+
+  return (
+    <figure className="m-0 print:hidden">
+      <svg
+        ref={svgRef}
+        viewBox={viewBox.join(' ')}
+        preserveAspectRatio="xMidYMid meet"
+        role="group"
+        aria-label="Map of California's watersheds with the places Devin has worked"
+        className="block aspect-[0.86] h-auto w-full min-[861px]:aspect-auto min-[861px]:h-[min(72svh,680px)]"
+        onPointerMove={onMove}
+        onPointerLeave={onLeave}
+      >
+        <g>
+          {basins.map((b) => (
+            <path key={b.huc} data-huc={b.huc} d={b.d} className={cn('basin', b.worked && 'basin-worked', selected?.huc === b.huc && 'basin-selected')} />
+          ))}
+        </g>
+        <g>
+          {pins.map((p) => {
+            const [dx, dy, anchor] = LABEL[p.labelSide];
+            const interactive = !p.home;
+            return (
+              <g
+                key={p.id}
+                className={cn('pin', p.home && 'pin-home', selectedId === p.id && 'pin-selected')}
+                {...(interactive && {
+                  role: 'button',
+                  tabIndex: 0,
+                  'aria-label': `${p.name}, ${p.place}`,
+                  'aria-pressed': selectedId === p.id,
+                  onClick: () => select(p),
+                  onKeyDown: (e: KeyboardEvent<SVGGElement>) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      select(p);
+                    }
+                  },
+                })}
+              >
+                <circle cx={p.x} cy={p.y} r={5 * unit} />
+                <text x={p.x + dx * unit} y={p.y + dy * unit} fontSize={15 * unit} textAnchor={anchor} style={{ strokeWidth: 4 * unit }}>
+                  {p.label}
+                </text>
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+      <figcaption aria-live="polite" className={cn(SITE_TYPE.label, 'mt-2 min-h-[3em]')}>
+        {selected ? (
+          <>
+            <b className="font-semibold text-ink-strong">{selected.name}</b> · {selected.years} · {selected.place}
+          </>
+        ) : (
+          'Choose a place to see the project there.'
+        )}
+      </figcaption>
+    </figure>
+  );
+}
