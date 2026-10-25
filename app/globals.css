@@ -125,16 +125,10 @@
      read as distinct WITHOUT hard borders). Light is untouched. */
   .dark .panel { border-color: var(--border-hairline); }
   .eyebrow { @apply font-sans font-medium text-xs uppercase tracking-caps text-eyebrow; }
-  .eyebrow-mono { @apply font-mono text-xs font-normal uppercase tracking-caps text-eyebrow; }
-  /* Section heading — a real mid-tier between the display h1 and the text-xl
-     subheads, so a section <h2> out-ranks the serif <h3>s beneath it instead of
-     sitting at eyebrow-label weight (which inverted the visual hierarchy). */
-  .section-title { @apply font-display text-2xl tracking-display text-ink-strong; }
   .display { @apply font-display font-medium tracking-display leading-tight-display text-ink-strong; }
   .lead { @apply text-lg leading-relaxed text-ink-body; }
   /* inline-block + py keeps these small-caps links at a ≥24px (WCAG 2.5.8) tap target. */
   .link-quiet { @apply inline-block py-1.5 font-sans font-medium text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
-  .link-quiet-mono { @apply inline-block py-1.5 font-mono text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
 
   /* The wrapper: a stacking context so the fixed contour plate paints above its ground, below content. */
   .site { isolation: isolate; display: flex; flex: 1 1 auto; min-height: 100svh; flex-direction: column; background: var(--surface-page); color: var(--text-body); font-family: var(--font-site), system-ui, sans-serif; }

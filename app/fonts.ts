@@ -1,4 +1,4 @@
-import { Newsreader, Hanken_Grotesk, JetBrains_Mono, Public_Sans } from 'next/font/google';
+import { Newsreader, Hanken_Grotesk, Public_Sans } from 'next/font/google';
 
 export const newsreader = Newsreader({
   subsets: ['latin'], style: ['normal', 'italic'],
@@ -6,9 +6,6 @@ export const newsreader = Newsreader({
 });
 export const hanken = Hanken_Grotesk({
   subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-sans', display: 'swap',
-});
-export const jetbrains = JetBrains_Mono({
-  subsets: ['latin'], weight: ['400', '500'], variable: '--font-mono', display: 'swap',
 });
 
 /** The portfolio's one typeface (DESIGN.md). Exposed as --font-site; .site maps the other font tokens to it. */
