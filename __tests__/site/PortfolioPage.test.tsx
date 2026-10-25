@@ -75,3 +75,10 @@ test('a malformed hash renders without throwing', () => {
   window.location.hash = '#%';
   expect(() => renderPage()).not.toThrow();
 });
+
+test('an entry without meta keeps its summary in the text column', () => {
+  const { container } = renderPage();
+  const summary = container.querySelector('#zbudget-dashboards summary')!.lastElementChild!;
+  expect(summary).toHaveTextContent('IWFM model diagnostic');
+  expect(summary).toHaveClass('min-[861px]:col-start-2');
+});

@@ -32,7 +32,7 @@ function Entry({ entry, hidden }: { entry: WorkEntry; hidden?: boolean }) {
               {entry.meta}
             </span>
           )}
-          <span className={cn(SITE_TYPE.body, 'max-w-[56ch]')}>{entry.summary}</span>
+          <span className={cn(SITE_TYPE.body, 'max-w-[56ch] min-[861px]:col-start-2')}>{entry.summary}</span>
         </summary>
         <div className="grid max-w-[70ch] gap-4 pb-8 pl-[70px] min-[861px]:pl-[100px]">
           {entry.content.map((paragraph, i) => (

@@ -25,4 +25,4 @@ export const SITE_BUTTON =
 export const SITE_LINK = 'text-link underline decoration-1 underline-offset-[0.2em] hover:decoration-2';
 
 /** The "Coming soon" label after a name. */
-export const SITE_SOON = 'ml-2.5 align-[0.3em] font-site text-site-label font-medium tracking-normal text-site-selected';
+export const SITE_SOON = 'ml-2.5 whitespace-nowrap align-[0.3em] font-site text-site-label font-medium tracking-normal text-site-selected';
