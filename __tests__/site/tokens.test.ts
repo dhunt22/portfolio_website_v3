@@ -4,8 +4,7 @@ import { createElement } from 'react';
 import { render } from '@testing-library/react';
 import SiteLayout from '@/app/(site)/layout';
 
-jest.mock('@/components/layout/Header', () => () => null);
-jest.mock('@/components/layout/Footer', () => () => null);
+jest.mock('next/navigation', () => ({ usePathname: () => '/' }));
 
 const css = fs.readFileSync(path.join(process.cwd(), 'app/globals.css'), 'utf8');
 const block = (selector: string) => {

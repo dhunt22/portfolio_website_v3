@@ -1,19 +1,10 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // app/(site)/layout.tsx
-// The portfolio pages' layout.
+// The portfolio pages' layout: the Working Map frame (DESIGN.md).
 
 import type { ReactNode } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+import { SiteChrome } from '@/components/site/SiteChrome';
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="site">
-      <Header />
-      <main id="main" className="flex-grow pt-16">
-        {children}
-      </main>
-      <Footer />
-    </div>
-  );
+  return <SiteChrome>{children}</SiteChrome>;
 }
