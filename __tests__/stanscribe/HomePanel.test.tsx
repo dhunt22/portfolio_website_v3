@@ -1,5 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
-import Home from '@/app/page';
+import Home from '@/app/(site)/page';
 import { SHOTS } from '@/lib/stanscribe';
 import { findCopyViolations, pageText } from '@/test-utils/stanscribe';
 

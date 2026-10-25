@@ -1,5 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
-import StanScribePage, { metadata } from '@/app/stanscribe/page';
+import StanScribePage, { metadata } from '@/app/(stanscribe)/stanscribe/page';
 import { APPS, LANGUAGES } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 

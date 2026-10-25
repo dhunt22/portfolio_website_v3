@@ -1,5 +1,5 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
-// app/interests/page.tsx
+// app/(site)/interests/page.tsx
 // Exploring personal interests like a river finds its path - always curious about where it leads!
 
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';

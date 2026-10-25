@@ -1,5 +1,5 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
-// app/portfolio/environmental-justice-prisons/page.tsx
+// app/(site)/portfolio/environmental-justice-prisons/page.tsx
 // Environmental Justice For Prisons - dedicated project page (server shell)
 
 import Link from 'next/link';

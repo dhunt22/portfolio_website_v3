@@ -1,5 +1,5 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
-// app/page.tsx
+// app/(site)/page.tsx
 // The home page - where the watershed of information begins
 
 import Image from 'next/image';

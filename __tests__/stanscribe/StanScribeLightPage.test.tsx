@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import StanScribeLightPage, { metadata } from '@/app/stanscribe-light/page';
+import StanScribeLightPage, { metadata } from '@/app/(stanscribe)/stanscribe-light/page';
 import { APPS } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 

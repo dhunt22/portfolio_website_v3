@@ -1,5 +1,5 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
-// app/resume/page.tsx
+// app/(site)/resume/page.tsx
 // A resume as flowing as a river - hopefully it doesn't run dry during interviews!
 
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';

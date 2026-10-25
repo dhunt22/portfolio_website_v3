@@ -4,8 +4,6 @@
 
 import './globals.css';
 import { newsreader, hanken, jetbrains } from './fonts';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Metadata, Viewport } from 'next';
@@ -91,11 +89,8 @@ export default function RootLayout({
               >
                 Skip to content
               </a>
-              <Header />
-              <main id="main" className="flex-grow pt-16">
-                {children}
-              </main>
-              <Footer />
+              {/* Each route group's layout (and app/not-found.tsx) renders the <main id="main"> the skip link targets. */}
+              {children}
             </div>
           </ErrorBoundary>
         </ThemeProvider>

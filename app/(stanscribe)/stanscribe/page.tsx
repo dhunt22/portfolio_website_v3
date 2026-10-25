@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
-// app/stanscribe/page.tsx
+// app/(stanscribe)/stanscribe/page.tsx
 // Stan Scribe and Stan Scribe Light: the product page, and both apps' Support and Marketing URL in
 // App Store Connect. Words come from transcript_stan/docs/marketing/stanscribe-page/copy.md, plus the
 // owner's story, trimmed (2026-10-24) so each thing is said once; the rules they all follow (no

@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
-// app/stanscribe-light/page.tsx
+// app/(stanscribe)/stanscribe-light/page.tsx
 // Stan Scribe Light's Support and Marketing URL in App Store Connect. App Review opens it looking
 // for a contact, so Help sits directly under the hero. Copy is copy.md's Light section.
 
