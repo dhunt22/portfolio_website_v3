@@ -31,7 +31,7 @@ export function LeadProject({ entry, figure, description }: { entry: WorkEntry; 
         <h3 className={SITE_TYPE.headline}>{entry.name}</h3>
         {entry.meta && <p className={cn(SITE_TYPE.label, 'mt-1.5')}>{entry.meta}</p>}
         <p className={cn(SITE_TYPE.body, 'mt-3.5 max-w-[42ch]')}>{description}</p>
-        <EntryLink href={entry.href} className={cn(SITE_LINK, 'mt-[18px] inline-block')}>
+        <EntryLink href={entry.href} className={cn(SITE_LINK, 'mt-[18px] inline-block font-site text-site-body')}>
           Explore the map <span aria-hidden="true">→</span>
         </EntryLink>
       </div>

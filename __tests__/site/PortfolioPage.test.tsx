@@ -44,6 +44,7 @@ test('details hold the full story and links', () => {
   const { container } = renderPage();
   const eej = container.querySelector('#prison-ej details')!;
   expect(within(eej as HTMLElement).getByRole('link', { name: /Open the project page/ })).toHaveAttribute('href', '/portfolio/environmental-justice-prisons');
+  expect(within(eej as HTMLElement).getByRole('link', { name: /Open the project page/ })).toHaveClass('text-site-body');
   expect(eej).toHaveTextContent('Caitlin Mothes');
 });
 

@@ -48,11 +48,11 @@ function Entry({ entry, hidden }: { entry: WorkEntry; hidden?: boolean }) {
           {hasLinks && (
             <ul className="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
               {entry.href && (
-                <li><a href={entry.href} className={SITE_LINK}>Open the project page <span aria-hidden="true">→</span></a></li>
+                <li><a href={entry.href} className={cn(SITE_LINK, 'font-site text-site-body')}>Open the project page <span aria-hidden="true">→</span></a></li>
               )}
               {entry.links.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} target="_blank" rel="noopener noreferrer" className={SITE_LINK}>{link.label}</a>
+                  <a href={link.href} target="_blank" rel="noopener noreferrer" className={cn(SITE_LINK, 'font-site text-site-body')}>{link.label}</a>
                 </li>
               ))}
             </ul>

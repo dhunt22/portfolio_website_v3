@@ -117,7 +117,7 @@
   .dark body:has(.site) { background-color: #111517; --ring-focus: #6fb1de; }
   /* The skip link sits outside .site too: on portfolio pages it takes the site's face and a square, light
      label over the dark strip it appears on, instead of the Stan Scribe pages' Hanken, rounded paper card. */
-  body:has(.site) a[href="#main"]:focus { font-family: var(--font-site), system-ui, sans-serif; border-radius: 0; border-color: transparent; background-color: #eef1f3; color: #0d1114; box-shadow: none; }
+  body:has(.site) a[href="#main"]:focus { font-family: var(--font-site), system-ui, sans-serif; font-size: 1.0625rem; line-height: 1.55; border-radius: 0; border-color: transparent; background-color: #eef1f3; color: #0d1114; box-shadow: none; }
   .dark body:has(.site) a[href="#main"]:focus { background-color: #e9edef; color: #111517; }
   /* Scrollbars on portfolio pages come from the palette. Setting scrollbar-color also retires the global
      stone-coloured, rounded ::-webkit-scrollbar below (Chrome 121+ prefers the standard property). */

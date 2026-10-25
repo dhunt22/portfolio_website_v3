@@ -50,3 +50,8 @@ test('a lead without meta renders no empty line', () => {
   const { container } = render(<LeadProject entry={{ ...lead, meta: '' }} figure={prisonsFigure()} description="Each dot is a prison." />);
   expect([...container.querySelectorAll('p')].filter((p) => !p.textContent?.trim())).toHaveLength(0);
 });
+
+test('standalone links set the body size, not the browser default', () => {
+  render(<Home />);
+  expect(screen.getByRole('link', { name: /Explore the map/ })).toHaveClass('text-site-body');
+});
