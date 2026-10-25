@@ -22,7 +22,7 @@ test('the .site scope remaps the semantic tokens to the Working Map palette', ()
 });
 
 test('Public Sans is loaded as --font-site', () => {
-  const fonts = fs.readFileSync(path.join(process.cwd(), 'app/fonts.ts'), 'utf8');
+  const fonts = fs.readFileSync(path.join(process.cwd(), 'app/fonts/site.ts'), 'utf8');
   expect(fonts).toMatch(/Public_Sans\(/);
   expect(fonts).toMatch(/variable: '--font-site'/);
 });
@@ -57,7 +57,7 @@ test('headings balance and paragraphs avoid orphans inside .site', () => {
 });
 
 test('on portfolio pages the skip link wears Public Sans, square and light over the strip, not the legacy card', () => {
-  expect(css).toMatch(/body:has\(\.site\) a\[href="#main"\]:focus \{ font-family: var\(--font-site\)[^}]*border-radius: 0;[^}]*background-color: #eef1f3;/);
+  expect(css).toMatch(/\.site a\[href="#main"\]:focus \{ font-family: var\(--font-site\)[^}]*border-radius: 0;[^}]*background-color: #eef1f3;/);
 });
 
 test('portfolio scrollbars take the palette, not the legacy stone', () => {

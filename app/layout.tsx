@@ -3,7 +3,6 @@
 // The topographic map that guides all other components - hope it doesn't lead us off a cliff!
 
 import './globals.css';
-import { newsreader, hanken, publicSans } from './fonts';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Metadata, Viewport } from 'next';
@@ -50,7 +49,7 @@ export const metadata: Metadata = {
  * RootLayout component that wraps all pages with common layout elements
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Child components to render within the layout
- * @returns {React.JSX.Element} The complete layout with header, main content, and footer
+ * @returns {React.JSX.Element} The complete layout with the theme provider and error boundary; each route group supplies its own frame and fonts
  */
 export default function RootLayout({
   children,
@@ -73,7 +72,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
-      <body className={`${newsreader.variable} ${hanken.variable} ${publicSans.variable} font-sans overflow-x-hidden bg-background text-foreground antialiased`}>
+      <body className="font-sans overflow-x-hidden bg-background text-foreground antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -82,14 +81,7 @@ export default function RootLayout({
         >
           <ErrorBoundary>
             <div className="min-h-svh flex flex-col">
-              {/* Skip link — first focusable element; visually hidden until focused. */}
-              <a
-                href="#main"
-                className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:border focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:text-ink-strong focus:shadow-lg"
-              >
-                Skip to content
-              </a>
-              {/* Each route group's layout (and app/not-found.tsx) renders the <main id="main"> the skip link targets. */}
+              {/* Each route group's frame (and app/not-found.tsx) renders the skip link and the <main id="main"> it targets. */}
               {children}
             </div>
           </ErrorBoundary>
