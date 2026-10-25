@@ -115,6 +115,10 @@
      for the whole page, so the root layout's skip link (outside .site) matches the rest. */
   body:has(.site) { background-color: #eef1f3; --ring-focus: #1c5a85; }
   .dark body:has(.site) { background-color: #111517; --ring-focus: #6fb1de; }
+  /* The skip link sits outside .site too: on portfolio pages it takes the site's face and a square, light
+     label over the dark strip it appears on, instead of the Stan Scribe pages' Hanken, rounded paper card. */
+  body:has(.site) a[href="#main"]:focus { font-family: var(--font-site), system-ui, sans-serif; border-radius: 0; border-color: transparent; background-color: #eef1f3; color: #0d1114; box-shadow: none; }
+  .dark body:has(.site) a[href="#main"]:focus { background-color: #e9edef; color: #111517; }
   html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
   :where(a, button, summary, [role="button"], [role="region"][tabindex], [role="application"][tabindex]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
 }

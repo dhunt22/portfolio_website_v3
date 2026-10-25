@@ -55,3 +55,7 @@ test('headings balance and paragraphs avoid orphans inside .site', () => {
   expect(css).toContain('.site :is(h1, h2, h3, h4, .entry-name) { text-wrap: balance; }');
   expect(css).toContain('.site p { text-wrap: pretty; }');
 });
+
+test('on portfolio pages the skip link wears Public Sans, square and light over the strip, not the legacy card', () => {
+  expect(css).toMatch(/body:has\(\.site\) a\[href="#main"\]:focus \{ font-family: var\(--font-site\)[^}]*border-radius: 0;[^}]*background-color: #eef1f3;/);
+});
