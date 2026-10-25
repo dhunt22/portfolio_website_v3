@@ -34,3 +34,9 @@ test('the footer is one quiet line', () => {
   expect(within(footer).getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', 'https://www.linkedin.com/in/devinthunt');
   expect(within(footer).getByRole('link', { name: 'contact@devinhunt.com' })).toHaveAttribute('href', 'mailto:contact@devinhunt.com');
 });
+
+test('the theme toggle focuses with the 2px offset outline', async () => {
+  render(<SiteChrome><p>content</p></SiteChrome>);
+  const toggle = await screen.findByRole('button', { name: /switch to/i });
+  expect(toggle).toHaveClass('focus-visible:outline-offset-[3px]');
+});

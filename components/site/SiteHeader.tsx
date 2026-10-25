@@ -43,7 +43,7 @@ export function SiteHeader() {
         </ul>
       </nav>
       <div className="flex items-center gap-2">
-        <ThemeToggle className="rounded-none text-ink-strong hover:bg-site-band focus-visible:ring-ring dark:text-ink-strong dark:hover:bg-site-band" />
+        <ThemeToggle className="rounded-none text-ink-strong hover:bg-site-band focus-visible:ring-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-ring dark:text-ink-strong dark:hover:bg-site-band" />
         <a href="mailto:contact@devinhunt.com" className={cn(SITE_BUTTON, 'hidden min-[521px]:inline-flex')}>
           Email me
         </a>
