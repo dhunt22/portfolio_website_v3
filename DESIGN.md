@@ -251,8 +251,8 @@ region (`aria-live="off"`): the same facts are on the page in text. Hidden in pr
 ### Navigation
 Wordmark "Devin Hunt" (700, 1.125rem) at left; three plain links (Portfolio, Résumé, Outdoors) in body
 type; the current page underlined 2px at 0.35em offset; the theme toggle (square, ink icon) and one
-primary "Email me" button at right. No dropdowns. Phones keep all three links on one row; the button
-hides under 520px.
+primary "Email me" button at right. No dropdowns. Below 640px the three links take their own row under the
+wordmark and the theme toggle, still on one line; the button hides under 520px.
 
 ### Buttons and links
 - **Primary button:** Field Ink fill, Cool Paper text, square, 44px tall, 0 20px padding; hover drops to

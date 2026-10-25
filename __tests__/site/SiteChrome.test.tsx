@@ -40,3 +40,9 @@ test('the theme toggle focuses with the 2px offset outline', async () => {
   const toggle = await screen.findByRole('button', { name: /switch to/i });
   expect(toggle).toHaveClass('focus-visible:outline-offset-[3px]');
 });
+
+test('below 640px the header wraps and the links take their own row', () => {
+  render(<SiteChrome><p>content</p></SiteChrome>);
+  expect(screen.getByRole('banner')).toHaveClass('flex-wrap');
+  expect(screen.getByRole('navigation', { name: 'Main' })).toHaveClass('order-last', 'w-full');
+});

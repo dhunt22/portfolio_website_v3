@@ -20,11 +20,11 @@ const LINKS = [
 export function SiteHeader() {
   const pathname = usePathname() ?? '';
   return (
-    <header className="flex items-center justify-between gap-6 px-gutter py-[18px] print:hidden">
-      <Link href="/" className="font-site text-lg font-bold tracking-[-0.01em] text-ink-strong no-underline">
+    <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 px-gutter py-[18px] print:hidden">
+      <Link href="/" className="font-site text-lg whitespace-nowrap font-bold tracking-[-0.01em] text-ink-strong no-underline">
         Devin Hunt
       </Link>
-      <nav aria-label="Main">
+      <nav aria-label="Main" className="order-last w-full min-[640px]:order-none min-[640px]:w-auto">
         <ul className="m-0 flex list-none gap-[18px] p-0 min-[861px]:gap-7">
           {LINKS.map(({ href, label }) => {
             const current = pathname === href || pathname.startsWith(`${href}/`);
