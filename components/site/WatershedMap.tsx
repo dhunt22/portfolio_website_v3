@@ -40,7 +40,15 @@ export function WatershedMap({ basins, pins, viewBox }: { basins: MapBasin[]; pi
     show(pin.reading);
   };
 
+  const onLeave = () => (selected ? show(selected.reading) : clear());
+
   const onMove = (e: PointerEvent<SVGSVGElement>) => {
+    const pinEl = (e.target as Element).closest?.('[data-pin]');
+    const pin = pinEl && pins.find((p) => p.id === pinEl.getAttribute('data-pin'));
+    if (pin) {
+      show(pin.reading);
+      return;
+    }
     const m = svgRef.current?.getScreenCTM?.();
     if (!m) return;
     const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
@@ -58,7 +66,6 @@ export function WatershedMap({ basins, pins, viewBox }: { basins: MapBasin[]; pi
     });
   };
 
-  const onLeave = () => (selected ? show(selected.reading) : clear());
 
   return (
     <figure className="m-0 print:hidden">
@@ -84,6 +91,7 @@ export function WatershedMap({ basins, pins, viewBox }: { basins: MapBasin[]; pi
             return (
               <g
                 key={p.id}
+                data-pin={p.id}
                 className={cn('pin', p.home && 'pin-home', selectedId === p.id && 'pin-selected')}
                 {...(interactive && {
                   role: 'button',
@@ -91,6 +99,8 @@ export function WatershedMap({ basins, pins, viewBox }: { basins: MapBasin[]; pi
                   'aria-label': `${p.name}, ${p.place}`,
                   'aria-pressed': selectedId === p.id,
                   onClick: () => select(p),
+                  onFocus: () => show(p.reading),
+                  onBlur: onLeave,
                   onKeyDown: (e: KeyboardEvent<SVGGElement>) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();

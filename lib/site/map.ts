@@ -29,7 +29,7 @@ export interface MapPin {
 
 /** Labels that would run into a neighbour or off the map go the other way. */
 const LABEL_SIDE: Record<string, LabelSide> = { 'antelope-wells': 'left', 'harvest-water': 'below' };
-const HOME = { lat: 38.58, lon: -121.49 };
+const HOME = { lat: 38.58, lon: -121.49 }; // approximate centre of Sacramento
 
 export function resumeMap() {
   const features = huc8Features();

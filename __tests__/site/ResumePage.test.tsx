@@ -39,3 +39,20 @@ test('every résumé section is still there', () => {
   expect(screen.getByText('Eagle Scout Award, Boy Scouts of America, August 2018')).toBeInTheDocument();
   expect(screen.getByText(/Supported a PhD dissertation on stream metabolism/)).toBeInTheDocument();
 });
+
+test('focusing a pin reports its place; blurring restores the default', () => {
+  renderPage();
+  const cuyama = screen.getByRole('button', { name: /Cuyama Valley Groundwater Basin/ });
+  fireEvent.focus(cuyama);
+  expect(screen.getByTestId('readout')).toHaveTextContent('Cuyama Valley');
+  fireEvent.blur(cuyama);
+  expect(screen.getByTestId('readout')).toHaveTextContent('Home base');
+});
+
+test('pointing at a pin reports its place, not the empty map', () => {
+  renderPage();
+  const circle = screen.getByRole('button', { name: /Cuyama Valley Groundwater Basin/ }).querySelector('circle')!;
+  fireEvent.pointerMove(circle);
+  expect(screen.getByTestId('readout')).toHaveTextContent('Cuyama Valley');
+  expect(screen.getByTestId('readout')).not.toHaveTextContent('Outside California');
+});
