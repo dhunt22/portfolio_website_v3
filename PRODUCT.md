@@ -50,7 +50,7 @@ it (AIIWFM, tested Python automation for IWFM workflows, the firm's AI Innovator
 
 ## Capabilities and Constraints
 
-- Next.js 14 App Router, static export (`output: 'export'`), Tailwind 3 on CSS-variable tokens,
+- Next.js 16 App Router, static export (`output: 'export'`), Tailwind 4 on CSS-variable tokens,
   light and dark themes. The live site is served by Netlify (`netlify.toml`); a GitHub Pages workflow
   also runs on pushes to `main`.
 - The EEJ project page carries a live MapLibre map with filters; it must keep working. The portfolio

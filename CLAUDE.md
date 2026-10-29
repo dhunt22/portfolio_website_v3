@@ -1,7 +1,7 @@
 # devinhunt.com
 
 This repo holds Devin Hunt's portfolio and the Stan Scribe app pages.
-Next.js 14 App Router with static export, Tailwind 3 and Jest 29.
+Next.js 16 App Router (Turbopack) with static export, React 19, Tailwind 4, Jest 30 and TypeScript 7, on Node 24.
 
 ## Before any UI work
 
@@ -19,7 +19,15 @@ Next.js 14 App Router with static export, Tailwind 3 and Jest 29.
 2. `npm run build` (static export to `out/`)
 3. Check the change in a browser at 1440 and 390 wide, in light and dark.
 
-Never run `npm run build` while `next dev` is running. They share `.next`.
+`next build` type-checks every file tsconfig includes, tests too. There is no linter (`next lint` is gone in
+Next 16, and Next's ESLint rules don't support TypeScript 7 yet).
+
+## Styles
+
+- Tailwind 4 keeps its theme in `app/globals.css` as `@theme inline`. Keep it `inline`: the tokens point at
+  variables that `.site` and `.dark` remap, and a plain `@theme` would freeze them at `:root`.
+- Rules that override third-party CSS (MapLibre) stay outside `@layer`. Unlayered CSS beats every layer in
+  Tailwind 4, whatever its specificity.
 
 ## Skills
 
