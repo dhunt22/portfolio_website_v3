@@ -7,7 +7,7 @@
 import './project-map.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import { getMapConfig } from '@/lib/maps/mapConfigurations';
@@ -16,8 +16,12 @@ import { setupPrisonLayers, setupSubbasinLayers, addMapControls } from '@/lib/ma
 import { usePrisonMap } from '@/hooks/usePrisonMap';
 import { useMapPopup } from '@/hooks/useMapPopup';
 import MapControls from '@/components/maps/MapControls';
-import { createEnhancedColorScale, applyFilterToLayers } from '@/lib/maps/mapUtils';
+import { createEnhancedColorScale, applyFilterToLayers, type PaintUpdate } from '@/lib/maps/mapUtils';
 import { resolveActiveColumn, buildCombinedFilter } from '@/hooks/usePrisonMap';
+
+// MapLibre 6 runs its tile work in a module worker that it looks for beside its own file. Once bundled that
+// path no longer exists, so point it at the worker file, which Turbopack emits as a static asset.
+maplibregl.setWorkerUrl(new URL('maplibre-gl/dist/maplibre-gl-worker.mjs', import.meta.url).toString());
 
 interface ProjectMapProps {
   projectId: string;
@@ -258,7 +262,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
               applyFilterToLayers(map.current!, PRISON_LAYERS, filterExpr);
 
               // Re-apply paint colors now that layers exist and data is ready
-              const paintUpdates = [
+              const paintUpdates: PaintUpdate[] = [
                 { layerId: `${lp}-polygons`, property: 'fill-color', value: colorScale },
                 { layerId: `${lp}-polygons-highlight`, property: 'fill-color', value: colorScale },
                 { layerId: `${lp}-centroids`, property: 'circle-color', value: colorScale },

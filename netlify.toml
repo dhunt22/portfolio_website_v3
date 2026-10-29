@@ -4,6 +4,9 @@
 
 [build.environment]
   NETLIFY_BUILD_BASE_IMAGE = "noble"
+  # Next 16 needs Node 20.9+. Pin the LTS line so the site never builds on whatever version Netlify first
+  # recorded for it.
+  NODE_VERSION = "24"
 
 # Handle SPA routing
 [[redirects]]

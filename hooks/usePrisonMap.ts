@@ -3,7 +3,7 @@
 // Custom hook for prison map functionality
 
 import { useEffect, useRef, useState } from 'react';
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
 import {
   PrisonFeature,
   createRiskColorScale,
@@ -12,6 +12,7 @@ import {
   applyFilterToLayers,
   updateLayerPaintProperty,
   updateLayerPaintPropertiesBatch,
+  type PaintUpdate,
 } from '@/lib/maps/mapUtils';
 import {
   buildCombinedFilter,
@@ -92,7 +93,7 @@ export const usePrisonMap = (
     const _dynamicProperties = createDynamicPaintProperties(selectedAttribute);
 
     // Use batch update for better consistency
-    const updates = [
+    const updates: PaintUpdate[] = [
       { layerId: `${layerPrefix}-polygons`, property: "fill-color", value: colorScale },
       { layerId: `${layerPrefix}-polygons-highlight`, property: "fill-color", value: colorScale },
       { layerId: `${layerPrefix}-centroids`, property: "circle-color", value: colorScale }

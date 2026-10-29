@@ -3,7 +3,8 @@
 // Custom hook for map popup functionality
 
 import { useEffect, useRef } from 'react';
-import maplibregl, { MapMouseEvent, MapGeoJSONFeature } from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
+import type { MapMouseEvent, MapGeoJSONFeature } from 'maplibre-gl';
 import { 
   PrisonFeatureProperties,
   createPrisonPopupContent,
@@ -60,18 +61,6 @@ export const useMapPopup = (
       console.log(`Layer ${layer} exists:`, !!exists);
     });
 
-    // Remove old event listeners - be more thorough
-    layers.forEach(layer => {
-      try {
-        // Remove all event types
-        map.current?.off("mousemove", layer as any);
-        map.current?.off("mouseenter", layer as any);
-        map.current?.off("mouseleave", layer as any);
-        map.current?.off("click", layer as any);
-      } catch (e) {
-        // Ignore errors if layer doesn't exist yet
-      }
-    });
 
     // Create hover popup (reusable) - no anchor specified allows automatic positioning
     popup.current = new maplibregl.Popup({
