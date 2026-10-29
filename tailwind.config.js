@@ -68,7 +68,5 @@ module.exports = {
       animation: { rise: 'rise 0.8s ease-out forwards' },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-  ],
+  plugins: [],
 }
