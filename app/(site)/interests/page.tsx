@@ -4,7 +4,7 @@
 
 import type { Metadata } from 'next';
 import { ReadoutDefault } from '@/components/site/Readout';
-import { SITE_TYPE } from '@/components/site/type';
+import { HERO, SITE_TYPE } from '@/components/site/type';
 import { plateReading } from '@/lib/site/reading';
 import { cn } from '@/lib/utils';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
@@ -145,13 +145,13 @@ export default function InterestsPage() {
     <>
       <ContourBackdrop page="interests" />
       <ReadoutDefault reading={plateReading('interests')} />
-      <section aria-labelledby="page-title" className="grid gap-[22px] px-gutter pb-14 pt-[clamp(40px,9vh,104px)]">
+      <section aria-labelledby="page-title" className={cn(HERO, 'gap-[22px] pb-14 pt-[clamp(40px,9vh,104px)]')}>
         <h1 id="page-title" className={cn(SITE_TYPE.display, 'halo')}>Outdoors</h1>
         <p className={cn(SITE_TYPE.lead, 'halo max-w-[30ch]')}>
           What I do outside work, in my own photos.
         </p>
       </section>
-      <div className="band px-gutter">
+      <div className="band px-frame">
         <div className="max-w-[76rem]">
           {interestSections.map((section) => <InterestSection key={section.id} {...section} />)}
           <section id="gis" className="scroll-mt-24 py-10">

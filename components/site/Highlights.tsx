@@ -39,19 +39,23 @@ export function LeadProject({ entry, figure, description }: { entry: Omit<WorkEn
   );
 }
 
-const ITEM = 'glyph-host grid grid-cols-[52px_minmax(0,1fr)] gap-x-[18px] gap-y-1 py-[22px] text-inherit no-underline min-[861px]:grid-cols-[72px_minmax(0,1fr)] min-[861px]:gap-x-7';
+// Home shows four, so its glyphs are half again the portfolio's: 78px on phones, 108px from 861px.
+const ITEM = 'glyph-host grid grid-cols-[78px_minmax(0,1fr)] items-start gap-x-5 py-[22px] text-inherit no-underline min-[861px]:grid-cols-[108px_minmax(0,1fr)] min-[861px]:gap-x-8';
 
 function Highlight({ entry }: { entry: WorkEntry }) {
   const handlers = useReadingHandlers(entry.reading);
   const body = (
     <>
-      <Glyph shape={entry.glyph} className="row-span-3 h-[52px] w-[52px] min-[861px]:h-[72px] min-[861px]:w-[72px]" />
-      <span className={cn(SITE_TYPE.title, 'entry-name')}>
-        {entry.name}
-        {entry.soon && <span className={SITE_SOON}>Coming soon</span>}
+      <Glyph shape={entry.glyph} className="h-[78px] w-[78px] min-[861px]:h-[108px] min-[861px]:w-[108px]" />
+      {/* One text block beside the glyph, so a glyph taller than the text never spreads its lines apart. */}
+      <span className="grid gap-y-1">
+        <span className={cn(SITE_TYPE.title, 'entry-name')}>
+          {entry.name}
+          {entry.soon && <span className={SITE_SOON}>Coming soon</span>}
+        </span>
+        {entry.meta && <span className={SITE_TYPE.label}>{entry.meta}</span>}
+        <span className={cn(SITE_TYPE.body, 'max-w-[56ch]')}>{entry.summary}</span>
       </span>
-      {entry.meta && <span className={SITE_TYPE.label}>{entry.meta}</span>}
-      <span className={cn(SITE_TYPE.body, 'max-w-[56ch]')}>{entry.summary}</span>
     </>
   );
   return (

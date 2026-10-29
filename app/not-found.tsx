@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { ReadoutDefault } from '@/components/site/Readout';
 import { SiteChrome } from '@/components/site/SiteChrome';
-import { SITE_BUTTON, SITE_LINK, SITE_TYPE } from '@/components/site/type';
+import { HERO, SITE_BUTTON, SITE_LINK, SITE_TYPE } from '@/components/site/type';
 import { plateReading } from '@/lib/site/reading';
 import { cn } from '@/lib/utils';
 
@@ -22,13 +22,13 @@ export default function NotFound() {
     <SiteChrome>
       <ContourBackdrop page="notFound" />
       <ReadoutDefault reading={plateReading('notFound')} />
-      <section aria-labelledby="nf-title" className="grid min-h-[60svh] content-start gap-6 px-gutter pb-16 pt-[clamp(40px,10vh,120px)]">
+      <section aria-labelledby="nf-title" className={cn(HERO, 'min-h-[60svh] gap-6 pb-16 pt-[clamp(40px,10vh,120px)]')}>
         <p className={cn(SITE_TYPE.display, 'halo')} aria-hidden="true">404</p>
         <h1 id="nf-title" className={cn(SITE_TYPE.headline, 'halo')}>Page not found</h1>
         <p className={cn(SITE_TYPE.lead, 'halo max-w-[40ch]')}>
           Looks like this stream dried up. The page wandered off like water finding a new path.
         </p>
-        <nav aria-label="Ways back" className="halo flex flex-wrap items-center gap-x-6 gap-y-3">
+        <nav aria-label="Ways back" className="halo flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
           <Link href="/" className={SITE_BUTTON}>Home</Link>
           <Link href="/portfolio" className={cn(SITE_LINK, 'font-site text-site-body')}>Portfolio</Link>
           <Link href="/resume" className={cn(SITE_LINK, 'font-site text-site-body')}>Résumé</Link>

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { IndicatorBrowser } from '@/components/portfolio/IndicatorBrowser';
 import { ReadoutDefault } from '@/components/site/Readout';
-import { SITE_LINK, SITE_TYPE } from '@/components/site/type';
+import { HERO, SITE_LINK, SITE_TYPE } from '@/components/site/type';
 import { labelReading } from '@/lib/site/reading';
 import { cn } from '@/lib/utils';
 
@@ -28,7 +28,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
       <ContourBackdrop page="ej" />
       <ReadoutDefault reading={labelReading('Prisons', '1,865 across the United States')} />
         {/* Hero — compact so the dashboard enters the first viewport on desktop */}
-        <header className="grid gap-5 px-gutter pb-12 pt-[clamp(32px,6vh,72px)]">
+        <header className={cn(HERO, 'gap-5 pb-12 pt-[clamp(32px,6vh,72px)]')}>
           <h1 className={cn(SITE_TYPE.display, 'halo max-w-[18ch]')}>
             Environmental Justice For Prisons
           </h1>
@@ -36,7 +36,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
           <p className={cn(SITE_TYPE.lead, 'halo max-w-[40rem]')}>
             Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons
           </p>
-          <nav aria-label="Project links" className="halo flex flex-wrap gap-8">
+          <nav aria-label="Project links" className="halo flex flex-wrap justify-center gap-8">
             <a
               href="https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1"
               target="_blank"
@@ -59,13 +59,13 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </header>
 
         {/* Dashboard — map leads as the primary element */}
-        <section className="band px-gutter" aria-labelledby="indicators-heading">
+        <section className="band px-frame" aria-labelledby="indicators-heading">
           <h2 id="indicators-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Environmental Risk Indicators</h2>
           <IndicatorBrowser />
         </section>
 
         {/* About — Project Overview */}
-        <section id="about" className="band px-gutter" aria-labelledby="overview-heading">
+        <section id="about" className="band px-frame" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Project Overview</h2>
           <div className="max-w-[76rem] xl:grid xl:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] xl:items-start xl:gap-10">
             {/* Overview paragraphs (left column on xl; single column below) */}
@@ -96,7 +96,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Long-form read — Project Team & Impact */}
-        <section className="band px-gutter" aria-labelledby="team-heading">
+        <section className="band px-frame" aria-labelledby="team-heading">
           <h2 id="team-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Project Team &amp; My Contribution</h2>
 
           <div className="grid max-w-[76rem] grid-cols-1 gap-12 md:grid-cols-2">
@@ -166,7 +166,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         </section>
 
         {/* Call to Action */}
-        <section className="band px-gutter" aria-labelledby="cta-heading">
+        <section className="band px-frame" aria-labelledby="cta-heading">
           <h2 id="cta-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Explore the Research</h2>
           <p className={cn(SITE_TYPE.body, 'max-w-[40rem]')}>
             Access the open-source code, data, and methodology of this environmental justice research.

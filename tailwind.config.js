@@ -57,7 +57,8 @@ module.exports = {
         'site-body': ['1.0625rem', { lineHeight: '1.55' }],
         'site-label': ['0.9375rem', { lineHeight: '1.45' }],
       },
-      spacing: { gutter: 'clamp(16px, 3vw, 40px)', section: 'clamp(64px, 9vw, 128px)' },
+      // frame: the gutter on small screens, then whatever centres a 75rem column (DESIGN.md › Layout › Frame).
+      spacing: { gutter: 'clamp(16px, 3vw, 40px)', frame: 'max(clamp(16px, 3vw, 40px), calc((100% - 75rem) / 2))', section: 'clamp(64px, 9vw, 128px)' },
       letterSpacing: { caps: '0.14em', display: '-0.02em', mono: '0.02em' },
       lineHeight: { 'tight-display': '1.08' },
       borderRadius: { lg: '10px', md: '10px', sm: '6px' },

@@ -84,7 +84,7 @@ export function WorkList({ entries, id, isHidden }: { entries: WorkEntry[]; id: 
     if (details) details.open = true;
   }, [entries]);
   return (
-    <ul id={id} className="m-0 mt-10 grid max-w-[72rem] list-none gap-2 p-0">
+    <ul id={id} className="m-0 mt-10 grid list-none gap-2 p-0">
       {entries.map((e) => <Entry key={e.id} entry={e} hidden={isHidden?.(e)} />)}
     </ul>
   );

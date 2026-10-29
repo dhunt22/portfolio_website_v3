@@ -62,7 +62,7 @@ export function ReadoutStrip() {
     <div
       data-testid="readout"
       aria-live="off"
-      className="sticky top-0 z-30 flex min-h-10 gap-4 overflow-hidden whitespace-nowrap bg-site-strip px-gutter py-[9px] font-site text-site-label tabular-nums text-site-strip-ink print:hidden min-[861px]:gap-7"
+      className="sticky top-0 z-30 flex min-h-10 gap-4 overflow-hidden whitespace-nowrap bg-site-strip px-frame py-[9px] font-site text-site-label tabular-nums text-site-strip-ink print:hidden min-[861px]:gap-7"
     >
       {reading?.fields.map((f) => (
         <span key={f.label} className={f.wide ? 'hidden min-[861px]:inline' : undefined}>

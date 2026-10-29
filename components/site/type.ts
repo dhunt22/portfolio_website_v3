@@ -17,6 +17,10 @@ export const SITE_TYPE = {
   label: 'font-site text-site-label tabular-nums text-ink-muted',
 } as const;
 
+/** A page's first screen: its words centred in the frame, over the plate's centred clearing (DESIGN.md › Layout).
+ *  Centred lines balance, so no line is left holding one word. */
+export const HERO = 'grid content-start justify-items-center gap-7 px-frame text-center [&_p]:[text-wrap:balance]';
+
 /** The one primary button: ink fill, ground text, square, 44px tall. Never haloed. */
 export const SITE_BUTTON =
   'inline-flex min-h-11 items-center bg-ink-strong px-5 font-site text-site-body font-medium text-background no-underline transition-opacity duration-150 [text-shadow:none] hover:opacity-[0.88]';
@@ -24,5 +28,6 @@ export const SITE_BUTTON =
 /** A text link: water blue, underlined, thicker on hover. */
 export const SITE_LINK = 'text-link underline decoration-1 underline-offset-[0.2em] hover:decoration-2';
 
-/** The "Coming soon" label after a name. */
-export const SITE_SOON = 'ml-2.5 whitespace-nowrap align-[0.3em] font-site text-site-label font-medium tracking-normal text-site-selected';
+/** The "Coming soon" label after a name. An inline-block, so a narrow line breaks before it rather than
+ *  holding it to the name's last word and pushing the page sideways. */
+export const SITE_SOON = 'ml-2.5 inline-block whitespace-nowrap align-[0.3em] font-site text-site-label font-medium tracking-normal text-site-selected';
