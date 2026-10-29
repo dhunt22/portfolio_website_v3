@@ -4,7 +4,7 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type JSX } from 'react';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
 import { SITE_LINK, SITE_TYPE } from '@/components/site/type';
 import { cn } from '@/lib/utils';

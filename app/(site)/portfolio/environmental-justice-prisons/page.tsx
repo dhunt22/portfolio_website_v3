@@ -3,6 +3,7 @@
 // Environmental Justice For Prisons - dedicated project page (server shell)
 
 import type { Metadata } from 'next';
+import type { JSX } from 'react';
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { IndicatorBrowser } from '@/components/portfolio/IndicatorBrowser';
