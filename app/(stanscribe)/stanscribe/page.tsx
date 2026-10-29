@@ -10,7 +10,7 @@ import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
 import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
 import { HelpBlock } from '@/components/stanscribe/HelpBlock';
 import { PhoneShot } from '@/components/stanscribe/PhoneShot';
-import { PANEL, Section } from '@/components/stanscribe/Section';
+import { COLUMN, INTRO, SHEET, Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
@@ -106,26 +106,26 @@ function CheckIcon() {
 
 export default function StanScribePage() {
   return (
-    <div className="relative min-h-svh">
+    <div className="relative min-h-svh px-4 pt-2 sm:px-6 md:pt-4">
       <ContourBackdrop page="interests" quiet />
 
-      <div className="container relative z-10 mx-auto space-y-8 px-4 pb-8 pt-8 sm:px-6 md:space-y-12 md:pt-12">
-        {/* Hero */}
-        <section aria-labelledby="stanscribe-title" className={cn(PANEL, 'grid items-center gap-10 lg:grid-cols-[minmax(0,36rem)_1fr] lg:gap-16')}>
+      <div className={cn(SHEET, 'relative z-10')}>
+        {/* Hero: one centred column, so the reading order is name, what it does, how to get it, then the picture */}
+        <section aria-labelledby="stanscribe-title" className="text-center">
           <HeroLoadIn>
             <h1 id="stanscribe-title" className={TYPE.display}>
               Stan Scribe
             </h1>
             <p className={cn(TYPE.title, 'mt-3')}>Live captions for every voice.</p>
-            <p className={cn(TYPE.lead, 'mt-6')}>
+            <p className={cn(TYPE.lead, INTRO)}>
               Put your iPhone on the table and tap Start. The words appear as people talk: big, clear, and in a different
               color for each person. It all happens on your iPhone or iPad, with no internet and no account.
             </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <div className="mx-auto mt-10 grid max-w-[40rem] gap-x-10 gap-y-8 sm:grid-cols-2">
               <DownloadBlock app="scribe" />
               <DownloadBlock app="light" />
             </div>
-            <nav aria-label="On this page" className="mt-6 flex flex-wrap gap-x-6 gap-y-1">
+            <nav aria-label="On this page" className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-1">
               {JUMP_LINKS.map(({ href, label }) => (
                 <a key={href} href={href} className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
                   {label}
@@ -133,22 +133,22 @@ export default function StanScribePage() {
               ))}
             </nav>
           </HeroLoadIn>
-          <PhoneShot image={SHOTS.hero} priority className="mx-auto max-w-[34rem] lg:max-w-none" />
+          <PhoneShot image={SHOTS.hero} priority className="mx-auto mt-12 max-w-[36rem]" />
         </section>
 
         <Section id="story" title="Built for my grandpa Stan">
-          <div className="max-w-[40rem] space-y-5">
+          <div className={cn(COLUMN, 'space-y-5')}>
             {STORY.map((paragraph) => (
               <p key={paragraph} className={TYPE.lead}>
                 {paragraph}
               </p>
             ))}
+            <p className={cn(TYPE.lead, 'pt-1 text-ink-strong')}>— Devin</p>
           </div>
-          <p className={cn(TYPE.lead, 'mt-6 text-ink-strong')}>— Devin</p>
         </Section>
 
         <Section id="how-it-works" title="How it works">
-          <div className="grid items-center gap-12 md:grid-cols-[1fr_minmax(0,14rem)] lg:gap-16">
+          <div className="mx-auto grid max-w-[52rem] items-center gap-12 md:grid-cols-[minmax(0,1fr)_13rem] md:gap-16">
             <ol className="space-y-8">
               {STEPS.map(({ title, body }, i) => (
                 <li key={title} className="grid grid-cols-[2rem_1fr] gap-x-2">
@@ -162,31 +162,37 @@ export default function StanScribePage() {
                 </li>
               ))}
             </ol>
-            <PhoneShot image={SHOTS.liveGraphite} className="mx-auto max-w-[14rem]" />
+            <PhoneShot image={SHOTS.liveGraphite} className="mx-auto max-w-[13rem]" />
           </div>
         </Section>
 
         <Section id="features" title="Made to be read across the table">
-          <div className="grid items-center gap-12 lg:grid-cols-[1fr_minmax(0,14rem)] lg:gap-16">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_13rem] lg:gap-16">
             <FeatureList items={FEATURES} className="sm:grid-cols-2" />
-            <PhoneShot image={SHOTS.liveLarge} className="mx-auto max-w-[14rem]" />
+            <PhoneShot image={SHOTS.liveLarge} className="mx-auto max-w-[13rem]" />
           </div>
-          <PhoneShot image={SHOTS.paintedThemes} className="mx-auto mt-12 max-w-[48rem]" />
+          <PhoneShot image={SHOTS.paintedThemes} className="mx-auto mt-16 max-w-[48rem]" />
         </Section>
 
         <Section id="privacy" title="Private by design">
-          <div className="grid gap-12 lg:grid-cols-[1fr_minmax(0,24rem)] lg:gap-16">
-            <ul className="space-y-6">
-              {PRIVACY.map(({ title, body }) => (
-                <li key={title} className="grid grid-cols-[1.75rem_1fr] gap-3">
-                  <CheckIcon />
-                  <p className={TYPE.body}>
-                    <strong className="font-semibold text-ink-strong">{title}</strong> {body}
-                  </p>
-                </li>
-              ))}
-            </ul>
-            <div className="self-start rounded-lg border-l-4 border-accent bg-muted p-5 md:p-6">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-16">
+            <div>
+              <ul className="space-y-6">
+                {PRIVACY.map(({ title, body }) => (
+                  <li key={title} className="grid grid-cols-[1.75rem_1fr] gap-3">
+                    <CheckIcon />
+                    <p className={TYPE.body}>
+                      <strong className="font-semibold text-ink-strong">{title}</strong> {body}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <p className={cn(TYPE.body, 'mt-8')}>
+                Read the <a href={APPS.scribe.legal.find((l) => l.label === 'Privacy Policy')!.href} className={TYPE.link}>Privacy Policy</a>.
+              </p>
+            </div>
+            {/* The consent note keeps its own column on wide screens; its heading carries it, no box needed. */}
+            <div className="self-start">
               <h3 className={TYPE.heading}>Ask before you caption people.</h3>
               <p className={cn(TYPE.body, 'mt-2')}>
                 The app hears everyone nearby. In some places, everyone in a conversation must agree before it is
@@ -194,17 +200,16 @@ export default function StanScribePage() {
               </p>
             </div>
           </div>
-          <p className={cn(TYPE.body, 'mt-8')}>
-            Read the <a href={APPS.scribe.legal.find((l) => l.label === 'Privacy Policy')!.href} className={TYPE.link}>Privacy Policy</a>.
-          </p>
         </Section>
 
         <Section id="light" title="Which one is for you?">
-          <p className={cn(TYPE.lead, 'max-w-[44rem]')}>Stan Scribe Light is the simple edition, and it’s free. {BOTH_APPS_SHARE}</p>
-          <ComparisonTable className="mt-8" />
-          <p className={cn(TYPE.body, 'mt-6 max-w-[44rem]')}>
-            <strong className="font-semibold text-ink-strong">Not sure?</strong> {LIGHT_NOT_SURE}
-          </p>
+          <div className={COLUMN}>
+            <p className={TYPE.lead}>Stan Scribe Light is the simple edition, and it’s free. {BOTH_APPS_SHARE}</p>
+            <ComparisonTable className="mt-8" />
+            <p className={cn(TYPE.body, 'mt-6')}>
+              <strong className="font-semibold text-ink-strong">Not sure?</strong> {LIGHT_NOT_SURE}
+            </p>
+          </div>
         </Section>
 
         {/* Every answer open, so "they can be wrong" is never hidden */}

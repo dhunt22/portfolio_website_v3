@@ -64,6 +64,7 @@ rounded:
   none: "0px"
 spacing:
   margin: "clamp(16px, 3vw, 40px)"
+  column: "75rem"
   section: "clamp(64px, 9vw, 128px)"
   item: "22px"
   stack-sm: "8px"
@@ -89,6 +90,10 @@ components:
     backgroundColor: "{colors.worked}"
     textColor: "{colors.ink}"
     size: "72px"
+  highlight-glyph:
+    backgroundColor: "{colors.worked}"
+    textColor: "{colors.ink}"
+    size: "108px"
   link:
     textColor: "{colors.selected}"
 ---
@@ -100,9 +105,13 @@ Approved 2026-10-25 after three rounds of prototypes (round 3, "C3"). Reference 
 https://claude.ai/artifact/NKpPGPwhhGFPPXEC1eN8GV. Product truth lives in `PRODUCT.md`.
 
 **Scope.** This system governs the portfolio pages: home, portfolio, résumé, project pages, outdoors,
-404. The Stan Scribe pages keep their current system (`components/stanscribe/type.ts`, Newsreader and
-Hanken, `.panel`) until they get their own direction as a separate product; the legacy tokens they use
-stay in place and are not renamed.
+404. The Stan Scribe pages keep their own system (`components/stanscribe/type.ts`, Newsreader and
+Hanken, the legacy paper tokens, which are not renamed) as a separate product. Since 2026-10-28 they
+have their own header and footer (`StanScribeHeader`, `StanScribeFooter`: the name, Stan Scribe Light,
+Help, the theme toggle; "Made by Devin Hunt") instead of the June 2026 portfolio chrome, and each page
+is one centred `.panel` sheet (`SHEET` in `components/stanscribe/Section.tsx`) whose sections are
+chapters with centred serif h2s, separated by space. Prose sits in a centred 42rem column with its lines
+set left; nothing is boxed inside the sheet.
 
 ## Overview
 
@@ -203,21 +212,25 @@ hyphenates rather than pushing the page sideways.
 
 ## Layout
 
-- **Frame:** one pair of outer margins, `clamp(16px, 3vw, 40px)`, on every element that touches an edge
-  (strip, header, hero, bands, footer). Content columns start on that margin; nothing is centred except
-  inside the map.
+- **Frame:** one centred column, 75rem (1200px) wide, with equal margins on both sides
+  (`px-frame`: the `clamp(16px, 3vw, 40px)` gutter on small screens, then whatever centres the column).
+  The strip, header, hero, bands and footer all use it; bands and the strip still run full width behind
+  it. Each page's first screen (name or title, statement, actions) is centred in the frame (`HERO` in
+  `components/site/type.ts`), its lines balanced. Section headings, lists, entries and running text stay
+  set left inside the column. The résumé's opening is the exception: it sits left of its map.
 - **Measures:** statement 30ch, body text 56–70ch, lists and the résumé up to 72–76rem wide.
 - **Section rhythm:** bands are separated by `clamp(64px, 9vw, 128px)`; list entries by 22px of padding
   and 8px gaps. Space separates things, not lines.
-- **The clearing:** the fixed backdrop is masked so contours fade out behind the hero text. Desktop:
-  `radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%)`. Phones (≤860px):
-  `linear-gradient(to bottom, transparent 0 34%, #000 62%)`.
+- **The clearing:** the fixed backdrop is masked so contours fade out behind the hero text. Desktop,
+  centred under the centred hero: `radial-gradient(44% 62% at 50% 34%, transparent 34%, #000 78%)`; the
+  résumé (`data-clearing="left"`) keeps `radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%)`.
+  Phones (≤860px): `linear-gradient(to bottom, transparent 0 34%, #000 62%)`.
 - **Breakpoints:** 860px (two columns collapse to one, list meta moves under the name, readout drops its
   wide fields), 520px (the header's Email button hides; email stays in the footer and actions).
 
 ### Page blueprints
-- **Home:** strip · header · hero (display name, lead statement, "See the work" + "Résumé") on the
-  clearing · band "Selected work": the lead project (Environmental Justice for Prisons, drawn large
+- **Home:** strip · header · centred hero (display name, lead statement, "See the work" + "Résumé") on
+  the clearing · band "Selected work": the lead project (Environmental Justice for Prisons, drawn large
   from its prison points, 7/5 split with its text) then a two-column list of four highlights (Yuba
   Subbasins Recharge Analysis, AIIWFM, ZBudget Dashboards "Coming soon", Stan Scribe) · footer. No map.
 - **Portfolio:** display title "Where the work is", lead line · band "Projects": its filters (All, Water
@@ -255,8 +268,8 @@ region (`aria-live="off"`): the same facts are on the page in text. Hidden in pr
 
 ### Navigation
 Wordmark "Devin Hunt" (700, 1.125rem) at left; three plain links (Portfolio, Résumé, Outdoors) in body
-type; the current page underlined 2px at 0.35em offset; the theme toggle (square, ink icon) and one
-primary "Email me" button at right. No dropdowns. Below 640px the three links take their own row under the
+type, on the page's centre line from 640px (a `1fr auto 1fr` grid); the current page underlined 2px at
+0.35em offset; the theme toggle (square, ink icon) and one primary "Email me" button at right. No dropdowns. Below 640px the three links take their own row under the
 wordmark and the theme toggle, still on one line; the button hides under 520px.
 
 ### Buttons and links
@@ -269,7 +282,7 @@ wordmark and the theme toggle, still on one line; the button hides under 520px.
 A row spanning the page: 72px glyph (52px on phones) · name in Title · meta in Label (place · years,
 right-aligned on desktop, under the name on phones) · one line of Body, max 56ch. Hover or focus
 underlines the name (2px) and fills the glyph with Water Blue at 45%, and updates the strip. Coming-soon
-entries carry a Water Blue "Coming soon" label after the name and no link target until they launch. On the portfolio each entry is a disclosure: the row is its summary, and opening it shows the full description, any figure and the links. On the home page the highlights are links to their entries.
+entries carry a Water Blue "Coming soon" label after the name and no link target until they launch. On the portfolio each entry is a disclosure: the row is its summary, and opening it shows the full description, any figure and the links. On the home page the highlights are links to their entries, and their glyphs are half again the size, 108px (78px on phones), since home shows only four (owner, 2026-10-28). A "Coming soon" label is an inline-block, so a narrow line breaks before it.
 
 ### Glyphs
 Each project is drawn from its own geometry or from the thing it measured, in a 72×72 box:
@@ -333,19 +346,19 @@ no labels.
 
 | Piece | Decision |
 | --- | --- |
-| `app/(site)/`, `app/(stanscribe)/` | Route groups (no URL change). `app/(site)/layout.tsx` wraps home, `portfolio/`, `portfolio/environmental-justice-prisons/`, `resume/` and `interests/` in `SiteChrome`. `app/(stanscribe)/layout.tsx` gives `stanscribe/` and `stanscribe-light/` the legacy `components/layout/Header.tsx` and `Footer.tsx`. |
+| `app/(site)/`, `app/(stanscribe)/` | Route groups (no URL change). `app/(site)/layout.tsx` wraps home, `portfolio/`, `portfolio/environmental-justice-prisons/`, `resume/` and `interests/` in `SiteChrome`. `app/(stanscribe)/layout.tsx` gives `stanscribe/` and `stanscribe-light/` their own `StanScribeHeader` and `StanScribeFooter`; the legacy `components/layout/Header.tsx` and `Footer.tsx` are deleted. |
 | `app/layout.tsx` | Root layout: `ThemeProvider` and `ErrorBoundary` around each group's frame. It loads no fonts, has no header, footer or skip link; each group's frame (and the 404) renders its own skip link and `<main id="main">`. |
 | `app/not-found.tsx` | The 404 sits outside both route groups, so it wraps itself in `SiteChrome` and uses the `notFound` plate. |
 | `app/fonts/site.ts`, `app/fonts/stanscribe.ts` | Two modules so a route group preloads only its own fonts (one woff2 on portfolio pages and the 404, three on Stan Scribe). `site.ts`: `publicSans` loads Public Sans as `--font-site`; `SiteChrome` puts its `.variable` on the `.site` div. `stanscribe.ts`: `newsreader` (`--font-display`) and `hanken` (`--font-sans`); `app/(stanscribe)/layout.tsx` puts their `.variable` classes and `font-sans` on a wrapper div. JetBrains Mono is removed. The skip link now lives in each frame (`SiteChrome`, the Stan Scribe layout) as the first focusable element. |
 | `app/globals.css` | `.site` (and `.dark .site`) adds the `--site-*` tokens and remaps the legacy semantic tokens (`--surface-*`, `--text-*`, `--brand-*`, `--border-*`, `--ring-focus`, and `--font-display`/`--font-sans`/`--font-mono` to `--font-site`), so the glow and the reused components follow this system inside the portfolio while Stan Scribe keeps the legacy values. `body:has(.site)` and `html:has(.site)` reach what sits outside the wrapper: the page ground, the Water Blue focus ring and the scrollbars. The skip link, now inside `.site`, is styled by `.site a[href="#main"]:focus`. The same file holds `.band`, `.halo`, the clearing mask on `[data-contour-plate]`, the Even Lines rules, the `.glyph` tones, the résumé map's basins and pins, the MapLibre controls and the print reset. `.eyebrow-mono`, `.link-quiet-mono`, `.section-title`, `.display` and `.lead` are removed; `.panel`, `.eyebrow` and `.link-quiet` stay for the Stan Scribe pages. |
-| `tailwind.config.js` | Adds the `site` colours (`site-band`, `site-basin`, `site-edge`, `site-worked`, `site-worked-deep`, `site-selected`, `site-strip`, `site-strip-ink`, `site-strip-label`), `font-site`, the six `text-site-*` roles and `gutter`/`section` spacing. |
+| `tailwind.config.js` | Adds the `site` colours (`site-band`, `site-basin`, `site-edge`, `site-worked`, `site-worked-deep`, `site-selected`, `site-strip`, `site-strip-ink`, `site-strip-label`), `font-site`, the six `text-site-*` roles and `gutter`/`frame`/`section` spacing (`frame` centres the 75rem column). |
 | `lib/utils.ts` | `cn()` uses `extendTailwindMerge` so tailwind-merge keeps the `text-site-*` sizes. Without it they read as colours and get dropped. |
 | `components/site/SiteChrome.tsx` | `SiteChrome`: the `.site` wrapper around `ReadoutProvider`, `ReadoutStrip`, `SiteHeader`, `<main id="main">` and `SiteFooter`. |
 | `components/site/Readout.tsx` | `ReadoutProvider`, `useReadout`, `ReadoutStrip` (the sticky strip), `ReadoutDefault` (sets a page's resting reading) and `useReadingHandlers` (pointer and focus handlers). A route change clears back to the resting reading. |
 | `components/site/SiteHeader.tsx`, `SiteFooter.tsx` | `SiteHeader`: wordmark, Portfolio/Résumé/Outdoors, `ThemeToggle` (now takes a `className`) and Email me; no dropdown. `SiteFooter`: one line on a band. |
-| `components/site/type.ts` | `SITE_TYPE` (the six roles), `SITE_BUTTON`, `SITE_LINK`, `SITE_SOON`. |
+| `components/site/type.ts` | `SITE_TYPE` (the six roles), `HERO` (a page's centred first screen), `SITE_BUTTON`, `SITE_LINK`, `SITE_SOON`. |
 | `components/site/Glyph.tsx` | `Glyph`: draws a `GlyphShape` as an `aria-hidden` SVG. |
-| `components/site/Highlights.tsx` | Home's Selected work: `LeadProject` (the EEJ prison points drawn large, 7/5 split) and `HighlightList`. |
+| `components/site/Highlights.tsx` | Home's Selected work: `LeadProject` (the EEJ prison points drawn large, 7/5 split) and `HighlightList` (108px glyphs, 78px on phones, each beside one text block). |
 | `components/site/ProjectsIndex.tsx`, `WorkList.tsx` | `ProjectsIndex`: the portfolio filters (All, Water resources, Geospatial, Research, with counts) over a `WorkList`. `WorkList`: glyph entries, each a `<details>` disclosure. They replace `components/portfolio/ProjectIndex.tsx` and `components/ui/tabs.tsx`, both deleted. |
 | `components/site/WatershedMap.tsx` | `WatershedMap`: the résumé header map, pins as focusable `role="button"` groups. `basinAcross` assigns the slivers between simplified basins to a neighbour. |
 | `lib/site/work.ts`, `map.ts`, `geodata.ts` | Server only: `geodata.ts` reads `public/data` with `node:fs` at build time, and the other two import it. Client components import only their types. `geodata.ts`: `huc8Features`, `b118Features`, `contiguousPrisonPoints`. `work.ts`: `WorkEntry`, `glyphFor`, `projectEntries`, `toolEntries`, `highlightEntries`, `prisonsFigure`. `map.ts`: `resumeMap` (basins, pins, viewBox). |
@@ -359,7 +372,7 @@ no labels.
 | `lib/portfolio-data.ts` | Each project gained `summary`, `place`, `glyph` (`GlyphSpec`), and a `location` (approximate) or a `readout`. Adds `TOOLS` and `HIGHLIGHTS`. |
 | `public/data/` | `cuyama_subbasin.geojson` and `yuba_subbasins.geojson` (B118) restored from git history. |
 | `__tests__/site/` | Tests for the chrome, each portfolio page, the readout, geometry, glyphs, entries, the map, `cn()` and the tokens; `tokens.test.ts` reads `globals.css` and `fonts.ts`. |
-| Stan Scribe pages and components | Untouched apart from the move into `app/(stanscribe)/`: `components/stanscribe/*`, `lib/stanscribe.ts`, the legacy `Header`/`Footer`, `HeroLoadIn` and `ContourBackdrop`'s `quiet` veil. They wait for their own direction. |
+| Stan Scribe pages and components | Their own system (Scope). `Section.tsx` exports `SHEET`, `COLUMN` and `INTRO` (a hero intro, centred from 768px, set left below); `DownloadBlock` has no box and takes `withName={false}` where the page's h1 and tagline already name the app; `ComparisonTable` has no box, a rule under the app names and between rows, and equal app columns; the consent note is a heading and paragraph, not an accent-edged callout. `lib/stanscribe.ts`, `HeroLoadIn` and `ContourBackdrop`'s `quiet` veil are unchanged. |
 
 ## Decision log
 
@@ -373,7 +386,10 @@ ignore; its remaining findings are listed here.
 | Inspector `text-shadow` (FAIL) | Hero words on every page | The Label Halo Rule: text over contours gets a ground-coloured halo, the way a map haloes its labels. It is not a legibility scrim and never appears below the first screen or on filled buttons. |
 | Inspector `few-pictures` (FAIL), `no-footage` (WARN) | Home, portfolio, résumé, EEJ, 404 | The owner rejected photo-led project presentation. Work is drawn as glyphs from its own geometry; there is no video by choice. Outdoors is the one page where photographs lead, and project figures open inside portfolio entries. |
 | Inspector `still-page` (FAIL) | Every page | Motion is the plate's breathe plus 120-200ms state changes (Backdrop; Do's). No entrance animations, by design. |
-| Inspector `off-centre` (WARN; FAIL on portfolio at 1440 and 768, EEJ at 1440) | Every page | Accepted. The editorial column is left-set on purpose, as in the approved C3 prototype ("nothing is centred except inside the map"), and the strip and header reach both margins. The inspector's 60px right-margin reading could not be traced to an element, so its cause is unconfirmed. |
+| Inspector `off-centre` | Every page | Resolved 2026-10-28: the owner disliked the strong left-anchoring, so the pages share one centred 75rem column and centred first screens (Layout › Frame). What remains is a WARN on home at 1440 (120px left, 140px right): the right highlight's text ends at its 56ch measure short of the column edge. |
+| Inspector `off-centre` (FAIL) | Stan Scribe Light at 1440 | A reading artifact: the inspector takes the 2nd and 98th percentiles of text edges, and on a page of centred text in a 42rem column the header's right-hand links are the only text near the right. Measured: the sheet sits 144px from each edge and the h1's midpoint is 720 of 1440. |
+| Inspector `outlined-box`, `hairline`, `palette-cream` (WARN) | Stan Scribe pages | The one sheet keeps the panel's 1px edge so the veiled contours stop cleanly at it (owner's "solid panels" for contrast); the one rule separates the support email from the legal fine print; cream is the Stan Scribe pages' own paper palette (Scope). |
+| Inspector `first-action`, `headline-lines`, `mixed-font-headline` | Stan Scribe pages | Pre-launch there is no App Store button, only "Coming soon" and the TestFlight link. The other two read each numbered step (number, h3, paragraph) as one headline. |
 | Inspector `first-action` (WARN at 390) | Portfolio, Outdoors, EEJ | The header's Email me button hides under 520px (Navigation); these pages have no hero action. Email stays in the footer. |
 | Inspector `shadow` (FAIL) | EEJ map: MapLibre control group, toolbar, legend, percentile menu | They float over the map, so they carry the one float shadow (Elevation & Depth). Nothing at rest has one. |
 | Inspector `small-text` (WARN, 3 blocks) | EEJ map attribution | MapLibre's attribution keeps its compact 12px so the legal line stays one row over the map. It is third-party chrome, now ink on a light label in both themes; the six roles govern the site's own text. |

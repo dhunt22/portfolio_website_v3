@@ -105,3 +105,13 @@ image (lazy).
 ## Out of scope
 
 Header/footer nav changes, new contour plates, editing generated legal text, the EU FAQ line.
+
+## Layout update (2026-10-28)
+
+The owner asked for a polish of these pages with less left-anchoring. The words, the two faces, the
+18px floor and the 7:1 rule are unchanged. The pages now have their own header (Stan Scribe, Stan
+Scribe Light, Help, theme toggle) and a one-line footer ("Made by Devin Hunt") instead of the portfolio's
+chrome. Each page is one centred sheet with centred section headings; the hero is centred, the download
+tiles lost their boxes, the consent note lost its accent edge, and the comparison table lost its frame.
+On `/stanscribe-light/` the download line shows only the status, since the h1 and tagline already name
+the app and its offer. DESIGN.md › Scope has the details.

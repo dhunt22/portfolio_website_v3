@@ -20,3 +20,10 @@ describe('DownloadBlock before release', () => {
     expect(container.querySelector('a[href^="https://apps.apple.com"]')).toBeNull();
   });
 });
+
+test('without its name, the block is the status alone', () => {
+  render(<DownloadBlock app="light" withName={false} />);
+  expect(screen.queryByText('Stan Scribe Light')).toBeNull();
+  expect(screen.queryByText('Free. The simple edition.')).toBeNull();
+  expect(screen.getByText('Coming soon to the App Store')).toBeInTheDocument();
+});

@@ -9,7 +9,7 @@ import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
 import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
 import { HelpBlock } from '@/components/stanscribe/HelpBlock';
 import { PhoneShot } from '@/components/stanscribe/PhoneShot';
-import { PANEL, Section } from '@/components/stanscribe/Section';
+import { COLUMN, INTRO, SHEET, Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
@@ -32,37 +32,39 @@ export const metadata: Metadata = {
 
 export default function StanScribeLightPage() {
   return (
-    <div className="relative min-h-svh">
+    <div className="relative min-h-svh px-4 pt-2 sm:px-6 md:pt-4">
       <ContourBackdrop page="interests" quiet />
 
-      <div className="container relative z-10 mx-auto space-y-8 px-4 pb-8 pt-8 sm:px-6 md:space-y-12 md:pt-12">
-        <section aria-labelledby="light-page-title" className={cn(PANEL, 'grid items-center gap-10 lg:grid-cols-[minmax(0,36rem)_1fr] lg:gap-16')}>
+      <div className={cn(SHEET, 'relative z-10')}>
+        <section aria-labelledby="light-page-title" className="text-center">
           <HeroLoadIn>
             <h1 id="light-page-title" className={TYPE.display}>
               Stan Scribe Light
             </h1>
             <p className={cn(TYPE.title, 'mt-3')}>The simple edition. Free.</p>
-            <p className={cn(TYPE.lead, 'mt-6')}>{LIGHT_SUMMARY}</p>
-            <DownloadBlock app="light" className="mt-8 max-w-sm" />
+            <p className={cn(TYPE.lead, INTRO)}>{LIGHT_SUMMARY}</p>
+            <DownloadBlock app="light" withName={false} className="mt-8" />
           </HeroLoadIn>
-          <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto max-w-[22rem] lg:max-w-[30rem]" />
+          <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-[26rem]" />
         </section>
 
         <HelpBlock apps={['light']} />
 
         <Section id="compare" title="Which one is for you?">
-          <p className={cn(TYPE.lead, 'max-w-[44rem]')}>{BOTH_APPS_SHARE}</p>
-          <ComparisonTable className="mt-8" />
-          <p className={cn(TYPE.body, 'mt-6 max-w-[44rem]')}>
-            <strong className="font-semibold text-ink-strong">Not sure?</strong> {LIGHT_NOT_SURE}
-          </p>
-          <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
-            <Link href="/stanscribe" className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
-              See everything in Stan Scribe <span aria-hidden="true">→</span>
-            </Link>
-            <Link href="/stanscribe#story" className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
-              Why I built Stan Scribe <span aria-hidden="true">→</span>
-            </Link>
+          <div className={COLUMN}>
+            <p className={TYPE.lead}>{BOTH_APPS_SHARE}</p>
+            <ComparisonTable className="mt-8" />
+            <p className={cn(TYPE.body, 'mt-6')}>
+              <strong className="font-semibold text-ink-strong">Not sure?</strong> {LIGHT_NOT_SURE}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
+              <Link href="/stanscribe" className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
+                See everything in Stan Scribe <span aria-hidden="true">→</span>
+              </Link>
+              <Link href="/stanscribe#story" className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
+                Why I built Stan Scribe <span aria-hidden="true">→</span>
+              </Link>
+            </div>
           </div>
         </Section>
       </div>

@@ -1,8 +1,10 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/ComparisonTable.tsx
 // "Which one is for you?": only the rows where the two apps differ, in copy.md's words, as a real
-// table (th scope). What they share is one line above it (BOTH_APPS_SHARE). Cells hyphenate and drop
-// to 16px below sm so the table fits 320px; the focusable region is the fallback at larger text sizes.
+// table (th scope). What they share is one line above it (BOTH_APPS_SHARE). No box around it: a rule
+// under the app names and one between rows, with the two apps' columns the same width. Cells hyphenate
+// and drop to 16px below sm so the table fits 320px; the focusable region is the fallback at larger text
+// sizes.
 
 import { cn } from '@/lib/utils';
 
@@ -15,7 +17,8 @@ const ROWS: [feature: string, scribe: string, light: string][] = [
   ['Download', 'Larger', 'Smaller'],
 ];
 
-const CELL = 'px-2 py-3 align-top hyphens-auto sm:p-3 md:px-5 md:py-4';
+// With no box, the outer columns sit flush with the text above and below the table.
+const CELL = 'px-2 py-3 align-top hyphens-auto first:pl-0 last:pr-0 sm:p-3 sm:first:pl-0 sm:last:pr-0 md:px-5 md:py-4 md:first:pl-0 md:last:pr-0';
 const HEADER = 'font-semibold text-ink-strong';
 
 export function ComparisonTable({ className }: { className?: string }) {
@@ -24,14 +27,19 @@ export function ComparisonTable({ className }: { className?: string }) {
       role="region"
       aria-labelledby="compare-caption"
       tabIndex={0}
-      className={cn('overflow-x-auto rounded-lg border border-border', className)}
+      className={cn('overflow-x-auto', className)}
     >
       <table className="w-full border-collapse text-left text-base leading-relaxed sm:text-lg">
+        <colgroup>
+          <col className="w-[30%]" />
+          <col className="w-[35%]" />
+          <col className="w-[35%]" />
+        </colgroup>
         <caption id="compare-caption" className="sr-only">
           How Stan Scribe and Stan Scribe Light differ
         </caption>
-        <thead className="bg-muted">
-          <tr>
+        <thead>
+          <tr className="border-b-2 border-ink-strong">
             <td className={CELL} />
             <th scope="col" className={cn(CELL, HEADER)}>
               Stan Scribe

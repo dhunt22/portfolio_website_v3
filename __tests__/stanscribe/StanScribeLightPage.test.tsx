@@ -46,3 +46,10 @@ test('words follow the brief, metadata included', () => {
   expect(findCopyViolations(`${pageText(page)} ${JSON.stringify(metadata)}`)).toEqual([]);
   expect(metadata.alternates?.canonical).toBe('https://devinhunt.com/stanscribe-light/');
 });
+
+test('the hero says the name and offer once: the download line adds only the status', () => {
+  renderPage();
+  expect(screen.getAllByText('Stan Scribe Light', { selector: 'h1, p' })).toHaveLength(1);
+  expect(screen.queryByText('Free. The simple edition.')).toBeNull();
+  expect(screen.getByText('Coming soon to the App Store')).toBeInTheDocument();
+});

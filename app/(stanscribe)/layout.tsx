@@ -1,12 +1,13 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // app/(stanscribe)/layout.tsx
-// The Stan Scribe pages keep the June 2026 site chrome until they get their own product site.
+// The Stan Scribe pages' frame: their own header and footer, not the portfolio's, ahead of the move to
+// stanscribe.devinhunt.com.
 
 import type { ReactNode } from 'react';
 import { newsreader, hanken } from '@/app/fonts/stanscribe';
+import { StanScribeFooter } from '@/components/stanscribe/StanScribeFooter';
+import { StanScribeHeader } from '@/components/stanscribe/StanScribeHeader';
 import { cn } from '@/lib/utils';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 
 export default function StanScribeLayout({ children }: { children: ReactNode }) {
   return (
@@ -18,11 +19,11 @@ export default function StanScribeLayout({ children }: { children: ReactNode }) 
       >
         Skip to content
       </a>
-      <Header />
-      <main id="main" className="flex-grow pt-16">
+      <StanScribeHeader />
+      <main id="main" className="flex-grow">
         {children}
       </main>
-      <Footer />
+      <StanScribeFooter />
     </div>
   );
 }
