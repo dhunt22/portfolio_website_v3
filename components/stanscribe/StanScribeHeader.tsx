@@ -20,12 +20,12 @@ export function StanScribeHeader() {
   return (
     <header className="px-4 pb-2 pt-4 sm:px-6 md:pt-6">
       {/* The row is the sheet's width, so the name and the toggle line up with the sheet's edges. */}
-      <div className="mx-auto flex max-w-[72rem] flex-wrap items-center justify-between gap-x-8 gap-y-1">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-1">
         <Link href="/stanscribe" aria-current={onLight ? undefined : 'page'} className={cn(TYPE.heading, 'py-1 no-underline')}>
           Stan Scribe
         </Link>
         {/* Below 520px the links take their own row under the name and the toggle. */}
-        <nav aria-label="Stan Scribe" className="order-last w-full min-[520px]:order-none min-[520px]:ml-auto min-[520px]:w-auto">
+        <nav aria-label="Stan Scribe" className="order-last w-full min-[520px]:order-0 min-[520px]:ml-auto min-[520px]:w-auto">
           <ul className={cn(TYPE.body, 'flex flex-wrap gap-x-7')}>
             <li>
               <Link href="/stanscribe-light" aria-current={onLight ? 'page' : undefined} className={NAV_LINK}>

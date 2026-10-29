@@ -34,7 +34,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             Environmental Justice For Prisons
           </h1>
           <p className={cn(SITE_TYPE.label, 'halo')}>Geospatial analysis · NASA grant project · 2022 to 2023</p>
-          <p className={cn(SITE_TYPE.lead, 'halo max-w-[40rem]')}>
+          <p className={cn(SITE_TYPE.lead, 'halo max-w-160')}>
             Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons
           </p>
           <nav aria-label="Project links" className="halo flex flex-wrap justify-center gap-8">
@@ -68,9 +68,9 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         {/* About — Project Overview */}
         <section id="about" className="band px-frame" aria-labelledby="overview-heading">
           <h2 id="overview-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Project Overview</h2>
-          <div className="max-w-[76rem] xl:grid xl:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] xl:items-start xl:gap-10">
+          <div className="max-w-304 xl:grid xl:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] xl:items-start xl:gap-10">
             {/* Overview paragraphs (left column on xl; single column below) */}
-            <div className={cn(SITE_TYPE.body, 'max-w-[40rem] space-y-6 xl:max-w-none')}>
+            <div className={cn(SITE_TYPE.body, 'max-w-160 space-y-6 xl:max-w-none')}>
               <p>
                 Despite documented environmental injustices in U.S. prisons, this area remains understudied. Prisons are EJ communities by definition&mdash;overrepresented by people of color, indigenous persons, and low-income individuals who cannot escape environmental health threats. This groundbreaking research initiative was funded by NASA&apos;s $100,000 Equity and Environmental Justice Grant to address this critical gap.
               </p>
@@ -85,7 +85,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </div>
 
             {/* Key Project Objectives (right column on xl) */}
-            <div className={cn(SITE_TYPE.body, 'mt-6 max-w-[40rem] xl:mt-0')}>
+            <div className={cn(SITE_TYPE.body, 'mt-6 max-w-160 xl:mt-0')}>
               <h3 className={cn(SITE_TYPE.title, 'mb-3')}>Key Project Objectives</h3>
               <ul className="list-disc space-y-2 pl-5">
                 <li>Quantify environmental conditions at all 1,865 state and federal prisons in the U.S.</li>
@@ -100,7 +100,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         <section className="band px-frame" aria-labelledby="team-heading">
           <h2 id="team-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Project Team &amp; My Contribution</h2>
 
-          <div className="grid max-w-[76rem] grid-cols-1 gap-12 md:grid-cols-2">
+          <div className="grid max-w-304 grid-cols-1 gap-12 md:grid-cols-2">
             <div>
               <h3 className={cn(SITE_TYPE.title, 'mb-4')}>Research Team</h3>
               <div className={cn(SITE_TYPE.body, 'space-y-4')}>
@@ -139,7 +139,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
             </div>
           </div>
 
-          <div className="mt-12 max-w-[40rem]">
+          <div className="mt-12 max-w-160">
             <h3 className={cn(SITE_TYPE.title, 'mb-4')}>Project Impact &amp; Recognition</h3>
             <div className={cn(SITE_TYPE.body, 'space-y-6')}>
               <p>
@@ -169,7 +169,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
         {/* Call to Action */}
         <section className="band px-frame" aria-labelledby="cta-heading">
           <h2 id="cta-heading" className={cn(SITE_TYPE.headline, 'mb-6')}>Explore the Research</h2>
-          <p className={cn(SITE_TYPE.body, 'max-w-[40rem]')}>
+          <p className={cn(SITE_TYPE.body, 'max-w-160')}>
             Access the open-source code, data, and methodology of this environmental justice research.
           </p>
           <nav aria-label="Research links" className="mt-8 flex flex-wrap gap-8">

@@ -25,7 +25,7 @@ export function SiteHeader() {
       <Link href="/" className="justify-self-start whitespace-nowrap font-site text-lg font-bold tracking-[-0.01em] text-ink-strong no-underline">
         Devin Hunt
       </Link>
-      <nav aria-label="Main" className="order-last w-full min-[640px]:order-none min-[640px]:w-auto">
+      <nav aria-label="Main" className="order-last w-full min-[640px]:order-0 min-[640px]:w-auto">
         <ul className="m-0 flex list-none gap-[18px] p-0 min-[861px]:gap-7">
           {LINKS.map(({ href, label }) => {
             const current = pathname === href || pathname.startsWith(`${href}/`);
@@ -44,7 +44,7 @@ export function SiteHeader() {
         </ul>
       </nav>
       <div className="flex items-center gap-2 justify-self-end">
-        <ThemeToggle className="rounded-none text-ink-strong hover:bg-site-band focus-visible:ring-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-ring dark:text-ink-strong dark:hover:bg-site-band" />
+        <ThemeToggle className="rounded-none text-ink-strong hover:bg-site-band focus-visible:ring-0 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-ring dark:text-ink-strong dark:hover:bg-site-band" />
         <a href="mailto:contact@devinhunt.com" className={cn(SITE_BUTTON, 'hidden min-[521px]:inline-flex')}>
           Email me
         </a>

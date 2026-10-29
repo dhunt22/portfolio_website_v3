@@ -1,9 +1,200 @@
 /* Copyright (c) 2025 Devin Hunt contact@devinhunt.com */
 /* app/globals.css */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Tailwind 4. The theme lives here rather than in a JS config; it is `inline` because its colours, fonts
+   and spacing point at runtime variables (--text-strong, --font-site, ...) that .site and .dark remap
+   further down the tree, so utilities must reference those variables directly. */
+@custom-variant dark (&:is(.dark *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@theme inline {
+  --color-forest-50: #f2f7f2;
+  --color-forest-100: #e4efe4;
+  --color-forest-200: #c8e0c9;
+  --color-forest-300: #a5cba7;
+  --color-forest-400: #7bb17f;
+  --color-forest-500: #57935c;
+  --color-forest-600: #3d733f;
+  --color-forest-700: #315a34;
+  --color-forest-800: #29472c;
+  --color-forest-900: #233c25;
+  --color-forest-950: #122114;
+
+  --color-earth-50: #faf6ef;
+  --color-earth-100: #f2eada;
+  --color-earth-200: #e6d3b3;
+  --color-earth-300: #d9b988;
+  --color-earth-400: #cb9a59;
+  --color-earth-500: #c08843;
+  --color-earth-600: #ac7039;
+  --color-earth-700: #8f5732;
+  --color-earth-800: #74472f;
+  --color-earth-900: #613c2b;
+  --color-earth-950: #351e16;
+
+  --color-river-50: #f5f7f9;
+  --color-river-100: #e8edf1;
+  --color-river-200: #d2dbe3;
+  --color-river-300: #b3c2cf;
+  --color-river-400: #91aabf;
+  --color-river-500: #738ea6;
+  --color-river-600: #5b748c;
+  --color-river-700: #495f74;
+  --color-river-800: #3b4c5d;
+  --color-river-900: #2f3a47;
+  --color-river-950: #1d242c;
+
+  --color-stone-50: #f7f6f2;
+  --color-stone-100: #eeece4;
+  --color-stone-200: #ddd9cc;
+  --color-stone-300: #c4bda9;
+  --color-stone-400: #a39a82;
+  --color-stone-500: #847b64;
+  --color-stone-600: #6a624f;
+  --color-stone-700: #554e40;
+  --color-stone-800: #3f3a30;
+  --color-stone-900: #2b2822;
+  --color-stone-950: #1a1814;
+
+  --color-background: var(--surface-page);
+  --color-foreground: var(--text-body);
+
+  --color-card: var(--surface-card);
+  --color-card-foreground: var(--text-body);
+
+  --color-ink-strong: var(--text-strong);
+  --color-ink-body: var(--text-body);
+  --color-ink-muted: var(--text-muted);
+  --color-ink-faint: var(--text-faint);
+
+  --color-link: var(--text-link);
+  --color-link-hover: var(--text-link-hover);
+
+  --color-eyebrow: var(--text-eyebrow);
+
+  --color-accent: var(--brand-accent);
+  --color-accent-foreground: #351e16;
+
+  --color-primary: var(--brand-primary);
+  --color-primary-foreground: #f2f7f2;
+
+  --color-border: var(--border-hairline);
+  --color-input: var(--border-default);
+  --color-ring: var(--ring-focus);
+
+  --color-muted: var(--surface-sunken);
+  --color-muted-foreground: var(--text-muted);
+
+  --color-secondary: var(--surface-sunken);
+  --color-secondary-foreground: var(--text-body);
+
+  --color-destructive: #a8472f;
+  --color-destructive-foreground: #faf6ef;
+
+  --color-popover: var(--surface-card);
+  --color-popover-foreground: var(--text-body);
+
+  --color-contour: var(--border-contour);
+
+  --color-site-band: var(--site-band);
+  --color-site-basin: var(--site-basin);
+  --color-site-edge: var(--site-basin-edge);
+  --color-site-worked: var(--site-worked);
+  --color-site-worked-deep: var(--site-worked-deep);
+  --color-site-selected: var(--site-selected);
+  --color-site-strip: var(--site-strip);
+  --color-site-strip-ink: var(--site-strip-ink);
+  --color-site-strip-label: var(--site-strip-label);
+
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-display: var(--font-display), Iowan Old Style, Georgia, serif;
+  --font-mono: var(--font-mono), SF Mono, Consolas, monospace;
+  --font-site: var(--font-site), system-ui, sans-serif;
+
+  --text-site-display: clamp(3.5rem, 2rem + 5vw, 6.25rem);
+  --text-site-display--line-height: 0.95;
+  --text-site-display--letter-spacing: -0.035em;
+  --text-site-display--font-weight: 700;
+  --text-site-headline: clamp(1.875rem, 1.5rem + 1.2vw, 2.5rem);
+  --text-site-headline--line-height: 1.1;
+  --text-site-headline--letter-spacing: -0.02em;
+  --text-site-headline--font-weight: 700;
+  --text-site-title: clamp(1.375rem, 1.15rem + 0.8vw, 1.875rem);
+  --text-site-title--line-height: 1.15;
+  --text-site-title--letter-spacing: -0.02em;
+  --text-site-title--font-weight: 600;
+  --text-site-lead: clamp(1.25rem, 1.1rem + 0.45vw, 1.4375rem);
+  --text-site-lead--line-height: 1.45;
+  --text-site-body: 1.0625rem;
+  --text-site-body--line-height: 1.55;
+  --text-site-label: 0.9375rem;
+  --text-site-label--line-height: 1.45;
+
+  --spacing-gutter: clamp(16px, 3vw, 40px);
+  --spacing-frame: max(clamp(16px, 3vw, 40px), calc((100% - 75rem) / 2));
+  --spacing-section: clamp(64px, 9vw, 128px);
+
+  --tracking-caps: 0.14em;
+  --tracking-display: -0.02em;
+  --tracking-mono: 0.02em;
+
+  --leading-tight-display: 1.08;
+
+  --radius-lg: 10px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+
+  --animate-rise: rise 0.8s ease-out forwards;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/* v3 gave buttons a pointer cursor; v4's preflight does not. */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 @layer base {
   :root {
@@ -202,22 +393,24 @@
   .site .pin .pin-ring { fill: none; stroke: none; }
   .site .pin:focus-visible .pin-ring { stroke: var(--ring-focus); stroke-width: 2; }
   .site .pin text { font-family: var(--font-site), system-ui, sans-serif; font-weight: 600; fill: var(--text-strong); paint-order: stroke; stroke: var(--surface-page); stroke-linejoin: round; }
-
-  /* MapLibre's own buttons take the site's focus ring instead of their blue glow. The map surface sits in a
-     clipping frame, so its ring is drawn just inside the edge, where it can be seen. */
-  .site .maplibregl-map .maplibregl-ctrl button:focus { box-shadow: none; }
-  .site .maplibregl-map .maplibregl-ctrl button:focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
-  .site :is([role="application"], .maplibregl-canvas):focus-visible { outline-offset: -4px; }
-  /* MapLibre's chrome on the site system: Public Sans, square, and the float shadow for its control group.
-     The attribution keeps MapLibre's own compact size but sits on a near-opaque light label with ink text
-     in both themes (inside .site it inherited the night ink and fell to 2.9:1 on the dark basemap). */
-  .site .maplibregl-map { font-family: var(--font-site), system-ui, sans-serif; }
-  .site .maplibregl-map .maplibregl-ctrl-group:not(:empty) { border-radius: 0; box-shadow: 0 1px 2px rgba(13, 17, 20, 0.08), 0 8px 24px rgba(13, 17, 20, 0.12); }
-  .site .maplibregl-map .maplibregl-ctrl-group button, .site .maplibregl-map .maplibregl-ctrl-group button:focus { border-radius: 0; }
-  .site .maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-attrib { background-color: rgb(255 255 255 / 0.88); color: #0d1114; }
-  .site .maplibregl-map .maplibregl-ctrl-attrib.maplibregl-compact { border-radius: 0; }
-  .site .maplibregl-map .maplibregl-ctrl-attrib a { color: #1c5a85; }
 }
+
+/* MapLibre overrides stay outside the layers: maplibre-gl.css is unlayered, and in Tailwind 4's cascade
+   layers anything unlayered beats a layered rule whatever its specificity. */
+/* MapLibre's own buttons take the site's focus ring instead of their blue glow. The map surface sits in a
+   clipping frame, so its ring is drawn just inside the edge, where it can be seen. */
+.site .maplibregl-map .maplibregl-ctrl button:focus { box-shadow: none; }
+.site .maplibregl-map .maplibregl-ctrl button:focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
+.site :is([role="application"], .maplibregl-canvas):focus-visible { outline-offset: -4px; }
+/* MapLibre's chrome on the site system: Public Sans, square, and the float shadow for its control group.
+   The attribution keeps MapLibre's own compact size but sits on a near-opaque light label with ink text
+   in both themes (inside .site it inherited the night ink and fell to 2.9:1 on the dark basemap). */
+.site .maplibregl-map { font-family: var(--font-site), system-ui, sans-serif; }
+.site .maplibregl-map .maplibregl-ctrl-group:not(:empty) { border-radius: 0; box-shadow: 0 1px 2px rgba(13, 17, 20, 0.08), 0 8px 24px rgba(13, 17, 20, 0.12); }
+.site .maplibregl-map .maplibregl-ctrl-group button, .site .maplibregl-map .maplibregl-ctrl-group button:focus { border-radius: 0; }
+.site .maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-attrib { background-color: rgb(255 255 255 / 0.88); color: #0d1114; }
+.site .maplibregl-map .maplibregl-ctrl-attrib.maplibregl-compact { border-radius: 0; }
+.site .maplibregl-map .maplibregl-ctrl-attrib a { color: #1c5a85; }
 
 /* Focus visible improvements */
 .focus-ring {

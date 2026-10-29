@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 export function StanScribeFooter() {
   return (
-    <footer className={cn(TYPE.body, 'mx-auto w-full max-w-[72rem] px-4 pb-12 pt-10 text-center sm:px-6')}>
+    <footer className={cn(TYPE.body, 'mx-auto w-full max-w-6xl px-4 pb-12 pt-10 text-center sm:px-6')}>
       Made by{' '}
       <a href="https://devinhunt.com/" className={TYPE.link}>
         Devin Hunt

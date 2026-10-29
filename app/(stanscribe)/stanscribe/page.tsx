@@ -121,7 +121,7 @@ export default function StanScribePage() {
               Put your iPhone on the table and tap Start. The words appear as people talk: big, clear, and in a different
               color for each person. It all happens on your iPhone or iPad, with no internet and no account.
             </p>
-            <div className="mx-auto mt-10 grid max-w-[40rem] gap-x-10 gap-y-8 sm:grid-cols-2">
+            <div className="mx-auto mt-10 grid max-w-160 gap-x-10 gap-y-8 sm:grid-cols-2">
               <DownloadBlock app="scribe" />
               <DownloadBlock app="light" />
             </div>
@@ -133,7 +133,7 @@ export default function StanScribePage() {
               ))}
             </nav>
           </HeroLoadIn>
-          <PhoneShot image={SHOTS.hero} priority className="mx-auto mt-12 max-w-[36rem]" />
+          <PhoneShot image={SHOTS.hero} priority className="mx-auto mt-12 max-w-xl" />
         </section>
 
         <Section id="story" title="Built for my grandpa Stan">
@@ -148,7 +148,7 @@ export default function StanScribePage() {
         </Section>
 
         <Section id="how-it-works" title="How it works">
-          <div className="mx-auto grid max-w-[52rem] items-center gap-12 md:grid-cols-[minmax(0,1fr)_13rem] md:gap-16">
+          <div className="mx-auto grid max-w-208 items-center gap-12 md:grid-cols-[minmax(0,1fr)_13rem] md:gap-16">
             <ol className="space-y-8">
               {STEPS.map(({ title, body }, i) => (
                 <li key={title} className="grid grid-cols-[2rem_1fr] gap-x-2">
@@ -162,16 +162,16 @@ export default function StanScribePage() {
                 </li>
               ))}
             </ol>
-            <PhoneShot image={SHOTS.liveGraphite} className="mx-auto max-w-[13rem]" />
+            <PhoneShot image={SHOTS.liveGraphite} className="mx-auto max-w-52" />
           </div>
         </Section>
 
         <Section id="features" title="Made to be read across the table">
           <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_13rem] lg:gap-16">
             <FeatureList items={FEATURES} className="sm:grid-cols-2" />
-            <PhoneShot image={SHOTS.liveLarge} className="mx-auto max-w-[13rem]" />
+            <PhoneShot image={SHOTS.liveLarge} className="mx-auto max-w-52" />
           </div>
-          <PhoneShot image={SHOTS.paintedThemes} className="mx-auto mt-16 max-w-[48rem]" />
+          <PhoneShot image={SHOTS.paintedThemes} className="mx-auto mt-16 max-w-3xl" />
         </Section>
 
         <Section id="privacy" title="Private by design">

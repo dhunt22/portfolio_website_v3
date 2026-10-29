@@ -52,7 +52,7 @@ export function InterestSection({
         <h2 className={SITE_TYPE.headline}>{title}</h2>
         {quote && (
           <figure className="m-0 mt-5">
-            <blockquote className={cn(SITE_TYPE.lead, 'm-0 max-w-[34rem] text-ink-strong')}>“{quote.text}”</blockquote>
+            <blockquote className={cn(SITE_TYPE.lead, 'm-0 max-w-136 text-ink-strong')}>“{quote.text}”</blockquote>
             <figcaption className={cn(SITE_TYPE.label, 'mt-2')}>{quote.author}</figcaption>
           </figure>
         )}
@@ -79,10 +79,10 @@ export function InterestSection({
           loading="lazy"
           className={cn(
             'block w-full',
-            image.whole ? 'h-auto' : cn('aspect-[4/3] object-cover', image.objectPosition === 'bottom' ? 'object-bottom' : 'object-center'),
+            image.whole ? 'h-auto' : cn('aspect-4/3 object-cover', image.objectPosition === 'bottom' ? 'object-bottom' : 'object-center'),
           )}
         />
-        {image.caption && <figcaption className={cn(SITE_TYPE.label, 'mt-3 max-w-[40rem]')}>{image.caption}</figcaption>}
+        {image.caption && <figcaption className={cn(SITE_TYPE.label, 'mt-3 max-w-160')}>{image.caption}</figcaption>}
       </figure>
     </section>
   );

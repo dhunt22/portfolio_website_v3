@@ -19,11 +19,11 @@ export const SITE_TYPE = {
 
 /** A page's first screen: its words centred in the frame, over the plate's centred clearing (DESIGN.md › Layout).
  *  Centred lines balance, so no line is left holding one word. */
-export const HERO = 'grid content-start justify-items-center gap-7 px-frame text-center [&_p]:[text-wrap:balance]';
+export const HERO = 'grid content-start justify-items-center gap-7 px-frame text-center [&_p]:text-balance';
 
 /** The one primary button: ink fill, ground text, square, 44px tall. Never haloed. */
 export const SITE_BUTTON =
-  'inline-flex min-h-11 items-center bg-ink-strong px-5 font-site text-site-body font-medium text-background no-underline transition-opacity duration-150 [text-shadow:none] hover:opacity-[0.88]';
+  'inline-flex min-h-11 items-center bg-ink-strong px-5 font-site text-site-body font-medium text-background no-underline transition-opacity duration-150 text-shadow-none hover:opacity-[0.88]';
 
 /** A text link: water blue, underlined, thicker on hover. */
 export const SITE_LINK = 'text-link underline decoration-1 underline-offset-[0.2em] hover:decoration-2';

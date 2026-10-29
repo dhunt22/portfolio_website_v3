@@ -265,7 +265,7 @@ export function IndicatorBrowser(): JSX.Element {
   }, []);
 
   return (
-    <div className="max-w-[76rem]">
+    <div className="max-w-304">
       {/* ── Desktop category row (phones and tablets use the grouped list below) ── */}
       <nav
         aria-label="Environmental risk indicator categories"
@@ -304,7 +304,7 @@ export function IndicatorBrowser(): JSX.Element {
       {/* ── Two-column dashboard at lg — FIXED height so the map never resizes
             when the explanatory text below changes length. The rail scrolls
             internally if a category has more indicators than fit. ── */}
-      <div className="lg:grid lg:h-[40rem] lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-x-10">
+      <div className="lg:grid lg:h-160 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-x-10">
 
         {/* LEFT: indicator rail — shown only on desktop (the grouped list above serves smaller screens) */}
         <div className="hidden lg:flex lg:h-full lg:min-h-0 lg:flex-col">
@@ -341,7 +341,7 @@ export function IndicatorBrowser(): JSX.Element {
 
       {/* Indicator detail: BELOW the dashboard, set apart by space, so the controls above read as
           controls and this reads as explanation. Its length can change freely without touching the map. */}
-      <div className="mt-12 max-w-[40rem]">
+      <div className="mt-12 max-w-160">
           <h3 className={SITE_TYPE.title}>{currentComponent.name}</h3>
           <p className={cn(SITE_TYPE.body, 'mt-2')}>{currentComponent.description}</p>
 

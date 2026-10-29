@@ -22,7 +22,7 @@ function EntryLink({ href, ...rest }: ComponentProps<'a'>) {
 export function LeadProject({ entry, figure, description }: { entry: Omit<WorkEntry, 'glyph'>; figure: GlyphShape; description: string }) {
   const handlers = useReadingHandlers(entry.reading);
   return (
-    <div className="mt-12 grid max-w-[76rem] items-center gap-[clamp(28px,5vw,72px)] min-[861px]:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+    <div className="mt-12 grid max-w-304 items-center gap-[clamp(28px,5vw,72px)] min-[861px]:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
       <EntryLink href={entry.href} {...handlers} className="lead-figure block" aria-label={`${entry.name}: every prison in the contiguous United States`}>
         <Glyph shape={figure} className="h-auto w-full" />
       </EntryLink>
@@ -71,7 +71,7 @@ function Highlight({ entry }: { entry: WorkEntry }) {
 
 export function HighlightList({ entries }: { entries: WorkEntry[] }) {
   return (
-    <ul className="m-0 mt-14 grid max-w-[76rem] list-none gap-x-[clamp(28px,5vw,72px)] gap-y-2 p-0 min-[861px]:grid-cols-2">
+    <ul className="m-0 mt-14 grid max-w-304 list-none gap-x-[clamp(28px,5vw,72px)] gap-y-2 p-0 min-[861px]:grid-cols-2">
       {entries.map((e) => <Highlight key={e.id} entry={e} />)}
     </ul>
   );

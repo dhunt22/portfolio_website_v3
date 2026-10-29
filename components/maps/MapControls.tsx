@@ -278,7 +278,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                 }}
               />
             ) : (
-              <div className="h-2.5 w-full bg-gradient-to-r from-[#2ecc71] via-[#f1c40f] to-[#e74c3c]" />
+              <div className="h-2.5 w-full bg-linear-to-r from-[#2ecc71] via-[#f1c40f] to-[#e74c3c]" />
             )}
           </div>
         ) : (

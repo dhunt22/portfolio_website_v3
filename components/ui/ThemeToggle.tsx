@@ -42,7 +42,7 @@ export function ThemeToggle({ className }: { className?: string } = {}) {
   return (
     <button
       onClick={toggleTheme}
-      className={cn('relative inline-flex items-center justify-center rounded-md p-2 text-forest-700 dark:text-forest-300 hover:bg-forest-100 dark:hover:bg-forest-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest-500', className)}
+      className={cn('relative inline-flex items-center justify-center rounded-md p-2 text-forest-700 dark:text-forest-300 hover:bg-forest-100 dark:hover:bg-forest-800 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-forest-500', className)}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >

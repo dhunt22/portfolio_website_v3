@@ -152,7 +152,7 @@ export default function InterestsPage() {
         </p>
       </section>
       <div className="band px-frame">
-        <div className="max-w-[76rem]">
+        <div className="max-w-304">
           {interestSections.map((section) => <InterestSection key={section.id} {...section} />)}
           <section id="gis" className="scroll-mt-24 py-10">
             <h2 className={SITE_TYPE.headline}>GIS</h2>
@@ -169,13 +169,13 @@ export default function InterestsPage() {
             src="/images/american_river_contour_bwn.svg"
             alt="American River Contour Map"
             loading="lazy"
-            className="block w-full aspect-[16/10] object-cover object-top dark:hidden"
+            className="block w-full aspect-16/10 object-cover object-top dark:hidden"
           />
           <img
             src="/images/american_river_contour_dark.svg"
             alt="American River Contour Map"
             loading="lazy"
-            className="hidden w-full aspect-[16/10] object-cover object-top dark:block"
+            className="hidden w-full aspect-16/10 object-cover object-top dark:block"
           />
         </div>
         <div className="overflow-hidden bg-card">
@@ -183,13 +183,13 @@ export default function InterestsPage() {
             src="/images/upper_folsom_contour_bwn.svg"
             alt="Upper Folsom Contour Map"
             loading="lazy"
-            className="block w-full aspect-[16/10] object-cover object-top dark:hidden"
+            className="block w-full aspect-16/10 object-cover object-top dark:hidden"
           />
           <img
             src="/images/upper_folsom_contour_dark.svg"
             alt="Upper Folsom Contour Map"
             loading="lazy"
-            className="hidden w-full aspect-[16/10] object-cover object-top dark:block"
+            className="hidden w-full aspect-16/10 object-cover object-top dark:block"
           />
         </div>
       </div>

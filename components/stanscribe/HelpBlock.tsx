@@ -16,7 +16,7 @@ export function HelpBlock({ apps }: { apps: AppKey[] }) {
         <p className={TYPE.lead}>Questions, problems or ideas? Email</p>
         <a
           href={`mailto:${SUPPORT_EMAIL}`}
-          className={cn(TYPE.heading, TYPE.link, 'mt-1 inline-block max-w-full [overflow-wrap:anywhere]')}
+          className={cn(TYPE.heading, TYPE.link, 'mt-1 inline-block max-w-full wrap-anywhere')}
         >
           {SUPPORT_EMAIL}
         </a>

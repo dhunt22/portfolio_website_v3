@@ -42,7 +42,7 @@ function Entry({ entry, hidden }: { entry: WorkEntry; hidden?: boolean }) {
           {entry.image && (
             <figure className="m-0">
               {/* eslint-disable-next-line @next/next/no-img-element -- static export, images unoptimized */}
-              <img src={entry.image.src} alt={entry.image.alt} loading="lazy" className="block h-auto w-full max-w-[36rem]" />
+              <img src={entry.image.src} alt={entry.image.alt} loading="lazy" className="block h-auto w-full max-w-xl" />
               {entry.image.caption && <figcaption className={cn(SITE_TYPE.label, 'mt-2')}>{entry.image.caption}</figcaption>}
             </figure>
           )}

@@ -45,7 +45,7 @@ export default function StanScribeLightPage() {
             <p className={cn(TYPE.lead, INTRO)}>{LIGHT_SUMMARY}</p>
             <DownloadBlock app="light" withName={false} className="mt-8" />
           </HeroLoadIn>
-          <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-[26rem]" />
+          <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-104" />
         </section>
 
         <HelpBlock apps={['light']} />
