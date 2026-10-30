@@ -11,6 +11,9 @@ Next.js 16 App Router (Turbopack) with static export, React 19, Tailwind 4, Jest
   `docs/superpowers/specs/2026-10-23-stanscribe-page-design.md`, enforced by `__tests__/stanscribe/`.
 - Stan Scribe must not pick up portfolio styles: no `.site`, `components/site/` or `text-site-*` there.
 - Route groups do not change URLs. The 404 (`app/not-found.tsx`) wraps itself in `SiteChrome`.
+- Netlify serves `out/` as plain files and answers unknown paths with `404.html`. Do not add a catch-all
+  rewrite to `/index.html`. App Store Connect links `/stanscribe/` and `/stanscribe-light/`, which
+  `scripts/stanscribe-index.mjs` turns into real files.
 - Do not invent claims, metrics or testimonials. Use what PRODUCT.md › Evidence on Hand lists.
 
 ## Verify
@@ -28,6 +31,8 @@ Next 16, and Next's ESLint rules don't support TypeScript 7 yet).
   variables that `.site` and `.dark` remap, and a plain `@theme` would freeze them at `:root`.
 - Rules that override third-party CSS (MapLibre) stay outside `@layer`. Unlayered CSS beats every layer in
   Tailwind 4, whatever its specificity.
+- A rule in `@layer base` or `@layer components` never beats a utility on the same element, whatever its
+  specificity. To override a utility, write the look as utilities or put the rule outside the layers.
 
 ## Skills
 
