@@ -8,17 +8,6 @@
    further down the tree, so utilities must reference those variables directly. */
 @custom-variant dark (&:is(.dark *));
 
-@utility container {
-  margin-inline: auto;
-  padding-inline: 2rem;
-  @media (width >= --theme(--breakpoint-sm)) {
-    max-width: none;
-  }
-  @media (width >= 1400px) {
-    max-width: 1400px;
-  }
-}
-
 @theme inline {
   --color-forest-50: #f2f7f2;
   --color-forest-100: #e4efe4;
@@ -112,7 +101,6 @@
   --color-site-basin: var(--site-basin);
   --color-site-edge: var(--site-basin-edge);
   --color-site-worked: var(--site-worked);
-  --color-site-worked-deep: var(--site-worked-deep);
   --color-site-selected: var(--site-selected);
   --color-site-strip: var(--site-strip);
   --color-site-strip-ink: var(--site-strip-ink);
@@ -155,19 +143,6 @@
   --radius-lg: 10px;
   --radius-md: 10px;
   --radius-sm: 6px;
-
-  --animate-rise: rise 0.8s ease-out forwards;
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(14px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 }
 
 /*
@@ -251,7 +226,6 @@
     --site-basin-edge: #cdd6dd;
     --site-hover: #e2edf5;
     --site-worked: #c6dcec;
-    --site-worked-deep: #9cc1dc;
     --site-selected: #1c5a85;
     --site-strip: #0d1114;
     --site-strip-ink: #e6eaed;
@@ -284,7 +258,6 @@
     --site-basin-edge: #3a4851;
     --site-hover: #243440;
     --site-worked: #1f3a4f;
-    --site-worked-deep: #2f5a7a;
     --site-selected: #6fb1de;
     --site-strip: #06090b;
     --surface-sunken: #0b0e10;
@@ -316,9 +289,6 @@
      separation, so panel outlines recede to the hairline (brief: layers
      read as distinct WITHOUT hard borders). Light is untouched. */
   .dark .panel { border-color: var(--border-hairline); }
-  .eyebrow { @apply font-sans font-medium text-xs uppercase tracking-caps text-eyebrow; }
-  /* inline-block + py keeps these small-caps links at a ≥24px (WCAG 2.5.8) tap target. */
-  .link-quiet { @apply inline-block py-1.5 font-sans font-medium text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
 
   /* The wrapper: a stacking context so the fixed contour plate paints above its ground, below content. */
   .site { isolation: isolate; display: flex; flex: 1 1 auto; min-height: 100svh; flex-direction: column; background: var(--surface-page); color: var(--text-body); font-family: var(--font-site), system-ui, sans-serif; }
@@ -358,17 +328,16 @@
   /* Glyphs (DESIGN.md › Glyphs). Tones are set per part by components/site/Glyph.tsx. */
   .glyph { display: block; overflow: visible; }
   .glyph .g-fill { fill: var(--site-worked); transition: fill 150ms; }
-  .glyph .g-deep { fill: var(--site-worked-deep); }
   .glyph .g-zone { fill: var(--site-selected); fill-opacity: 0.4; }
   .glyph .g-strong { fill: var(--site-selected); fill-opacity: 0.9; }
-  .glyph :is(.g-fill, .g-deep, .g-zone, .g-strong, .g-line) { stroke: var(--text-strong); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
+  .glyph :is(.g-fill, .g-zone, .g-strong, .g-line) { stroke: var(--text-strong); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
   .glyph .g-line { fill: none; }
   .glyph :is(.g-thin, .g-ghost) { fill: none; stroke: var(--text-muted); stroke-width: 0.75; vector-effect: non-scaling-stroke; }
   .glyph .g-dot { fill: var(--text-strong); transition: fill 200ms; }
   .glyph .g-accent { fill: var(--site-selected); }
   .glyph-dense .g-fill { stroke-width: 0.5; }
   /* A glyph's host (an entry or a link) lights the glyph and underlines its name when pointed at. */
-  .glyph-host:is(:hover, :focus-visible, [data-active='true']) .glyph .g-fill { fill: var(--site-selected); fill-opacity: 0.45; }
+  .glyph-host:is(:hover, :focus-visible) .glyph .g-fill { fill: var(--site-selected); fill-opacity: 0.45; }
   .glyph-host:is(:hover, :focus-visible) .entry-name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.18em; }
   .lead-figure:is(:hover, :focus-visible) .glyph .g-dot { fill: var(--site-selected); }
 
@@ -408,11 +377,6 @@ body:has(.site) { background-color: #eef1f3; --ring-focus: #1c5a85; }
 .site .maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-attrib { background-color: rgb(255 255 255 / 0.88); color: #0d1114; }
 .site .maplibregl-map .maplibregl-ctrl-attrib.maplibregl-compact { border-radius: 0; }
 .site .maplibregl-map .maplibregl-ctrl-attrib a { color: #1c5a85; }
-
-/* Focus visible improvements */
-.focus-ring {
-  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
-}
 
 /* Improved scrollbar */
 ::-webkit-scrollbar {
@@ -505,6 +469,6 @@ html.js [data-contour-plate][data-plate-ready='true'] {
     --text-link: #1c5a85; --text-link-hover: #123d5c;
     --border-hairline: #cccccc; --border-default: #bbbbbb;
     --site-basin: #ffffff; --site-basin-edge: #cccccc;
-    --site-worked: #e6eef4; --site-worked-deep: #c6dcec; --site-selected: #1c5a85;
+    --site-worked: #e6eef4; --site-selected: #1c5a85;
   }
 }

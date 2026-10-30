@@ -5,7 +5,7 @@
 
 import { fitTo, pathData, polygonsOf, project, type Feature, type LonLat, type XY } from '@/lib/site/geo';
 
-export type Tone = 'fill' | 'deep' | 'zone' | 'strong' | 'line' | 'thin' | 'dot' | 'accent' | 'ghost';
+export type Tone = 'fill' | 'zone' | 'strong' | 'line' | 'thin' | 'dot' | 'accent' | 'ghost';
 
 export type Part =
   | { t: 'path'; d: string; tone: Tone }

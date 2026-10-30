@@ -22,7 +22,6 @@ interface InterestQuoteConfig {
 interface InterestLinkConfig {
   href: string;
   label: string;
-  ariaLabel?: string;
 }
 
 export interface InterestSectionProps {
@@ -65,14 +64,13 @@ export function InterestSection({
             target="_blank"
             rel="noopener noreferrer"
             className={cn(SITE_LINK, 'mt-6 inline-block font-site text-site-body')}
-            aria-label={externalLink.ariaLabel || `${externalLink.label} - Open in new tab`}
+            aria-label={`${externalLink.label} - Open in new tab`}
           >
             {externalLink.label}
           </a>
         )}
       </div>
       <figure className={cn('m-0 min-[861px]:col-span-5', imagePosition === 'left' && 'min-[861px]:order-first')}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- static export, images unoptimized */}
         <img
           src={image.src}
           alt={image.alt}
@@ -87,5 +85,3 @@ export function InterestSection({
     </section>
   );
 }
-
-export default InterestSection;

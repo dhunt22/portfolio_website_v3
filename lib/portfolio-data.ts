@@ -305,29 +305,3 @@ export const TOOLS: Tool[] = [
 
 /** The home page's Selected work, in order (owner, 2026-10-25). */
 export const HIGHLIGHTS = ['prison-ej', 'yuba-recharge', 'aiiwfm', 'zbudget-dashboards', 'stan-scribe'] as const;
-
-/**
- * Get projects filtered by category
- * @param category - Category to filter by
- * @returns Filtered projects array
- */
-export function getProjectsByCategory(category: string): Project[] {
-  return PROJECTS.filter(project => project.categories.includes(category));
-}
-
-/**
- * Get featured projects
- * @returns Array of featured projects
- */
-export function getFeaturedProjects(): Project[] {
-  return PROJECTS.filter(project => project.featured);
-}
-
-/**
- * Get project by ID
- * @param id - Project ID
- * @returns Project or undefined
- */
-export function getProjectById(id: string): Project | undefined {
-  return PROJECTS.find(project => project.id === id);
-}

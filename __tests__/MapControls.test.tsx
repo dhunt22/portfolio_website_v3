@@ -30,7 +30,6 @@ function renderControls(overrides: Record<string, unknown> = {}) {
     onResetView: jest.fn(),
     ...overrides,
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const view = render(<MapControls {...(props as any)} />);
   return { ...view, props };
 }

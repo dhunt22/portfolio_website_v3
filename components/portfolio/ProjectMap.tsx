@@ -198,7 +198,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         map.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   // ── Dark/light basemap theme sync ──────────────────────────────────────────
@@ -324,14 +323,14 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
 
     applyThemeSwap(resolvedTheme);
   // resolvedTheme is the only trigger; refs track the rest
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedTheme]);
 
   // Re-bind popup handlers when the active indicator changes so popups show the
   // right values. Colors + filters are applied by usePrisonMap's own effect
   // (which queues on 'idle' if the map is busy) — the old pair of effects here
   // gated on isStyleLoaded() and silently DROPPED clicks made while tiles were
-  // still loading. Popup rebinding is idempotent (useMapPopup offs before ons).
+  // still loading. Each rebind adds listeners without removing the old ones; the newest run last, so
+  // popups show the current indicator.
   useEffect(() => {
     if (projectId !== 'prison-ej' || !map.current) return;
     const m = map.current;
@@ -350,7 +349,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
     return () => {
       m.off('idle', rebind);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAttribute, selectedComponent, componentColor, projectId]);
 
   // Close panels when clicking outside

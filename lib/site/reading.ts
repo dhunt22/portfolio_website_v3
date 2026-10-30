@@ -39,10 +39,7 @@ export function placeReading(p: Place): Reading {
   };
 }
 
-export const labelReading = (label: string, value: string, note?: string): Reading => ({
-  fields: [{ label, value }],
-  ...(note ? { note } : {}),
-});
+export const labelReading = (label: string, value: string): Reading => ({ fields: [{ label, value }] });
 
 /** The terrain each page's contour plate shows (scripts/build-plates.mjs). Coordinates are approximate. */
 export const PLATES = {

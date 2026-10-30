@@ -8,7 +8,6 @@ import {
   PrisonFeature,
   createRiskColorScale,
   createEnhancedColorScale,
-  createDynamicPaintProperties,
   applyFilterToLayers,
   updateLayerPaintProperty,
   updateLayerPaintPropertiesBatch,
@@ -30,7 +29,7 @@ export type { PercentileThreshold, FacilityType };
 type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
 
 export const usePrisonMap = (
-  map: React.MutableRefObject<maplibregl.Map | null>,
+  map: React.RefObject<maplibregl.Map | null>,
   projectId: string,
   selectedComponent?: string,
   componentColor?: string,
@@ -89,8 +88,6 @@ export const usePrisonMap = (
     const colorScale = componentId && compColor ?
       createEnhancedColorScale(componentId, compColor) :
       createRiskColorScale(selectedAttribute);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _dynamicProperties = createDynamicPaintProperties(selectedAttribute);
 
     // Use batch update for better consistency
     const updates: PaintUpdate[] = [
@@ -137,7 +134,6 @@ export const usePrisonMap = (
     return () => {
       m.off('idle', onIdle);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [percentileThreshold, facilityTypes, selectedAttribute, allPrisonData, projectId, selectedComponent, componentColor]);
 
   return {

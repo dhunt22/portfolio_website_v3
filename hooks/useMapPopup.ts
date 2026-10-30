@@ -16,7 +16,7 @@ import {
 type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
 
 export const useMapPopup = (
-  map: React.MutableRefObject<maplibregl.Map | null>,
+  map: React.RefObject<maplibregl.Map | null>,
   projectId: string,
   selectedAttribute?: RiskAttribute,
   selectedComponent?: string,

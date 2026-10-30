@@ -184,9 +184,7 @@ const MapControls: React.FC<MapControlsProps> = ({
               id="percentile-menu-stack"
               role="group"
               aria-label="Percentile threshold"
-              // Solid bg-card (not bg-card/95): --surface-card is a hex, so Tailwind's
-              // /opacity modifier compiles to an invalid color → a transparent panel the
-              // busy map bleeds through. A dropdown floats, so it takes the float shadow.
+              // Solid bg-card, so the busy map does not show through. A dropdown floats, so it takes the float shadow.
               className={cn('absolute bottom-full left-0 mb-1 z-30 flex w-36 flex-col bg-card', FLOAT)}
             >
               {PERCENTILE_OPTIONS.map((opt) => {

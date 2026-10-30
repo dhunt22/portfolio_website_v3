@@ -27,9 +27,6 @@ export const b118Features = (file: string) =>
     a.properties.Basin_Subbasin_Number.localeCompare(b.properties.Basin_Subbasin_Number),
   );
 
-/** Prisons in the study (EEJ): 1,865 in all. */
-export const PRISON_COUNT = 1865;
-
 /** The study's prisons in the contiguous United States (1,838 of the 1,865), for drawing. */
 export function contiguousPrisonPoints(): LonLat[] {
   const { features } = read<{ features: { geometry: { type: string; coordinates: number[] } | null }[] }>(
