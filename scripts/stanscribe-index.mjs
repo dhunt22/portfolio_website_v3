@@ -1,8 +1,8 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // scripts/stanscribe-index.mjs
 // Runs after `next build`. With trailingSlash off, Next exports out/stanscribe.html, but App Store
-// Connect links /stanscribe/ and /stanscribe-light/ — paths Netlify would otherwise send to the SPA
-// fallback (the homepage). Copying each page to <route>/index.html makes those URLs real files.
+// Connect links /stanscribe/ and /stanscribe-light/, folders that hold only the legal pages. Copying
+// each page to <route>/index.html makes those exact URLs real files, so they answer 200 on any host.
 //
 // Usage: node scripts/stanscribe-index.mjs [--out out]
 

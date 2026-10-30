@@ -8,10 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/stanscribe-index.mjs",
-    "export": "next build && node scripts/stanscribe-index.mjs",
-    "start": "next start",
     "test": "jest",
-    "netlify-build": "next build && node scripts/stanscribe-index.mjs",
     "sync:stanscribe-legal": "node scripts/sync-stanscribe-legal.mjs",
     "build:plates": "node scripts/build-plates.mjs"
   },

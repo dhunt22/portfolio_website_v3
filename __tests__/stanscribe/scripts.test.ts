@@ -103,3 +103,10 @@ describe('synced legal pages in public/', () => {
     expect(existsSync(join(ROOT, 'public', app, 'index.html'))).toBe(false);
   });
 });
+
+describe('Netlify routing', () => {
+  test('no catch-all rewrite sends a mistyped URL to the homepage instead of the 404', () => {
+    expect(existsSync(join(ROOT, 'public', '_redirects'))).toBe(false);
+    expect(readFileSync(join(ROOT, 'netlify.toml'), 'utf8')).not.toMatch(/\[\[redirects\]\]/);
+  });
+});

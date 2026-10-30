@@ -1,5 +1,5 @@
 [build]
-  command = "npm run netlify-build"
+  command = "npm run build"
   publish = "out"
 
 [build.environment]
@@ -8,8 +8,6 @@
   # recorded for it.
   NODE_VERSION = "24"
 
-# Handle SPA routing
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# No catch-all rewrite to /index.html: every route is a real file in out/, and Netlify answers any other
+# path with out/404.html and a 404 status. A catch-all would show the homepage instead, so a mistyped
+# Stan Scribe link from the App Store would land on the portfolio.
