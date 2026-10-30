@@ -12,10 +12,10 @@ import { SiteHeader } from '@/components/site/SiteHeader';
 export function SiteChrome({ children }: { children: ReactNode }) {
   return (
     <div className={`${publicSans.variable} site`}>
-      {/* Skip link: first focusable element; visually hidden until focused. globals.css gives it the site's face. */}
+      {/* Skip link: first focusable element; visually hidden until focused, then a square, light label over the dark strip. */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:rounded focus:border focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:text-ink-strong focus:shadow-lg"
+        className="sr-only bg-site-strip-ink font-site text-site-body text-site-strip focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:px-4 focus:py-2"
       >
         Skip to content
       </a>

@@ -5,19 +5,13 @@
 // The home page's Selected work (DESIGN.md › Lead project, Project entry): the lead drawn large beside
 // its text, then the highlights as glyph entries. Pointing at one puts it in the readout.
 
-import Link from 'next/link';
-import type { ComponentProps } from 'react';
+import { EntryLink } from '@/components/site/EntryLink';
 import { Glyph } from '@/components/site/Glyph';
 import { useReadingHandlers } from '@/components/site/Readout';
 import { SITE_LINK, SITE_SOON, SITE_TYPE } from '@/components/site/type';
 import type { GlyphShape } from '@/lib/site/glyphs';
 import type { WorkEntry } from '@/lib/site/work';
 import { cn } from '@/lib/utils';
-
-/** Portfolio routes navigate in place (no full reload); Stan Scribe is its own product and loads as its own site. */
-function EntryLink({ href, ...rest }: ComponentProps<'a'>) {
-  return href?.startsWith('/') && !href.startsWith('/stanscribe') ? <Link href={href} {...rest} /> : <a href={href} {...rest} />;
-}
 
 export function LeadProject({ entry, figure, description }: { entry: Omit<WorkEntry, 'glyph'>; figure: GlyphShape; description: string }) {
   const handlers = useReadingHandlers(entry.reading);

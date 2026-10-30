@@ -79,7 +79,13 @@ test('a malformed hash renders without throwing', () => {
 
 test('an entry without meta keeps its summary in the text column', () => {
   const { container } = renderPage();
-  const summary = container.querySelector('#zbudget-dashboards summary')!.lastElementChild!;
+  const summary = container.querySelector('#zbudget-dashboards > div')!.lastElementChild!;
   expect(summary).toHaveTextContent('IWFM model diagnostic');
   expect(summary).toHaveClass('min-[861px]:col-start-2');
+});
+
+test('a coming-soon entry with nothing more to show is a plain row, not a disclosure that opens empty', () => {
+  const { container } = renderPage();
+  expect(container.querySelector('#zbudget-dashboards details')).toBeNull();
+  expect(container.querySelector('#zbudget-dashboards')).toHaveTextContent('Coming soon');
 });

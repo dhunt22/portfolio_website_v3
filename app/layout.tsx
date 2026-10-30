@@ -5,9 +5,10 @@
 import './globals.css';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { pageMetadata } from '@/lib/site/metadata';
 import { Metadata, Viewport } from 'next';
 
-// Viewport export — kept separate from metadata (Next 14 requirement).
+// Viewport export — Next takes it separately from metadata.
 // interactiveWidget: 'resizes-visual' tells mobile browsers that the on-screen
 // keyboard resizes only the visual viewport, not the layout viewport, preventing
 // layout reflows when the keyboard appears or dismisses. NOTE: this setting does
@@ -22,27 +23,16 @@ export const viewport: Viewport = {
   interactiveWidget: 'resizes-visual',
 };
 
-// Define the metadata for the application
+// The home page's metadata, and the fallback for every page that sets none of its own.
 export const metadata: Metadata = {
-  title: 'Devin Hunt · Water resources engineering and AI tools',
-  description: 'Devin Hunt models California’s groundwater and builds the Python and AI tools around that work.',
+  ...pageMetadata(
+    'Devin Hunt · Water resources engineering and AI tools',
+    'Devin Hunt models California’s groundwater and builds the Python and AI tools around that work.',
+    '',
+  ),
   keywords: ['hydrologist', 'water resources', 'engineer', 'IWFM', 'geospatial', 'exploration', 'fishing', 'mycology'],
   authors: [{ name: 'Devin Hunt', url: 'https://devinhunt.com' }],
   creator: 'Devin Hunt',
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://devinhunt.com',
-    title: 'Devin Hunt · Water resources engineering and AI tools',
-    description: 'Devin Hunt models California’s groundwater and builds the Python and AI tools around that work.',
-    siteName: 'Devin Hunt Portfolio',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Devin Hunt · Water resources engineering and AI tools',
-    description: 'Devin Hunt models California’s groundwater and builds the Python and AI tools around that work.',
-    creator: '@devinhunt',
-  },
 };
 
 /**

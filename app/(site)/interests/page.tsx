@@ -5,6 +5,7 @@
 import type { Metadata } from 'next';
 import { ReadoutDefault } from '@/components/site/Readout';
 import { HERO, SITE_TYPE } from '@/components/site/type';
+import { pageMetadata } from '@/lib/site/metadata';
 import { plateReading } from '@/lib/site/reading';
 import { cn } from '@/lib/utils';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
@@ -129,12 +130,11 @@ const interestSections: InterestSectionProps[] = [
   },
 ];
 
-export const metadata: Metadata = {
-  title: 'Outdoors · Devin Hunt',
-  description: 'Exploration, fishing, bicycles, community, mycology and photography, in Devin Hunt’s own photos.',
-  openGraph: { title: 'Outdoors · Devin Hunt', description: 'Exploration, fishing, bicycles, community, mycology and photography, in Devin Hunt’s own photos.', url: 'https://devinhunt.com/interests' },
-  twitter: { title: 'Outdoors · Devin Hunt', description: 'Exploration, fishing, bicycles, community, mycology and photography, in Devin Hunt’s own photos.' },
-};
+export const metadata: Metadata = pageMetadata(
+  'Outdoors · Devin Hunt',
+  'Exploration, fishing, bicycles, community, mycology and photography, in Devin Hunt’s own photos.',
+  '/interests',
+);
 
 /**
  * Outdoors page: the one page where photographs lead

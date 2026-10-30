@@ -8,16 +8,16 @@ import { ProjectsIndex } from '@/components/site/ProjectsIndex';
 import { ReadoutDefault } from '@/components/site/Readout';
 import { WorkList } from '@/components/site/WorkList';
 import { HERO, SITE_TYPE } from '@/components/site/type';
+import { pageMetadata } from '@/lib/site/metadata';
 import { plateReading } from '@/lib/site/reading';
 import { projectEntries, toolEntries } from '@/lib/site/work';
 import { cn } from '@/lib/utils';
 
-export const metadata: Metadata = {
-  title: 'Portfolio · Devin Hunt',
-  description: 'Groundwater, recharge and geospatial projects, most of them in California, and the tools Devin Hunt builds around them.',
-  openGraph: { title: 'Portfolio · Devin Hunt', description: 'Groundwater, recharge and geospatial projects, most of them in California, and the tools Devin Hunt builds around them.', url: 'https://devinhunt.com/portfolio' },
-  twitter: { title: 'Portfolio · Devin Hunt', description: 'Groundwater, recharge and geospatial projects, most of them in California, and the tools Devin Hunt builds around them.' },
-};
+export const metadata: Metadata = pageMetadata(
+  'Portfolio · Devin Hunt',
+  'Groundwater, recharge and geospatial projects, most of them in California, and the tools Devin Hunt builds around them.',
+  '/portfolio',
+);
 
 export default function PortfolioPage() {
   return (

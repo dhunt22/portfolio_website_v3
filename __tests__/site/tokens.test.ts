@@ -38,6 +38,20 @@ test('printing from either theme resets the portfolio tokens to a clean light do
   expect(print).toContain('--site-worked: #e6eef4');
 });
 
+/** True when `rule` sits at the top level of globals.css, outside every @layer and @media block. */
+const unlayered = (rule: string) => {
+  const at = css.indexOf(rule);
+  const before = css.slice(0, at).replace(/\/\*[\s\S]*?\*\//g, '');
+  return at >= 0 && (before.match(/\{/g) ?? []).length === (before.match(/\}/g) ?? []).length;
+};
+
+test('the portfolio ground behind the page beats the body utility, so it sits outside the layers', () => {
+  // In Tailwind 4 every utility outranks a rule in @layer base, whatever its specificity.
+  expect(unlayered('body:has(.site) {')).toBe(true);
+  expect(unlayered('.dark body:has(.site) {')).toBe(true);
+  expect(css).toMatch(/body:has\(\.site\) \{ background-color: #eef1f3;/);
+});
+
 test('every focus ring on a portfolio page is Water Blue: skip link, map and MapLibre buttons', () => {
   expect(css).toMatch(/body:has\(\.site\) \{[^}]*--ring-focus: #1c5a85/);
   expect(css).toMatch(/\.dark body:has\(\.site\) \{[^}]*--ring-focus: #6fb1de/);
@@ -57,7 +71,10 @@ test('headings balance and paragraphs avoid orphans inside .site', () => {
 });
 
 test('on portfolio pages the skip link wears Public Sans, square and light over the strip, not the legacy card', () => {
-  expect(css).toMatch(/\.site a\[href="#main"\]:focus \{ font-family: var\(--font-site\)[^}]*border-radius: 0;[^}]*background-color: #eef1f3;/);
+  const { container } = render(createElement(SiteLayout, null, createElement('p', null, 'page')));
+  const skip = container.querySelector('a[href="#main"]')!;
+  expect(skip).toHaveClass('font-site', 'text-site-body', 'bg-site-strip-ink', 'text-site-strip');
+  expect(skip.className).not.toMatch(/rounded|shadow|border/);
 });
 
 test('portfolio scrollbars take the palette, not the legacy stone', () => {

@@ -11,15 +11,15 @@ import { ReadoutDefault } from '@/components/site/Readout';
 import { WatershedMap } from '@/components/site/WatershedMap';
 import { SITE_BUTTON, SITE_LINK, SITE_TYPE } from '@/components/site/type';
 import { resumeMap } from '@/lib/site/map';
+import { pageMetadata } from '@/lib/site/metadata';
 import { HOME_BASE } from '@/lib/site/reading';
 import { cn } from '@/lib/utils';
 
-export const metadata: Metadata = {
-  title: 'Résumé · Devin Hunt',
-  description: 'AI specialist and groundwater modeler in Sacramento: tested Python automation, AI-grounded applications and IWFM modeling.',
-  openGraph: { title: 'Résumé · Devin Hunt', description: 'AI specialist and groundwater modeler in Sacramento: tested Python automation, AI-grounded applications and IWFM modeling.', url: 'https://devinhunt.com/resume' },
-  twitter: { title: 'Résumé · Devin Hunt', description: 'AI specialist and groundwater modeler in Sacramento: tested Python automation, AI-grounded applications and IWFM modeling.' },
-};
+export const metadata: Metadata = pageMetadata(
+  'Résumé · Devin Hunt',
+  'AI specialist and groundwater modeler in Sacramento: tested Python automation, AI-grounded applications and IWFM modeling.',
+  '/resume',
+);
 
 export default function ResumePage() {
   // Professional skills data

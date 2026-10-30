@@ -24,7 +24,9 @@ test('the EEJ page keeps its map and links', () => {
   render(<EejPage />);
   expect(screen.getByRole('heading', { level: 1, name: 'Environmental Justice For Prisons' })).toBeInTheDocument();
   expect(screen.getByText('Geospatial analysis · NASA grant project · 2022 to 2023')).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /GitHub repository/ })).toHaveAttribute('href', 'https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1');
+  // Links are named by their visible words (WCAG 2.5.3).
+  expect(screen.getByRole('link', { name: 'Published Dataset' })).toHaveAttribute('href', 'https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1');
+  expect(screen.getByRole('link', { name: 'Publication' })).toHaveAttribute('href', 'https://ui.adsabs.harvard.edu/abs/2023AGUFMINV31C0.1M/abstract');
   expect(screen.getByTestId('indicators')).toBeInTheDocument();
   // Bands keep the site's content width; nothing runs the full 1440px.
   for (const name of ['Project Overview', 'Project Team & My Contribution']) {

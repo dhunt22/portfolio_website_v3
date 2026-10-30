@@ -9,15 +9,15 @@ import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { IndicatorBrowser } from '@/components/portfolio/IndicatorBrowser';
 import { ReadoutDefault } from '@/components/site/Readout';
 import { HERO, SITE_LINK, SITE_TYPE } from '@/components/site/type';
+import { pageMetadata } from '@/lib/site/metadata';
 import { labelReading } from '@/lib/site/reading';
 import { cn } from '@/lib/utils';
 
-export const metadata: Metadata = {
-  title: 'Environmental Justice For Prisons · Devin Hunt',
-  description: 'Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons',
-  openGraph: { title: 'Environmental Justice For Prisons · Devin Hunt', description: 'Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons', url: 'https://devinhunt.com/portfolio/environmental-justice-prisons' },
-  twitter: { title: 'Environmental Justice For Prisons · Devin Hunt', description: 'Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons' },
-};
+export const metadata: Metadata = pageMetadata(
+  'Environmental Justice For Prisons · Devin Hunt',
+  'Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons',
+  '/portfolio/environmental-justice-prisons',
+);
 
 /**
  * Environmental Justice For Prisons - Dedicated Project Page
@@ -43,7 +43,6 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(SITE_LINK, 'font-site text-site-body')}
-              aria-label="View GitHub repository for NASA Prison Environmental Justice project"
             >
               Published Dataset
             </a>
@@ -52,7 +51,6 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(SITE_LINK, 'font-site text-site-body')}
-              aria-label="Visit NASA Applied Sciences project page"
             >
               Publication
             </a>

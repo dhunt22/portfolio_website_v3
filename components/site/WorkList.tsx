@@ -5,35 +5,47 @@
 // Project and tool entries (DESIGN.md › Project entry): glyph, name, meta, one line; open for the full
 // story and links. Pointing at an entry puts its place in the readout.
 
-import Link from 'next/link';
 import { useEffect } from 'react';
+import { EntryLink } from '@/components/site/EntryLink';
 import { Glyph } from '@/components/site/Glyph';
 import { useReadingHandlers } from '@/components/site/Readout';
 import { SITE_LINK, SITE_SOON, SITE_TYPE } from '@/components/site/type';
 import type { WorkEntry } from '@/lib/site/work';
 import { cn } from '@/lib/utils';
 
+const ROW = 'grid grid-cols-[52px_minmax(0,1fr)] gap-x-[18px] gap-y-1 py-[22px] min-[861px]:grid-cols-[72px_minmax(0,1fr)_auto] min-[861px]:gap-x-7';
+
 function Entry({ entry, hidden }: { entry: WorkEntry; hidden?: boolean }) {
   const handlers = useReadingHandlers(entry.reading);
   const hasLinks = Boolean(entry.href) || entry.links.length > 0;
+  const row = (
+    <>
+      <Glyph shape={entry.glyph} className="row-span-3 h-[52px] w-[52px] min-[861px]:row-span-2 min-[861px]:h-[72px] min-[861px]:w-[72px]" />
+      <span className={cn(SITE_TYPE.title, 'entry-name')}>
+        {entry.name}
+        {entry.soon && <span className={SITE_SOON}>Coming soon</span>}
+      </span>
+      {entry.meta && (
+        <span className={cn(SITE_TYPE.label, 'min-[861px]:col-start-3 min-[861px]:row-start-1 min-[861px]:whitespace-nowrap min-[861px]:pt-1.5 min-[861px]:text-right')}>
+          {entry.meta}
+        </span>
+      )}
+      <span className={cn(SITE_TYPE.body, 'max-w-[56ch] min-[861px]:col-start-2')}>{entry.summary}</span>
+    </>
+  );
+  // An entry with nothing more to show (a tool that is coming soon) is a plain row, not a disclosure that opens empty.
+  if (!hasLinks && entry.content.length === 0 && !entry.image) {
+    return (
+      <li id={entry.id} hidden={hidden} className="scroll-mt-24">
+        <div {...handlers} className={ROW}>{row}</div>
+      </li>
+    );
+  }
   return (
     <li id={entry.id} hidden={hidden} className="scroll-mt-24">
       <details>
-        <summary
-          {...handlers}
-          className="glyph-host grid cursor-pointer list-none grid-cols-[52px_minmax(0,1fr)] gap-x-[18px] gap-y-1 py-[22px] min-[861px]:grid-cols-[72px_minmax(0,1fr)_auto] min-[861px]:gap-x-7 [&::-webkit-details-marker]:hidden"
-        >
-          <Glyph shape={entry.glyph} className="row-span-3 h-[52px] w-[52px] min-[861px]:row-span-2 min-[861px]:h-[72px] min-[861px]:w-[72px]" />
-          <span className={cn(SITE_TYPE.title, 'entry-name')}>
-            {entry.name}
-            {entry.soon && <span className={SITE_SOON}>Coming soon</span>}
-          </span>
-          {entry.meta && (
-            <span className={cn(SITE_TYPE.label, 'min-[861px]:col-start-3 min-[861px]:row-start-1 min-[861px]:whitespace-nowrap min-[861px]:pt-1.5 min-[861px]:text-right')}>
-              {entry.meta}
-            </span>
-          )}
-          <span className={cn(SITE_TYPE.body, 'max-w-[56ch] min-[861px]:col-start-2')}>{entry.summary}</span>
+        <summary {...handlers} className={cn(ROW, 'glyph-host cursor-pointer list-none [&::-webkit-details-marker]:hidden')}>
+          {row}
         </summary>
         <div className="grid max-w-[70ch] gap-4 pb-8 pl-[70px] min-[861px]:pl-[100px]">
           {entry.content.map((paragraph, i) => (
@@ -41,7 +53,6 @@ function Entry({ entry, hidden }: { entry: WorkEntry; hidden?: boolean }) {
           ))}
           {entry.image && (
             <figure className="m-0">
-              {/* eslint-disable-next-line @next/next/no-img-element -- static export, images unoptimized */}
               <img src={entry.image.src} alt={entry.image.alt} loading="lazy" className="block h-auto w-full max-w-xl" />
               {entry.image.caption && <figcaption className={cn(SITE_TYPE.label, 'mt-2')}>{entry.image.caption}</figcaption>}
             </figure>
@@ -51,7 +62,7 @@ function Entry({ entry, hidden }: { entry: WorkEntry; hidden?: boolean }) {
               {entry.href && (
                 <li>
                   {entry.href.startsWith('/') ? (
-                    <Link href={entry.href} className={cn(SITE_LINK, 'font-site text-site-body')}>Open the project page <span aria-hidden="true">→</span></Link>
+                    <EntryLink href={entry.href} className={cn(SITE_LINK, 'font-site text-site-body')}>Open the project page <span aria-hidden="true">→</span></EntryLink>
                   ) : (
                     <a href={entry.href} target="_blank" rel="noopener noreferrer" className={cn(SITE_LINK, 'font-site text-site-body')}>Open the project page <span aria-hidden="true">→</span></a>
                   )}
