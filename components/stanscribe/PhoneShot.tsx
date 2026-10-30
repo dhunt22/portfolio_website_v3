@@ -20,7 +20,7 @@ export function PhoneShot({ image, className, priority = false }: PhoneShotProps
       alt={image.alt}
       width={image.width}
       height={image.height}
-      priority={priority}
+      preload={priority}
       className={cn('h-auto w-full', className)}
     />
   );

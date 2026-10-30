@@ -27,7 +27,7 @@ export function DownloadBlock({ app, withName = true, className }: DownloadBlock
       )}
       {RELEASED ? (
         <a href={info.appStoreUrl} aria-label={`Download ${info.name} on the App Store`} className={cn('inline-block rounded-[10px]', withName && 'mt-2')}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- Apple's badge is used exactly as supplied */}
+          {/* A plain img: Apple's badge is used exactly as supplied. */}
           <img src={APP_STORE_BADGE.src} alt="" width={APP_STORE_BADGE.width} height={APP_STORE_BADGE.height} className="h-10 w-auto" />
         </a>
       ) : (

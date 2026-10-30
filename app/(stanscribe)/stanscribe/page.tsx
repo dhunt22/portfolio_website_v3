@@ -85,7 +85,7 @@ const JUMP_LINKS = [
 /** A heading and a paragraph per item, at the same two sizes everywhere on the page. */
 function FeatureList({ items, className }: { items: Feature[]; className?: string }) {
   return (
-    <ul className={cn('grid gap-x-12 gap-y-8', className)}>
+    <ul role="list" className={cn('grid gap-x-12 gap-y-8', className)}>
       {items.map(({ title, body }) => (
         <li key={title}>
           <h3 className={TYPE.heading}>{title}</h3>
@@ -149,7 +149,7 @@ export default function StanScribePage() {
 
         <Section id="how-it-works" title="How it works">
           <div className="mx-auto grid max-w-208 items-center gap-12 md:grid-cols-[minmax(0,1fr)_13rem] md:gap-16">
-            <ol className="space-y-8">
+            <ol role="list" className="space-y-8">
               {STEPS.map(({ title, body }, i) => (
                 <li key={title} className="grid grid-cols-[2rem_1fr] gap-x-2">
                   <span aria-hidden="true" className={TYPE.heading}>
@@ -177,7 +177,7 @@ export default function StanScribePage() {
         <Section id="privacy" title="Private by design">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-16">
             <div>
-              <ul className="space-y-6">
+              <ul role="list" className="space-y-6">
                 {PRIVACY.map(({ title, body }) => (
                   <li key={title} className="grid grid-cols-[1.75rem_1fr] gap-3">
                     <CheckIcon />

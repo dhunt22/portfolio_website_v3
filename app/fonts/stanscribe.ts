@@ -1,7 +1,7 @@
 import { Newsreader, Hanken_Grotesk } from 'next/font/google';
 
 export const newsreader = Newsreader({
-  subsets: ['latin'], style: ['normal', 'italic'],
+  subsets: ['latin'],
   weight: ['400', '500', '600'], variable: '--font-display', display: 'swap',
 });
 export const hanken = Hanken_Grotesk({

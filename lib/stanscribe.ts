@@ -94,7 +94,7 @@ export const SOCIAL_IMAGE = {
   alt: 'Stan Scribe and Stan Scribe Light on two iPhones, showing live captions in color.',
 };
 
-/** Shared by the #light section of /stanscribe/ and the /stanscribe-light/ page. */
+/** The /stanscribe-light/ page's intro. */
 export const LIGHT_SUMMARY =
   'Stan Scribe Light has the same live captions, speaker colors and voices it knows, in a simpler package: one speech model, a black or a white page, and calm motion, so it is a smaller download. Want plain captions? Turn speaker colors off.';
 

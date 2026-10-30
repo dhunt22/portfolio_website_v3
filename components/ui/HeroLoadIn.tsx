@@ -52,6 +52,9 @@ export function HeroLoadIn({ children }: HeroLoadInProps) {
           stagger: 0.13,
         });
       }, container);
+    }).catch(() => {
+      // The animation is decoration: if its chunk fails to load, show the words.
+      for (const child of Array.from(containerRef.current?.children ?? [])) (child as HTMLElement).style.opacity = '1';
     });
 
     return () => {
@@ -59,7 +62,6 @@ export function HeroLoadIn({ children }: HeroLoadInProps) {
       ctx?.revert();
     };
     // Only run once on mount (reducedMotion changes are handled by CSS).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

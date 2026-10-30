@@ -22,12 +22,11 @@ interface SectionProps {
   id: string;
   title: string;
   children: ReactNode;
-  className?: string;
 }
 
-export function Section({ id, title, children, className }: SectionProps) {
+export function Section({ id, title, children }: SectionProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={cn('scroll-mt-8', className)}>
+    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-8">
       <h2 id={`${id}-title`} className={cn(TYPE.title, 'text-center')}>
         {title}
       </h2>

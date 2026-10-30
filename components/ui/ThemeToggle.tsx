@@ -23,7 +23,7 @@ export function ThemeToggle({ className }: { className?: string } = {}) {
   }, []);
 
   if (!mounted) {
-    return <div className="w-9 h-9" />; // Placeholder to prevent layout shift
+    return <div className={cn('w-9 h-9', className)} />; // Placeholder to prevent layout shift
   }
 
   const toggleTheme = () => {
