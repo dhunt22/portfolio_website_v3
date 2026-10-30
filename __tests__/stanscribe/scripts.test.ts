@@ -105,8 +105,14 @@ describe('synced legal pages in public/', () => {
 });
 
 describe('Netlify routing', () => {
+  const toml = readFileSync(join(ROOT, 'netlify.toml'), 'utf8');
+
   test('no catch-all rewrite sends a mistyped URL to the homepage instead of the 404', () => {
     expect(existsSync(join(ROOT, 'public', '_redirects'))).toBe(false);
-    expect(readFileSync(join(ROOT, 'netlify.toml'), 'utf8')).not.toMatch(/\[\[redirects\]\]/);
+    expect(toml).not.toMatch(/from = "\/\*"/);
+  });
+
+  test.each(APPS)('/%s/ answers 200 from its copied index.html instead of a pretty-URL 301', (app) => {
+    expect(toml).toContain(`from = "/${app}/"\n  to = "/${app}/index.html"\n  status = 200\n  force = true`);
   });
 });
