@@ -3,14 +3,12 @@
 // The topographic map that guides all other components - hope it doesn't lead us off a cliff!
 
 import './globals.css';
-import { newsreader, hanken, jetbrains } from './fonts';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { pageMetadata } from '@/lib/site/metadata';
 import { Metadata, Viewport } from 'next';
 
-// Viewport export — kept separate from metadata (Next 14 requirement).
+// Viewport export — Next takes it separately from metadata.
 // interactiveWidget: 'resizes-visual' tells mobile browsers that the on-screen
 // keyboard resizes only the visual viewport, not the layout viewport, preventing
 // layout reflows when the keyboard appears or dismisses. NOTE: this setting does
@@ -25,34 +23,23 @@ export const viewport: Viewport = {
   interactiveWidget: 'resizes-visual',
 };
 
-// Define the metadata for the application
+// The home page's metadata, and the fallback for every page that sets none of its own.
 export const metadata: Metadata = {
-  title: 'Devin Hunt - Water Resources Engineer & Explorer',
-  description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
+  ...pageMetadata(
+    'Devin Hunt · Water resources engineering and AI tools',
+    'Devin Hunt models California’s groundwater and builds the Python and AI tools around that work.',
+    '',
+  ),
   keywords: ['hydrologist', 'water resources', 'engineer', 'IWFM', 'geospatial', 'exploration', 'fishing', 'mycology'],
   authors: [{ name: 'Devin Hunt', url: 'https://devinhunt.com' }],
   creator: 'Devin Hunt',
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://devinhunt.com',
-    title: 'Devin Hunt - Water Resources Engineer & Explorer',
-    description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
-    siteName: 'Devin Hunt Portfolio',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Devin Hunt - Water Resources Engineer & Explorer',
-    description: 'Portfolio of Devin Hunt, a water resources engineer passionate about hydrological challenges and outdoor adventures.',
-    creator: '@devinhunt',
-  },
 };
 
 /**
  * RootLayout component that wraps all pages with common layout elements
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Child components to render within the layout
- * @returns {React.JSX.Element} The complete layout with header, main content, and footer
+ * @returns {React.JSX.Element} The complete layout with the theme provider and error boundary; each route group supplies its own frame and fonts
  */
 export default function RootLayout({
   children,
@@ -75,7 +62,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
-      <body className={`${newsreader.variable} ${hanken.variable} ${jetbrains.variable} font-sans overflow-x-hidden bg-background text-foreground antialiased`}>
+      <body className="font-sans overflow-x-hidden bg-background text-foreground antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -84,18 +71,8 @@ export default function RootLayout({
         >
           <ErrorBoundary>
             <div className="min-h-svh flex flex-col">
-              {/* Skip link — first focusable element; visually hidden until focused. */}
-              <a
-                href="#main"
-                className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:border focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:text-ink-strong focus:shadow-lg"
-              >
-                Skip to content
-              </a>
-              <Header />
-              <main id="main" className="flex-grow pt-16">
-                {children}
-              </main>
-              <Footer />
+              {/* Each route group's frame (and app/not-found.tsx) renders the skip link and the <main id="main"> it targets. */}
+              {children}
             </div>
           </ErrorBoundary>
         </ThemeProvider>

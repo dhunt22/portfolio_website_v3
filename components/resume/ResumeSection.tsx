@@ -3,6 +3,7 @@
 // Organizing resume sections like well-defined watershed basins!
 
 import React from 'react';
+import { SITE_TYPE } from '@/components/site/type';
 
 /**
  * ResumeSection props interface
@@ -22,9 +23,9 @@ interface ResumeSectionProps {
  */
 const ResumeSection: React.FC<ResumeSectionProps> = ({ title, children }) => {
   return (
-    <section className="py-6">
-      <h2 className="eyebrow mb-6">{title}</h2>
-      {children}
+    <section className="pt-12 first:pt-0">
+      <h2 className={SITE_TYPE.headline}>{title}</h2>
+      <div className="mt-6">{children}</div>
     </section>
   );
 };

@@ -1,9 +1,17 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // app/not-found.tsx
-// A 404 page that flows like a river finding its way back to the source!
+// A 404 page inside the site chrome
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
+import { ReadoutDefault } from '@/components/site/Readout';
+import { SiteChrome } from '@/components/site/SiteChrome';
+import { HERO, SITE_BUTTON, SITE_LINK, SITE_TYPE } from '@/components/site/type';
+import { plateReading } from '@/lib/site/reading';
+import { cn } from '@/lib/utils';
+
+export const metadata: Metadata = { title: 'Page not found · Devin Hunt' };
 
 /**
  * 404 Not Found page component
@@ -11,40 +19,23 @@ import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
  */
 export default function NotFound() {
   return (
-    <div className="relative min-h-svh">
+    <SiteChrome>
       <ContourBackdrop page="notFound" />
-
-      <div className="container relative z-10 mx-auto px-6">
-        <section className="flex min-h-[82svh] max-w-3xl flex-col justify-center">
-          {/* Decorative error code — not a heading, so AT lands on the real h1 below. */}
-          <p className="display mb-8 text-[clamp(3rem,7vw,5.25rem)]">404</p>
-
-          <div className="panel">
-            <h1 className="display mb-4 text-3xl">Page Not Found</h1>
-
-            <p className="mb-8 max-w-[40rem] leading-relaxed text-ink-body">
-              Looks like this stream dried up &mdash; the page wandered off like water finding
-              a new path. Here&apos;s the way back to familiar waters.
-            </p>
-
-            {/* Recovery first, before the closing flourish. Return Home is the primary path. */}
-            <nav aria-label="Site links" className="mb-12 flex flex-wrap items-center gap-x-8 gap-y-3">
-              <Link href="/" className="link-quiet text-ink-strong">Return Home</Link>
-              <Link href="/portfolio" className="link-quiet">View Portfolio</Link>
-              <Link href="/resume" className="link-quiet">Resume</Link>
-              <Link href="/interests" className="link-quiet">Interests</Link>
-              <a href="mailto:contact@devinhunt.com" className="link-quiet">contact@devinhunt.com</a>
-            </nav>
-
-            <figure>
-              <blockquote className="font-display italic text-xl leading-snug text-ink-strong">
-                &ldquo;The best way out is always through.&rdquo;
-              </blockquote>
-              <figcaption className="eyebrow mt-4">Robert Frost</figcaption>
-            </figure>
-          </div>
-        </section>
-      </div>
-    </div>
+      <ReadoutDefault reading={plateReading('notFound')} />
+      <section aria-labelledby="nf-title" className={cn(HERO, 'min-h-[60svh] gap-6 pb-16 pt-[clamp(40px,10vh,120px)]')}>
+        <p className={cn(SITE_TYPE.display, 'halo')} aria-hidden="true">404</p>
+        <h1 id="nf-title" className={cn(SITE_TYPE.headline, 'halo')}>Page not found</h1>
+        <p className={cn(SITE_TYPE.lead, 'halo max-w-[40ch]')}>
+          Looks like this stream dried up. The page wandered off like water finding a new path.
+        </p>
+        <nav aria-label="Ways back" className="halo flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+          <Link href="/" className={SITE_BUTTON}>Home</Link>
+          <Link href="/portfolio" className={cn(SITE_LINK, 'font-site text-site-body')}>Portfolio</Link>
+          <Link href="/resume" className={cn(SITE_LINK, 'font-site text-site-body')}>Résumé</Link>
+          <Link href="/interests" className={cn(SITE_LINK, 'font-site text-site-body')}>Outdoors</Link>
+          <a href="mailto:contact@devinhunt.com" className={cn(SITE_LINK, 'font-site text-site-body')}>contact@devinhunt.com</a>
+        </nav>
+      </section>
+    </SiteChrome>
   );
 }

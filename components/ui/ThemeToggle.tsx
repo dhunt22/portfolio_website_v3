@@ -6,13 +6,14 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 import { SunIcon, MoonIcon } from './icons/common-icons';
 
 /**
  * Theme toggle button component
  * Toggles between light and dark themes (defaults to system preference)
  */
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string } = {}) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -22,7 +23,7 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <div className="w-9 h-9" />; // Placeholder to prevent layout shift
+    return <div className={cn('w-9 h-9', className)} />; // Placeholder to prevent layout shift
   }
 
   const toggleTheme = () => {
@@ -41,7 +42,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative inline-flex items-center justify-center rounded-md p-2 text-forest-700 dark:text-forest-300 hover:bg-forest-100 dark:hover:bg-forest-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest-500"
+      className={cn('relative inline-flex items-center justify-center rounded-md p-2 text-forest-700 dark:text-forest-300 hover:bg-forest-100 dark:hover:bg-forest-800 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-forest-500', className)}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
