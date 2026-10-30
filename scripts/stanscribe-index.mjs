@@ -2,7 +2,8 @@
 // scripts/stanscribe-index.mjs
 // Runs after `next build`. With trailingSlash off, Next exports out/stanscribe.html, but App Store
 // Connect links /stanscribe/ and /stanscribe-light/, folders that hold only the legal pages. Copying
-// each page to <route>/index.html makes those exact URLs real files, so they answer 200 on any host.
+// each page to <route>/index.html makes those exact URLs real files. netlify.toml rewrites to them, since
+// Netlify's pretty URLs would otherwise 301 the slash URL to the slashless page.
 //
 // Usage: node scripts/stanscribe-index.mjs [--out out]
 

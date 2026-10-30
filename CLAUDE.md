@@ -12,8 +12,9 @@ Next.js 16 App Router (Turbopack) with static export, React 19, Tailwind 4, Jest
 - Stan Scribe must not pick up portfolio styles: no `.site`, `components/site/` or `text-site-*` there.
 - Route groups do not change URLs. The 404 (`app/not-found.tsx`) wraps itself in `SiteChrome`.
 - Netlify serves `out/` as plain files and answers unknown paths with `404.html`. Do not add a catch-all
-  rewrite to `/index.html`. App Store Connect links `/stanscribe/` and `/stanscribe-light/`, which
-  `scripts/stanscribe-index.mjs` turns into real files.
+  rewrite to `/index.html`. App Store Connect links `/stanscribe/` and `/stanscribe-light/`:
+  `scripts/stanscribe-index.mjs` copies each page to `<route>/index.html`, and `netlify.toml` rewrites those
+  two URLs to the copies, or Netlify's pretty URLs would 301 them to the slashless page.
 - Do not invent claims, metrics or testimonials. Use what PRODUCT.md › Evidence on Hand lists.
 
 ## Verify
