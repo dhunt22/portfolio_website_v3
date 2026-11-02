@@ -57,10 +57,10 @@ it (AIIWFM, tested Python automation for IWFM workflows, the firm's AI Innovator
   index draws projects as glyphs and has no map.
 - Factual copy (projects, roles, dates, the Stan Scribe story) is not rewritten or extended with new
   claims without asking.
-- **Decided: Stan Scribe becomes its own product site at `stanscribe.devinhunt.com`**, with its own
-  routes (privacy, terms, help and so on). Open: where and how it is hosted and deployed, the redirects
-  from today's `devinhunt.com/stanscribe/` and `/stanscribe-light/` (currently the App Store Connect
-  Support and Marketing URLs, pre-launch), the path names (`/terms` vs `/tos`), and where Light lives.
+- **Decided (owner, 2026-11-01): Stan Scribe stays at `devinhunt.com/stanscribe/` and
+  `/stanscribe-light/`**, with their `privacy/`, `terms/` and `acknowledgements/` pages, on this site's
+  Netlify deploy. These are the App Store Connect Support and Marketing URLs. There is no
+  `stanscribe.devinhunt.com`: the earlier plan for one is dropped.
 - Stan Scribe copy rules (banned words, required links and phrases) are in
   `docs/superpowers/specs/2026-10-23-stanscribe-page-design.md` and enforced by tests in
   `__tests__/stanscribe/`. Its pages make no analytics, cookie or third-party requests.
@@ -91,7 +91,8 @@ it (AIIWFM, tested Python automation for IWFM workflows, the firm's AI Innovator
 - Real data: NASA EEJ prison points and polygons, California HUC8 watersheds (`public/data/`).
 - Contour plates generated from real terrain (`public/images/plates/`, `scripts/build-plates.mjs`).
 - Stan Scribe: real app screenshots (`public/images/stanscribe/`), a public TestFlight link, legal pages
-  synced from `../transcript_stan/site/`.
+  rendered here from `content/stanscribe-legal/`, whose words are pulled from the app repo
+  (`npm run sync:stanscribe-legal`).
 - Absent, and not to be invented: testimonials, client logos, metrics, press, awards.
 
 ## Product Principles
