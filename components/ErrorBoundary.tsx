@@ -78,13 +78,12 @@ function DefaultErrorFallback({ error, retry }: { error: Error | null; retry: ()
             </details>
           )}
           <div className="flex gap-2">
-            <Button onClick={retry} className="bg-river-600 hover:bg-river-700">
+            <Button onClick={retry}>
               Try again
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => window.location.href = '/'}
-              className="border-forest-600 text-forest-600 hover:bg-forest-50"
             >
               Go home
             </Button>

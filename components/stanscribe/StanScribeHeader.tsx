@@ -38,7 +38,7 @@ export function StanScribeHeader() {
           </ul>
         </nav>
         {/* -mr-2.5 sets the icon, not its 44px hit area, on the sheet's edge. */}
-        <ThemeToggle className="-mr-2.5 h-11 w-11 rounded-md text-ink-strong hover:bg-muted dark:text-ink-strong dark:hover:bg-muted" />
+        <ThemeToggle className="-mr-2.5 h-11 w-11" />
       </div>
     </header>
   );
