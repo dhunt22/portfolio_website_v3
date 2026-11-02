@@ -37,7 +37,7 @@ export default function EnvironmentalJusticePrisonsPage(): JSX.Element {
           <p className={cn(SITE_TYPE.lead, 'halo max-w-160')}>
             Leveraging NASA Earth Science Data to Map Environmental Injustices in U.S. Prisons
           </p>
-          <nav aria-label="Project links" className="halo flex flex-wrap justify-center gap-8">
+          <nav aria-label="Project links" className="halo flex flex-wrap gap-8">
             <a
               href="https://github.com/GeospatialCentroid/NASA-prison-EJ/releases/tag/v2023-1"
               target="_blank"

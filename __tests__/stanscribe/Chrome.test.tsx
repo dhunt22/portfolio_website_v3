@@ -7,7 +7,7 @@ jest.mock('next/navigation', () => ({ usePathname: () => pathname }));
 
 const renderFrame = () => render(<StanScribeLayout><p>content</p></StanScribeLayout>).container;
 
-test('its own header: the name, the other edition and Help, with no portfolio links', () => {
+test('its own header: the name, the other edition, Help and the way to Devin Hunt, with no portfolio links', () => {
   pathname = '/stanscribe';
   renderFrame();
   const header = screen.getByRole('banner');
@@ -17,8 +17,9 @@ test('its own header: the name, the other edition and Help, with no portfolio li
   expect(within(nav).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
     ['Stan Scribe Light', '/stanscribe-light'],
     ['Help', '#help'],
+    ['Devin Hunt', '/'],
   ]);
-  for (const href of ['/', '/portfolio', '/resume', '/interests']) expect(header.querySelector(`a[href="${href}"]`)).toBeNull();
+  for (const href of ['/portfolio', '/resume', '/interests']) expect(header.querySelector(`a[href="${href}"]`)).toBeNull();
 });
 
 test('on the Light page, Light is the current page', () => {
@@ -31,7 +32,7 @@ test('on the Light page, Light is the current page', () => {
 
 test('the footer credits the maker, and the skip link leads to main', () => {
   const frame = renderFrame();
-  expect(within(screen.getByRole('contentinfo')).getByRole('link', { name: 'Devin Hunt' })).toHaveAttribute('href', 'https://devinhunt.com/');
+  expect(within(screen.getByRole('contentinfo')).getByRole('link', { name: 'Devin Hunt' })).toHaveAttribute('href', '/');
   expect(frame.querySelector('a')).toHaveAttribute('href', '#main');
   expect(screen.getByRole('main')).toHaveAttribute('id', 'main');
 });

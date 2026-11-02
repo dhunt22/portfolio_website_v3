@@ -58,8 +58,7 @@ export default function ResumePage() {
       <ContourBackdrop page="resume" />
       <ReadoutDefault reading={HOME_BASE} />
 
-      {/* Its words sit left of the map, so the plate's clearing sits left too (globals.css). */}
-      <section aria-labelledby="name" data-clearing="left" className="grid items-start gap-[clamp(24px,4vw,64px)] px-frame pb-12 pt-[clamp(32px,6vh,72px)] min-[861px]:grid-cols-2">
+      <section aria-labelledby="name" className="grid items-start gap-[clamp(24px,4vw,64px)] px-frame pb-12 pt-[clamp(32px,6vh,72px)] min-[861px]:grid-cols-2">
         <div className="grid content-start gap-5">
           <h1 id="name" className={cn(SITE_TYPE.display, 'halo')}>Devin Hunt</h1>
           <p className={cn(SITE_TYPE.lead, 'halo font-semibold text-ink-strong')}>AI Specialist and Groundwater Modeler</p>
