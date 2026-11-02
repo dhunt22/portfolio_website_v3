@@ -24,7 +24,7 @@ export default function Home() {
           Water resources engineer in Sacramento. I model California’s groundwater and turn the slow, manual parts of
           that work into tested Python and AI tools.
         </p>
-        <div className="halo flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+        <div className="halo flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link href="/portfolio" className={SITE_BUTTON}>See the work</Link>
           <Link href="/resume" className={cn(SITE_LINK, 'font-site text-site-body')}>Résumé</Link>
         </div>

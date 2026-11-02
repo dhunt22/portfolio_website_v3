@@ -249,16 +249,10 @@
   /* The Label Halo Rule: a ground-coloured halo for text over contours (hero only). */
   .site .halo { text-shadow: 0 0 3px var(--surface-page), 0 0 10px var(--surface-page); }
   /* The clearing: contours fade out behind the hero words, as a map clears lines behind a label. The words
-     are centred, so the clearing is too; the résumé's words sit left of its map, so its clearing sits left. */
+     are set left, so the clearing sits left and the contours run at full strength to their right. */
   .site [data-contour-plate] {
-    -webkit-mask-image: radial-gradient(44% 62% at 50% 34%, transparent 34%, #000 78%);
-            mask-image: radial-gradient(44% 62% at 50% 34%, transparent 34%, #000 78%);
-  }
-  @media (min-width: 861px) {
-    .site:has([data-clearing='left']) [data-contour-plate] {
-      -webkit-mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
-              mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
-    }
+    -webkit-mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
+            mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
   }
   /* Below 380px a display word wider than the viewport ("Environmental" at 56px is ~362px plus the gutter)
      hyphenates instead of pushing the page sideways; only words of 12+ letters break, and where a browser has

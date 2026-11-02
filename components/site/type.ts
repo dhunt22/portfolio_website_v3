@@ -17,9 +17,9 @@ export const SITE_TYPE = {
   label: 'font-site text-site-label tabular-nums text-ink-muted',
 } as const;
 
-/** A page's first screen: its words centred in the frame, over the plate's centred clearing (DESIGN.md › Layout).
- *  Centred lines balance, so no line is left holding one word. */
-export const HERO = 'grid content-start justify-items-center gap-7 px-frame text-center [&_p]:text-balance';
+/** A page's first screen: its words set left in the frame, on the plate's clearing, with the contours running
+ *  free to their right (DESIGN.md › Layout). */
+export const HERO = 'grid content-start justify-items-start gap-7 px-frame text-left';
 
 /** The one primary button: ink fill, ground text, square, 44px tall. Never haloed. */
 export const SITE_BUTTON =

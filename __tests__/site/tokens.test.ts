@@ -82,6 +82,10 @@ test('scrollbars take the palette on every page, not the legacy stone', () => {
   expect(css).toContain('html.dark { scrollbar-color: #4d5962 #111517; }');
 });
 
+test('the plate clears behind words set left', () => {
+  expect(block('.site [data-contour-plate]')).toContain('radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%)');
+});
+
 test('a page title too wide for a narrow phone hyphenates rather than overflowing', () => {
   expect(css).toMatch(/@media \(max-width: 380px\) \{\s*\.site h1 \{ -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 12 6 6; overflow-wrap: anywhere; \}/);
 });
