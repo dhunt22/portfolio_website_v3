@@ -3,8 +3,8 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/StanScribeHeader.tsx
 // Stan Scribe's own header, so its pages stand as one product (PRODUCT.md › Brand Commitments): the name,
-// the other edition, Help (App Review looks for a contact) and the theme toggle. Not sticky, so it never
-// covers the words at 200% zoom.
+// the other edition, Help (App Review looks for a contact), the way to Devin's site and the theme toggle.
+// Not sticky, so it never covers the words at 200% zoom.
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -24,8 +24,8 @@ export function StanScribeHeader() {
         <Link href="/stanscribe" aria-current={onLight ? undefined : 'page'} className={cn(TYPE.heading, 'py-1 no-underline')}>
           Stan Scribe
         </Link>
-        {/* Below 520px the links take their own row under the name and the toggle. */}
-        <nav aria-label="Stan Scribe" className="order-last w-full min-[520px]:order-0 min-[520px]:ml-auto min-[520px]:w-auto">
+        {/* Below 640px the links take their own row under the name and the toggle. */}
+        <nav aria-label="Stan Scribe" className="order-last w-full sm:order-0 sm:ml-auto sm:w-auto">
           <ul className={cn(TYPE.body, 'flex flex-wrap gap-x-7')}>
             <li>
               <Link href="/stanscribe-light" aria-current={onLight ? 'page' : undefined} className={NAV_LINK}>
@@ -34,6 +34,10 @@ export function StanScribeHeader() {
             </li>
             <li>
               <a href="#help" className={NAV_LINK}>Help</a>
+            </li>
+            <li>
+              {/* A plain <a>: the portfolio has its own frame and fonts, so it loads as a page of its own. */}
+              <a href="/" className={NAV_LINK}>Devin Hunt</a>
             </li>
           </ul>
         </nav>
