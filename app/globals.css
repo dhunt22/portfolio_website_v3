@@ -233,10 +233,21 @@
 
 @layer components {
   .panel { @apply border bg-card p-4 md:p-5; border-color: var(--border-default); }
-  /* Dark: the stone surface steps (page→header→card) carry the layer
-     separation, so panel outlines recede to the hairline (brief: layers
-     read as distinct WITHOUT hard borders). Light is untouched. */
-  .dark .panel { border-color: var(--border-hairline); }
+
+  /* A Stan Scribe legal page's words (content/stanscribe-legal/). They arrive with no classes, so the roles in
+     components/stanscribe/type.ts are set here. License text is fine print, in the page's own face. */
+  .legal { @apply text-lg leading-relaxed wrap-break-word text-ink-body; }
+  /* The title role, with a lower floor: "Acknowledgements" is one word and has to fit whole at 320px. */
+  .legal h1 { @apply font-display text-[clamp(1.75rem,8.75vw,2.75rem)] leading-tight font-medium tracking-display text-ink-strong; }
+  .legal h2 { @apply mt-12 font-display text-2xl leading-snug font-medium text-ink-strong; }
+  .legal :is(p, ul, details) { @apply mt-5; }
+  .legal ul { @apply list-disc space-y-2 pl-6; }
+  .legal strong { @apply font-semibold text-ink-strong; }
+  .legal a { @apply text-link-hover underline decoration-1 underline-offset-4 transition-colors hover:text-ink-strong hover:decoration-2; }
+  .legal .muted { @apply text-base text-ink-muted; }
+  .legal details { @apply border-b border-border pb-4; }
+  .legal summary { @apply cursor-pointer py-1 font-semibold text-ink-strong; }
+  .legal pre { @apply mt-3 font-sans text-base leading-relaxed whitespace-pre-wrap text-ink-muted; }
 
   /* The wrapper: a stacking context so the fixed contour plate paints above its ground, below content. */
   .site { isolation: isolate; display: flex; flex: 1 1 auto; min-height: 100svh; flex-direction: column; background: var(--surface-page); color: var(--text-body); font-family: var(--font-site), system-ui, sans-serif; }

@@ -29,6 +29,8 @@ export interface LegalLink {
 
 export interface AppInfo {
   name: string;
+  /** Its URL path, and its folder in content/stanscribe-legal/. */
+  route: string;
   /** The line under the name in its download tile. */
   offer: string;
   appStoreUrl: string;
@@ -37,25 +39,31 @@ export interface AppInfo {
   legal: LegalLink[];
 }
 
-const legalLinks = (base: string): LegalLink[] => [
-  { label: 'Privacy Policy', href: `${base}privacy/` },
-  { label: 'Terms of Use', href: `${base}terms/` },
-  { label: 'Acknowledgements', href: `${base}acknowledgements/` },
-];
+export const LEGAL_PAGES = [
+  { slug: 'privacy', label: 'Privacy Policy' },
+  { slug: 'terms', label: 'Terms of Use' },
+  { slug: 'acknowledgements', label: 'Acknowledgements' },
+] as const;
+
+export type LegalSlug = (typeof LEGAL_PAGES)[number]['slug'];
+
+const legalLinks = (route: string): LegalLink[] => LEGAL_PAGES.map(({ slug, label }) => ({ label, href: `/${route}/${slug}/` }));
 
 export const APPS: Record<AppKey, AppInfo> = {
   scribe: {
     name: 'Stan Scribe',
+    route: 'stanscribe',
     offer: 'Pay once. No subscription.',
     appStoreUrl: 'https://apps.apple.com/app/id6822377139',
     betaUrl: 'https://testflight.apple.com/join/ejNyaGqJ',
-    legal: legalLinks('/stanscribe/'),
+    legal: legalLinks('stanscribe'),
   },
   light: {
     name: 'Stan Scribe Light',
+    route: 'stanscribe-light',
     offer: 'Free. The simple edition.',
     appStoreUrl: 'https://apps.apple.com/app/id6824796578',
-    legal: legalLinks('/stanscribe-light/'),
+    legal: legalLinks('stanscribe-light'),
   },
 };
 
