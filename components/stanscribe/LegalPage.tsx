@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/LegalPage.tsx
-// One legal page on the Stan Scribe sheet: its words, then the way to the app's other two. The words come from
+// One legal page, as a single band: its words, then the way to the app's other two. The words come from
 // the app repo through scripts/sync-stanscribe-legal.mjs, are set by .legal in globals.css, and are never edited here.
 
 import type { Metadata } from 'next';
 import { LegalLinks } from '@/components/stanscribe/LegalLinks';
-import { COLUMN, SHEET } from '@/components/stanscribe/Section';
+import { BAND, BAND_COLUMN, BANDS, COLUMN } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { APPS, LEGAL_PAGES, SOCIAL_IMAGE, pageUrl, type AppKey, type LegalSlug } from '@/lib/stanscribe';
@@ -39,13 +39,17 @@ export async function legalMetadata(app: AppKey, { params }: LegalRouteProps): P
 export async function LegalPage({ app, params }: LegalRouteProps & { app: AppKey }) {
   const { page } = await params;
   return (
-    <div className="relative min-h-svh px-4 pt-2 sm:px-6 md:pt-4">
+    <div className="relative">
       <ContourBackdrop page="interests" quiet />
-      <div className={cn(SHEET, 'relative z-10')}>
-        <article className={cn('legal', COLUMN)} dangerouslySetInnerHTML={{ __html: legalWords(app, page as LegalSlug) }} />
-        <div className={cn(TYPE.small, COLUMN)}>
-          <LegalLinks app={app} />
-        </div>
+      <div className={BANDS}>
+        <section className={cn(BAND, 'band-only min-h-svh')}>
+          <div className={BAND_COLUMN}>
+            <article className={cn('legal', COLUMN)} dangerouslySetInnerHTML={{ __html: legalWords(app, page as LegalSlug) }} />
+            <div className={cn(TYPE.small, COLUMN, 'mt-16')}>
+              <LegalLinks app={app} />
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

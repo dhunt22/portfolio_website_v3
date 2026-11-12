@@ -9,7 +9,7 @@ import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
 import { Faq } from '@/components/stanscribe/Faq';
 import { HelpBlock } from '@/components/stanscribe/HelpBlock';
 import { PhoneShot } from '@/components/stanscribe/PhoneShot';
-import { COLUMN, INTRO, SHEET, Section } from '@/components/stanscribe/Section';
+import { BAND, BAND_COLUMN, BANDS, COLUMN, INTRO, Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
@@ -32,20 +32,22 @@ export const metadata: Metadata = {
 
 export default function StanScribeLightPage() {
   return (
-    <div className="relative min-h-svh px-4 pt-2 sm:px-6 md:pt-4">
+    <div className="relative min-h-svh">
       <ContourBackdrop page="interests" quiet />
 
-      <div className={cn(SHEET, 'relative z-10')}>
-        <section aria-labelledby="light-page-title" className="text-center">
-          <HeroLoadIn>
-            <h1 id="light-page-title" className={TYPE.display}>
-              Stan Scribe Light
-            </h1>
-            <p className={cn(TYPE.title, 'mt-3')}>The simple edition. Free.</p>
-            <p className={cn(TYPE.lead, INTRO)}>{LIGHT_SUMMARY}</p>
-            <DownloadBlock app="light" withName={false} className="mt-8" />
-          </HeroLoadIn>
-          <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-104" />
+      <div className={BANDS}>
+        <section aria-labelledby="light-page-title" className={cn(BAND, 'pt-8 text-center md:pt-12')}>
+          <div className={BAND_COLUMN}>
+            <HeroLoadIn>
+              <h1 id="light-page-title" className={TYPE.display}>
+                Stan Scribe Light
+              </h1>
+              <p className={cn(TYPE.title, 'mt-3')}>The simple edition. Free.</p>
+              <p className={cn(TYPE.lead, INTRO)}>{LIGHT_SUMMARY}</p>
+              <DownloadBlock app="light" withName={false} className="mt-8" />
+            </HeroLoadIn>
+            <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-104" />
+          </div>
         </section>
 
         <HelpBlock apps={['light']} />

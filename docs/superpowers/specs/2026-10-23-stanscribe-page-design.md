@@ -203,3 +203,26 @@ TestFlight link them.
 
 The themes feature says why it is there again, in the owner's words for the App Store listing: "Something
 you use every day should not look clinical."
+
+## Bands in place of the sheet (2026-11-12)
+
+The owner found two things hard about reading the pages: sections ran together, and the bordered sheet
+competed with the words. He chose bands with soft breaks from three options and asked for the blends at
+half the height shown. Seeing it built, he asked for the gap under the hero to go, and then for the soft
+side edges of the first hero to run down every section, in place of bands the full width of the window.
+
+- Every section is a band. `Section` renders one, and the two heroes and the legal page use the same
+  `BAND` padding and `BAND_COLUMN` (64rem) so their words line up.
+- `.bands` in `globals.css` gives the bands two solid tones in turn, the card colour and the page ground,
+  and blends each in from the tone above it over 80px (`--band-blend`). Text clears 7:1 on both tones.
+- Each band's fill is its own layer (`::before`), masked so it is solid for 72rem (`--band-solid`) and
+  fades out over 12rem on each side (`--band-fade`). The veiled contours show in the side margins all the
+  way down. Below 72rem wide there are no margins, and the bands are solid from edge to edge. The mask is
+  on the fill only, so it never touches the words.
+- The hero is the first band and is filled like the rest. Its fill fades in under the header.
+- Help lands on a white band on both pages, where its fine print reads best, and each page ends on a white
+  band, which the footer blends from. Tests fail if a new section breaks either.
+- A legal page is one white band (`band-only`), at least a window tall, so no contours show between it and
+  the footer. The footer (`band-foot`) blends from white to the ground.
+- The header row is as wide as a band's column, so the name lines up with the words below it.
+- Checked at 320, 390, 768, 1440 and 1920 wide in both themes: no sideways scroll.

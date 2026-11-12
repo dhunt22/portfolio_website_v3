@@ -232,7 +232,25 @@
 }
 
 @layer components {
-  .panel { @apply border bg-card p-4 md:p-5; border-color: var(--border-default); }
+  /* Stan Scribe's pages are a column of bands in two solid tones that take turns, each blending in from the
+     tone above it over --band-blend, so no break is a line. The column is solid behind the words and fades
+     out toward the window's edges, so the veiled contours show in the side margins all the way down. A window
+     narrower than --band-solid has no margins, and there the bands are solid from edge to edge. */
+  .bands, .band-foot { --band-a: var(--surface-card); --band-b: var(--surface-page); --band-blend: 80px; --band-solid: 72rem; --band-fade: 12rem; }
+  .bands > section, .band-foot { position: relative; isolation: isolate; --band-from: var(--band-a); --band-to: var(--band-b); }
+  /* The fill is its own layer, so the side fade never touches the words. */
+  .bands > section::before, .band-foot::before {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(to bottom, var(--band-from) 0, var(--band-to) var(--band-blend));
+    -webkit-mask-image: linear-gradient(to right, transparent calc(50% - var(--band-solid) / 2 - var(--band-fade)), #000 calc(50% - var(--band-solid) / 2), #000 calc(50% + var(--band-solid) / 2), transparent calc(50% + var(--band-solid) / 2 + var(--band-fade)));
+    mask-image: linear-gradient(to right, transparent calc(50% - var(--band-solid) / 2 - var(--band-fade)), #000 calc(50% - var(--band-solid) / 2), #000 calc(50% + var(--band-solid) / 2), transparent calc(50% + var(--band-solid) / 2 + var(--band-fade)));
+  }
+  .bands > section:nth-of-type(even) { --band-from: var(--band-b); --band-to: var(--band-a); }
+  /* The hero is the first band. Its fill fades in under the header. */
+  .bands > section:first-of-type { --band-from: transparent; }
+  /* A page that is one band (the legal pages) is on the lighter tone. Every page ends on that tone, and the
+     footer, which takes the shared rule above, blends from it to the ground. */
+  .bands > section.band-only { --band-from: transparent; --band-to: var(--band-a); }
 
   /* A Stan Scribe legal page's words (content/stanscribe-legal/). They arrive with no classes, so the roles in
      components/stanscribe/type.ts are set here. License text is fine print, in the page's own face. */
@@ -383,7 +401,6 @@ html.js [data-contour-plate][data-plate-ready='true'] {
     --border-hairline: #cccccc; --border-default: #bbbbbb;
   }
   [data-contour-plate] { display: none !important; }
-  .panel { border: none !important; padding: 0 !important; }
   .resume-item { break-inside: avoid; }
   .site, .dark .site {
     --surface-page: #ffffff; --surface-card: #ffffff; --site-band: #ffffff;
