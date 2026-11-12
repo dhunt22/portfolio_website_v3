@@ -6,6 +6,7 @@
 import type { Metadata } from 'next';
 import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
 import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
+import { Faq } from '@/components/stanscribe/Faq';
 import { HelpBlock } from '@/components/stanscribe/HelpBlock';
 import { PhoneShot } from '@/components/stanscribe/PhoneShot';
 import { COLUMN, INTRO, SHEET, Section } from '@/components/stanscribe/Section';
@@ -66,6 +67,8 @@ export default function StanScribeLightPage() {
             </div>
           </div>
         </Section>
+
+        <Faq app="light" />
       </div>
     </div>
   );

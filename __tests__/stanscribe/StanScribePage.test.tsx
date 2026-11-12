@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import StanScribePage, { metadata } from '@/app/(stanscribe)/stanscribe/page';
-import { APPS, LANGUAGES, legalLinks } from '@/lib/stanscribe';
+import { APPS, legalLinks } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 
 // The backdrop fetches SVG and GSAP needs matchMedia; neither matters to the page's content.
@@ -34,7 +34,7 @@ test('seven sections, each said once, in order', () => {
     'Made to be read across the table',
     'Privacy',
     'Which one is for you?',
-    'Questions',
+    'Questions and answers',
     'Help',
   ]);
 });
@@ -80,13 +80,6 @@ test('six features', () => {
   const page = renderPage();
   const features = page.querySelector<HTMLElement>('#features')!;
   expect(within(features).getAllByRole('heading', { level: 3 })).toHaveLength(6);
-});
-
-test('four questions, one naming every caption language', () => {
-  const page = renderPage();
-  const questions = page.querySelector<HTMLElement>('#questions')!;
-  expect(within(questions).getAllByRole('heading', { level: 3 })).toHaveLength(4);
-  for (const language of LANGUAGES) expect(questions.textContent).toContain(language);
 });
 
 test('one type scale: no mono, tracked caps or italics', () => {

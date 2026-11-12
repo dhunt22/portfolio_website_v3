@@ -172,3 +172,23 @@ unchanged" above: the page is now ahead of `copy.md` in the app repo until the s
 - **Cut:** "because something you use every day should be a pleasure to look at", and "keep using AI for good".
 - **New rule:** no em dashes on these pages. `findCopyViolations` flags one.
 - The portfolio's Stan Scribe entry tells the same story in three sentences and was reworded to match.
+
+## Questions and answers, with structured data (2026-11-12)
+
+The owner asked for a FAQ at the end of both pages for search and answer engines, and approved the questions
+and answers. This replaces "say it once" for this section only: an answer engine quotes one answer without
+the rest of the page, so three answers repeat points from Privacy.
+
+- `lib/stanscribe-faq.ts` holds each page's list. `components/stanscribe/Faq.tsx` renders it as the
+  "Questions and answers" section, every answer open, and writes the same words as schema.org `FAQPage`
+  JSON-LD. A test fails if the two differ.
+- The main page has 15 questions, in place of the 4 it had, still just above Help. Questions 2 to 4 are three
+  situations the owner named (family conversations, staying part of a conversation, a doctor's appointment).
+  The Light page has 7, after its comparison. They give it the accuracy and consent lines it lacked.
+- The owner's calls: the accuracy answer credits the speech models through the Acknowledgements page and
+  does not name them. The consent question reads "before I start captions". No questions about Android,
+  the release date or countries.
+- No answer says how long sound is held in memory. The Privacy Policy sets that figure and changed it on
+  November 1. A test fails on "seconds" or "minutes" in an answer.
+- Google shows FAQ rich results only for government and health sites since August 2023, so the markup is
+  there for other search and answer engines, not for a change in Google's listing.
