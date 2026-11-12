@@ -36,19 +36,20 @@ interface Feature {
   body: string;
 }
 
-// The owner's story and how it was built, told once, in the brief's words: "captions", never
-// "transcription"; other apps' pricing as a "monthly fee", since "subscription" appears only as
-// "no subscription".
+// The owner's story, told once, with the details he gave on 2026-11-11. The other app has no name and no
+// price (his call), and its pricing is a "monthly fee", since "subscription" appears only as "no subscription".
 const STORY = [
   'My grandpa Stan is hard of hearing. At the table, the conversation moves faster than he can catch it.',
-  'When my parents tried a live captions app with my grandparents, it changed the conversations they could have together. But the apps we found all charged a monthly fee, and something you need every day shouldn’t cost you every month.',
-  'So I used AI to help me build my own, and made it as easy to get as I could. Stan Scribe Light is free, and the full Stan Scribe is a one-time purchase with no subscription.',
-  'Now it’s here for anyone who needs the same thing. It’s only the start: I want to keep building tools like this, and keep using AI for good.',
+  'My parents tried a live captions app with him at dinner. He could keep up and answer, instead of pretending he had heard. My parents didn’t have to yell. He got his voice back.',
+  'That app worked well, but it charged a monthly fee just to use it, and more money for additional usage. It also needed the internet for its best captions.',
+  'So I used AI to help me build my own. I wanted as many people as possible to have it, at the lowest cost I could manage. Stan Scribe Light is free. The full Stan Scribe is a one-time purchase, with no subscription. Both work with no internet at all.',
+  'Stan uses it every day at dinner now. He took it to a doctor’s appointment too, and my mom didn’t have to shout and repeat what the doctor said.',
+  'Next I want to add more languages, make the speech models smaller and faster, and build a live translation app the same way. That one is in progress.',
 ];
 
 const STEPS: Feature[] = [
   { title: 'Tap Start.', body: 'Captions begin as soon as people speak. They never start on their own.' },
-  { title: 'Follow along.', body: 'Each speaker gets their own color and name, in words as big as you need.' },
+  { title: 'Follow along.', body: 'Each speaker gets a color and a name. Make the words as big as you need.' },
   { title: 'Tap Stop.', body: 'The conversation is saved as text, ready to read, search or share. No audio is kept.' },
 ];
 
@@ -56,21 +57,21 @@ const FEATURES: Feature[] = [
   { title: 'Speakers in color.', body: 'A color and a name for each speaker, so you can tell who said what.' },
   { title: 'Voices it knows.', body: 'Teach it the people you talk with most, with their permission, and it labels them by name.' },
   { title: 'Big text, clear buttons.', body: 'Make the words as large as you like. Every button is large and says what it does: Smaller, Larger, Save, Stop.' },
-  { title: 'Keeps listening.', body: 'Switch apps or lock your iPhone, and captions keep going until you tap Stop. Start Captions from the Lock Screen or Control Center.' },
+  { title: 'Keeps listening.', body: 'Switch apps or lock your iPhone, and captions keep going until you tap Stop. Add Start Captions to your Lock Screen or Control Center to begin with one tap.' },
   { title: 'Conversations you keep.', body: 'Find any conversation by date, by person or by any word. Export it, send it to a notes folder such as Obsidian, or back it up to your own iCloud.' },
-  { title: 'Make it yours.', body: '28 color themes, painted ones, and themes from your own photos, because something you use every day should be a pleasure to look at.' },
+  { title: 'Choose how it looks.', body: 'Pick from 28 color themes, some of them painted, or make your own from your photos.' },
 ];
 
 const PRIVACY: Feature[] = [
   { title: 'Everything happens on your iPhone or iPad.', body: 'The speech models are built into the app, so captions work in airplane mode.' },
   { title: 'No account. No ads. No tracking.', body: 'The app never connects to the internet.' },
-  { title: 'No audio is saved.', body: 'Sound is turned into captions as you listen, then gone. Only the words of conversations you keep are saved, on your device.' },
-  { title: 'Your words leave only when you send them:', body: 'when you share or export a conversation, sync it to a notes folder, or turn on iCloud backup to your own iCloud.' },
+  { title: 'No audio is saved.', body: 'The app turns sound into captions as you listen and keeps none of the sound. It saves only the words of conversations you keep, on your device.' },
+  { title: 'Your words leave your device only when you send them.', body: 'That is when you share or export a conversation, sync it to a notes folder, or turn on iCloud backup to your own iCloud.' },
 ];
 
 const QUESTIONS: Feature[] = [
   { title: 'How accurate are the captions?', body: 'They’re automatic, so they can be wrong, especially with background noise, accents, people talking over each other, and names. Please don’t rely on them for emergencies, or for medical, legal or safety decisions. Stan Scribe is not a medical device and doesn’t replace a professional interpreter or captioner.' },
-  { title: 'What do I need?', body: 'An iPhone or iPad with iOS 18 or later. No internet and no account.' },
+  { title: 'What do I need?', body: 'An iPhone or iPad with iOS 18 or later. You don’t need the internet or an account.' },
   { title: 'Where are my conversations kept?', body: 'On your device, until you delete them: delete a conversation or a voice in the app, or delete the app to remove everything it kept. If you turn on iCloud backup, a copy of the text goes to your own iCloud. I can’t see it.' },
   { title: 'Which languages does it caption?', body: `${LANGUAGES.slice(0, -1).join(', ')} and ${LANGUAGES[LANGUAGES.length - 1]}. Choose one in Settings, or leave it on Auto.` },
 ];
@@ -118,8 +119,9 @@ export default function StanScribePage() {
             </h1>
             <p className={cn(TYPE.title, 'mt-3')}>Live captions for every voice.</p>
             <p className={cn(TYPE.lead, INTRO)}>
-              Put your iPhone on the table and tap Start. The words appear as people talk: big, clear, and in a different
-              color for each person. It all happens on your iPhone or iPad, with no internet and no account.
+              Put your iPhone on the table and tap Start. As people talk, their words appear in large text, with a
+              different color for each person. Everything runs on your iPhone or iPad. It needs no internet and no
+              account.
             </p>
             <div className="mx-auto mt-10 grid max-w-160 gap-x-10 gap-y-8 sm:grid-cols-2">
               <DownloadBlock app="scribe" />
@@ -143,7 +145,7 @@ export default function StanScribePage() {
                 {paragraph}
               </p>
             ))}
-            <p className={cn(TYPE.lead, 'pt-1 text-ink-strong')}>— Devin</p>
+            <p className={cn(TYPE.lead, 'pt-1 text-ink-strong')}>Devin</p>
           </div>
         </Section>
 
@@ -174,7 +176,7 @@ export default function StanScribePage() {
           <PhoneShot image={SHOTS.paintedThemes} className="mx-auto mt-16 max-w-3xl" />
         </Section>
 
-        <Section id="privacy" title="Private by design">
+        <Section id="privacy" title="Privacy">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-16">
             <div>
               <ul role="list" className="space-y-6">

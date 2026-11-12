@@ -298,7 +298,7 @@ export const TOOLS: Tool[] = [
     title: 'Stan Scribe',
     meta: 'iPhone and iPad',
     summary: 'Live captions in color, built for my grandpa, who is hard of hearing, and for anyone who needs them.',
-    content: ['My grandpa Stan is hard of hearing. Live captions changed the conversations my family could have with him, but the apps we found all charged a monthly fee. So I used AI to build one that reaches as many people as possible: live captions in color, a free edition, and no subscription.'],
+    content: ['My grandpa Stan is hard of hearing. With live captions at dinner he could keep up and answer, but the app my parents found charged a monthly fee and needed the internet. So I used AI to build one that works offline and costs as little as I could manage: a free edition, and a full one you pay for once.'],
     glyph: { kind: 'captions' },
     readout: { label: 'App', value: 'Stan Scribe, on its own site' },
     href: pageHref('scribe'),

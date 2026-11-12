@@ -137,7 +137,7 @@ export const SOCIAL_IMAGE = {
 
 /** The /stanscribe-light/ page's intro. */
 export const LIGHT_SUMMARY =
-  'Stan Scribe Light has the same live captions, speaker colors and voices it knows, in a simpler package: one speech model, a black or a white page, and calm motion, so it is a smaller download. Want plain captions? Turn speaker colors off.';
+  'Stan Scribe Light has the same live captions and speaker colors as Stan Scribe, and you can teach it the voices of the people you talk with. It is simpler: one speech model, a black or a white page, and calm motion. That also makes it a smaller download. If you want plain captions, turn speaker colors off.';
 
 /** Above the comparison table, which lists only the differences. */
 export const BOTH_APPS_SHARE =

@@ -39,7 +39,7 @@ describe('lib/stanscribe', () => {
 });
 
 describe('findCopyViolations', () => {
-  test.each(['Built on Whisper.', 'Only $4.99.', 'Fast transcription.', 'Leave a tip.', 'Monthly subscription.'])(
+  test.each(['Built on Whisper.', 'Only $4.99.', 'Fast transcription.', 'Leave a tip.', 'Monthly subscription.', 'Thanks — Devin'])(
     'flags %p',
     (text) => expect(findCopyViolations(text)).not.toEqual([]),
   );
