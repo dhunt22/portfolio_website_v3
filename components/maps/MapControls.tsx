@@ -1,11 +1,20 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/maps/MapControls.tsx
-// DS-restyled legend + percentile/type/view toolbar overlaid on the map edge
+// Legend + percentile/type/view toolbar floating on the map edge, in the site's type roles (DESIGN.md ›
+// Elevation: map controls float, so they alone carry the float shadow; square, no outlines).
 
 'use client';
 
 import React from 'react';
 import type { PercentileThreshold, FacilityType } from '@/hooks/usePrisonMap';
+import { SITE_TYPE } from '@/components/site/type';
+import { cn } from '@/lib/utils';
+
+/** DESIGN.md › Elevation & Depth: the one shadow, for things that truly float. */
+const FLOAT = 'shadow-[0_1px_2px_rgba(13,17,20,0.08),0_8px_24px_rgba(13,17,20,0.12)]';
+/** A control in label type: muted until pointed at; pressed fills with ink like the primary button. */
+const CONTROL = cn(SITE_TYPE.label, 'px-2.5 py-1 font-medium transition-colors duration-150 hover:text-ink-strong');
+const PRESSED_FILL = 'bg-ink-strong text-background hover:text-background';
 
 // Define types locally to avoid circular imports
 type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
@@ -112,16 +121,16 @@ const MapControls: React.FC<MapControlsProps> = ({
 
   return (
     <>
-      {/* ── Toolbar row: compact control group at the bottom-left of the map ── */}
-      {/* color-mix gives a real translucent fill: bg-card/80 is dead on a hex token
-          (--surface-card has no <alpha-value> slot), so the bar would otherwise be
-          fill-less and the controls would float, unreadable, over the bare basemap. */}
-      <div className="absolute bottom-2 left-2 right-2 sm:right-auto z-30 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 px-3 py-1.5 rounded border border-border bg-[color-mix(in_srgb,var(--surface-card)_88%,transparent)] backdrop-blur-sm">
+      {/* ── Toolbar row: compact control group at the bottom-left of the map. It leaves the map's
+            attribution readable: on phones it stops short of the attribution button in the corner;
+            wider, it sits above the one-line attribution. ── */}
+      {/* A solid fill: anything translucent lets map labels and the attribution ghost through the controls. */}
+      <div className={cn('absolute bottom-2 left-2 right-12 sm:bottom-9 sm:right-auto z-30 flex flex-wrap items-center gap-x-4 gap-y-1 bg-card px-2 py-1.5', FLOAT)}>
         {/* Percentile segmented control (desktop+) — plain buttons with aria-pressed.
             Hidden below `sm`, where the collapsing disclosure below takes over. */}
         <div
           aria-label="Percentile threshold"
-          className="hidden sm:flex items-center rounded border border-border overflow-hidden"
+          className="hidden sm:flex items-center"
         >
           {PERCENTILE_OPTIONS.map((opt) => {
             const isSelected = percentileThreshold === opt.value;
@@ -131,12 +140,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                 type="button"
                 aria-pressed={isSelected}
                 onClick={() => handlePercentileChange(opt.value)}
-                className={[
-                  'px-2.5 py-1 text-xs font-sans font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                  isSelected
-                    ? 'bg-ink-strong text-card'
-                    : 'text-ink-muted hover:text-ink-strong hover:bg-card',
-                ].join(' ')}
+                className={cn(CONTROL, isSelected && PRESSED_FILL)}
               >
                 {opt.label}
               </button>
@@ -156,11 +160,11 @@ const MapControls: React.FC<MapControlsProps> = ({
             {...(percentileMenuOpen ? { 'aria-controls': 'percentile-menu-stack' } : {})}
             aria-label={`Percentile threshold, currently ${currentPercentileLabel}`}
             onClick={() => setPercentileMenuOpen((open) => !open)}
-            // Transparent over the filled toolbar bar (matches the sibling toggles); the bar's
-            // color-mix surface gives the trigger's state text its contrast floor over the map.
-            className="flex items-center gap-1.5 min-h-[44px] px-2.5 py-1 text-xs font-sans font-medium rounded border border-border text-ink-muted hover:text-ink-strong hover:bg-card transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            // Transparent over the toolbar (matches the sibling toggles); the toolbar's solid fill gives
+            // the trigger's state text its contrast floor over the map.
+            className={cn(CONTROL, 'flex min-h-[44px] items-center gap-1.5 px-1')}
           >
-            <span className="text-ink-muted">Percentile:</span>
+            <span>Percentile:</span>
             <span className="text-ink-strong">{currentPercentileLabel}</span>
             <svg
               className={['w-3 h-3 transition-transform', percentileMenuOpen ? 'rotate-180' : ''].join(' ')}
@@ -180,11 +184,8 @@ const MapControls: React.FC<MapControlsProps> = ({
               id="percentile-menu-stack"
               role="group"
               aria-label="Percentile threshold"
-              // Solid bg-card (not bg-card/95): --surface-card is a hex, so Tailwind's
-              // /opacity modifier compiles to an invalid color → a transparent panel the
-              // busy map bleeds through. The legend's .panel uses the same solid fill; the
-              // border defines the edge and the shadow adds a light lift over the map.
-              className="absolute bottom-full left-0 mb-1 z-30 flex flex-col w-36 rounded border border-border bg-card shadow-xl overflow-hidden animate-rise"
+              // Solid bg-card, so the busy map does not show through. A dropdown floats, so it takes the float shadow.
+              className={cn('absolute bottom-full left-0 mb-1 z-30 flex w-36 flex-col bg-card', FLOAT)}
             >
               {PERCENTILE_OPTIONS.map((opt) => {
                 const isSelected = percentileThreshold === opt.value;
@@ -198,12 +199,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                       setPercentileMenuOpen(false);
                       triggerRef.current?.focus();
                     }}
-                    className={[
-                      'w-full min-h-[44px] px-3 py-2.5 text-sm font-sans font-medium text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                      isSelected
-                        ? 'bg-ink-strong text-card'
-                        : 'text-ink-muted hover:text-ink-strong hover:bg-card',
-                    ].join(' ')}
+                    className={cn(CONTROL, 'min-h-[44px] w-full px-3 py-2.5 text-left', isSelected && PRESSED_FILL)}
                   >
                     {opt.label}
                   </button>
@@ -213,11 +209,8 @@ const MapControls: React.FC<MapControlsProps> = ({
           )}
         </div>
 
-        {/* Divider */}
-        <span className="hidden sm:inline-block h-4 w-px bg-border" aria-hidden />
-
-        {/* Facility type toggles */}
-        <div className="flex items-center gap-1.5" aria-label="Facility type filter">
+        {/* Facility type toggles (groups are set apart by space, not divider rules) */}
+        <div className="flex items-center gap-1" aria-label="Facility type filter">
           {FACILITY_TYPES.map((ft) => {
             const isActive = facilityTypes.includes(ft.value);
             return (
@@ -226,21 +219,13 @@ const MapControls: React.FC<MapControlsProps> = ({
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => handleTypeToggle(ft.value)}
-                className={[
-                  'px-2.5 py-1 text-xs font-sans font-medium rounded border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                  isActive
-                    ? 'bg-ink-strong text-card border-ink-strong'
-                    : 'text-ink-muted border-border hover:text-ink-strong hover:bg-card',
-                ].join(' ')}
+                className={cn(CONTROL, isActive && PRESSED_FILL)}
               >
                 {ft.label}
               </button>
             );
           })}
         </div>
-
-        {/* Divider */}
-        <span className="hidden sm:inline-block h-4 w-px bg-border" aria-hidden />
 
         {/* Reset view button */}
         {onResetView && (
@@ -249,7 +234,7 @@ const MapControls: React.FC<MapControlsProps> = ({
             onClick={onResetView}
             title="Reset map view to US extent"
             aria-label="Reset map view"
-            className="flex items-center gap-1 px-2.5 py-1 text-xs font-sans font-medium text-ink-muted rounded border border-border hover:text-ink-strong hover:bg-card transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className={cn(CONTROL, 'flex items-center gap-1.5')}
           >
             {/* Home/reset icon */}
             <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -263,14 +248,14 @@ const MapControls: React.FC<MapControlsProps> = ({
       {/* ── Legend: overlaid top-right, collapsible ── */}
       <div className="absolute top-2 right-14 z-40 flex flex-col items-end gap-1 control-panel">
         {showCategoryPanel ? (
-          <div className="panel p-3 w-44">
-            <div className="flex items-center justify-between mb-2">
-              <span className="eyebrow">
+          <div className={cn('w-48 bg-card p-3', FLOAT)}>
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className={cn(SITE_TYPE.label, 'font-medium text-ink-strong')}>
                 {hideRiskSelector && componentName ? componentName : 'Risk Score'}
               </span>
               <button
                 onClick={() => setShowCategoryPanel(false)}
-                className="text-ink-faint hover:text-ink-muted transition-colors p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="p-1 text-ink-muted transition-colors hover:text-ink-strong"
                 title="Collapse legend"
                 aria-label="Collapse legend"
               >
@@ -279,25 +264,25 @@ const MapControls: React.FC<MapControlsProps> = ({
                 </svg>
               </button>
             </div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="font-mono text-xs text-ink-faint">Low</span>
-              <span className="font-mono text-xs text-ink-faint">High</span>
+            <div className={cn(SITE_TYPE.label, 'mb-1 flex items-center justify-between')}>
+              <span>Low</span>
+              <span>High</span>
             </div>
             {hideRiskSelector && componentName && componentColor ? (
               <div
-                className="h-2.5 w-full rounded-sm"
+                className="h-2.5 w-full"
                 style={{
                   background: `linear-gradient(to right, #ffffff, ${componentColor}40, ${componentColor}80, ${componentColor}cc, ${componentColor})`
                 }}
               />
             ) : (
-              <div className="h-2.5 w-full rounded-sm bg-gradient-to-r from-[#2ecc71] via-[#f1c40f] to-[#e74c3c]" />
+              <div className="h-2.5 w-full bg-linear-to-r from-[#2ecc71] via-[#f1c40f] to-[#e74c3c]" />
             )}
           </div>
         ) : (
           <button
             onClick={() => setShowCategoryPanel(true)}
-            className="p-1.5 text-ink-muted hover:text-ink-strong border border-border rounded bg-card transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className={cn('bg-card p-2 text-ink-muted transition-colors hover:text-ink-strong', FLOAT)}
             title="Show legend"
             aria-label="Show legend"
           >

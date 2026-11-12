@@ -3,15 +3,15 @@
 // Custom hook for prison map functionality
 
 import { useEffect, useRef, useState } from 'react';
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
 import {
   PrisonFeature,
   createRiskColorScale,
   createEnhancedColorScale,
-  createDynamicPaintProperties,
   applyFilterToLayers,
   updateLayerPaintProperty,
   updateLayerPaintPropertiesBatch,
+  type PaintUpdate,
 } from '@/lib/maps/mapUtils';
 import {
   buildCombinedFilter,
@@ -29,7 +29,7 @@ export type { PercentileThreshold, FacilityType };
 type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
 
 export const usePrisonMap = (
-  map: React.MutableRefObject<maplibregl.Map | null>,
+  map: React.RefObject<maplibregl.Map | null>,
   projectId: string,
   selectedComponent?: string,
   componentColor?: string,
@@ -88,11 +88,9 @@ export const usePrisonMap = (
     const colorScale = componentId && compColor ?
       createEnhancedColorScale(componentId, compColor) :
       createRiskColorScale(selectedAttribute);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _dynamicProperties = createDynamicPaintProperties(selectedAttribute);
 
     // Use batch update for better consistency
-    const updates = [
+    const updates: PaintUpdate[] = [
       { layerId: `${layerPrefix}-polygons`, property: "fill-color", value: colorScale },
       { layerId: `${layerPrefix}-polygons-highlight`, property: "fill-color", value: colorScale },
       { layerId: `${layerPrefix}-centroids`, property: "circle-color", value: colorScale }
@@ -136,7 +134,6 @@ export const usePrisonMap = (
     return () => {
       m.off('idle', onIdle);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [percentileThreshold, facilityTypes, selectedAttribute, allPrisonData, projectId, selectedComponent, componentColor]);
 
   return {

@@ -59,7 +59,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
  */
 function DefaultErrorFallback({ error, retry }: { error: Error | null; retry: () => void }) {
   return (
-    <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[400px]">
+    <div className="mx-auto max-w-[1400px] px-4 py-8 flex items-center justify-center min-h-[400px]">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-red-600">Something went wrong</CardTitle>
@@ -78,13 +78,12 @@ function DefaultErrorFallback({ error, retry }: { error: Error | null; retry: ()
             </details>
           )}
           <div className="flex gap-2">
-            <Button onClick={retry} className="bg-river-600 hover:bg-river-700">
+            <Button onClick={retry}>
               Try again
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => window.location.href = '/'}
-              className="border-forest-600 text-forest-600 hover:bg-forest-50"
             >
               Go home
             </Button>

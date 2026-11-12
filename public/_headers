@@ -4,3 +4,8 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://*.openfreemap.org; img-src 'self' data: blob: https://*.openfreemap.org; font-src 'self'; connect-src 'self' https://*.openfreemap.org; frame-src 'self'; worker-src 'self' blob:; manifest-src 'self'
+
+# MapLibre 6 loads its map worker as an ES module (_next/static/media/maplibre-gl-worker.*.mjs). With nosniff,
+# a module only runs if it is served as JavaScript, so say so rather than rely on the host's MIME table.
+/_next/static/media/*.mjs
+  Content-Type: text/javascript; charset=utf-8

@@ -2,7 +2,7 @@
 // lib/maps/layerSetup.ts
 // Layer setup utilities for different map types
 
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
 import { MapConfig } from './mapConfigurations';
 import { createRiskColorScale, createEnhancedColorScale, createDynamicPaintProperties, ZOOM_OPACITY_CONFIG, fitMapToGeoJSON } from './mapUtils';
 

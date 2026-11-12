@@ -2,7 +2,12 @@
 // lib/maps/mapUtils.ts
 // Utility functions for map operations
 
-import maplibregl, { MapMouseEvent, MapGeoJSONFeature } from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
+import type { MapMouseEvent, MapGeoJSONFeature } from 'maplibre-gl';
+
+/** A paint property MapLibre accepts ('fill-color', 'circle-color', ...), from its own setPaintProperty. */
+export type PaintName = Parameters<maplibregl.Map['setPaintProperty']>[1];
+export interface PaintUpdate { layerId: string; property: PaintName; value: any }
 import { COMPONENT_FILTER_COLUMNS } from './filterUtils';
 
 export interface PrisonFeatureProperties {
@@ -361,7 +366,7 @@ export function applyFilterToLayers(map: maplibregl.Map, layerIds: string[], fil
 // Enhanced layer update function that ensures immediate visual updates
 export function updateLayerPaintPropertiesBatch(
   map: maplibregl.Map, 
-  updates: Array<{layerId: string; property: string; value: any}>,
+  updates: PaintUpdate[],
   forceRepaint: boolean = true
 ): void {
   // Apply all paint property updates first
@@ -388,7 +393,7 @@ export function updateLayerPaintPropertiesBatch(
   }
 }
 
-export function updateLayerPaintProperty(map: maplibregl.Map, layerId: string, property: string, value: any): void {
+export function updateLayerPaintProperty(map: maplibregl.Map, layerId: string, property: PaintName, value: any): void {
   if (map.getLayer(layerId)) {
     try {
       console.log(`Updating ${layerId} ${property}`);

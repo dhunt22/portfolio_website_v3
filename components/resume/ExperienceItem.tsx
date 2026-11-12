@@ -3,6 +3,8 @@
 // Documenting experience like a hydrologist documents water flow - in meticulous detail!
 
 import React from 'react';
+import { SITE_TYPE } from '@/components/site/type';
+import { cn } from '@/lib/utils';
 
 /**
  * ExperienceItem props interface
@@ -31,15 +33,13 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
   responsibilities,
 }) => {
   return (
-    <div className="resume-item mb-10 last:mb-0">
-      <h3 className="font-display text-xl text-ink-strong">{title}</h3>
-      <p className="mt-1 text-sm text-ink-body">
-        <span className="font-medium">{company}</span>
-        <span className="text-ink-muted"> · {period}</span>
-      </p>
-      <ul className="mt-3 list-disc space-y-1 pl-5 leading-relaxed text-ink-body marker:text-eyebrow">
+    <div className="resume-item grid grid-cols-1 gap-x-6 gap-y-1 border-0 py-6 first:pt-0 min-[861px]:grid-cols-[minmax(0,1fr)_auto]">
+      <h3 className={SITE_TYPE.title}>{title}</h3>
+      <p className={cn(SITE_TYPE.label, 'min-[861px]:col-start-2 min-[861px]:row-start-1 min-[861px]:whitespace-nowrap min-[861px]:pt-1.5')}>{period}</p>
+      <p className={cn(SITE_TYPE.body, 'text-ink-muted')}>{company}</p>
+      <ul className="col-span-full mt-3 grid max-w-[70ch] list-disc gap-2 pl-5">
         {responsibilities.map((responsibility, index) => (
-          <li key={index}>{responsibility}</li>
+          <li key={index} className={SITE_TYPE.body}>{responsibility}</li>
         ))}
       </ul>
     </div>

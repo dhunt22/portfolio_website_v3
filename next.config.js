@@ -10,7 +10,6 @@ const nextConfig = {
   // Disable image optimization for static export
   images: {
     unoptimized: true,
-    domains: ['placeholder.com'], // Add any external image domains here
   },
   
   // Enable strict mode for better development experience
@@ -18,9 +17,6 @@ const nextConfig = {
   
   // Netlify handles trailing slashes correctly
   trailingSlash: false,
-  
-  // Enable transpilePackages if needed
-  transpilePackages: ['maplibre-gl'],
   
   // Note: headers() function is not compatible with static export
   // CORS headers should be handled by Netlify via _headers file in public directory

@@ -3,6 +3,8 @@
 // Displaying skills like tributaries flowing into a main river - each one contributes to the whole!
 
 import React from 'react';
+import { SITE_TYPE } from '@/components/site/type';
+import { cn } from '@/lib/utils';
 
 /**
  * SkillsList props interface
@@ -20,7 +22,7 @@ interface SkillsListProps {
  */
 const SkillsList: React.FC<SkillsListProps> = ({ skills }) => {
   return (
-    <ul className="list-disc pl-5 leading-relaxed text-ink-body marker:text-eyebrow sm:columns-2 sm:gap-x-10 [&>li]:mb-1 [&>li]:break-inside-avoid">
+    <ul className={cn(SITE_TYPE.body, 'list-disc pl-5 sm:columns-2 sm:gap-x-10 [&>li]:mb-1 [&>li]:break-inside-avoid')}>
       {skills.map((skill, index) => (
         <li key={index}>{skill}</li>
       ))}

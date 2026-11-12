@@ -7,7 +7,7 @@
 import './project-map.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import { getMapConfig } from '@/lib/maps/mapConfigurations';
@@ -16,8 +16,12 @@ import { setupPrisonLayers, setupSubbasinLayers, addMapControls } from '@/lib/ma
 import { usePrisonMap } from '@/hooks/usePrisonMap';
 import { useMapPopup } from '@/hooks/useMapPopup';
 import MapControls from '@/components/maps/MapControls';
-import { createEnhancedColorScale, applyFilterToLayers } from '@/lib/maps/mapUtils';
+import { createEnhancedColorScale, applyFilterToLayers, type PaintUpdate } from '@/lib/maps/mapUtils';
 import { resolveActiveColumn, buildCombinedFilter } from '@/hooks/usePrisonMap';
+
+// MapLibre 6 runs its tile work in a module worker that it looks for beside its own file. Once bundled that
+// path no longer exists, so point it at the worker file, which Turbopack emits as a static asset.
+maplibregl.setWorkerUrl(new URL('maplibre-gl/dist/maplibre-gl-worker.mjs', import.meta.url).toString());
 
 interface ProjectMapProps {
   projectId: string;
@@ -194,7 +198,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         map.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   // ── Dark/light basemap theme sync ──────────────────────────────────────────
@@ -258,7 +261,7 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
               applyFilterToLayers(map.current!, PRISON_LAYERS, filterExpr);
 
               // Re-apply paint colors now that layers exist and data is ready
-              const paintUpdates = [
+              const paintUpdates: PaintUpdate[] = [
                 { layerId: `${lp}-polygons`, property: 'fill-color', value: colorScale },
                 { layerId: `${lp}-polygons-highlight`, property: 'fill-color', value: colorScale },
                 { layerId: `${lp}-centroids`, property: 'circle-color', value: colorScale },
@@ -320,14 +323,14 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
 
     applyThemeSwap(resolvedTheme);
   // resolvedTheme is the only trigger; refs track the rest
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedTheme]);
 
   // Re-bind popup handlers when the active indicator changes so popups show the
   // right values. Colors + filters are applied by usePrisonMap's own effect
   // (which queues on 'idle' if the map is busy) — the old pair of effects here
   // gated on isStyleLoaded() and silently DROPPED clicks made while tiles were
-  // still loading. Popup rebinding is idempotent (useMapPopup offs before ons).
+  // still loading. Each rebind adds listeners without removing the old ones; the newest run last, so
+  // popups show the current indicator.
   useEffect(() => {
     if (projectId !== 'prison-ej' || !map.current) return;
     const m = map.current;
@@ -346,7 +349,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
     return () => {
       m.off('idle', rebind);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAttribute, selectedComponent, componentColor, projectId]);
 
   // Close panels when clicking outside

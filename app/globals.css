@@ -1,110 +1,335 @@
 /* Copyright (c) 2025 Devin Hunt contact@devinhunt.com */
 /* app/globals.css */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Tailwind 4. The theme lives here rather than in a JS config; it is `inline` because its colours, fonts
+   and spacing point at runtime variables (--text-strong, --font-site, ...) that .site and .dark remap
+   further down the tree, so utilities must reference those variables directly. */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--surface-page);
+  --color-foreground: var(--text-body);
+
+  --color-card: var(--surface-card);
+  --color-card-foreground: var(--text-body);
+
+  --color-ink-strong: var(--text-strong);
+  --color-ink-body: var(--text-body);
+  --color-ink-muted: var(--text-muted);
+  --color-ink-faint: var(--text-faint);
+
+  --color-link: var(--text-link);
+  --color-link-hover: var(--text-link-hover);
+
+  --color-eyebrow: var(--text-eyebrow);
+
+  --color-accent: var(--brand-accent);
+  --color-accent-foreground: var(--surface-page);
+
+  --color-primary: var(--brand-primary);
+  --color-primary-foreground: var(--surface-page);
+
+  --color-border: var(--border-hairline);
+  --color-input: var(--border-default);
+  --color-ring: var(--ring-focus);
+
+  --color-muted: var(--surface-sunken);
+  --color-muted-foreground: var(--text-muted);
+
+  --color-secondary: var(--surface-sunken);
+  --color-secondary-foreground: var(--text-body);
+
+  --color-destructive: #a8472f;
+  --color-destructive-foreground: #ffffff;
+
+  --color-popover: var(--surface-card);
+  --color-popover-foreground: var(--text-body);
+
+  --color-contour: var(--border-contour);
+
+  --color-site-band: var(--site-band);
+  --color-site-basin: var(--site-basin);
+  --color-site-edge: var(--site-basin-edge);
+  --color-site-worked: var(--site-worked);
+  --color-site-selected: var(--site-selected);
+  --color-site-strip: var(--site-strip);
+  --color-site-strip-ink: var(--site-strip-ink);
+  --color-site-strip-label: var(--site-strip-label);
+
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-display: var(--font-display), Iowan Old Style, Georgia, serif;
+  --font-mono: var(--font-mono), SF Mono, Consolas, monospace;
+  --font-site: var(--font-site), system-ui, sans-serif;
+
+  --text-site-display: clamp(3.5rem, 2rem + 5vw, 6.25rem);
+  --text-site-display--line-height: 0.95;
+  --text-site-display--letter-spacing: -0.035em;
+  --text-site-display--font-weight: 700;
+  --text-site-headline: clamp(1.875rem, 1.5rem + 1.2vw, 2.5rem);
+  --text-site-headline--line-height: 1.1;
+  --text-site-headline--letter-spacing: -0.02em;
+  --text-site-headline--font-weight: 700;
+  --text-site-title: clamp(1.375rem, 1.15rem + 0.8vw, 1.875rem);
+  --text-site-title--line-height: 1.15;
+  --text-site-title--letter-spacing: -0.02em;
+  --text-site-title--font-weight: 600;
+  --text-site-lead: clamp(1.25rem, 1.1rem + 0.45vw, 1.4375rem);
+  --text-site-lead--line-height: 1.45;
+  --text-site-body: 1.0625rem;
+  --text-site-body--line-height: 1.55;
+  --text-site-label: 0.9375rem;
+  --text-site-label--line-height: 1.45;
+
+  --spacing-gutter: clamp(16px, 3vw, 40px);
+  --spacing-frame: max(clamp(16px, 3vw, 40px), calc((100% - 75rem) / 2));
+  --spacing-section: clamp(64px, 9vw, 128px);
+
+  --tracking-caps: 0.14em;
+  --tracking-display: -0.02em;
+  --tracking-mono: 0.02em;
+
+  --leading-tight-display: 1.08;
+
+  --radius-lg: 10px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/* v3 gave buttons a pointer cursor; v4's preflight does not. */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 @layer base {
+  /* What the Stan Scribe pages read: the Working Map's colours (DESIGN.md › Colors), with a white sheet on
+     the cool ground. The type stays theirs; the portfolio's comes with .site below. */
   :root {
-    /* Paper (light) — design_system/tokens/colors.css */
-    --paper-base: #f7f4ec; --paper-raised: #fdfbf6; --paper-sunken: #efe9dc;
-    --surface-page: var(--paper-base);
-    --surface-card: var(--paper-raised);
-    --surface-sunken: var(--paper-sunken);
-    --surface-header: var(--paper-base); /* light: same as page (header is translucent over page) */
-    --text-strong: #122114;        /* forest-950 */
-    --text-body: #3f3a30;          /* stone-800 */
-    --text-muted: #6a624f;         /* stone-600 */
-    --text-faint: #6f6650;         /* darkened from stone-500 #847b64 to clear WCAG AA (4.5:1) on paper */
-    --text-link: #495f74;          /* river-700 */
-    --text-link-hover: #2f3a47;    /* river-900 */
-    --text-eyebrow: #8f5732;       /* earth-700 */
-    --brand-primary: #315a34;      /* forest-700 */
-    --brand-accent: #c08843;       /* earth-500 */
-    --border-hairline: #ddd9cc;    /* stone-200 */
-    --border-default: #c4bda9;     /* stone-300 */
-    --border-contour: rgba(143, 87, 50, 0.35);
-    --ring-focus: #3d733f;         /* forest-600 */
+    --surface-page: #eef1f3;
+    --surface-card: #ffffff;
+    --surface-sunken: #e3e8eb;
+    --surface-header: #eef1f3;
+    --text-strong: #0d1114;
+    --text-body: #0d1114;
+    --text-muted: #4d5962;
+    --text-faint: #4d5962;
+    --text-link: #1c5a85;
+    --text-link-hover: #123d5c;
+    --text-eyebrow: #4d5962;
+    --brand-primary: #0d1114;
+    --brand-accent: #1c5a85;
+    --border-hairline: #cdd6dd;
+    --border-default: #cdd6dd;
+    --border-contour: rgb(28 90 133 / 0.3);
+    --ring-focus: #1c5a85;
   }
   .dark {
-    /* Stone palette — topo-at-dusk (2026-06 brief) */
-    --stone-925: #221f1b; /* new token: interpolated stone-950↔900 for the header layer (2026-06 brief) */
-    --surface-page:   #1a1814; /* stone-950 */
-    --surface-card:   #2b2822; /* stone-900 */
-    --surface-sunken: #15130f; /* derived well — darker than page, stone hue */
-    --surface-header: var(--stone-925); /* stone-925: distinct step between page and card */
-    --text-strong: #f3f1e8;
-    --text-body: #c4bda9;          /* stone-300 — approved DS-6 (deliberate one-step deviation from DS stone-200) */
-    --text-muted: #a39a82;         /* stone-400 */
-    --text-faint: #938a72;         /* lightened from #847b64 to clear WCAG AA (4.5:1) on stone surfaces */
-    --text-link: #b3c2cf;          /* river-300 */
-    --text-link-hover: #d2dbe3;    /* river-200 */
-    --text-eyebrow: #cb9a59;       /* earth-400 */
-    --brand-primary: #57935c;      /* forest-500 */
-    --brand-accent: #cb9a59;
-    --border-hairline: #3a372c;    /* stepped up from #2c2a22 — old value was near-flush with stone-900 card */
-    --border-default: #4a4437;     /* stepped up proportionally */
-    --border-contour: rgba(203, 154, 89, 0.3);
-    --ring-focus: #7bb17f;         /* forest-400 */
+    --surface-page: #111517;
+    --surface-card: #1c2429;
+    --surface-sunken: #0b0e10;
+    --surface-header: #111517;
+    --text-strong: #e9edef;
+    --text-body: #e9edef;
+    --text-muted: #a2adb5;
+    --text-faint: #a2adb5;
+    --text-link: #6fb1de;
+    --text-link-hover: #a9d2ee;
+    --text-eyebrow: #a2adb5;
+    --brand-primary: #e9edef;
+    --brand-accent: #6fb1de;
+    --border-hairline: #3a4851;
+    --border-default: #3a4851;
+    --border-contour: rgb(111 177 222 / 0.3);
+    --ring-focus: #6fb1de;
   }
+
+  /* ── The portfolio system (DESIGN.md, "The Working Map") ─────────────────────
+     Scoped to .site, the wrapper the portfolio pages render in, so the Stan Scribe pages keep their own
+     type. Inside .site the existing semantic tokens are remapped, so every component already built on them
+     (the backdrop's glow strokes in var(--surface-page)) takes the portfolio's tokens and Public Sans. */
+  .site {
+    --site-ground: #eef1f3;
+    --site-band: rgb(238 241 243 / 0.92);
+    --site-basin: #ffffff;
+    --site-basin-edge: #cdd6dd;
+    --site-hover: #e2edf5;
+    --site-worked: #c6dcec;
+    --site-selected: #1c5a85;
+    --site-strip: #0d1114;
+    --site-strip-ink: #e6eaed;
+    --site-strip-label: #9aa7b1;
+    --surface-page: var(--site-ground);
+    --surface-card: var(--site-basin);
+    --surface-sunken: #e3e8eb;
+    --surface-header: var(--site-ground);
+    --text-strong: #0d1114;
+    --text-body: #0d1114;
+    --text-muted: #4d5962;
+    --text-faint: #4d5962;
+    --text-link: #1c5a85;
+    --text-link-hover: #123d5c;
+    --text-eyebrow: #4d5962;
+    --brand-primary: #0d1114;
+    --brand-accent: #1c5a85;
+    --border-hairline: #cdd6dd;
+    --border-default: #cdd6dd;
+    --border-contour: rgb(28 90 133 / 0.3);
+    --ring-focus: #1c5a85;
+    --font-display: var(--font-site);
+    --font-sans: var(--font-site);
+    --font-mono: var(--font-site);
+  }
+  .dark .site {
+    --site-ground: #111517;
+    --site-band: rgb(17 21 23 / 0.9);
+    --site-basin: #1c2429;
+    --site-basin-edge: #3a4851;
+    --site-hover: #243440;
+    --site-worked: #1f3a4f;
+    --site-selected: #6fb1de;
+    --site-strip: #06090b;
+    --surface-sunken: #0b0e10;
+    --text-strong: #e9edef;
+    --text-body: #e9edef;
+    --text-muted: #a2adb5;
+    --text-faint: #a2adb5;
+    --text-link: #6fb1de;
+    --text-link-hover: #a9d2ee;
+    --text-eyebrow: #a2adb5;
+    --brand-primary: #e9edef;
+    --brand-accent: #6fb1de;
+    --border-hairline: #3a4851;
+    --border-default: #3a4851;
+    --border-contour: rgb(111 177 222 / 0.3);
+    --ring-focus: #6fb1de;
+  }
+  html { scrollbar-color: #9aa7b1 #eef1f3; }
+  html.dark { scrollbar-color: #4d5962 #111517; }
   html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
-  :where(a, button, [role="button"]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
+  :where(a, button, summary, [role="button"], [role="region"][tabindex], [role="application"][tabindex]):focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
 }
 
 @layer components {
   .panel { @apply border bg-card p-4 md:p-5; border-color: var(--border-default); }
-  /* Dark: the stone surface steps (page→header→card) carry the layer
-     separation, so panel outlines recede to the hairline (brief: layers
-     read as distinct WITHOUT hard borders). Light is untouched. */
-  .dark .panel { border-color: var(--border-hairline); }
-  .eyebrow { @apply font-sans font-medium text-xs uppercase tracking-caps text-eyebrow; }
-  .eyebrow-mono { @apply font-mono text-xs font-normal uppercase tracking-caps text-eyebrow; }
-  /* Section heading — a real mid-tier between the display h1 and the text-xl
-     subheads, so a section <h2> out-ranks the serif <h3>s beneath it instead of
-     sitting at eyebrow-label weight (which inverted the visual hierarchy). */
-  .section-title { @apply font-display text-2xl tracking-display text-ink-strong; }
-  .display { @apply font-display font-medium tracking-display leading-tight-display text-ink-strong; }
-  .lead { @apply text-lg leading-relaxed text-ink-body; }
-  /* inline-block + py keeps these small-caps links at a ≥24px (WCAG 2.5.8) tap target. */
-  .link-quiet { @apply inline-block py-1.5 font-sans font-medium text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
-  .link-quiet-mono { @apply inline-block py-1.5 font-mono text-xs uppercase tracking-caps text-link underline decoration-1 underline-offset-[0.5em] transition-colors duration-200 hover:text-link-hover; }
+
+  /* A Stan Scribe legal page's words (content/stanscribe-legal/). They arrive with no classes, so the roles in
+     components/stanscribe/type.ts are set here. License text is fine print, in the page's own face. */
+  .legal { @apply text-lg leading-relaxed wrap-break-word text-ink-body; }
+  /* The title role, with a lower floor: "Acknowledgements" is one word and has to fit whole at 320px. */
+  .legal h1 { @apply font-display text-[clamp(1.75rem,8.75vw,2.75rem)] leading-tight font-medium tracking-display text-ink-strong; }
+  .legal h2 { @apply mt-12 font-display text-2xl leading-snug font-medium text-ink-strong; }
+  .legal :is(p, ul, details) { @apply mt-5; }
+  .legal ul { @apply list-disc space-y-2 pl-6; }
+  .legal strong { @apply font-semibold text-ink-strong; }
+  .legal a { @apply text-link-hover underline decoration-1 underline-offset-4 transition-colors hover:text-ink-strong hover:decoration-2; }
+  .legal .muted { @apply text-base text-ink-muted; }
+  .legal details { @apply border-b border-border pb-4; }
+  .legal summary { @apply cursor-pointer py-1 font-semibold text-ink-strong; }
+  .legal pre { @apply mt-3 font-sans text-base leading-relaxed whitespace-pre-wrap text-ink-muted; }
+
+  /* The wrapper: a stacking context so the fixed contour plate paints above its ground, below content. */
+  .site { isolation: isolate; display: flex; flex: 1 1 auto; min-height: 100svh; flex-direction: column; background: var(--surface-page); color: var(--text-body); font-family: var(--font-site), system-ui, sans-serif; }
+  /* Headings and names balance their lines; paragraphs avoid a one-word last line (as the C3 prototype did). */
+  .site :is(h1, h2, h3, h4, .entry-name) { text-wrap: balance; }
+  .site p { text-wrap: pretty; }
+  /* The Band Rule: below the first screen, content sits on a near-opaque full-width band. */
+  .site .band { background: var(--site-band); padding-block: clamp(64px, 9vw, 128px); }
+  .site .band + .band { padding-top: 0; }
+  /* The Label Halo Rule: a ground-coloured halo for text over contours (hero only). */
+  .site .halo { text-shadow: 0 0 3px var(--surface-page), 0 0 10px var(--surface-page); }
+  /* The clearing: contours fade out behind the hero words, as a map clears lines behind a label. The words
+     are set left, so the clearing sits left and the contours run at full strength to their right. */
+  .site [data-contour-plate] {
+    -webkit-mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
+            mask-image: radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%);
+  }
+  /* Below 380px a display word wider than the viewport ("Environmental" at 56px is ~362px plus the gutter)
+     hyphenates instead of pushing the page sideways; only words of 12+ letters break, and where a browser has
+     no hyphenation dictionary the word still wraps rather than overflowing. */
+  @media (max-width: 380px) {
+    .site h1 { -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 12 6 6; overflow-wrap: anywhere; }
+  }
+  @media (max-width: 860px) {
+    .site [data-contour-plate] {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0 34%, #000 62%);
+              mask-image: linear-gradient(to bottom, transparent 0 34%, #000 62%);
+    }
+  }
+
+  /* Glyphs (DESIGN.md › Glyphs). Tones are set per part by components/site/Glyph.tsx. */
+  .glyph { display: block; overflow: visible; }
+  .glyph .g-fill { fill: var(--site-worked); transition: fill 150ms; }
+  .glyph .g-zone { fill: var(--site-selected); fill-opacity: 0.4; }
+  .glyph .g-strong { fill: var(--site-selected); fill-opacity: 0.9; }
+  .glyph :is(.g-fill, .g-zone, .g-strong, .g-line) { stroke: var(--text-strong); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
+  .glyph .g-line { fill: none; }
+  .glyph :is(.g-thin, .g-ghost) { fill: none; stroke: var(--text-muted); stroke-width: 0.75; vector-effect: non-scaling-stroke; }
+  .glyph .g-dot { fill: var(--text-strong); transition: fill 200ms; }
+  .glyph .g-accent { fill: var(--site-selected); }
+  .glyph-dense .g-fill { stroke-width: 0.5; }
+  /* A glyph's host (an entry or a link) lights the glyph and underlines its name when pointed at. */
+  .glyph-host:is(:hover, :focus-visible) .glyph .g-fill { fill: var(--site-selected); fill-opacity: 0.45; }
+  .glyph-host:is(:hover, :focus-visible) .entry-name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.18em; }
+  .lead-figure:is(:hover, :focus-visible) .glyph .g-dot { fill: var(--site-selected); }
+
+  /* The résumé's watershed map (DESIGN.md › Watershed map). */
+  .site path.basin { fill: var(--site-basin); fill-opacity: 0.94; stroke: var(--site-basin-edge); stroke-width: 0.6; vector-effect: non-scaling-stroke; transition: fill 120ms; }
+  .site path.basin-worked { fill: var(--site-worked); fill-opacity: 1; }
+  .site path.basin:hover { fill: var(--site-hover); fill-opacity: 1; }
+  .site path.basin-selected { fill: var(--site-selected); fill-opacity: 0.45; stroke: var(--site-selected); }
+  .site .pin { cursor: pointer; outline: none; }
+  .site .pin circle { fill: var(--text-strong); stroke: var(--surface-page); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  .site .pin-home { cursor: default; }
+  .site .pin-home circle { fill: var(--surface-page); stroke: var(--text-strong); }
+  .site .pin-selected circle { fill: var(--site-selected); }
+  .site .pin .pin-ring { fill: none; stroke: none; }
+  .site .pin:focus-visible .pin-ring { stroke: var(--ring-focus); stroke-width: 2; }
+  .site .pin text { font-family: var(--font-site), system-ui, sans-serif; font-weight: 600; fill: var(--text-strong); paint-order: stroke; stroke: var(--surface-page); stroke-linejoin: round; }
 }
 
-/* Focus visible improvements */
-.focus-ring {
-  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
-}
+/* Overscroll and the area outside the wrapper match the portfolio ground, and the focus ring is Water Blue
+   for the whole page. Outside the layers so it beats the root layout's bg-background utility on <body>. */
+body:has(.site) { background-color: #eef1f3; --ring-focus: #1c5a85; }
+.dark body:has(.site) { background-color: #111517; --ring-focus: #6fb1de; }
 
-/* Improved scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-stone-100;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-stone-300 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-stone-400;
-}
-
-/* Dark theme scrollbar */
-.dark ::-webkit-scrollbar-track {
-  @apply bg-stone-900;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  @apply bg-stone-700;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  @apply bg-stone-600;
-}
+/* MapLibre overrides stay outside the layers: maplibre-gl.css is unlayered, and in Tailwind 4's cascade
+   layers anything unlayered beats a layered rule whatever its specificity. */
+/* MapLibre's own buttons take the site's focus ring instead of their blue glow. The map surface sits in a
+   clipping frame, so its ring is drawn just inside the edge, where it can be seen. */
+.site .maplibregl-map .maplibregl-ctrl button:focus { box-shadow: none; }
+.site .maplibregl-map .maplibregl-ctrl button:focus-visible { outline: 2px solid var(--ring-focus); outline-offset: 3px; }
+.site :is([role="application"], .maplibregl-canvas):focus-visible { outline-offset: -4px; }
+/* MapLibre's chrome on the site system: Public Sans, square, and the float shadow for its control group.
+   The attribution keeps MapLibre's own compact size but sits on a near-opaque light label with ink text
+   in both themes (inside .site it inherited the night ink and fell to 2.9:1 on the dark basemap). */
+.site .maplibregl-map { font-family: var(--font-site), system-ui, sans-serif; }
+.site .maplibregl-map .maplibregl-ctrl-group:not(:empty) { border-radius: 0; box-shadow: 0 1px 2px rgba(13, 17, 20, 0.08), 0 8px 24px rgba(13, 17, 20, 0.12); }
+.site .maplibregl-map .maplibregl-ctrl-group button, .site .maplibregl-map .maplibregl-ctrl-group button:focus { border-radius: 0; }
+.site .maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-attrib { background-color: rgb(255 255 255 / 0.88); color: #0d1114; }
+.site .maplibregl-map .maplibregl-ctrl-attrib.maplibregl-compact { border-radius: 0; }
+.site .maplibregl-map .maplibregl-ctrl-attrib a { color: #1c5a85; }
 
 /* Hero load-in: hide children until GSAP runs (no-FOUC + no-JS-safe).
    The `html.js` class is set by an inline script in <head> before first paint.
@@ -134,10 +359,6 @@ html.js [data-contour-plate][data-plate-ready='true'] {
   opacity: 1;
 }
 
-/* Hide scrollbar for mobile chip rail while preserving scroll */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -164,4 +385,13 @@ html.js [data-contour-plate][data-plate-ready='true'] {
   [data-contour-plate] { display: none !important; }
   .panel { border: none !important; padding: 0 !important; }
   .resume-item { break-inside: avoid; }
+  .site, .dark .site {
+    --surface-page: #ffffff; --surface-card: #ffffff; --site-band: #ffffff;
+    --text-strong: #111111; --text-body: #222222; --text-muted: #444444;
+    --surface-sunken: #ffffff; --text-faint: #555555; --text-eyebrow: #555555;
+    --text-link: #1c5a85; --text-link-hover: #123d5c;
+    --border-hairline: #cccccc; --border-default: #bbbbbb;
+    --site-basin: #ffffff; --site-basin-edge: #cccccc;
+    --site-worked: #e6eef4; --site-selected: #1c5a85;
+  }
 }

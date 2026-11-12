@@ -4,8 +4,10 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type JSX } from 'react';
 import LazyProjectMap from '@/components/portfolio/LazyProjectMap';
+import { SITE_LINK, SITE_TYPE } from '@/components/site/type';
+import { cn } from '@/lib/utils';
 
 // Individual component types
 type ComponentType = 'overall' | 'heat' | 'canopy' | 'wildfire' | 'flood' | 'ozone' | 'pm25' | 'pesticide' | 'traffic' | 'superfund' | 'rmp' | 'hazwaste';
@@ -185,6 +187,10 @@ const tabs: { value: TabType; label: string }[] = [
   { value: 'overall', label: 'Overall' },
 ];
 
+// A pressed control reads like the portfolio's filters: ink, semibold, underlined 2px. The indicator's own
+// map colour carries the underline, so the selection points at the ramp it draws (DESIGN.md › Data colours).
+const PRESSED = 'aria-pressed:font-semibold aria-pressed:text-ink-strong aria-pressed:underline aria-pressed:decoration-2 aria-pressed:underline-offset-[0.35em]';
+
 // ── Indicator button component ──────────────────────────────────────────────
 interface IndicatorButtonProps {
   component: ComponentConfig;
@@ -200,35 +206,21 @@ function IndicatorButton({ component, isActive, onClick }: IndicatorButtonProps)
         onClick={() => onClick(component.id)}
         aria-label={`View ${component.name} on map`}
         aria-pressed={isActive}
-        style={isActive ? { borderLeftColor: component.color } : undefined}
-        className={[
-          // Full-width row, left color rule (3px) when active
-          'group relative block w-full text-left',
-          'py-3 pl-4 pr-3',
-          'border-l-[3px] transition-colors duration-150',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
-          // Selected = soft SUNKEN darkening (bg-card is lighter than the page
-          // in light mode, which read as a highlight, not a pressed state).
-          isActive
-            ? 'bg-[var(--surface-sunken)]'
-            : 'border-l-transparent hover:bg-[color-mix(in_srgb,var(--surface-sunken)_55%,transparent)]',
-        ].join(' ')}
+        className="group grid w-full gap-0.5 py-3 text-left"
       >
-        <span className={[
-          'block font-sans font-medium text-sm leading-snug',
-          isActive ? 'text-ink-strong' : 'text-ink-body group-hover:text-ink-strong',
-        ].join(' ')}>
+        <span
+          style={isActive ? { textDecorationColor: component.color } : undefined}
+          className={cn(SITE_TYPE.body, 'font-medium group-hover:text-ink-strong group-aria-pressed:font-semibold group-aria-pressed:text-ink-strong group-aria-pressed:underline group-aria-pressed:decoration-2 group-aria-pressed:underline-offset-[0.25em]')}
+        >
           {component.name}
         </span>
-        <span className="mt-0.5 block font-sans text-xs leading-relaxed text-ink-muted">
-          {component.description}
-        </span>
+        <span className={SITE_TYPE.label}>{component.description}</span>
       </button>
     </li>
   );
 }
 
-// ── Mobile chip component ───────────────────────────────────────────────────
+// ── Mobile indicator button ─────────────────────────────────────────────────
 interface MobileChipProps {
   component: ComponentConfig;
   isActive: boolean;
@@ -242,17 +234,8 @@ function MobileChip({ component, isActive, onClick }: MobileChipProps) {
       onClick={() => onClick(component.id)}
       aria-pressed={isActive}
       aria-label={`View ${component.name} on map`}
-      style={isActive ? { borderColor: component.color, color: component.color } : undefined}
-      className={[
-        'flex-none inline-flex items-center',
-        'h-11 px-3 rounded',
-        'font-sans font-medium text-xs whitespace-nowrap',
-        'border transition-colors duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-        isActive
-          ? 'bg-[var(--surface-sunken)]'
-          : 'border-border text-ink-muted bg-[color-mix(in_srgb,var(--surface-card)_50%,transparent)] hover:text-ink-body hover:bg-[color-mix(in_srgb,var(--surface-sunken)_55%,transparent)]',
-      ].join(' ')}
+      style={isActive ? { textDecorationColor: component.color } : undefined}
+      className={cn(SITE_TYPE.label, 'whitespace-nowrap py-1.5 hover:text-ink-strong', PRESSED)}
     >
       {component.name}
     </button>
@@ -282,75 +265,53 @@ export function IndicatorBrowser(): JSX.Element {
   }, []);
 
   return (
-    <div>
-      {/* ── Desktop tab row (hidden on mobile — mobile uses chip scroll rail) ── */}
+    <div className="max-w-304">
+      {/* ── Desktop category row (phones and tablets use the grouped list below) ── */}
       <nav
         aria-label="Environmental risk indicator categories"
-        className="hidden lg:flex gap-8 mb-8"
+        className="mb-6 hidden gap-x-7 lg:flex"
       >
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.value;
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => handleTabChange(tab.value)}
-              aria-pressed={isActive}
-              className={[
-                'eyebrow whitespace-nowrap px-0 py-1 transition-colors hover:text-ink-strong',
-                isActive
-                  ? 'text-ink-strong underline decoration-eyebrow decoration-2 underline-offset-8'
-                  : '',
-              ].join(' ')}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
+        {tabs.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => handleTabChange(tab.value)}
+            aria-pressed={activeTab === tab.value}
+            className={cn(SITE_TYPE.label, 'whitespace-nowrap py-1.5 hover:text-ink-strong', PRESSED)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </nav>
 
-      {/* ── Mobile chip scroll rail: single row, all indicators + category labels ── */}
-      {/* Hidden on lg+ where the side rail handles selection */}
-      <div className="lg:hidden mb-4 -mx-4 px-4">
-        <div
-          className="flex gap-2 overflow-x-auto pb-2 no-scrollbar"
-          role="group"
-          aria-label="Select an indicator"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          {tabs.map((tab) => (
-            <div key={tab.value} className="flex items-center gap-2 flex-none">
-              {/* Category label chip */}
-              <span className="flex-none inline-flex items-center h-11 px-2 font-sans font-medium text-xs uppercase tracking-caps text-ink-faint whitespace-nowrap">
-                {TAB_LABELS[tab.value]}
-              </span>
-              {/* Indicator chips for this category */}
-              {COMPONENT_CONFIGS.filter(c => c.category === tab.value).map((component) => (
-                <MobileChip
-                  key={component.id}
-                  component={component}
-                  isActive={selectedComponent === component.id}
-                  onClick={handleComponentClick}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+      {/* ── Phones and tablets: every indicator, grouped by category, wrapping (nothing hides past the edge) ── */}
+      <div className="mb-6 grid gap-2 lg:hidden" role="group" aria-label="Select an indicator">
+        {tabs.map((tab) => (
+          <div key={tab.value} className="flex flex-wrap items-baseline gap-x-5">
+            <span className={cn(SITE_TYPE.label, 'font-semibold text-ink-strong')}>{TAB_LABELS[tab.value]}</span>
+            {COMPONENT_CONFIGS.filter(c => c.category === tab.value).map((component) => (
+              <MobileChip
+                key={component.id}
+                component={component}
+                isActive={selectedComponent === component.id}
+                onClick={handleComponentClick}
+              />
+            ))}
+          </div>
+        ))}
       </div>
 
       {/* ── Two-column dashboard at lg — FIXED height so the map never resizes
             when the explanatory text below changes length. The rail scrolls
             internally if a category has more indicators than fit. ── */}
-      <div className="lg:grid lg:h-[40rem] lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-x-10">
+      <div className="lg:grid lg:h-160 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-x-10">
 
-        {/* LEFT: indicator rail — shown only on desktop (mobile uses chips above) */}
+        {/* LEFT: indicator rail — shown only on desktop (the grouped list above serves smaller screens) */}
         <div className="hidden lg:flex lg:h-full lg:min-h-0 lg:flex-col">
-          {/* Category panel label */}
-          <h3 className="mb-3 font-display text-xl text-ink-strong">{TAB_PANEL_LABELS[activeTab]}</h3>
+          <h3 className={cn(SITE_TYPE.body, 'mb-1 font-semibold text-ink-strong')}>{TAB_PANEL_LABELS[activeTab]}</h3>
 
-          {/* Indicator list for active tab (category switching lives in the
-              single top tab row — a second in-rail nav duplicated it) */}
-          <ul className="min-h-0 overflow-y-auto border-t border-border">
+          {/* Indicator list for the active category (category switching lives in the row above) */}
+          <ul className="min-h-0 overflow-y-auto">
             {COMPONENT_CONFIGS.filter(c => c.category === activeTab).map((component) => (
               <IndicatorButton
                 key={component.id}
@@ -363,11 +324,12 @@ export function IndicatorBrowser(): JSX.Element {
         </div>
 
         {/* RIGHT: map — fills the fixed dashboard height */}
-        <div className="mt-4 lg:mt-0 lg:flex lg:h-full lg:flex-col">
-          {/* Mobile indicator title */}
-          <p className="eyebrow mb-3 lg:hidden">{currentComponent.name}</p>
+        <div className="lg:flex lg:h-full lg:flex-col">
+          {/* Phone and tablet indicator title */}
+          <p className={cn(SITE_TYPE.body, 'mb-3 font-semibold text-ink-strong lg:hidden')}>{currentComponent.name}</p>
 
-          <div className="h-[60svh] min-h-[320px] border border-border md:h-[500px] lg:h-full">
+          {/* isolate: the map's floating controls stack inside this frame, never over the sticky strip */}
+          <div className="isolate h-[60svh] min-h-[320px] md:h-[500px] lg:h-full">
             <LazyProjectMap
               projectId="prison-ej"
               selectedComponent={selectedComponent}
@@ -377,24 +339,23 @@ export function IndicatorBrowser(): JSX.Element {
         </div>
       </div>
 
-      {/* Indicator detail: BELOW the dashboard, separated by a hairline so the
-          buttons above read as controls and this reads as explanation. Its
-          length can change freely without touching the map height. */}
-      <div className="mt-8 max-w-[44rem] border-t border-border pt-6">
-          <h3 className="font-display text-xl text-ink-strong">{currentComponent.name}</h3>
-          <p className="mt-2 leading-relaxed text-ink-body">{currentComponent.description}</p>
+      {/* Indicator detail: BELOW the dashboard, set apart by space, so the controls above read as
+          controls and this reads as explanation. Its length can change freely without touching the map. */}
+      <div className="mt-12 max-w-160">
+          <h3 className={SITE_TYPE.title}>{currentComponent.name}</h3>
+          <p className={cn(SITE_TYPE.body, 'mt-2')}>{currentComponent.description}</p>
 
           {currentComponent.detailedDescription && (
             <div className="mt-6">
-              <p className="eyebrow mb-2">Data Source Description</p>
-              <p className="leading-relaxed text-ink-body">{currentComponent.detailedDescription}</p>
+              <h4 className={cn(SITE_TYPE.body, 'mb-1 font-semibold text-ink-strong')}>Data Source Description</h4>
+              <p className={SITE_TYPE.body}>{currentComponent.detailedDescription}</p>
             </div>
           )}
 
           {currentComponent.methodology && (
             <div className="mt-6">
-              <p className="eyebrow mb-2">Processing &amp; Methodology</p>
-              <p className="leading-relaxed text-ink-body">{currentComponent.methodology}</p>
+              <h4 className={cn(SITE_TYPE.body, 'mb-1 font-semibold text-ink-strong')}>Processing &amp; Methodology</h4>
+              <p className={SITE_TYPE.body}>{currentComponent.methodology}</p>
             </div>
           )}
 
@@ -404,7 +365,7 @@ export function IndicatorBrowser(): JSX.Element {
                 href={currentComponent.dataSourceLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-quiet"
+                className={cn(SITE_LINK, 'font-site text-site-body')}
               >
                 Data Source Link
               </a>

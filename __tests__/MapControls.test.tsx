@@ -30,7 +30,6 @@ function renderControls(overrides: Record<string, unknown> = {}) {
     onResetView: jest.fn(),
     ...overrides,
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const view = render(<MapControls {...(props as any)} />);
   return { ...view, props };
 }
@@ -149,4 +148,14 @@ test('reset and facility toggles still render and fire their callbacks', () => {
   // STATE is active by default; toggling it off should drop it from the set.
   fireEvent.click(screen.getByRole('button', { name: 'State' }));
   expect(setFacilityTypes).toHaveBeenCalledWith(['FEDERAL']);
+});
+
+test('the controls use the site type roles: square, no outlines, no mono or tracked capitals', () => {
+  const { container } = renderControls({ showCategoryPanel: true, hideRiskSelector: true, componentName: 'Heat Index', componentColor: '#f97316' });
+  act(() => {
+    fireEvent.click(trigger());
+  });
+  expect(screen.getByText('Heat Index')).toBeInTheDocument();
+  const legacy = '.eyebrow, .panel, .uppercase, .font-mono, .font-sans, .rounded, .rounded-sm, .border, [class*="tracking-"], [class*="text-xs"], [class*="text-sm"], .backdrop-blur-sm';
+  expect(container.querySelector(legacy)).toBeNull();
 });

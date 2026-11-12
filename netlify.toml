@@ -1,12 +1,125 @@
 [build]
-  command = "npm run netlify-build"
+  command = "npm run build"
   publish = "out"
 
 [build.environment]
   NETLIFY_BUILD_BASE_IMAGE = "noble"
+  # Next 16 needs Node 20.9+. Pin the LTS line so the site never builds on whatever version Netlify first
+  # recorded for it.
+  NODE_VERSION = "24"
 
-# Handle SPA routing
+[context.production.environment]
+  NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN = "true"
+
+# No catch-all rewrite to /index.html: every route is a real file in out/, and Netlify answers any other
+# path with out/404.html and a 404 status. A catch-all would show the homepage instead, so a mistyped
+# Stan Scribe link from the App Store would land on the portfolio.
+
+# stanscribe.devinhunt.com is a domain alias of this site, and Stan Scribe's own address. A rule whose `from`
+# names a host applies to that host alone. Netlify takes the first rule that matches, so these come before
+# the rules for every host.
+#
+# Each path is listed: a wildcard would also rewrite /_next/ and /images/, which the pages load from the root.
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "https://stanscribe.devinhunt.com/"
+  to = "/stanscribe/index.html"
   status = 200
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/privacy/"
+  to = "/stanscribe/privacy/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/terms/"
+  to = "/stanscribe/terms/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/acknowledgements/"
+  to = "/stanscribe/acknowledgements/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/light/"
+  to = "/stanscribe-light/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/light/privacy/"
+  to = "/stanscribe-light/privacy/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/light/terms/"
+  to = "/stanscribe-light/terms/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/light/acknowledgements/"
+  to = "/stanscribe-light/acknowledgements/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://devinhunt.com/stanscribe/*"
+  to = "https://stanscribe.devinhunt.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://devinhunt.com/stanscribe-light/*"
+  to = "https://stanscribe.devinhunt.com/light/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/stanscribe/*"
+  to = "https://stanscribe.devinhunt.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/stanscribe-light/*"
+  to = "https://stanscribe.devinhunt.com/light/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/interests/*"
+  to = "https://devinhunt.com/interests/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/portfolio/*"
+  to = "https://devinhunt.com/portfolio/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/resume/*"
+  to = "https://devinhunt.com/resume/:splat"
+  status = 301
+  force = true
+
+# Netlify's pretty URLs would 301 /stanscribe/ to the slashless page, so serve the copies
+# scripts/stanscribe-index.mjs makes.
+[[redirects]]
+  from = "/stanscribe/"
+  to = "/stanscribe/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/stanscribe-light/"
+  to = "/stanscribe-light/index.html"
+  status = 200
+  force = true
