@@ -36,13 +36,11 @@ interface Feature {
   body: string;
 }
 
-// The owner's story, told once, with the details he gave on 2026-11-11. The other app has no name and no
-// price (his call), and its pricing is a "monthly fee", since "subscription" appears only as "no subscription".
 const STORY = [
   'My grandpa Stan is hard of hearing. At the table, the conversation moves faster than he can catch it.',
   'My parents tried a live captions app with him at dinner. He could keep up and answer, instead of pretending he had heard. My parents didn’t have to yell. He got his voice back.',
   'That app worked well, but it charged a monthly fee just to use it, and more money for additional usage. It also needed the internet for its best captions.',
-  'So I used AI to help me build my own. I wanted as many people as possible to have it, at the lowest cost I could manage. Stan Scribe Light is free. The full Stan Scribe is a one-time purchase, with no subscription. Both work with no internet at all.',
+  'So I used AI to help me build my own. I wanted as many people as possible to have it, at the lowest cost I could manage. Stan Scribe Light is free. The full Stan Scribe is a one-time purchase, with no subscription. Both work without the internet.',
   'Stan uses it every day at dinner now. He took it to a doctor’s appointment too, and my mom didn’t have to shout and repeat what the doctor said.',
   'Next I want to add more languages, make the speech models smaller and faster, and build a live translation app the same way. That one is in progress.',
 ];
