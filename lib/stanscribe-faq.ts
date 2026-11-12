@@ -1,10 +1,4 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
-// lib/stanscribe-faq.ts
-// Each Stan Scribe page's questions and answers, approved by the owner on 2026-11-12. The page shows them and
-// its FAQPage structured data repeats them, both from this one list.
-//
-// Every claim is inside the app repo's brief. No answer says how long sound is held in memory: the Privacy
-// Policy sets that figure. No answer names a speech model: the Acknowledgements page credits them.
 
 import { APPS, LANGUAGES, pageHref, type AppKey } from '@/lib/stanscribe';
 
@@ -16,14 +10,13 @@ export interface FaqItem {
   answer: AnswerPart[];
 }
 
-/** An answer as plain text, for structured data. */
 export const answerText = (answer: AnswerPart[]): string => answer.map((part) => (typeof part === 'string' ? part : part.text)).join('');
 
 const ACCURACY = 'How accurate are the captions?';
 const accuracy = (app: AppKey): FaqItem => ({
   question: ACCURACY,
   answer: [
-    'The captions come from open speech models that run on your iPhone or iPad, credited by name on the ',
+    `The captions come from ${app === 'light' ? 'an open speech model that runs' : 'open speech models that run'} on your iPhone or iPad, credited by name on the `,
     { text: 'Acknowledgements page', href: pageHref(app, 'acknowledgements') },
     `. Captions are automatic, so they can be wrong, especially with background noise, accents, people talking over each other, and names. Please don’t rely on them for emergencies, or for medical, legal or safety decisions. ${APPS[app].name} is not a medical device and doesn’t replace a professional interpreter or captioner.`,
   ],

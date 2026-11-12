@@ -27,18 +27,20 @@ const faqOf = (page: HTMLElement) => {
 };
 
 describe.each([
-  ['Stan Scribe', StanScribePage, 15, 'What is Stan Scribe?', '/stanscribe/acknowledgements/'],
-  ['Stan Scribe Light', StanScribeLightPage, 7, 'What is Stan Scribe Light?', '/stanscribe-light/acknowledgements/'],
-] as const)('%s', (name, Page, count, first, credits) => {
+  ['Stan Scribe', StanScribePage, 15, 'What is Stan Scribe?', '/stanscribe/acknowledgements/', /^The captions come from open speech models that run on/],
+  ['Stan Scribe Light', StanScribeLightPage, 7, 'What is Stan Scribe Light?', '/stanscribe-light/acknowledgements/', /^The captions come from an open speech model that runs on/],
+] as const)('%s', (name, Page, count, first, credits, source) => {
   const renderPage = () => render(<Page />).container;
 
-  test('ends on its questions, every answer open, with Help still to be found', () => {
+  test('its questions are the last section but Help, with every answer open', () => {
     const page = renderPage();
     const { section, items } = faqOf(page);
     expect(within(section).getByRole('heading', { level: 2, name: 'Questions and answers' })).toBeInTheDocument();
     expect(items).toHaveLength(count);
     expect(items[0].question).toBe(first);
     expect(section.querySelector('details')).toBeNull();
+    const after = Array.from(page.querySelectorAll('section')).filter((other) => section.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(after.map((other) => other.id).filter((id) => id !== 'help')).toEqual([]);
     expect(page.querySelector('#help')).not.toBeNull();
   });
 
@@ -55,6 +57,7 @@ describe.each([
   test('the accuracy answer keeps "they can be wrong" and credits the speech models without naming them', () => {
     const { items } = faqOf(renderPage());
     const accuracy = items.find(({ question }) => question === 'How accurate are the captions?')!;
+    expect(accuracy.answer).toMatch(source);
     expect(accuracy.answer).toMatch(/they can be wrong/);
     expect(accuracy.answer).toMatch(new RegExp(`${name} is not a medical device`));
     expect(within(accuracy.li).getByRole('link', { name: 'Acknowledgements page' })).toHaveAttribute('href', credits);
@@ -69,7 +72,6 @@ describe.each([
     const { items } = faqOf(renderPage());
     for (const { question, answer } of items) {
       expect(findCopyViolations(`${question} ${answer}`)).toEqual([]);
-      // The Privacy Policy sets that figure and has changed it once already.
       expect(answer).not.toMatch(/seconds|minutes/);
     }
   });

@@ -1,7 +1,4 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
-// components/stanscribe/Faq.tsx
-// A page's questions and answers, every answer open, and the same words again as schema.org FAQPage data for
-// search and answer engines.
 
 import { Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
@@ -27,11 +24,11 @@ export function Faq({ app }: { app: AppKey }) {
           <li key={question}>
             <h3 className={TYPE.heading}>{question}</h3>
             <p className={cn(TYPE.body, 'mt-2')}>
-              {answer.map((part) =>
+              {answer.map((part, index) =>
                 typeof part === 'string' ? (
                   part
                 ) : (
-                  <a key={part.href} href={part.href} className={TYPE.link}>
+                  <a key={index} href={part.href} className={TYPE.link}>
                     {part.text}
                   </a>
                 ),
