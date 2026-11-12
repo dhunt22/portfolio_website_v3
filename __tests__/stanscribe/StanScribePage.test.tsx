@@ -76,10 +76,11 @@ test('the story is told once: the first dinner, a monthly fee, built with AI, wh
   expect(page.querySelector('#behind-the-app')).toBeNull();
 });
 
-test('six features', () => {
+test('six features, the themes one saying why', () => {
   const page = renderPage();
   const features = page.querySelector<HTMLElement>('#features')!;
   expect(within(features).getAllByRole('heading', { level: 3 })).toHaveLength(6);
+  expect(features.textContent).toMatch(/Something you use every day should not look clinical\./);
 });
 
 test('one type scale: no mono, tracked caps or italics', () => {

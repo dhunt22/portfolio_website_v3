@@ -63,3 +63,6 @@ bash.exe.stackdump
 /.tmp_review/
 tmp-*.mjs
 /style-explorations/bigsur_p*.svg
+
+# Plannotator working files (mockups and proposals for the owner to mark up)
+/.superpowers/

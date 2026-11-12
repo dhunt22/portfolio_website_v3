@@ -34,10 +34,11 @@ describe.each([
     expect(metadata.alternates?.canonical).toBe(`${address}${page}/`);
   });
 
-  test.each(PAGES)('%s holds only the words, none of the generated frame', (page) => {
+  test.each(PAGES)('%s holds only the words, none of the generated frame, and names the subdomain', (page) => {
     const words = fs.readFileSync(path.join(process.cwd(), 'content/stanscribe-legal', route, `${page}.html`), 'utf8');
     expect(words).not.toMatch(/<(html|head|body|main|nav|style|script)\b/i);
     expect(words).toMatch(/^<h1>/);
+    expect(words).not.toContain('devinhunt.com/stanscribe');
   });
 });
 
