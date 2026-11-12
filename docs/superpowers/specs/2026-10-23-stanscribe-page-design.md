@@ -203,3 +203,21 @@ TestFlight link them.
 
 The themes feature says why it is there again, in the owner's words for the App Store listing: "Something
 you use every day should not look clinical."
+
+## Bands in place of the sheet (2026-11-12)
+
+The owner found two things hard about reading the pages: sections ran together, and the boxed sheet with
+contours down both sides competed with the words. He chose bands with soft breaks from three options, and
+asked for the blends at half the height shown.
+
+- Every section is a band the full width of the window. `Section` renders one, and the two heroes and the
+  legal page use the same `BAND` padding and `BAND_COLUMN` (64rem) so their words line up.
+- `.bands` in `globals.css` gives the bands two solid tones in turn, the card colour and the page ground,
+  and blends each in from the tone above it over 80px (`--band-blend`). Text clears 7:1 on both tones.
+- The hero is the first band. Contours show at its sides only, with a clearing of the ground colour behind
+  its words. The first band after it starts transparent, so the contours fade out under its top.
+- Help lands on a white band on both pages, where its fine print reads best. A test fails if a new section
+  moves it onto the ground tone.
+- A legal page is one white band (`band-only`). The footer (`band-foot`) blends from white to the ground.
+- The header row is as wide as a band's column, so the name lines up with the words below it.
+- Checked at 320, 390, 768 and 1440 wide in both themes: no sideways scroll.

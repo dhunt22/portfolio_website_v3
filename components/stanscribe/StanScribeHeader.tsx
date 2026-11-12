@@ -19,9 +19,9 @@ export function StanScribeHeader() {
   const current = (page: typeof app) => (main && app === page ? 'page' : undefined);
   const helpHref = main ? '#help' : `${pageHref(app)}#help`;
   return (
-    <header className="px-4 pb-2 pt-4 sm:px-6 md:pt-6">
-      {/* The row is the sheet's width, so the name and the toggle line up with the sheet's edges. */}
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-1">
+    <header className="px-5 pb-2 pt-4 sm:px-10 md:pt-6">
+      {/* The row is as wide as a band's column, so the name and the toggle line up with the words below. */}
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-8 gap-y-1">
         <a href={pageHref('scribe')} aria-current={current('scribe')} className={cn(TYPE.heading, 'py-1 no-underline')}>
           Stan Scribe
         </a>
@@ -41,7 +41,7 @@ export function StanScribeHeader() {
             </li>
           </ul>
         </nav>
-        {/* -mr-2.5 sets the icon, not its 44px hit area, on the sheet's edge. */}
+        {/* -mr-2.5 sets the icon, not its 44px hit area, on the column's edge. */}
         <ThemeToggle className="-mr-2.5 h-11 w-11" />
       </div>
     </header>

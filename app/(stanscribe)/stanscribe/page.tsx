@@ -11,7 +11,7 @@ import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
 import { Faq } from '@/components/stanscribe/Faq';
 import { HelpBlock } from '@/components/stanscribe/HelpBlock';
 import { PhoneShot } from '@/components/stanscribe/PhoneShot';
-import { COLUMN, INTRO, SHEET, Section } from '@/components/stanscribe/Section';
+import { BAND, BAND_COLUMN, BANDS, COLUMN, INTRO, Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
@@ -99,35 +99,37 @@ function CheckIcon() {
 
 export default function StanScribePage() {
   return (
-    <div className="relative min-h-svh px-4 pt-2 sm:px-6 md:pt-4">
+    <div className="relative min-h-svh">
       <ContourBackdrop page="interests" quiet />
 
-      <div className={cn(SHEET, 'relative z-10')}>
+      <div className={BANDS}>
         {/* Hero: one centred column, so the reading order is name, what it does, how to get it, then the picture */}
-        <section aria-labelledby="stanscribe-title" className="text-center">
-          <HeroLoadIn>
-            <h1 id="stanscribe-title" className={TYPE.display}>
-              Stan Scribe
-            </h1>
-            <p className={cn(TYPE.title, 'mt-3')}>Live captions for every voice.</p>
-            <p className={cn(TYPE.lead, INTRO)}>
-              Put your iPhone on the table and tap Start. As people talk, their words appear in large text, with a
-              different color for each person. Everything runs on your iPhone or iPad. It needs no internet and no
-              account.
-            </p>
-            <div className="mx-auto mt-10 grid max-w-160 gap-x-10 gap-y-8 sm:grid-cols-2">
-              <DownloadBlock app="scribe" />
-              <DownloadBlock app="light" />
-            </div>
-            <nav aria-label="On this page" className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-1">
-              {JUMP_LINKS.map(({ href, label }) => (
-                <a key={href} href={href} className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
-                  {label}
-                </a>
-              ))}
-            </nav>
-          </HeroLoadIn>
-          <PhoneShot image={SHOTS.hero} priority className="mx-auto mt-12 max-w-xl" />
+        <section aria-labelledby="stanscribe-title" className={cn(BAND, 'pt-8 text-center md:pt-12')}>
+          <div className={BAND_COLUMN}>
+            <HeroLoadIn>
+              <h1 id="stanscribe-title" className={TYPE.display}>
+                Stan Scribe
+              </h1>
+              <p className={cn(TYPE.title, 'mt-3')}>Live captions for every voice.</p>
+              <p className={cn(TYPE.lead, INTRO)}>
+                Put your iPhone on the table and tap Start. As people talk, their words appear in large text, with a
+                different color for each person. Everything runs on your iPhone or iPad. It needs no internet and no
+                account.
+              </p>
+              <div className="mx-auto mt-10 grid max-w-160 gap-x-10 gap-y-8 sm:grid-cols-2">
+                <DownloadBlock app="scribe" />
+                <DownloadBlock app="light" />
+              </div>
+              <nav aria-label="On this page" className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-1">
+                {JUMP_LINKS.map(({ href, label }) => (
+                  <a key={href} href={href} className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
+                    {label}
+                  </a>
+                ))}
+              </nav>
+            </HeroLoadIn>
+            <PhoneShot image={SHOTS.hero} priority className="mx-auto mt-12 max-w-xl" />
+          </div>
         </section>
 
         <Section id="story" title="Built for my grandpa Stan">
