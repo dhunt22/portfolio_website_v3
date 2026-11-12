@@ -1,7 +1,6 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // app/(stanscribe)/layout.tsx
-// The Stan Scribe pages' frame: their own header and footer, not the portfolio's, ahead of the move to
-// stanscribe.devinhunt.com.
+// The Stan Scribe pages' frame: their own header and footer, not the portfolio's.
 
 import type { ReactNode } from 'react';
 import { newsreader, hanken } from '@/app/fonts/stanscribe';

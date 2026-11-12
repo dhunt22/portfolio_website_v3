@@ -14,6 +14,6 @@ export const TYPE = {
   body: 'text-lg leading-relaxed text-ink-body',
   /** Legal fine print only: everything else is at least 18px. */
   small: 'text-base leading-relaxed text-ink-muted',
-  /** The deeper river (text-link-hover), so links clear 7:1 like body text; text-link is 5.5:1 on paper. */
+  /** The deeper blue (text-link-hover), so links clear 7:1 like body text in both themes; text-link does not at night. */
   link: 'text-link-hover underline decoration-1 underline-offset-4 transition-colors hover:text-ink-strong hover:decoration-2',
 } as const;

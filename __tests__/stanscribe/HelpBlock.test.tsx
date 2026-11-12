@@ -1,13 +1,13 @@
 import { render, screen, within } from '@testing-library/react';
 import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
 import { HelpBlock } from '@/components/stanscribe/HelpBlock';
-import { APPS } from '@/lib/stanscribe';
+import { legalLinks } from '@/lib/stanscribe';
 
 test('HelpBlock shows the support email and only the named apps’ legal links', () => {
   const { container } = render(<HelpBlock apps={['light']} />);
   expect(screen.getByRole('link', { name: 'stanscribe@devinhunt.com' })).toHaveAttribute('href', 'mailto:stanscribe@devinhunt.com');
-  for (const { href } of APPS.light.legal) expect(container.querySelector(`a[href="${href}"]`)).not.toBeNull();
-  for (const { href } of APPS.scribe.legal) expect(container.querySelector(`a[href="${href}"]`)).toBeNull();
+  for (const { href } of legalLinks('light')) expect(container.querySelector(`a[href="${href}"]`)).not.toBeNull();
+  for (const { href } of legalLinks('scribe')) expect(container.querySelector(`a[href="${href}"]`)).toBeNull();
 });
 
 test('ComparisonTable has real headers, one row per difference', () => {

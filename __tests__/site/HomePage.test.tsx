@@ -56,9 +56,15 @@ test('standalone links set the body size, not the browser default', () => {
   expect(screen.getByRole('link', { name: /Explore the map/ })).toHaveClass('text-site-body');
 });
 
-test('the hero is centred, and the four highlights draw their glyphs half again the portfolio size', () => {
+test('the hero is set left in the frame, its actions too', () => {
+  render(<Home />);
+  const hero = screen.getByRole('heading', { level: 1, name: 'Devin Hunt' }).closest('section')!;
+  expect(hero).toHaveClass('text-left', 'justify-items-start', 'px-frame');
+  expect(hero.querySelector('.justify-center')).toBeNull();
+});
+
+test('the four highlights draw their glyphs half again the portfolio size', () => {
   const { container } = render(<Home />);
-  expect(screen.getByRole('heading', { level: 1, name: 'Devin Hunt' }).closest('section')).toHaveClass('text-center', 'px-frame');
   const glyphs = container.querySelectorAll('.glyph-host svg');
   expect(glyphs).toHaveLength(4);
   for (const g of Array.from(glyphs)) expect(g).toHaveClass('h-[78px]', 'w-[78px]', 'min-[861px]:h-[108px]', 'min-[861px]:w-[108px]');

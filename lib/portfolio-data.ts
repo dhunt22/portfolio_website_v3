@@ -2,6 +2,8 @@
 // lib/portfolio-data.ts
 // Portfolio project data separated for better maintainability
 
+import { pageHref } from '@/lib/stanscribe';
+
 /** How a project or tool is drawn (DESIGN.md › Glyphs). */
 export type GlyphSpec =
   | { kind: 'subbasin'; file: string } // DWR Bulletin 118 polygons in public/data
@@ -299,7 +301,7 @@ export const TOOLS: Tool[] = [
     content: ['My grandpa Stan is hard of hearing. Live captions changed the conversations my family could have with him, but the apps we found all charged a monthly fee. So I used AI to build one that reaches as many people as possible: live captions in color, a free edition, and no subscription.'],
     glyph: { kind: 'captions' },
     readout: { label: 'App', value: 'Stan Scribe, on its own site' },
-    href: '/stanscribe',
+    href: pageHref('scribe'),
   },
 ];
 

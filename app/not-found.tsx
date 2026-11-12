@@ -28,7 +28,7 @@ export default function NotFound() {
         <p className={cn(SITE_TYPE.lead, 'halo max-w-[40ch]')}>
           Looks like this stream dried up. The page wandered off like water finding a new path.
         </p>
-        <nav aria-label="Ways back" className="halo flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+        <nav aria-label="Ways back" className="halo flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link href="/" className={SITE_BUTTON}>Home</Link>
           <Link href="/portfolio" className={cn(SITE_LINK, 'font-site text-site-body')}>Portfolio</Link>
           <Link href="/resume" className={cn(SITE_LINK, 'font-site text-site-body')}>Résumé</Link>

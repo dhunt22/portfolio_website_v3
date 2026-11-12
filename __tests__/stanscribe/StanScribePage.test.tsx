@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import StanScribePage, { metadata } from '@/app/(stanscribe)/stanscribe/page';
-import { APPS, LANGUAGES } from '@/lib/stanscribe';
+import { APPS, LANGUAGES, legalLinks } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 
 // The backdrop fetches SVG and GSAP needs matchMedia; neither matters to the page's content.
@@ -13,7 +13,7 @@ const renderPage = () => render(<StanScribePage />).container;
 test('support email and both apps’ legal links (App Store Connect Support URL)', () => {
   const page = renderPage();
   expect(screen.getByRole('link', { name: 'stanscribe@devinhunt.com' })).toHaveAttribute('href', 'mailto:stanscribe@devinhunt.com');
-  for (const { href } of [...APPS.scribe.legal, ...APPS.light.legal]) {
+  for (const { href } of [...legalLinks('scribe'), ...legalLinks('light')]) {
     expect(page.querySelector(`a[href="${href}"]`)).not.toBeNull();
   }
 });
@@ -104,5 +104,5 @@ test('words follow the brief, metadata included', () => {
   const page = renderPage();
   expect(findCopyViolations(`${pageText(page)} ${JSON.stringify(metadata)}`)).toEqual([]);
   expect(metadata.title).toBe('Stan Scribe: live captions for every voice');
-  expect(metadata.alternates?.canonical).toBe('https://devinhunt.com/stanscribe/');
+  expect(metadata.alternates?.canonical).toBe('https://stanscribe.devinhunt.com/');
 });

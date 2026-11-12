@@ -29,33 +29,74 @@ export interface LegalLink {
 
 export interface AppInfo {
   name: string;
+  /** Its route in this repo, and its folder in content/stanscribe-legal/. */
+  route: string;
+  /** Its path on stanscribe.devinhunt.com. netlify.toml rewrites this to the route's exported files. */
+  path: string;
   /** The line under the name in its download tile. */
   offer: string;
   appStoreUrl: string;
   /** Public TestFlight link, shown before release. Light's is not live yet. */
   betaUrl?: string;
-  legal: LegalLink[];
 }
 
-const legalLinks = (base: string): LegalLink[] => [
-  { label: 'Privacy Policy', href: `${base}privacy/` },
-  { label: 'Terms of Use', href: `${base}terms/` },
-  { label: 'Acknowledgements', href: `${base}acknowledgements/` },
-];
+export const LEGAL_PAGES = [
+  { slug: 'privacy', label: 'Privacy Policy' },
+  { slug: 'terms', label: 'Terms of Use' },
+  { slug: 'acknowledgements', label: 'Acknowledgements' },
+] as const;
+
+export type LegalSlug = (typeof LEGAL_PAGES)[number]['slug'];
+
+/** Stan Scribe's own address. Every canonical URL is here. */
+export const STANSCRIBE_ORIGIN = 'https://stanscribe.devinhunt.com';
+
+/** True in the production build alone: netlify.toml sets the variable for that build, and Next inlines it. */
+const onSubdomain = (): boolean => process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN === 'true';
+
+const PLACES: Record<AppKey, Pick<AppInfo, 'route' | 'path'>> = {
+  scribe: { route: 'stanscribe', path: '/' },
+  light: { route: 'stanscribe-light', path: '/light/' },
+};
+
+/** A page's address on stanscribe.devinhunt.com: an app's main page, or one of its legal pages. */
+export const pageUrl = (app: AppKey, legal?: LegalSlug): string => `${STANSCRIBE_ORIGIN}${PLACES[app].path}${legal ? `${legal}/` : ''}`;
+
+/** What a link to that page says in this build. */
+export const pageHref = (app: AppKey, legal?: LegalSlug): string =>
+  onSubdomain() ? pageUrl(app, legal) : `/${PLACES[app].route}${legal ? `/${legal}/` : ''}`;
+
+/** The way to the portfolio, which is on another domain in production. */
+export const portfolioHref = (): string => (onSubdomain() ? 'https://devinhunt.com/' : '/');
+
+/**
+ * Which app a path belongs to, and whether it is that app's main page. A page is built at its route in this
+ * repo (/stanscribe-light/terms) and opened at its path on the subdomain (/light/terms), and the header must
+ * render the same at both, so this reads either.
+ */
+export function locate(pathname: string): { app: AppKey; main: boolean } {
+  const [first, ...rest] = pathname.split('/').filter(Boolean);
+  if (first === PLACES.light.route || `/${first}/` === PLACES.light.path) return { app: 'light', main: rest.length === 0 };
+  if (first === PLACES.scribe.route) return { app: 'scribe', main: rest.length === 0 };
+  return { app: 'scribe', main: first === undefined };
+}
+
+/** One app's Privacy Policy, Terms of Use and Acknowledgements. */
+export const legalLinks = (app: AppKey): LegalLink[] => LEGAL_PAGES.map(({ slug, label }) => ({ label, href: pageHref(app, slug) }));
 
 export const APPS: Record<AppKey, AppInfo> = {
   scribe: {
     name: 'Stan Scribe',
+    ...PLACES.scribe,
     offer: 'Pay once. No subscription.',
     appStoreUrl: 'https://apps.apple.com/app/id6822377139',
     betaUrl: 'https://testflight.apple.com/join/ejNyaGqJ',
-    legal: legalLinks('/stanscribe/'),
   },
   light: {
     name: 'Stan Scribe Light',
+    ...PLACES.light,
     offer: 'Free. The simple edition.',
     appStoreUrl: 'https://apps.apple.com/app/id6824796578',
-    legal: legalLinks('/stanscribe-light/'),
   },
 };
 

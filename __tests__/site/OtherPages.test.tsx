@@ -34,6 +34,16 @@ test('the EEJ page keeps its map and links', () => {
   }
 });
 
+test('every first screen is set left, its links too', () => {
+  const heroOf = (name: string) => screen.getByRole('heading', { level: 1, name }).parentElement!;
+  for (const [page, name] of [[<InterestsPage key="i" />, 'Outdoors'], [<EejPage key="e" />, 'Environmental Justice For Prisons'], [<NotFound key="n" />, 'Page not found']] as const) {
+    const { unmount } = render(page);
+    expect(heroOf(name)).toHaveClass('text-left', 'justify-items-start');
+    expect(heroOf(name).querySelector('.justify-center')).toBeNull();
+    unmount();
+  }
+});
+
 test('the 404 sits in the site frame with ways back', () => {
   const { container } = render(<NotFound />);
   expect(container.querySelector('.site header')).not.toBeNull();
