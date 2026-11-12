@@ -28,7 +28,7 @@ const git = (cwd: string, ...args: string[]) => {
 
 /** A generated page, as Scripts/legal.py frames it. */
 const generated = (words: string) =>
-  `<!doctype html>\n<html><head><style>body {}</style></head><body><main><nav><a href="https://devinhunt.com/stanscribe/">Stan Scribe</a></nav>\n${words}\n</main></body></html>\n`;
+  `<!doctype html>\n<html><head><style>body {}</style></head><body><main><nav><a href="https://stanscribe.devinhunt.com/">Stan Scribe</a></nav>\n${words}\n</main></body></html>\n`;
 
 const writePage = (site: string, app: string, page: string, words: string) => {
   mkdirSync(join(site, app, page), { recursive: true });

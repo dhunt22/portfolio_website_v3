@@ -129,7 +129,7 @@ export const SHOTS = {
 
 /** Link-preview card (absolute URL: the root layout sets no metadataBase). */
 export const SOCIAL_IMAGE = {
-  url: 'https://devinhunt.com/images/stanscribe/stan-scribe-social.jpg',
+  url: `${STANSCRIBE_ORIGIN}/images/stanscribe/stan-scribe-social.jpg`,
   width: 1200,
   height: 630,
   alt: 'Stan Scribe and Stan Scribe Light on two iPhones, showing live captions in color.',

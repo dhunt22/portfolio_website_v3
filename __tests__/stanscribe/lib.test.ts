@@ -23,6 +23,10 @@ describe('lib/stanscribe', () => {
     expect(findCopyViolations(`${SOCIAL_IMAGE.alt} ${SOCIAL_IMAGE.url}`)).toEqual([]);
   });
 
+  test('the social card is on Stan Scribe’s own address', () => {
+    expect(SOCIAL_IMAGE.url).toBe('https://stanscribe.devinhunt.com/images/stanscribe/stan-scribe-social.jpg');
+  });
+
   test('the social card is 1200×630', async () => {
     const file = join(PUBLIC, new URL(SOCIAL_IMAGE.url).pathname);
     const meta = await sharp(file).metadata();

@@ -192,3 +192,14 @@ the rest of the page, so three answers repeat points from Privacy.
   November 1. A test fails on "seconds" or "minutes" in an answer.
 - Google shows FAQ rich results only for government and health sites since August 2023, so the markup is
   there for other search and answer engines, not for a change in Google's listing.
+
+## Every address is the subdomain's (2026-11-12)
+
+The owner asked for the proper `stanscribe.devinhunt.com` addresses everywhere. The app repo's
+`legal/site.json` and `legal/site-light.json` now give them, so the legal words pulled by
+`npm run sync:stanscribe-legal` link the subdomain, and a test fails if a first address comes back in them.
+The link-preview image is served from the subdomain too. The first addresses still redirect: builds on
+TestFlight link them.
+
+The themes feature says why it is there again, in the owner's words for the App Store listing: "Something
+you use every day should not look clinical."

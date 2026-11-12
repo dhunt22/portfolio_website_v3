@@ -58,7 +58,7 @@ const FEATURES: Feature[] = [
   { title: 'Big text, clear buttons.', body: 'Make the words as large as you like. Every button is large and says what it does: Smaller, Larger, Save, Stop.' },
   { title: 'Keeps listening.', body: 'Switch apps or lock your iPhone, and captions keep going until you tap Stop. Add Start Captions to your Lock Screen or Control Center to begin with one tap.' },
   { title: 'Conversations you keep.', body: 'Find any conversation by date, by person or by any word. Export it, send it to a notes folder such as Obsidian, or back it up to your own iCloud.' },
-  { title: 'Choose how it looks.', body: 'Pick from 28 color themes, some of them painted, or make your own from your photos.' },
+  { title: 'Choose how it looks.', body: 'Something you use every day should not look clinical. Pick from 28 color themes, some of them painted, or make your own from your photos.' },
 ];
 
 const PRIVACY: Feature[] = [
