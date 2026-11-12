@@ -214,8 +214,11 @@ asked for the blends at half the height shown.
   legal page use the same `BAND` padding and `BAND_COLUMN` (64rem) so their words line up.
 - `.bands` in `globals.css` gives the bands two solid tones in turn, the card colour and the page ground,
   and blends each in from the tone above it over 80px (`--band-blend`). Text clears 7:1 on both tones.
-- The hero is the first band. Contours show at its sides only, with a clearing of the ground colour behind
-  its words. The first band after it starts transparent, so the contours fade out under its top.
+- The hero is the first band and has no fill: the veiled contours run behind all of it, edge to edge, and
+  the band after it starts transparent, so they fade out under its top with no gap. The first build had a
+  block of ground colour behind the hero's words, which the owner read as the old card. Measured over the
+  contours at their darkest (lightest at night), hero text is 13.5:1 in light and 15.2:1 at night, and
+  links 8.1:1 and 11.2:1, at 1440 and 390 wide.
 - Help lands on a white band on both pages, where its fine print reads best. A test fails if a new section
   moves it onto the ground tone.
 - A legal page is one white band (`band-only`). The footer (`band-foot`) blends from white to the ground.

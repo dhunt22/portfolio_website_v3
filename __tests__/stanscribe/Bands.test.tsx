@@ -69,6 +69,10 @@ describe('the band rules in globals.css', () => {
     expect(css).toMatch(/--band-b:\s*var\(--surface-page\)/);
   });
 
+  test('the hero has no fill of its own, so it never reads as a card with contour margins', () => {
+    expect(css).toMatch(/\.bands > section:first-of-type \{ background: none; \}/);
+  });
+
   test('each break is an 80px blend, the height the owner chose', () => {
     expect(css).toMatch(/--band-blend:\s*80px/);
   });

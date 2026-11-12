@@ -234,12 +234,12 @@
 @layer components {
   /* Stan Scribe's pages are bands the full width of the window, in two solid tones that take turns. Each band
      blends in from the tone above it over --band-blend, so no break is a line. The first section is the hero:
-     it keeps the contours at its sides, with a clearing of the ground colour behind its words. */
+     it has no fill, so the veiled contours run behind all of it, edge to edge, and fade out under the next band. */
   .bands, .band-foot { --band-a: var(--surface-card); --band-b: var(--surface-page); --band-blend: 80px; }
   .bands > section { --band-from: var(--band-a); --band-to: var(--band-b); background: linear-gradient(to bottom, var(--band-from) 0, var(--band-to) var(--band-blend)); }
   .bands > section:nth-of-type(even) { --band-from: var(--band-b); --band-to: var(--band-a); }
   .bands > section:nth-of-type(2) { --band-from: transparent; }
-  .bands > section:first-of-type { background: radial-gradient(ellipse 46rem 100% at 50% 45%, var(--surface-page) 62%, transparent 100%); }
+  .bands > section:first-of-type { background: none; }
   /* A page that is one band (the legal pages) starts on the lighter tone, the contours fading under its top. */
   .bands > section.band-only { background: linear-gradient(to bottom, transparent 0, var(--band-a) var(--band-blend)); }
   /* Every page ends on the lighter tone, so the footer blends from it to the ground. */

@@ -115,8 +115,11 @@ page is a run of bands the full width of the window (`BANDS`, `BAND` and `BAND_C
 with contours down both sides. The bands take turns between two solid tones, the card colour (white,
 night #1c2429) and the page ground, and each blends in from the tone above it over 80px. The owner chose
 this from three options to stop sections running together, and asked for the short blends. The first
-band is the hero: the contours show at its sides, with a clearing of the ground colour behind its
-words, and they show nowhere below it. Help sits on a white band, the footer closes the page on the
+band is the hero. It has no fill, so the veiled contours run behind all of it from edge to edge and
+fade out under the band below, and they show nowhere after that. (A first build put a block of ground
+colour behind the hero's words; the owner read it as the old card with a contour gap under it, so it
+went.) Over the veiled contours the hero's text measures 13.5:1 at worst in light and 15.2:1 at night,
+and its links 8.1:1 and 11.2:1. Help sits on a white band, the footer closes the page on the
 ground tone, and a legal page is one white band. Each band's words sit in a centred 64rem column;
 prose sits in a centred 42rem column with its lines set left; nothing is boxed. Sections open on
 centred serif h2s. The six legal pages (`/stanscribe/privacy/` and so on) have their words set by
