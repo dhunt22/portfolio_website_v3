@@ -207,14 +207,12 @@ describe('Netlify routing', () => {
     expect(toml).toContain(`from = "/${app}/"\n  to = "/${app}/index.html"\n  status = 200\n  force = true`);
   });
 
-  // Every [[redirects]] table, in file order. Netlify takes the first rule that matches.
   const rules = toml.split('[[redirects]]').slice(1).map((block) => {
     const value = (key: string) => block.match(new RegExp(`^\\s*${key} = "?([^"\\n]+)"?$`, 'm'))?.[1];
     return { from: value('from'), to: value('to'), status: value('status'), force: value('force') };
   });
   const indexOf = (from: string) => rules.findIndex((rule) => rule.from === from);
   const SUBDOMAIN = 'https://stanscribe.devinhunt.com';
-  // Where each app's pages sit on the subdomain, beside their folder in out/.
   const PLACES = [['stanscribe', '/'], ['stanscribe-light', '/light/']] as const;
 
   test.each(PLACES)('the subdomain serves %s at %s, and its legal pages under it', (app, path) => {
@@ -227,7 +225,6 @@ describe('Netlify routing', () => {
   test.each(PLACES)('the old /%s/ addresses move to the subdomain for good, on both domains', (app, path) => {
     for (const host of ['https://devinhunt.com', SUBDOMAIN]) {
       expect(rules).toContainEqual({ from: `${host}/${app}/*`, to: `${SUBDOMAIN}${path}:splat`, status: '301', force: 'true' });
-      // Ahead of the rewrite that serves the same path on deploy previews, or the rewrite would win.
       expect(indexOf(`${host}/${app}/*`)).toBeLessThan(indexOf(`/${app}/`));
     }
   });
@@ -242,6 +239,6 @@ describe('Netlify routing', () => {
 
   test('only the production build links to the subdomain', () => {
     expect(toml).toContain('[context.production.environment]\n  NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN = "true"');
-    expect(toml.match(/NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN/g)).toHaveLength(1);
+    expect(toml.split('[context.production.environment]')[0]).not.toContain('NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN');
   });
 });

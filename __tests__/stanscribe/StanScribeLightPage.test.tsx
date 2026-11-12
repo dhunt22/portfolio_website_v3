@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import StanScribeLightPage, { metadata } from '@/app/(stanscribe)/stanscribe-light/page';
-import { APPS } from '@/lib/stanscribe';
+import { legalLinks } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 
 jest.mock('@/lib/stanscribe', () => ({ ...jest.requireActual('@/lib/stanscribe'), RELEASED: false }));
@@ -13,7 +13,7 @@ test('Light’s Support URL: email and Light’s legal links', () => {
   const page = renderPage();
   expect(screen.getByRole('heading', { level: 1, name: 'Stan Scribe Light' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'stanscribe@devinhunt.com' })).toHaveAttribute('href', 'mailto:stanscribe@devinhunt.com');
-  for (const { href } of APPS.light.legal) expect(page.querySelector(`a[href="${href}"]`)).not.toBeNull();
+  for (const { href } of legalLinks('light')) expect(page.querySelector(`a[href="${href}"]`)).not.toBeNull();
 });
 
 test('Help comes right after the hero, before the comparison', () => {

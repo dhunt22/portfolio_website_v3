@@ -4,7 +4,7 @@ import { render, screen, within } from '@testing-library/react';
 import StanScribeLayout from '@/app/(stanscribe)/layout';
 import ScribeLegal, { generateStaticParams as scribeParams, generateMetadata as scribeMetadata } from '@/app/(stanscribe)/stanscribe/[page]/page';
 import LightLegal, { generateStaticParams as lightParams, generateMetadata as lightMetadata } from '@/app/(stanscribe)/stanscribe-light/[page]/page';
-import { APPS } from '@/lib/stanscribe';
+import { legalLinks } from '@/lib/stanscribe';
 
 let pathname = '/stanscribe/privacy';
 jest.mock('next/navigation', () => ({ usePathname: () => pathname }));
@@ -19,13 +19,13 @@ describe.each([
 ] as const)('%s', (route, name, Page, staticParams, metadataFor, app, address) => {
   test('exports exactly the three pages every legal link points at', () => {
     const routes = staticParams().map(({ page }) => `/${route}/${page}/`).sort();
-    expect(routes).toEqual(APPS[app].legal.map((l) => l.href).sort());
+    expect(routes).toEqual(legalLinks(app).map((l) => l.href).sort());
   });
 
   test.each(PAGES)('%s shows the words under the name the links use', async (page, label) => {
     const { container } = render(await Page(params(page)));
     expect(screen.getByRole('heading', { level: 1, name: label })).toBeInTheDocument();
-    for (const { href } of APPS[app].legal) expect(container.querySelector(`a[href="${href}"]`)).not.toBeNull();
+    for (const { href } of legalLinks(app)) expect(container.querySelector(`a[href="${href}"]`)).not.toBeNull();
   });
 
   test.each(PAGES)('%s names its address on the subdomain and says which app it belongs to', async (page, label) => {

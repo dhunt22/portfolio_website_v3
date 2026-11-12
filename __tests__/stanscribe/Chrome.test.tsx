@@ -30,7 +30,6 @@ test('on the Light page, Light is the current page', () => {
   expect(within(header).getByRole('link', { name: 'Stan Scribe' })).not.toHaveAttribute('aria-current');
 });
 
-// The header is built at the path in this repo and hydrated at the subdomain's, so both must render alike.
 test.each([
   ['/stanscribe', '/'],
   ['/stanscribe-light', '/light'],

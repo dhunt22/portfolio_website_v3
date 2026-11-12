@@ -8,8 +8,6 @@
   # recorded for it.
   NODE_VERSION = "24"
 
-# The production build links the Stan Scribe pages to stanscribe.devinhunt.com (lib/stanscribe.ts). Deploy
-# previews keep the paths in this repo, so their pages can be clicked through.
 [context.production.environment]
   NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN = "true"
 
@@ -21,7 +19,6 @@
 # names a host applies to that host alone. Netlify takes the first rule that matches, so these come before
 # the rules for every host.
 #
-# The subdomain serves the Stan Scribe pages at its root, from the files scripts/stanscribe-index.mjs makes.
 # Each path is listed: a wildcard would also rewrite /_next/ and /images/, which the pages load from the root.
 [[redirects]]
   from = "https://stanscribe.devinhunt.com/"
@@ -71,7 +68,6 @@
   status = 200
   force = true
 
-# The pages' first addresses, which the apps and App Store Connect link, move to the subdomain for good.
 [[redirects]]
   from = "https://devinhunt.com/stanscribe/*"
   to = "https://stanscribe.devinhunt.com/:splat"
@@ -96,7 +92,6 @@
   status = 301
   force = true
 
-# The portfolio has one address. Without these the subdomain would serve it a second time.
 [[redirects]]
   from = "https://stanscribe.devinhunt.com/interests/*"
   to = "https://devinhunt.com/interests/:splat"
@@ -115,7 +110,6 @@
   status = 301
   force = true
 
-# Every other host (deploy previews, devinhunt.netlify.app) serves the pages at their paths in this repo.
 # Netlify's pretty URLs would 301 /stanscribe/ to the slashless page, so serve the copies
 # scripts/stanscribe-index.mjs makes.
 [[redirects]]

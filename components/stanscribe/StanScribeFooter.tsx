@@ -4,14 +4,14 @@
 // copyright and Apple's trademark line stay in each page's Help section, where App Review looks for them.
 
 import { TYPE } from '@/components/stanscribe/type';
-import { PORTFOLIO_HREF } from '@/lib/stanscribe';
+import { portfolioHref } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
 export function StanScribeFooter() {
   return (
     <footer className={cn(TYPE.body, 'mx-auto w-full max-w-6xl px-4 pb-12 pt-10 text-center sm:px-6')}>
       Made by{' '}
-      <a href={PORTFOLIO_HREF} className={TYPE.link}>
+      <a href={portfolioHref()} className={TYPE.link}>
         Devin Hunt
       </a>
     </footer>

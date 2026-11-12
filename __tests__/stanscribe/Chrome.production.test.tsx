@@ -1,13 +1,18 @@
-import '@/test-utils/stanscribe-production';
 import { render, screen, within } from '@testing-library/react';
 import StanScribeLayout from '@/app/(stanscribe)/layout';
 import StanScribeLightPage from '@/app/(stanscribe)/stanscribe-light/page';
-import { TOOLS } from '@/lib/portfolio-data';
 
 let pathname = '/';
 jest.mock('next/navigation', () => ({ usePathname: () => pathname }));
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
 jest.mock('@/components/ui/HeroLoadIn', () => ({ HeroLoadIn: ({ children }: { children: unknown }) => children }));
+
+beforeAll(() => {
+  process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN = 'true';
+});
+afterAll(() => {
+  delete process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN;
+});
 
 const renderFrame = (at: string) => {
   pathname = at;
@@ -45,5 +50,8 @@ test('the Light page links back to Stan Scribe and its story on the subdomain', 
 });
 
 test('the portfolio’s Stan Scribe entry leads to the subdomain', () => {
-  expect(TOOLS.find((tool) => tool.id === 'stan-scribe')?.href).toBe('https://stanscribe.devinhunt.com/');
+  jest.isolateModules(() => {
+    const { TOOLS } = jest.requireActual<typeof import('@/lib/portfolio-data')>('@/lib/portfolio-data');
+    expect(TOOLS.find((tool) => tool.id === 'stan-scribe')?.href).toBe('https://stanscribe.devinhunt.com/');
+  });
 });

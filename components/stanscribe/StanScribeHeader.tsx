@@ -4,13 +4,12 @@
 // components/stanscribe/StanScribeHeader.tsx
 // Stan Scribe's own header, so its pages stand as one product (PRODUCT.md › Brand Commitments): the name,
 // the other edition, Help (App Review looks for a contact), the way to Devin's site and the theme toggle.
-// Not sticky, so it never covers the words at 200% zoom. Its links are plain <a>: in production they lead to
-// stanscribe.devinhunt.com, where Next's router does not know the paths.
+// Not sticky, so it never covers the words at 200% zoom.
 
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { TYPE } from '@/components/stanscribe/type';
-import { PORTFOLIO_HREF, locate, pageHref } from '@/lib/stanscribe';
+import { locate, pageHref, portfolioHref } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
 const NAV_LINK = 'inline-block py-2 text-ink-strong underline-offset-[6px] decoration-2 hover:underline aria-[current=page]:underline';
@@ -18,6 +17,7 @@ const NAV_LINK = 'inline-block py-2 text-ink-strong underline-offset-[6px] decor
 export function StanScribeHeader() {
   const { app, main } = locate(usePathname() ?? '');
   const current = (page: typeof app) => (main && app === page ? 'page' : undefined);
+  const helpHref = main ? '#help' : `${pageHref(app)}#help`;
   return (
     <header className="px-4 pb-2 pt-4 sm:px-6 md:pt-6">
       {/* The row is the sheet's width, so the name and the toggle line up with the sheet's edges. */}
@@ -34,11 +34,10 @@ export function StanScribeHeader() {
               </a>
             </li>
             <li>
-              {/* The legal pages have no Help section of their own, so there it leads to their app's. */}
-              <a href={main ? '#help' : `${pageHref(app)}#help`} className={NAV_LINK}>Help</a>
+              <a href={helpHref} className={NAV_LINK}>Help</a>
             </li>
             <li>
-              <a href={PORTFOLIO_HREF} className={NAV_LINK}>Devin Hunt</a>
+              <a href={portfolioHref()} className={NAV_LINK}>Devin Hunt</a>
             </li>
           </ul>
         </nav>

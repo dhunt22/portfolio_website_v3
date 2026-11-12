@@ -38,7 +38,6 @@ export interface AppInfo {
   appStoreUrl: string;
   /** Public TestFlight link, shown before release. Light's is not live yet. */
   betaUrl?: string;
-  legal: LegalLink[];
 }
 
 export const LEGAL_PAGES = [
@@ -52,12 +51,8 @@ export type LegalSlug = (typeof LEGAL_PAGES)[number]['slug'];
 /** Stan Scribe's own address. Every canonical URL is here. */
 export const STANSCRIBE_ORIGIN = 'https://stanscribe.devinhunt.com';
 
-/**
- * netlify.toml sets this for the production build only, and Next inlines it. That build's links lead to the
- * subdomain. Every other build (next dev, a deploy preview) links to the pages where this repo serves them,
- * so they can be clicked through before they are live.
- */
-const ON_SUBDOMAIN = process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN === 'true';
+/** True in the production build alone: netlify.toml sets the variable for that build, and Next inlines it. */
+const onSubdomain = (): boolean => process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN === 'true';
 
 const PLACES: Record<AppKey, Pick<AppInfo, 'route' | 'path'>> = {
   scribe: { route: 'stanscribe', path: '/' },
@@ -69,10 +64,10 @@ export const pageUrl = (app: AppKey, legal?: LegalSlug): string => `${STANSCRIBE
 
 /** What a link to that page says in this build. */
 export const pageHref = (app: AppKey, legal?: LegalSlug): string =>
-  ON_SUBDOMAIN ? pageUrl(app, legal) : `/${PLACES[app].route}${legal ? `/${legal}/` : ''}`;
+  onSubdomain() ? pageUrl(app, legal) : `/${PLACES[app].route}${legal ? `/${legal}/` : ''}`;
 
 /** The way to the portfolio, which is on another domain in production. */
-export const PORTFOLIO_HREF = ON_SUBDOMAIN ? 'https://devinhunt.com/' : '/';
+export const portfolioHref = (): string => (onSubdomain() ? 'https://devinhunt.com/' : '/');
 
 /**
  * Which app a path belongs to, and whether it is that app's main page. A page is built at its route in this
@@ -86,7 +81,8 @@ export function locate(pathname: string): { app: AppKey; main: boolean } {
   return { app: 'scribe', main: first === undefined };
 }
 
-const legalLinks = (app: AppKey): LegalLink[] => LEGAL_PAGES.map(({ slug, label }) => ({ label, href: pageHref(app, slug) }));
+/** One app's Privacy Policy, Terms of Use and Acknowledgements. */
+export const legalLinks = (app: AppKey): LegalLink[] => LEGAL_PAGES.map(({ slug, label }) => ({ label, href: pageHref(app, slug) }));
 
 export const APPS: Record<AppKey, AppInfo> = {
   scribe: {
@@ -95,14 +91,12 @@ export const APPS: Record<AppKey, AppInfo> = {
     offer: 'Pay once. No subscription.',
     appStoreUrl: 'https://apps.apple.com/app/id6822377139',
     betaUrl: 'https://testflight.apple.com/join/ejNyaGqJ',
-    legal: legalLinks('scribe'),
   },
   light: {
     name: 'Stan Scribe Light',
     ...PLACES.light,
     offer: 'Free. The simple edition.',
     appStoreUrl: 'https://apps.apple.com/app/id6824796578',
-    legal: legalLinks('light'),
   },
 };
 

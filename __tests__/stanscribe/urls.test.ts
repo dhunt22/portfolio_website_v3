@@ -1,19 +1,5 @@
 /** @jest-environment node */
-import { APPS, PORTFOLIO_HREF, locate, pageHref, pageUrl } from '@/lib/stanscribe';
-
-type Lib = typeof import('@/lib/stanscribe');
-
-/** lib/stanscribe as the production build sees it: netlify.toml sets the switch for that build only. */
-const productionLib = (): Lib => {
-  let lib: Lib | undefined;
-  process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN = 'true';
-  jest.isolateModules(() => {
-    lib = jest.requireActual<Lib>('@/lib/stanscribe');
-  });
-  delete process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN;
-  if (!lib) throw new Error('lib/stanscribe did not load');
-  return lib;
-};
+import { legalLinks, locate, pageHref, pageUrl, portfolioHref } from '@/lib/stanscribe';
 
 describe('canonical URLs are on stanscribe.devinhunt.com', () => {
   test.each([
@@ -31,23 +17,28 @@ describe('links outside the production build', () => {
     expect(pageHref('scribe')).toBe('/stanscribe');
     expect(pageHref('light')).toBe('/stanscribe-light');
     expect(pageHref('light', 'terms')).toBe('/stanscribe-light/terms/');
-    expect(APPS.scribe.legal.map((l) => l.href)).toEqual(['/stanscribe/privacy/', '/stanscribe/terms/', '/stanscribe/acknowledgements/']);
-    expect(PORTFOLIO_HREF).toBe('/');
+    expect(legalLinks('scribe').map((l) => l.href)).toEqual(['/stanscribe/privacy/', '/stanscribe/terms/', '/stanscribe/acknowledgements/']);
+    expect(portfolioHref()).toBe('/');
   });
 });
 
 describe('links in the production build', () => {
-  const lib = productionLib();
+  beforeAll(() => {
+    process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN = 'true';
+  });
+  afterAll(() => {
+    delete process.env.NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN;
+  });
 
   test('lead to the subdomain, and the way to the portfolio leaves it', () => {
-    expect(lib.pageHref('scribe')).toBe('https://stanscribe.devinhunt.com/');
-    expect(lib.pageHref('light')).toBe('https://stanscribe.devinhunt.com/light/');
-    expect(lib.APPS.light.legal.map((l) => l.href)).toEqual([
+    expect(pageHref('scribe')).toBe('https://stanscribe.devinhunt.com/');
+    expect(pageHref('light')).toBe('https://stanscribe.devinhunt.com/light/');
+    expect(legalLinks('light').map((l) => l.href)).toEqual([
       'https://stanscribe.devinhunt.com/light/privacy/',
       'https://stanscribe.devinhunt.com/light/terms/',
       'https://stanscribe.devinhunt.com/light/acknowledgements/',
     ]);
-    expect(lib.PORTFOLIO_HREF).toBe('https://devinhunt.com/');
+    expect(portfolioHref()).toBe('https://devinhunt.com/');
   });
 });
 
