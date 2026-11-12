@@ -44,6 +44,10 @@ describe.each([
     expect(position).toBeGreaterThan(0);
     expect(position % 2).toBe(0);
   });
+
+  test('ends on a white band, the tone the footer blends from', () => {
+    expect(sectionsOf(renderPage()).length % 2).toBe(0);
+  });
 });
 
 test('a legal page is one band, with no boxed sheet', async () => {
@@ -53,6 +57,8 @@ test('a legal page is one band, with no boxed sheet', async () => {
   expect(sections).toHaveLength(1);
   expect(sections[0].parentElement?.className).toMatch(/\bbands\b/);
   expect(sections[0].className).toMatch(/\bband-only\b/);
+  // The band fills the window on a short page, so no contours show between it and the footer.
+  expect(sections[0].className).toMatch(/\bmin-h-svh\b/);
   expect(sections[0].querySelector('h1')).not.toBeNull();
 });
 
@@ -69,8 +75,11 @@ describe('the band rules in globals.css', () => {
     expect(css).toMatch(/--band-b:\s*var\(--surface-page\)/);
   });
 
-  test('the hero has no fill of its own, so it never reads as a card with contour margins', () => {
-    expect(css).toMatch(/\.bands > section:first-of-type \{ background: none; \}/);
+  test('every band, the hero included, is solid behind the words and fades out toward the window’s edges', () => {
+    expect(css).toMatch(/--band-solid:\s*72rem/);
+    expect(css).toMatch(/--band-fade:\s*12rem/);
+    expect(css).toMatch(/\.bands > section::before, \.band-foot::before \{[^}]*mask-image: linear-gradient\(to right, transparent/);
+    expect(css).not.toMatch(/\.bands > section:first-of-type \{ background: none/);
   });
 
   test('each break is an 80px blend, the height the owner chose', () => {

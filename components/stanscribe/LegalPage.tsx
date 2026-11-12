@@ -39,10 +39,10 @@ export async function legalMetadata(app: AppKey, { params }: LegalRouteProps): P
 export async function LegalPage({ app, params }: LegalRouteProps & { app: AppKey }) {
   const { page } = await params;
   return (
-    <div className="relative min-h-svh">
+    <div className="relative">
       <ContourBackdrop page="interests" quiet />
       <div className={BANDS}>
-        <section className={cn(BAND, 'band-only')}>
+        <section className={cn(BAND, 'band-only min-h-svh')}>
           <div className={BAND_COLUMN}>
             <article className={cn('legal', COLUMN)} dangerouslySetInnerHTML={{ __html: legalWords(app, page as LegalSlug) }} />
             <div className={cn(TYPE.small, COLUMN, 'mt-16')}>

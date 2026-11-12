@@ -110,16 +110,18 @@ their routes in this repo are still `/stanscribe` and `/stanscribe-light`. Since
 have their own header and footer (`StanScribeHeader`, `StanScribeFooter`: the name, which leads to the
 main Stan Scribe page, then Stan Scribe Light, Help, Devin Hunt, which leads to the portfolio, and the
 theme toggle; "Made by Devin Hunt") instead of the June 2026 portfolio chrome. Since 2026-11-12 each
-page is a run of bands the full width of the window (`BANDS`, `BAND` and `BAND_COLUMN` in
-`components/stanscribe/Section.tsx`; `.bands` in `globals.css`), in place of the centred, boxed sheet
-with contours down both sides. The bands take turns between two solid tones, the card colour (white,
-night #1c2429) and the page ground, and each blends in from the tone above it over 80px. The owner chose
-this from three options to stop sections running together, and asked for the short blends. The first
-band is the hero. It has no fill, so the veiled contours run behind all of it from edge to edge and
-fade out under the band below, and they show nowhere after that. (A first build put a block of ground
-colour behind the hero's words; the owner read it as the old card with a contour gap under it, so it
-went.) Over the veiled contours the hero's text measures 13.5:1 at worst in light and 15.2:1 at night,
-and its links 8.1:1 and 11.2:1. Help sits on a white band, the footer closes the page on the
+page is a column of bands (`BANDS`, `BAND` and `BAND_COLUMN` in `components/stanscribe/Section.tsx`;
+`.bands` in `globals.css`), in place of the bordered sheet. The bands take turns between two solid
+tones, the card colour (white, night #1c2429) and the page ground, and each blends in from the tone
+above it over 80px. The column is solid for 72rem behind the words and fades out over 12rem on each
+side, so the veiled contours show in the side margins all the way down the page; a window narrower
+than 72rem has no margins and the bands are solid from edge to edge. The hero is the first band and
+is filled like the rest, so nothing above the story reads as a separate card and no contours show
+between two bands. The owner arrived at this in three steps: bands with short soft breaks, chosen
+from three options, to stop sections running together; then no gap under the hero; then the soft
+side edges of the first build's hero carried down every section, in place of bands that ran the full
+width of the window. Text never sits on the fade: its column is 64rem. Over the veiled contours
+alone, text still measures 13.5:1 at worst in light and 15.2:1 at night, and links 8.1:1 and 11.2:1. Help sits on a white band, the footer closes the page on the
 ground tone, and a legal page is one white band. Each band's words sit in a centred 64rem column;
 prose sits in a centred 42rem column with its lines set left; nothing is boxed. Sections open on
 centred serif h2s. The six legal pages (`/stanscribe/privacy/` and so on) have their words set by
@@ -402,7 +404,7 @@ ignore; its remaining findings are listed here.
 | Inspector `off-centre` | Every page | Resolved 2026-10-28: the owner disliked the strong left-anchoring, so the pages share one centred 75rem column (Layout › Frame). The first screens were centred in it too until 2026-11-01, when the owner set them left in the column so they work with the contours. What remains is a WARN on home at 1440 (120px left, 140px right): the right highlight's text ends at its 56ch measure short of the column edge. |
 | Inspector `off-centre` (FAIL) | Stan Scribe Light at 1440 | A reading artifact: the inspector takes the 2nd and 98th percentiles of text edges, and on a page of centred text in a 42rem column the header's right-hand links are the only text near the right. Measured: the sheet sits 144px from each edge and the h1's midpoint is 720 of 1440. |
 | Inspector `hairline` (WARN) | Stan Scribe pages | The one rule separates the support email from the legal fine print. The `outlined-box` finding went with the boxed sheet on 2026-11-12. |
-| Inspector `gradient` (FAIL, 7 fills) | Stan Scribe pages | The owner's choice, 2026-11-12: each band blends in from the tone above it over 80px, so sections read as separate without a line. Both ends of every blend are solid tones that body text clears at 7:1 (`palette.test.ts`). The portfolio keeps its no-gradient rule. |
+| Inspector `gradient` (FAIL) | Stan Scribe pages | The owner's choice, 2026-11-12: each band blends in from the tone above it over 80px, so sections read as separate without a line, and fades out toward the window's edges so the contours show in the margins. Both ends of every blend are solid tones that body text clears at 7:1 (`palette.test.ts`). The portfolio keeps its no-gradient rule. |
 | Inspector `first-action`, `headline-lines`, `mixed-font-headline` | Stan Scribe pages | Pre-launch there is no App Store button, only "Coming soon" and the TestFlight link. The other two read each numbered step (number, h3, paragraph) as one headline. |
 | Inspector `first-action` (WARN at 390) | Portfolio, Outdoors, EEJ | The header's Email me button hides under 520px (Navigation); these pages have no hero action. Email stays in the footer. |
 | Inspector `shadow` (FAIL) | EEJ map: MapLibre control group, toolbar, legend, percentile menu | They float over the map, so they carry the one float shadow (Elevation & Depth). Nothing at rest has one. |
