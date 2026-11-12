@@ -156,3 +156,19 @@ The owner chose the subdomain as Stan Scribe's address, which replaces "there is
 - The pages link with plain `<a>`, not Next's `Link`. Next's router does not know the subdomain's paths.
 - The subdomain redirects `/portfolio`, `/resume` and `/interests` to `devinhunt.com`. A test fails when a
   new route in `app/(site)/` has no such rule.
+
+## Copy revision (2026-11-11)
+
+The owner reviewed the page's words passage by passage and approved these changes. They replace "words
+unchanged" above: the page is now ahead of `copy.md` in the app repo until the same changes land there.
+
+- **The story** uses details the owner gave: what changed at the first dinner with captions, what the other
+  app charged for, where Stan uses the app now, and what comes next (more languages, smaller and faster
+  speech models, a live translation app). The owner's calls: the other app has no name and no price, the
+  doctor's appointment stays, and the page has no line about funding.
+- **Reworded for plain sentences:** the hero's intro, step 2, "Keeps listening", two privacy points, "What
+  do I need?" and the Light page's intro. The claims are the same.
+- **Headings:** "Private by design" is now "Privacy", and "Make it yours" is "Choose how it looks".
+- **Cut:** "because something you use every day should be a pleasure to look at", and "keep using AI for good".
+- **New rule:** no em dashes on these pages. `findCopyViolations` flags one.
+- The portfolio's Stan Scribe entry tells the same story in three sentences and was reworded to match.

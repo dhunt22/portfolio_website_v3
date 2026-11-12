@@ -32,7 +32,7 @@ test('seven sections, each said once, in order', () => {
     'Built for my grandpa Stan',
     'How it works',
     'Made to be read across the table',
-    'Private by design',
+    'Privacy',
     'Which one is for you?',
     'Questions',
     'Help',
@@ -62,24 +62,24 @@ test('images have alt text and headings are in order', () => {
   });
 });
 
-test('the story is told once: hard of hearing, a monthly fee, built with AI, AI for good', () => {
+test('the story is told once: the first dinner, a monthly fee, built with AI, where Stan uses it, what comes next', () => {
   const page = renderPage();
   const story = page.querySelector<HTMLElement>('#story')!;
   const text = story.textContent ?? '';
   expect(text).toMatch(/My grandpa Stan is hard of hearing/);
-  expect(text).toMatch(/live captions app with my grandparents/);
+  expect(text).toMatch(/He could keep up and answer, instead of pretending he had heard/);
   expect(text).toMatch(/charged a monthly fee/);
   expect(text).toMatch(/I used AI to help me build my own/);
-  expect(text).toMatch(/Stan Scribe Light is free, and the full Stan Scribe is a one-time purchase with no subscription/);
-  expect(text).toMatch(/keep using AI for good/);
+  expect(text).toMatch(/Stan Scribe Light is free\. The full Stan Scribe is a one-time purchase, with no subscription/);
+  expect(text).toMatch(/Stan uses it every day at dinner now/);
+  expect(text).toMatch(/a live translation app/);
   expect(page.querySelector('#behind-the-app')).toBeNull();
 });
 
-test('six features, the themes one saying why', () => {
+test('six features', () => {
   const page = renderPage();
   const features = page.querySelector<HTMLElement>('#features')!;
   expect(within(features).getAllByRole('heading', { level: 3 })).toHaveLength(6);
-  expect(features.textContent).toMatch(/a pleasure to look at/);
 });
 
 test('four questions, one naming every caption language', () => {

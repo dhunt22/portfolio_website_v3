@@ -12,6 +12,7 @@ const BANNED: [RegExp, string][] = [
   [/\b(tip|tips|tipping|donate|donation)\b/i, 'never "tip" or "donate"'],
   [/\b(lite|trial|crippled)\b/i, 'Light is "the simple edition"'],
   [/nothing ever leaves/i, 'that privacy claim needs its qualifier'],
+  [/—/, 'no em dashes: end the sentence or use a comma'],
 ];
 
 /** Every way `text` breaks the brief's word rules; empty when it follows them. */
