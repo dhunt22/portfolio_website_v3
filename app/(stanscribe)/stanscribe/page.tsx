@@ -8,13 +8,14 @@
 import type { Metadata } from 'next';
 import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
 import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
+import { Faq } from '@/components/stanscribe/Faq';
 import { HelpBlock } from '@/components/stanscribe/HelpBlock';
 import { PhoneShot } from '@/components/stanscribe/PhoneShot';
 import { COLUMN, INTRO, SHEET, Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
-import { APPS, BOTH_APPS_SHARE, LANGUAGES, LIGHT_NOT_SURE, SHOTS, SOCIAL_IMAGE, pageHref, pageUrl } from '@/lib/stanscribe';
+import { BOTH_APPS_SHARE, LIGHT_NOT_SURE, SHOTS, SOCIAL_IMAGE, pageHref, pageUrl } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
 const TITLE = 'Stan Scribe: live captions for every voice';
@@ -65,13 +66,6 @@ const PRIVACY: Feature[] = [
   { title: 'No account. No ads. No tracking.', body: 'The app never connects to the internet.' },
   { title: 'No audio is saved.', body: 'The app turns sound into captions as you listen and keeps none of the sound. It saves only the words of conversations you keep, on your device.' },
   { title: 'Your words leave your device only when you send them.', body: 'That is when you share or export a conversation, sync it to a notes folder, or turn on iCloud backup to your own iCloud.' },
-];
-
-const QUESTIONS: Feature[] = [
-  { title: 'How accurate are the captions?', body: 'They’re automatic, so they can be wrong, especially with background noise, accents, people talking over each other, and names. Please don’t rely on them for emergencies, or for medical, legal or safety decisions. Stan Scribe is not a medical device and doesn’t replace a professional interpreter or captioner.' },
-  { title: 'What do I need?', body: 'An iPhone or iPad with iOS 18 or later. You don’t need the internet or an account.' },
-  { title: 'Where are my conversations kept?', body: 'On your device, until you delete them: delete a conversation or a voice in the app, or delete the app to remove everything it kept. If you turn on iCloud backup, a copy of the text goes to your own iCloud. I can’t see it.' },
-  { title: 'Which languages does it caption?', body: `${LANGUAGES.slice(0, -1).join(', ')} and ${LANGUAGES[LANGUAGES.length - 1]}. Choose one in Settings, or leave it on Auto.` },
 ];
 
 const JUMP_LINKS = [
@@ -212,10 +206,7 @@ export default function StanScribePage() {
           </div>
         </Section>
 
-        {/* Every answer open, so "they can be wrong" is never hidden */}
-        <Section id="questions" title="Questions">
-          <FeatureList items={QUESTIONS} className="md:grid-cols-2" />
-        </Section>
+        <Faq app="scribe" />
 
         <HelpBlock apps={['scribe', 'light']} />
       </div>
