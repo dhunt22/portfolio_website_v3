@@ -131,3 +131,28 @@ routes on the Stan Scribe sheet, with its header, footer and theme toggle, at th
 written in the app repo, because the apps bundle the same text. `npm run sync:stanscribe-legal` fetches that
 repo's `origin/main`, drops each generated page's styles and nav, and writes the words to
 `content/stanscribe-legal/`. This replaces the sync described under Architecture.
+
+## The pages move to stanscribe.devinhunt.com (2026-11-11)
+
+The owner chose the subdomain as Stan Scribe's address, which replaces "there is no separate subdomain" above.
+
+| Page | Address | Exported file |
+|---|---|---|
+| Stan Scribe | `https://stanscribe.devinhunt.com/` | `stanscribe/index.html` |
+| Its legal pages | `/privacy/`, `/terms/`, `/acknowledgements/` | `stanscribe/<page>/index.html` |
+| Stan Scribe Light | `https://stanscribe.devinhunt.com/light/` | `stanscribe-light/index.html` |
+| Its legal pages | `/light/privacy/` and so on | `stanscribe-light/<page>/index.html` |
+
+- The routes in this repo do not move. `stanscribe.devinhunt.com` is a domain alias of the same Netlify
+  site, and `netlify.toml` has one host-scoped rewrite for each address in the table.
+- `devinhunt.com/stanscribe/...` and `/stanscribe-light/...` answer 301 to the matching address, so the links
+  in the apps, in App Store Connect and in the legal words keep working.
+- `lib/stanscribe.ts` holds the addresses. `pageUrl` gives a page's canonical URL, always on the subdomain.
+  `pageHref` gives the link for this build. The production build sets `NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN`
+  (in `netlify.toml`) and links to the subdomain. `next dev` and deploy previews link to the routes in this
+  repo, so their pages can be clicked through.
+- The header reads its place from the path with `locate`, which takes both shapes. A page is built at
+  `/stanscribe-light/terms` and opened at `/light/terms`, and the header must render the same at both.
+- The pages link with plain `<a>`, not Next's `Link`. Next's router does not know the subdomain's paths.
+- The subdomain redirects `/portfolio`, `/resume` and `/interests` to `devinhunt.com`. A test fails when a
+  new route in `app/(site)/` has no such rule.

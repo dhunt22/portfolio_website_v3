@@ -104,5 +104,5 @@ test('words follow the brief, metadata included', () => {
   const page = renderPage();
   expect(findCopyViolations(`${pageText(page)} ${JSON.stringify(metadata)}`)).toEqual([]);
   expect(metadata.title).toBe('Stan Scribe: live captions for every voice');
-  expect(metadata.alternates?.canonical).toBe('https://devinhunt.com/stanscribe/');
+  expect(metadata.alternates?.canonical).toBe('https://stanscribe.devinhunt.com/');
 });

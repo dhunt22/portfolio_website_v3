@@ -4,7 +4,6 @@
 // for a contact, so Help sits directly under the hero. Copy is copy.md's Light section.
 
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
 import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
 import { HelpBlock } from '@/components/stanscribe/HelpBlock';
@@ -13,13 +12,13 @@ import { COLUMN, INTRO, SHEET, Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
-import { BOTH_APPS_SHARE, LIGHT_NOT_SURE, LIGHT_SUMMARY, SHOTS, SOCIAL_IMAGE } from '@/lib/stanscribe';
+import { BOTH_APPS_SHARE, LIGHT_NOT_SURE, LIGHT_SUMMARY, SHOTS, SOCIAL_IMAGE, pageHref, pageUrl } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
 const TITLE = 'Stan Scribe Light: live captions, the simple edition';
 const DESCRIPTION =
   'Live captions for the conversation in front of you, with a color for each speaker. The simple edition of Stan Scribe, free. Works offline on iPhone and iPad. No account, no ads, no tracking.';
-const PAGE_URL = 'https://devinhunt.com/stanscribe-light/';
+const PAGE_URL = pageUrl('light');
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -58,12 +57,12 @@ export default function StanScribeLightPage() {
               <strong className="font-semibold text-ink-strong">Not sure?</strong> {LIGHT_NOT_SURE}
             </p>
             <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
-              <Link href="/stanscribe" className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
+              <a href={pageHref('scribe')} className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
                 See everything in Stan Scribe <span aria-hidden="true">→</span>
-              </Link>
-              <Link href="/stanscribe#story" className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
+              </a>
+              <a href={`${pageHref('scribe')}#story`} className={cn(TYPE.body, TYPE.link, 'inline-block py-1')}>
                 Why I built Stan Scribe <span aria-hidden="true">→</span>
-              </Link>
+              </a>
             </div>
           </div>
         </Section>

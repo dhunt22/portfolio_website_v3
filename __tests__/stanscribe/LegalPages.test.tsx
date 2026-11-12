@@ -14,9 +14,9 @@ const PAGES = [['privacy', 'Privacy Policy'], ['terms', 'Terms of Use'], ['ackno
 const params = (page: string) => ({ params: Promise.resolve({ page }) });
 
 describe.each([
-  ['stanscribe', 'Stan Scribe', ScribeLegal, scribeParams, scribeMetadata, 'scribe'],
-  ['stanscribe-light', 'Stan Scribe Light', LightLegal, lightParams, lightMetadata, 'light'],
-] as const)('%s', (route, name, Page, staticParams, metadataFor, app) => {
+  ['stanscribe', 'Stan Scribe', ScribeLegal, scribeParams, scribeMetadata, 'scribe', 'https://stanscribe.devinhunt.com/'],
+  ['stanscribe-light', 'Stan Scribe Light', LightLegal, lightParams, lightMetadata, 'light', 'https://stanscribe.devinhunt.com/light/'],
+] as const)('%s', (route, name, Page, staticParams, metadataFor, app, address) => {
   test('exports exactly the three pages every legal link points at', () => {
     const routes = staticParams().map(({ page }) => `/${route}/${page}/`).sort();
     expect(routes).toEqual(APPS[app].legal.map((l) => l.href).sort());
@@ -28,10 +28,10 @@ describe.each([
     for (const { href } of APPS[app].legal) expect(container.querySelector(`a[href="${href}"]`)).not.toBeNull();
   });
 
-  test.each(PAGES)('%s keeps its URL and says which app it belongs to', async (page, label) => {
+  test.each(PAGES)('%s names its address on the subdomain and says which app it belongs to', async (page, label) => {
     const metadata = await metadataFor(params(page));
     expect(metadata.title).toBe(`${label} · ${name}`);
-    expect(metadata.alternates?.canonical).toBe(`https://devinhunt.com/${route}/${page}/`);
+    expect(metadata.alternates?.canonical).toBe(`${address}${page}/`);
   });
 
   test.each(PAGES)('%s holds only the words, none of the generated frame', (page) => {

@@ -1,7 +1,6 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/LegalLinks.tsx
-// One app's Privacy Policy, Terms of Use and Acknowledgements. Plain <a>, so the browser asks for the exact
-// slash URLs the apps and App Store Connect use.
+// One app's Privacy Policy, Terms of Use and Acknowledgements, at the addresses lib/stanscribe.ts gives them.
 
 import { TYPE } from '@/components/stanscribe/type';
 import { APPS, type AppKey } from '@/lib/stanscribe';

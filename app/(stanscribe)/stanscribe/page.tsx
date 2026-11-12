@@ -14,13 +14,13 @@ import { COLUMN, INTRO, SHEET, Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
-import { APPS, BOTH_APPS_SHARE, LANGUAGES, LIGHT_NOT_SURE, SHOTS, SOCIAL_IMAGE } from '@/lib/stanscribe';
+import { APPS, BOTH_APPS_SHARE, LANGUAGES, LIGHT_NOT_SURE, SHOTS, SOCIAL_IMAGE, pageUrl } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
 const TITLE = 'Stan Scribe: live captions for every voice';
 const DESCRIPTION =
   'Live captions for the conversation in front of you, with a color for each speaker. Works offline on iPhone and iPad. No account, no ads, no tracking.';
-const PAGE_URL = 'https://devinhunt.com/stanscribe/';
+const PAGE_URL = pageUrl('scribe');
 
 export const metadata: Metadata = {
   title: TITLE,

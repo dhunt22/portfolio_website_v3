@@ -16,11 +16,15 @@ Next.js 16 App Router (Turbopack) with static export, React 19, Tailwind 4, Jest
   It shares only the colours, through the root tokens in `app/globals.css`.
 - Route groups do not change URLs. The 404 (`app/not-found.tsx`) wraps itself in `SiteChrome`.
 - Netlify serves `out/` as plain files and answers unknown paths with `404.html`. Do not add a catch-all
-  rewrite to `/index.html`. App Store Connect links `/stanscribe/` and `/stanscribe-light/`:
-  `scripts/stanscribe-index.mjs` copies each page to `<route>/index.html`, and `netlify.toml` rewrites those
-  two URLs to the copies, or Netlify's pretty URLs would 301 them to the slashless page. The legal pages'
-  slash URLs are in the apps: the same script moves each to `<page>/index.html`, so no `<page>.html` is left to
-  redirect to.
+  rewrite to `/index.html`.
+- Stan Scribe's address is `stanscribe.devinhunt.com` (Light at `/light/`), a domain alias of the same Netlify
+  site. Its routes in this repo stay `/stanscribe` and `/stanscribe-light`: `scripts/stanscribe-index.mjs`
+  writes each page to `<route>/index.html` and each legal page to `<page>/index.html`, and `netlify.toml`
+  rewrites the subdomain's paths to those files. `devinhunt.com/stanscribe/...`, which the apps and App
+  Store Connect link, 301s to the subdomain. Deploy previews and `next dev` serve the pages at their routes.
+- Build Stan Scribe links with `pageHref` and canonical URLs with `pageUrl` (`lib/stanscribe.ts`), in plain
+  `<a>`, never `Link`. Only the production build links to the subdomain. A new portfolio route needs a
+  redirect off the subdomain in `netlify.toml`; a test says so.
 - Do not invent claims, metrics or testimonials. Use what PRODUCT.md › Evidence on Hand lists.
 
 ## Verify

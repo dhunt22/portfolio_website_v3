@@ -44,7 +44,7 @@ test('one type scale: no mono, tracked caps or italics', () => {
 test('words follow the brief, metadata included', () => {
   const page = renderPage();
   expect(findCopyViolations(`${pageText(page)} ${JSON.stringify(metadata)}`)).toEqual([]);
-  expect(metadata.alternates?.canonical).toBe('https://devinhunt.com/stanscribe-light/');
+  expect(metadata.alternates?.canonical).toBe('https://stanscribe.devinhunt.com/light/');
 });
 
 test('the hero says the name and offer once: the download line adds only the status', () => {

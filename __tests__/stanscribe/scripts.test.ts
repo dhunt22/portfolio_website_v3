@@ -1,6 +1,6 @@
 /** @jest-environment node */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -205,5 +205,43 @@ describe('Netlify routing', () => {
 
   test.each(APPS)('/%s/ answers 200 from its copied index.html instead of a pretty-URL 301', (app) => {
     expect(toml).toContain(`from = "/${app}/"\n  to = "/${app}/index.html"\n  status = 200\n  force = true`);
+  });
+
+  // Every [[redirects]] table, in file order. Netlify takes the first rule that matches.
+  const rules = toml.split('[[redirects]]').slice(1).map((block) => {
+    const value = (key: string) => block.match(new RegExp(`^\\s*${key} = "?([^"\\n]+)"?$`, 'm'))?.[1];
+    return { from: value('from'), to: value('to'), status: value('status'), force: value('force') };
+  });
+  const indexOf = (from: string) => rules.findIndex((rule) => rule.from === from);
+  const SUBDOMAIN = 'https://stanscribe.devinhunt.com';
+  // Where each app's pages sit on the subdomain, beside their folder in out/.
+  const PLACES = [['stanscribe', '/'], ['stanscribe-light', '/light/']] as const;
+
+  test.each(PLACES)('the subdomain serves %s at %s, and its legal pages under it', (app, path) => {
+    expect(rules).toContainEqual({ from: `${SUBDOMAIN}${path}`, to: `/${app}/index.html`, status: '200', force: 'true' });
+    for (const page of PAGES) {
+      expect(rules).toContainEqual({ from: `${SUBDOMAIN}${path}${page}/`, to: `/${app}/${page}/index.html`, status: '200', force: 'true' });
+    }
+  });
+
+  test.each(PLACES)('the old /%s/ addresses move to the subdomain for good, on both domains', (app, path) => {
+    for (const host of ['https://devinhunt.com', SUBDOMAIN]) {
+      expect(rules).toContainEqual({ from: `${host}/${app}/*`, to: `${SUBDOMAIN}${path}:splat`, status: '301', force: 'true' });
+      // Ahead of the rewrite that serves the same path on deploy previews, or the rewrite would win.
+      expect(indexOf(`${host}/${app}/*`)).toBeLessThan(indexOf(`/${app}/`));
+    }
+  });
+
+  test('the portfolio is not served a second time on the subdomain', () => {
+    const routes = readdirSync(join(ROOT, 'app', '(site)'), { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+    expect(routes.length).toBeGreaterThan(0);
+    for (const route of routes) {
+      expect(rules).toContainEqual({ from: `${SUBDOMAIN}/${route}/*`, to: `https://devinhunt.com/${route}/:splat`, status: '301', force: 'true' });
+    }
+  });
+
+  test('only the production build links to the subdomain', () => {
+    expect(toml).toContain('[context.production.environment]\n  NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN = "true"');
+    expect(toml.match(/NEXT_PUBLIC_STANSCRIBE_SUBDOMAIN/g)).toHaveLength(1);
   });
 });

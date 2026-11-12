@@ -8,7 +8,7 @@ import { LegalLinks } from '@/components/stanscribe/LegalLinks';
 import { COLUMN, SHEET } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
-import { APPS, LEGAL_PAGES, SOCIAL_IMAGE, type AppKey, type LegalSlug } from '@/lib/stanscribe';
+import { APPS, LEGAL_PAGES, SOCIAL_IMAGE, pageUrl, type AppKey, type LegalSlug } from '@/lib/stanscribe';
 import { legalWords } from '@/lib/stanscribe-legal';
 import { cn } from '@/lib/utils';
 
@@ -20,11 +20,12 @@ export const legalParams = () => LEGAL_PAGES.map(({ slug }) => ({ page: slug }))
 
 export async function legalMetadata(app: AppKey, { params }: LegalRouteProps): Promise<Metadata> {
   const { page } = await params;
-  const { name, route } = APPS[app];
-  const label = LEGAL_PAGES.find(({ slug }) => slug === page)?.label;
-  const title = `${label} · ${name}`;
-  const description = `${label} for ${name}.`;
-  const url = `https://devinhunt.com/${route}/${page}/`;
+  const { name } = APPS[app];
+  const legal = LEGAL_PAGES.find(({ slug }) => slug === page);
+  if (!legal) throw new Error(`No Stan Scribe legal page is named "${page}".`);
+  const title = `${legal.label} · ${name}`;
+  const description = `${legal.label} for ${name}.`;
+  const url = pageUrl(app, legal.slug);
   return {
     title,
     description,

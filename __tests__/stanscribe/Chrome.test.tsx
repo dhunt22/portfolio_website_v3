@@ -30,6 +30,21 @@ test('on the Light page, Light is the current page', () => {
   expect(within(header).getByRole('link', { name: 'Stan Scribe' })).not.toHaveAttribute('aria-current');
 });
 
+// The header is built at the path in this repo and hydrated at the subdomain's, so both must render alike.
+test.each([
+  ['/stanscribe', '/'],
+  ['/stanscribe-light', '/light'],
+  ['/stanscribe/privacy', '/privacy'],
+  ['/stanscribe-light/terms', '/light/terms'],
+])('the header at %s is the same on the subdomain at %s', (inRepo, onSubdomain) => {
+  pathname = inRepo;
+  const built = render(<StanScribeLayout><p>content</p></StanScribeLayout>);
+  const builtHeader = built.container.querySelector('header')!.outerHTML;
+  built.unmount();
+  pathname = onSubdomain;
+  expect(renderFrame().querySelector('header')!.outerHTML).toBe(builtHeader);
+});
+
 test('the footer credits the maker, and the skip link leads to main', () => {
   const frame = renderFrame();
   expect(within(screen.getByRole('contentinfo')).getByRole('link', { name: 'Devin Hunt' })).toHaveAttribute('href', '/');

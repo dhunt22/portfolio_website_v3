@@ -104,7 +104,8 @@ https://claude.ai/artifact/NKpPGPwhhGFPPXEC1eN8GV. Product truth lives in `PRODU
 
 **Scope.** This system governs the portfolio pages: home, portfolio, résumé, project pages, outdoors,
 404. The Stan Scribe pages keep their own type and layout (`components/stanscribe/type.ts`, Newsreader
-and Hanken) as a separate product, at `devinhunt.com/stanscribe/` and `/stanscribe-light/`. Since
+and Hanken) as a separate product, at `stanscribe.devinhunt.com` (Light at `/light/`) since 2026-11-11;
+their routes in this repo are still `/stanscribe` and `/stanscribe-light`. Since
 2026-11-01 they take this system's colours through the root tokens, on a white (night #1c2429) sheet;
 the warm paper palette is gone. Since 2026-10-28 they
 have their own header and footer (`StanScribeHeader`, `StanScribeFooter`: the name, which leads to the

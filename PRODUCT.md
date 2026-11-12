@@ -57,10 +57,12 @@ it (AIIWFM, tested Python automation for IWFM workflows, the firm's AI Innovator
   index draws projects as glyphs and has no map.
 - Factual copy (projects, roles, dates, the Stan Scribe story) is not rewritten or extended with new
   claims without asking.
-- **Decided (owner, 2026-11-01): Stan Scribe stays at `devinhunt.com/stanscribe/` and
-  `/stanscribe-light/`**, with their `privacy/`, `terms/` and `acknowledgements/` pages, on this site's
-  Netlify deploy. These are the App Store Connect Support and Marketing URLs. There is no
-  `stanscribe.devinhunt.com`: the earlier plan for one is dropped.
+- **Decided (owner, 2026-11-11): Stan Scribe lives at `stanscribe.devinhunt.com`.** Stan Scribe is at `/`
+  and Stan Scribe Light at `/light/`, each with its `privacy/`, `terms/` and `acknowledgements/` pages.
+  The subdomain is a domain alias of this site's Netlify deploy, and `netlify.toml` rewrites its paths to
+  the same exported files. The first addresses, `devinhunt.com/stanscribe/` and `/stanscribe-light/`,
+  redirect there for good, so the links in the apps and in App Store Connect keep working. This replaces
+  the 2026-11-01 decision to have no subdomain.
 - Stan Scribe copy rules (banned words, required links and phrases) are in
   `docs/superpowers/specs/2026-10-23-stanscribe-page-design.md` and enforced by tests in
   `__tests__/stanscribe/`. Its pages make no analytics, cookie or third-party requests.

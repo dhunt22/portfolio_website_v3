@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // scripts/stanscribe-index.mjs
-// Runs after `next build`. With trailingSlash off, Next exports out/stanscribe.html, but App Store
-// Connect links /stanscribe/ and /stanscribe-light/, folders that hold only the legal pages. Copying
-// each page to <route>/index.html makes those exact URLs real files. netlify.toml rewrites to them, since
-// Netlify's pretty URLs would otherwise 301 the slash URL to the slashless page.
+// Runs after `next build`. With trailingSlash off, Next exports out/stanscribe.html and
+// out/stanscribe/privacy.html. This gives every Stan Scribe page a folder and an index.html, the files
+// netlify.toml rewrites stanscribe.devinhunt.com's paths to.
 //
-// The legal pages' slash URLs are in the apps themselves. Moving each to <page>/index.html leaves no
-// <page>.html for pretty URLs to redirect to, so they need no rewrites.
+// A deploy preview serves the pages at their routes instead. There /stanscribe/ needs netlify.toml's
+// rewrite to the copy, or Netlify's pretty URLs would 301 it to the slashless page. The legal pages are
+// moved, not copied, which leaves no <page>.html to redirect to, so they need no rewrite.
 //
 // Usage: node scripts/stanscribe-index.mjs [--out out]
 
