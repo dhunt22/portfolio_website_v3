@@ -5,7 +5,8 @@
 // The drawings are from Lucide (https://lucide.dev), ISC licence, copyright Lucide Icons and Contributors; the
 // chevron, lock, search, share, phone and square are Lucide's from Feather, MIT licence, copyright Cole Bemis.
 // They are copied from lucide-react 1.63.0 as static SVG, so the pages ship no icon library and no script for
-// their icons. The speaker dots are drawn here, in the app's colours.
+// their icons. Both licences are in full in icons.LICENSE.txt beside this file. The speaker dots are drawn
+// here, in the app's colours.
 
 import type { SVGProps } from 'react';
 

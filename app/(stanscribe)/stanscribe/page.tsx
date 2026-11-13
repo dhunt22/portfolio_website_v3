@@ -143,7 +143,7 @@ export default function StanScribePage() {
         <section aria-labelledby="stanscribe-title" className={cn(BAND, 'relative z-10 pb-0 pt-8 text-center md:pt-12')}>
           <div className={BAND_COLUMN}>
             <HeroLoadIn>
-              <AppIcon app="scribe" className="h-26 w-26 shadow-lg" />
+              <AppIcon app="scribe" className="h-26 w-26" />
               <h1 id="stanscribe-title" className={cn(TYPE.display, 'mt-5')}>
                 Stan Scribe
               </h1>
