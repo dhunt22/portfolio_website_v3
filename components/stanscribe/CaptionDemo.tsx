@@ -25,6 +25,8 @@ const BAR = ['Smaller', 'Larger', 'Save', 'Stop'];
 
 export function CaptionDemo() {
   const panel = useRef<HTMLDivElement>(null);
+  // The observer waits for the first start. Pressing Play counts as that start, so it lets go of the observer.
+  const observer = useRef<IntersectionObserver | null>(null);
   // Every word shows until the script decides it can animate, so the server render is the whole conversation.
   // The count lives in a ref as well, so the timer chain reads it without waiting on a render.
   const count = useRef(TOTAL);
@@ -41,18 +43,18 @@ export function CaptionDemo() {
     if (reduced || typeof IntersectionObserver === 'undefined' || !panel.current) return;
     setAnimated(true);
     show(0);
-    let started = false;
-    const observer = new IntersectionObserver(
+    const watcher = new IntersectionObserver(
       (entries) => {
-        if (started || !entries.some((entry) => entry.isIntersecting)) return;
-        started = true;
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        watcher.disconnect();
+        observer.current = null;
         setPlaying(true);
-        observer.disconnect();
       },
       { threshold: 0.5 },
     );
-    observer.observe(panel.current);
-    return () => observer.disconnect();
+    observer.current = watcher;
+    watcher.observe(panel.current);
+    return () => watcher.disconnect();
   }, []);
 
   useEffect(() => {
@@ -60,7 +62,7 @@ export function CaptionDemo() {
     let timer: ReturnType<typeof setTimeout>;
     // Each step schedules the next itself, so the pace does not depend on when React renders.
     const step = () => {
-      const next = count.current + 1;
+      const next = Math.min(count.current + 1, TOTAL);
       show(next);
       if (next >= TOTAL) {
         setPlaying(false);
@@ -74,6 +76,8 @@ export function CaptionDemo() {
 
   const finished = shown >= TOTAL;
   const press = () => {
+    observer.current?.disconnect();
+    observer.current = null;
     if (playing) {
       setPlaying(false);
       return;
@@ -100,7 +104,7 @@ export function CaptionDemo() {
                 <span
                   data-speaker
                   data-shown={named}
-                  className="block text-base transition-opacity duration-200"
+                  className="block text-lg transition-opacity duration-200"
                   style={{ color: turn.color, opacity: named ? 1 : 0 }}
                 >
                   {turn.speaker}

@@ -17,11 +17,16 @@ beforeEach(() => {
   jest.useFakeTimers();
   setMotion(false);
   (window as unknown as { IntersectionObserver: unknown }).IntersectionObserver = class {
+    live = true;
     constructor(callback: (entries: { isIntersecting: boolean }[]) => void) {
-      intersect = (isIntersecting) => callback([{ isIntersecting }]);
+      intersect = (isIntersecting) => {
+        if (this.live) callback([{ isIntersecting }]);
+      };
     }
     observe() {}
-    disconnect() {}
+    disconnect() {
+      this.live = false;
+    }
   };
 });
 
@@ -129,4 +134,31 @@ test('the app’s bar is a picture: hidden from screen readers, with no controls
   expect(bar.getAttribute('aria-hidden')).toBe('true');
   expect(bar.querySelector('button, a, [tabindex]')).toBeNull();
   expect(bar.textContent).toBe('SmallerLargerSaveStop');
+});
+
+test('pressing Play before it scrolls into view counts as the start: scrolling in later does not replay it', () => {
+  const { container } = render(<CaptionDemo />);
+  fireEvent.click(screen.getByRole('button', { name: 'Play' }));
+  advance(20000);
+  expect(shown(container)).toBe(WORDS.length);
+  scrollIntoView();
+  expect(shown(container)).toBe(WORDS.length);
+  expect(screen.queryByRole('button', { name: 'Pause' })).toBeNull();
+  expect(screen.getByRole('button', { name: 'Play again' })).toBeInTheDocument();
+  advance(20000);
+  expect(container.querySelectorAll('[data-word]')).toHaveLength(WORDS.length);
+  expect(shown(container)).toBe(WORDS.length);
+  expect(screen.getByRole('button', { name: 'Play again' })).toBeInTheDocument();
+});
+
+test('Pause pressed before it scrolls into view stays paused when it scrolls in', () => {
+  const { container } = render(<CaptionDemo />);
+  fireEvent.click(screen.getByRole('button', { name: 'Play' }));
+  advance(1000);
+  fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
+  const held = shown(container);
+  scrollIntoView();
+  advance(5000);
+  expect(shown(container)).toBe(held);
+  expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
 });
