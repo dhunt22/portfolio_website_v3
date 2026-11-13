@@ -104,8 +104,8 @@ This replaces "Bands in place of the sheet (2026-11-12)" in the October spec.
 
 There is no pseudo-element, no mask and no `isolation`. `--band-a` and `--band-b` become the two tones
 with their alpha. The hero is the first section and has `background: none`. The footer (`.band-foot`)
-and the legal pages' single band (`.band-only`) take the same plain rule. `BANDS`, `BAND` and
-`BAND_COLUMN` in `Section.tsx` keep their names.
+takes the same plain rule. The legal pages have a hero too, so `.band-only`, the rule for a page of one
+band, is removed. `BANDS`, `BAND` and `BAND_COLUMN` in `Section.tsx` keep their names.
 
 **Tone order.** The first card band is the lighter tone, so the card reads as a card against the hero.
 The main page has eight sections (hero, then seven bands) and Light has four, so Help stays on the
@@ -242,9 +242,10 @@ that holds an optional icon tile, the label as an `h3`, and a chevron that turns
 uses no JavaScript. Browsers open a closed row when find-in-page matches its words. Each summary is at
 least 64px tall, and the global focus ring already covers `summary`.
 
-**Icons.** Lucide (`lucide-react`, ISC licence), rendered on the server as plain SVG. The app's tour
-uses Apple's SF Symbols, which Apple licenses for apps on its platforms and not for websites, so the
-page uses the nearest Lucide drawing for each. The speaker dots and the Start and Stop tiles are drawn
+**Icons.** Lucide's drawings (ISC licence), inlined in `components/stanscribe/icons.tsx` as static SVG,
+so the pages ship no icon library and no script for their icons. The app's tour uses Apple's SF Symbols,
+which Apple licenses for apps on its platforms and not for websites, so the page uses the nearest Lucide
+drawing for each. The speaker dots and the Start and Stop tiles are drawn
 here, in the app's colours.
 
 **Stan Scribe Light.** The same hero pattern with Light's own icon: h1, "The simple edition. Free.", one
@@ -334,19 +335,20 @@ images.
 
 | File | Change |
 |---|---|
-| `app/globals.css` | `.bands`, `.band-foot`, `.band-only`: plain backgrounds, see-through tones, no masks |
+| `app/globals.css` | `.bands`, `.band-foot`: plain backgrounds, see-through tones, no masks; `.band-only` removed |
 | `components/ui/ContourBackdrop.tsx` | the `quiet` veil at 40% |
-| `components/stanscribe/Section.tsx` | comments only; the names stay |
-| `components/stanscribe/Disclosure.tsx`, `IconTile.tsx`, `CaptionDemo.tsx` | new |
+| `components/stanscribe/Section.tsx` | `Section` takes a `className`, for a band under a picture that hangs into it; the names stay |
+| `components/stanscribe/Disclosure.tsx`, `IconTile.tsx`, `CaptionDemo.tsx`, `icons.tsx` | new |
 | `components/stanscribe/Faq.tsx`, `ComparisonTable.tsx` | rows that open; the framed table |
 | `app/(stanscribe)/stanscribe/page.tsx`, `stanscribe-light/page.tsx` | the sections above |
-| `app/(stanscribe)/layout.tsx`, `app/layout.tsx`, `lib/site/metadata.ts` | icons through metadata; `og:site_name` |
+| `app/(stanscribe)/layout.tsx`, `app/layout.tsx` | icons through metadata; `og:site_name` |
 | `lib/stanscribe.ts` | the shared lines, the icon files, the card's alt text |
+| `lib/stanscribe-legal.ts`, `components/stanscribe/LegalPage.tsx` | `legalParts` splits a legal page's words into the title and the rest; the page sets the title on the contours and the rest on the card |
 | `lib/portfolio-data.ts` | line X |
 | `scripts/stanscribe-social.mjs`, `scripts/stanscribe-social/` | the card's script and template |
 | `scripts/scroll-trace.mjs` | the trace harness from section 3, kept so the measurement can be repeated |
 | `public/images/stanscribe/` | the new card; the app icons |
-| `package.json` | `lucide-react`; `build:stanscribe-social` |
+| `package.json` | `build:stanscribe-social` |
 | `__tests__/stanscribe/` | see Testing |
 | `DESIGN.md`, the October spec | the card, the rows, the demo; a pointer to this spec |
 | `transcript_stan/docs/marketing/stanscribe-page/screenshot-request.md` | the request, in the app repo |
