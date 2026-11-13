@@ -90,8 +90,10 @@ This replaces "Bands in place of the sheet (2026-11-12)" in the October spec.
 - The side fades go. The contours no longer show in the side margins, except faintly through the card.
   This reverses the owner's 2026-11-12 choice, at his request. It matches the portfolio and the CSS is
   simpler. The traces below do not show that it is faster.
-- The page-coloured veil over the contours drops from 60% to 30%, as drawn, so the contours read behind
-  the hero.
+- The page-coloured veil over the contours drops from 60% to 40%, so the contours read behind the hero.
+  The mockup drew 30%. At 30% a link in the hero that crosses a contour line measures 6.6:1 by day and
+  6.9:1 at night, under the 7:1 rule. At 40% the worst cases are 7.06:1 and 7.5:1. The lines are the plate's own cream (night) and
+  brown (day), not the blue the mockup tinted them.
 
 **How it is built.** Today each section and the footer paints its fill on a `::before` layer with a
 `mask-image`, inside its own stacking context. The new rule is one plain background per section:
@@ -333,7 +335,7 @@ images.
 | File | Change |
 |---|---|
 | `app/globals.css` | `.bands`, `.band-foot`, `.band-only`: plain backgrounds, see-through tones, no masks |
-| `components/ui/ContourBackdrop.tsx` | the `quiet` veil at 30% |
+| `components/ui/ContourBackdrop.tsx` | the `quiet` veil at 40% |
 | `components/stanscribe/Section.tsx` | comments only; the names stay |
 | `components/stanscribe/Disclosure.tsx`, `IconTile.tsx`, `CaptionDemo.tsx` | new |
 | `components/stanscribe/Faq.tsx`, `ComparisonTable.tsx` | rows that open; the framed table |
@@ -356,7 +358,7 @@ Tests come first, as the repo's TDD rule asks.
 - `Bands.test.tsx`: no `mask-image`, no `::before` fill and no `isolation` in the band rules; the two
   tones are see-through; the blend is 80px; the hero has no fill; the tone order and the Help rule hold.
 - `palette.test.ts`: 7:1 for body text and links on each see-through tone, composited over the ground
-  and over a contour line under the 30% veil, in both themes; 7:1 for the demo's speaker names.
+  and over a contour line under the 40% veil, in both themes; 7:1 for the demo's speaker names.
 - `StanScribePage.test.tsx` and `StanScribeLightPage.test.tsx`: the four facts; four steps; "Features";
   six feature rows; five privacy rows whose labels are visible with the row closed; "Ask before you
   caption people" visible; the accuracy answer open; the story's three paragraphs with the rest inside
