@@ -29,6 +29,10 @@ It replaces parts of `2026-10-23-stanscribe-page-design.md`. Each section says w
 He marked nothing against the rest of the drawing, so the spec builds it as drawn. The list under
 "Open points" names the parts that go beyond his request, so he can strike any of them here.
 
+He then reviewed this spec and asked for three changes, which are made below: a caption demo in which
+the reader watches three other people talk, "curated" in the themes line, and a note that the slowness
+is in the browser on his computer and, less, on his phone.
+
 ## 1. The share preview
 
 **The card.** `public/images/stanscribe/stan-scribe-social.jpg` stays at the same address and size
@@ -42,8 +46,8 @@ He marked nothing against the rest of the drawing, so the spec builds it as draw
 No italics, and no warm colours.
 
 **A script builds it.** `scripts/stanscribe-social.mjs` (run as `npm run build:stanscribe-social`) fills
-an HTML template in `scripts/stanscribe-social/`, renders it at 1200 x 630 in the Chrome installed on the
-Mac, and writes the JPEG with `sharp`. It reads Newsreader and Hanken from the last `npm run build`, so
+an HTML template in `scripts/stanscribe-social/`, renders it at 1200 x 630 in a Chromium browser installed on the
+Mac (Brave, on the owner's), and writes the JPEG with `sharp`. It reads Newsreader and Hanken from the last `npm run build`, so
 the card uses the page's fonts. The October card was a one-off Python drawing. The script matters because
 the screenshots will change (section 6), and the card must be redrawn when they do. The JPEG is committed.
 The Netlify build does not run the script.
@@ -84,7 +88,8 @@ This replaces "Bands in place of the sheet (2026-11-12)" in the October spec.
   from the tone above it over 80px. The first band blends in from nothing, so the card has no hard top
   edge.
 - The side fades go. The contours no longer show in the side margins, except faintly through the card.
-  This reverses the owner's 2026-11-12 choice, at his request, for speed.
+  This reverses the owner's 2026-11-12 choice, at his request. It matches the portfolio and the CSS is
+  simpler. The traces below do not show that it is faster.
 - The page-coloured veil over the contours drops from 60% to 30%, as drawn, so the contours read behind
   the hero.
 
@@ -108,13 +113,36 @@ lighter tone and each page still ends on it, as the tests in `Bands.test.tsx` re
 see-through tone over the ground and over a contour line at the new veil strength, and check the worst
 case in both themes.
 
-**What I measured, and what I did not.** I scrolled the live page in Chrome on the owner's Mac (1728 x
-823 at 2x, night theme, glow running) in four states: as shipped, masks off, masks and veil off, fills
-off. Each run scrolled the whole page in five seconds. I recorded seven runs: each state twice, and
-fills off once. Every run held 120 frames a second with no frame over 20 ms. That test times main-thread frames only. It cannot
-see work on the GPU, and it says nothing about Safari or an iPhone. So the masks are the likely cause
-and not a proven one. The owner has not yet said where he sees the slowness. The fix is checked on that
-device, before and after, on a deploy preview (see Testing).
+**What I measured.** The owner sees the slowness in the browser on his computer, and less on his phone.
+His desktop browser is Brave, so I traced the live page there, on his Mac, with a temporary profile and
+real wheel input (`Input.synthesizeScrollGesture`, the whole page at 1,500px a second). The trace counts
+the frames the compositor presents, so it sees work on the GPU side as well as on the main thread.
+
+Verdict: no measurable difference, and no slowness to explain.
+
+| State of the page | Runs | Frames presented in about 5.7 s | Dropped-frame events per run |
+|---|---|---|---|
+| As shipped | 3 | 689 to 692 | 1 to 3 |
+| Masks off | 3 | 687 to 689 | 0 to 6 |
+| The build this spec proposes (plain fills) | 3 | 689 to 690 | 1 to 3 |
+| Glow off, masks on | 3 | 685 | 10 |
+
+Every run scrolled the full 8,548px and presented 120 frames a second, the display's refresh rate, with
+no blank tiles. The display is the limit in every state, not the page. The runs were interleaved. Two
+more rounds at an emulated 2560 x 1440 window and one round in the day theme gave the same result for
+the shipped and proposed states. An earlier test inside his own Brave profile, timing main-thread frames,
+also held 120 a second. Two page loads showed one long task between them, of 51 ms.
+
+So I have not reproduced the slowness, and I cannot say the masks cause it. Two costs do show in the
+traces, and both are shared with the portfolio's pages:
+
+- The page downloads three contour files of about 466 KB each over the wire (1.7 MB each unpacked): the
+  plate for the current theme, the glow, and the other theme's plate, fetched ahead for the toggle.
+- While the glow runs, the main thread produces a frame on every refresh, 120 a second, for as long as
+  the page is open. With the glow off, half of those frames are not needed.
+
+Neither is fixed by this spec. Open point 1 asks what the owner sees, so the cause can be found before
+anything is changed for speed.
 
 ## 4. The page
 
@@ -167,7 +195,7 @@ doctor's appointment, and what comes next.
 | Big text, clear buttons | Every button says what it does: Smaller, Larger, Save, Stop. |
 | Keeps listening | Lock your iPhone and captions keep going until you tap Stop. |
 | Conversations you keep | Find any one by date, person or word. Export it, or back it up to your own iCloud. |
-| Choose how it looks | See Open points. |
+| Choose how it looks | 28 themes I curated, or make your own from your photos. |
 
 Then five screens in a row, each with a short label: Speakers in color, Text as big as you need, Saved
 as text, Find any conversation, 25 languages. They are a grid, five across on a wide window and two
@@ -240,18 +268,20 @@ questions as rows.
 - With reduced motion, or with JavaScript off, the whole conversation is there from the start and
   nothing moves. The server renders every word. The script only changes each word's opacity, so a
   screen reader reads the whole conversation at any moment and the layout never shifts.
-- Its cost is one timer and about forty small updates over about thirteen seconds. It has no video, no
+- Its cost is one timer and about twenty small updates over about eight seconds. It has no video, no
   GIF and no canvas.
 - It is dark in both themes, as a phone screen is. The speaker colours are brightened until each name
   clears 7:1 on the panel. `palette.test.ts` checks them.
 
-The script, with fictional names as in the app's own demo:
+The script. The reader watches three other people make a plan, and nobody is spoken to by a name that
+differs from their label:
 
-> **Alex** Did everyone get enough to eat?
-> **Rosa** Plenty. Grandpa, tell them about the fishing trip.
-> **Person 3** We left at five and caught nothing until noon.
+> **Alex** Are we still on for Saturday?
+> **Rosa** Yes. Come at six, and bring the salad.
+> **Person 3** I will bring dessert.
 
-Two named voices and one "Person 3" show both kinds of label.
+Alex and Rosa are fictional names from the app's own demo. "Person 3" is the label the app gives a
+speaker before anyone names them, so the demo shows both kinds. The demo runs about eight seconds.
 
 ## 6. A request to the app repo for new screenshots
 
@@ -266,10 +296,10 @@ code change. It gives a script for each:
 
 | Image | Where it sits | Script |
 |---|---|---|
-| `hero-stan-scribe`, `both-apps`, `light-black-and-white` | Heroes, share card | The dinner conversation from the caption demo, continued for a full screen. |
+| `hero-stan-scribe`, `both-apps`, `light-black-and-white` | Heroes, share card | The Saturday plan from the caption demo, continued for a full screen. |
 | `stan-scribe-live-large` | "Text as big as you need" | Two short lines at the largest size: "Dinner is ready. / Come and sit down." |
 | `stan-scribe-live-graphite` | "Speakers in color" | Three speakers, two of them named, about who is driving on Saturday. |
-| `stan-scribe-painted-themes` | "Should not look clinical" | The dinner conversation. |
+| `stan-scribe-painted-themes` | "Should not look clinical" | The Saturday plan. |
 | `stan-scribe-conversation`, `stan-scribe-library`, `stan-scribe-languages` | Features | No change. They already show their feature. |
 
 One rule for every script: the speakers talk about dinner, plans and each other, and never about the
@@ -284,20 +314,19 @@ images.
 
 ## Open points for the owner
 
-1. **Where is the page slow for you?** iPhone, Safari on the Mac, or Chrome. The check in Testing
-   depends on the answer.
-2. **The themes line.** You wrote "28 themes created by me, or make your own custom themes". Some of the
-   28 are photographs of paintings by other people, credited on the Acknowledgements page, and the
-   artists' permission is still open in the app repo. "Created by me" over those reads as a claim to
-   the paintings. I suggest "28 themes I put together, or make your own from your photos." Say which.
-3. **Parts drawn beyond your request**, which stand unless you strike them:
+1. **What do you see when the page is slow?** I could not reproduce it in Brave on your Mac (section 3).
+   Tell me what happens and when: stutter while you scroll, a slow first load, a pause a few seconds
+   after loading, or the fans. Tell me the display too, if it is an external one. Until the cause is
+   found, the full-width card is a change of look and not a speed fix. If you would keep the faded sides
+   on those terms, say so.
+2. **Parts drawn beyond your request**, which stand unless you strike them:
    - the hero's intro paragraph and jump links are cut;
    - Features no longer mentions Start Captions on the Lock Screen and Control Center, or Obsidian by
      name;
    - the comparison loses its Speaker colors and Motion rows, and "Not sure?" is one sentence;
    - the accuracy answer starts open;
    - the tab icon becomes the app's icon.
-4. **The demo's script and the screenshot scripts** in sections 5 and 6 are my drafts. Change any line.
+3. **The screenshot scripts** in section 6 are my drafts, and so is the third speaker's label in the demo. Change any line.
 
 ## Files
 
@@ -313,6 +342,7 @@ images.
 | `lib/stanscribe.ts` | the shared lines, the icon files, the card's alt text |
 | `lib/portfolio-data.ts` | line X |
 | `scripts/stanscribe-social.mjs`, `scripts/stanscribe-social/` | the card's script and template |
+| `scripts/scroll-trace.mjs` | the trace harness from section 3, kept so the measurement can be repeated |
 | `public/images/stanscribe/` | the new card; the app icons |
 | `package.json` | `lucide-react`; `build:stanscribe-social` |
 | `__tests__/stanscribe/` | see Testing |
@@ -344,9 +374,9 @@ Tests come first, as the repo's TDD rule asks.
 - In a browser at 1440 and 390 wide, light and dark, and at 320px and 200% zoom with no sideways scroll.
   Keyboard: every row opens with Enter and Space, and the demo's button works. Taste-Skill's
   `inspect.mjs` over both pages.
-- The speed check: on the device the owner names, scroll the deploy preview and the live page one after
-  the other and compare. If the preview is no better there, the masks were not the cause, and the next
-  suspects are the veil and the glow, taken one at a time.
+- Speed: the trace harness from section 3 runs against the deploy preview and the live page, interleaved,
+  five runs a side, to show the new build is no slower. The slowness the owner reported is a separate
+  open item until it is reproduced.
 - The share card: read the built page's tags, and paste the deploy preview's address into Messages.
 
 ## Out of scope
