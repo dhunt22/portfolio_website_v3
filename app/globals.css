@@ -250,9 +250,8 @@
   .bands > section:first-of-type { background: none; }
   /* The card starts at the second section and blends in from nothing. */
   .bands > section:nth-of-type(2) { --band-from: transparent; }
-  /* A page that is one band (the legal pages) is the lighter tone from the top. Every page ends on that tone,
-     and the footer, which takes the shared rule above, blends from it to the ground. */
-  .bands > section.band-only { --band-from: transparent; --band-to: var(--band-a); background: linear-gradient(to bottom, var(--band-from) 0, var(--band-to) var(--band-blend)); }
+  /* Every page ends on the lighter tone, and the footer, which takes the shared rule above, blends from it to
+     the ground. */
 
   /* A Stan Scribe legal page's words (content/stanscribe-legal/). They arrive with no classes, so the roles in
      components/stanscribe/type.ts are set here. License text is fine print, in the page's own face. */

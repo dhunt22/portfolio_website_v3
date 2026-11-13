@@ -50,16 +50,27 @@ describe.each([
   });
 });
 
-test('a legal page is one band, with no boxed sheet', async () => {
+test('a legal page is a title on the contours, then the card, as the portfolio and the app pages are', async () => {
   const page = render(await ScribeLegal({ params: Promise.resolve({ page: 'privacy' }) })).container;
   expect(page.querySelector('.panel')).toBeNull();
-  const sections = sectionsOf(page);
-  expect(sections).toHaveLength(1);
-  expect(sections[0].parentElement?.className).toMatch(/\bbands\b/);
-  expect(sections[0].className).toMatch(/\bband-only\b/);
-  // The band fills the window on a short page, so no contours show between it and the footer.
-  expect(sections[0].className).toMatch(/\bmin-h-svh\b/);
-  expect(sections[0].querySelector('h1')).not.toBeNull();
+  const [hero, card, ...rest] = sectionsOf(page);
+  expect(rest).toHaveLength(0);
+  expect(hero.parentElement?.className).toMatch(/\bbands\b/);
+  expect(card.parentElement).toBe(hero.parentElement);
+  // The first section of .bands has no fill: the title and the line under it sit on the contours.
+  expect(hero.querySelector('h1')?.textContent).toBe('Privacy Policy');
+  expect(hero.textContent).toMatch(/^Privacy Policy\s*Effective /);
+  expect(hero.querySelectorAll('p')).toHaveLength(1);
+  // The second section is the card, on the lighter tone. It fills the window on a short page, so no contours
+  // show between it and the footer.
+  expect(card.className).toMatch(/\bmin-h-svh\b/);
+  expect(card.querySelector('h1')).toBeNull();
+  expect(card.textContent).toMatch(/The short version/);
+  expect(page.querySelector('.band-only')).toBeNull();
+  for (const section of [hero, card]) {
+    expect(section.children).toHaveLength(1);
+    expect(section.firstElementChild?.className).toMatch(/\bmax-w-5xl\b/);
+  }
 });
 
 test('the footer closes the page on a band, so the contours do not come back under it', () => {
@@ -69,8 +80,8 @@ test('the footer closes the page on a band, so the contours do not come back und
 
 describe('the band rules in globals.css', () => {
   const css = fs.readFileSync(path.join(process.cwd(), 'app/globals.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-  // Every rule whose selector names .bands, .band-foot or .band-only (the portfolio's .site .band is not one).
-  const bandRules = (css.match(/[^{}]*\.band(?:s|-foot|-only)[^{}]*\{[^}]*\}/g) ?? []).join('\n');
+  // Every rule whose selector names .bands or .band-foot (the portfolio's .site .band is not one).
+  const bandRules = (css.match(/[^{}]*\.band(?:s|-foot)[^{}]*\{[^}]*\}/g) ?? []).join('\n');
 
   test('two tones take turns: the card’s colour and the page’s, both slightly see-through', () => {
     expect(bandRules).toMatch(/--band-a:\s*color-mix\(in srgb, var\(--surface-card\) 92%, transparent\)/);
@@ -90,6 +101,10 @@ describe('the band rules in globals.css', () => {
   test('the hero has no fill, and the card under it blends in from nothing', () => {
     expect(bandRules).toMatch(/\.bands > section:first-of-type \{ background: none; \}/);
     expect(bandRules).toMatch(/\.bands > section:nth-of-type\(2\) \{ --band-from: transparent; \}/);
+  });
+
+  test('no page is a single band any more: the legal pages have a hero too', () => {
+    expect(css).not.toMatch(/band-only/);
   });
 
   test('each break is an 80px blend, the height the owner chose', () => {

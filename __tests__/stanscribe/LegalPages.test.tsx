@@ -5,6 +5,7 @@ import StanScribeLayout from '@/app/(stanscribe)/layout';
 import ScribeLegal, { generateStaticParams as scribeParams, generateMetadata as scribeMetadata } from '@/app/(stanscribe)/stanscribe/[page]/page';
 import LightLegal, { generateStaticParams as lightParams, generateMetadata as lightMetadata } from '@/app/(stanscribe)/stanscribe-light/[page]/page';
 import { legalLinks } from '@/lib/stanscribe';
+import { legalParts, legalWords } from '@/lib/stanscribe-legal';
 
 let pathname = '/stanscribe/privacy';
 jest.mock('next/navigation', () => ({ usePathname: () => pathname }));
@@ -39,6 +40,17 @@ describe.each([
     expect(words).not.toMatch(/<(html|head|body|main|nav|style|script)\b/i);
     expect(words).toMatch(/^<h1>/);
     expect(words).not.toContain('devinhunt.com/stanscribe');
+  });
+});
+
+describe.each(['scribe', 'light'] as const)('%s legal pages split into a title and the rest without losing a word', (app) => {
+  test.each(PAGES)('%s', (page, label) => {
+    const { head, body } = legalParts(app, page);
+    expect(head + body).toBe(legalWords(app, page));
+    // The head is the h1 and the one paragraph under it: the effective date, or the Acknowledgements' first line.
+    expect(head).toMatch(new RegExp(`^<h1>${label}</h1>\\s*<p>[^<]+</p>\\s*$`));
+    expect(body).not.toMatch(/<h1>/);
+    expect(body.length).toBeGreaterThan(head.length);
   });
 });
 
