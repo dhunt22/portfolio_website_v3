@@ -4,31 +4,31 @@
     {
       "id": 1,
       "subject": "Task 1: One full-width see-through card in place of the masked bands",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Every Stan Scribe band paints one plain `background`, the two tones are see-through, the hero has no fill, and the veil is 40%.\n\n**Files:**\n- Modify: `app/globals.css` (the `.bands` block at the top of `@layer components`)\n- Modify: `components/ui/ContourBackdrop.tsx` (the `quiet` veil's class)\n- Modify: `components/stanscribe/Section.tsx` (comments only)\n- Test: `__tests__/stanscribe/Bands.test.tsx`, `__tests__/stanscribe/palette.test.ts`\n\n**Acceptance Criteria:**\n- [ ] No Stan Scribe band rule in `app/globals.css` contains `mask-image`, `::before` or `isolation`.\n- [ ] `--band-a` and `--band-b` are `color-mix(in srgb, <token> 92%, transparent)`, and 90% under `.dark`.\n- [ ] `.bands > section:first-of-type` has `background: none`, and the second section blends in from `transparent`.\n- [ ] `--band-blend` is still `80px`.\n- [ ] The veil class is `opacity-40`.\n- [ ] `palette.test.ts` proves 7:1 for `--text-strong`, `--text-body` and `--text-link-hover` over a contour line in the hero and through both tones, in both themes.\n\n**Verify:** `npx jest --ci __tests__/stanscribe/Bands.test.tsx __tests__/stanscribe/palette.test.ts` → all pass\n\n```json:metadata\n{\"files\":[\"app/globals.css\",\".bands\",\"components/ui/ContourBackdrop.tsx\",\"components/stanscribe/Section.tsx\",\"__tests__/stanscribe/Bands.test.tsx\",\"__tests__/stanscribe/palette.test.ts\"],\"verifyCommand\":\"npx jest --ci __tests__/stanscribe/Bands.test.tsx __tests__/stanscribe/palette.test.ts\",\"acceptanceCriteria\":[\"No Stan Scribe band rule in `app/globals.css` contains `mask-image`, `::before` or `isolation`.\",\"`--band-a` and `--band-b` are `color-mix(in srgb, <token> 92%, transparent)`, and 90% under `.dark`.\",\"`.bands > section:first-of-type` has `background: none`, and the second section blends in from `transparent`.\",\"`--band-blend` is still `80px`.\",\"The veil class is `opacity-40`.\",\"`palette.test.ts` proves 7:1 for `--text-strong`, `--text-body` and `--text-link-hover` over a contour line in the hero and through both tones, in both themes.\"],\"modelTier\":\"standard\"}\n```"
     },
     {
       "id": 2,
       "subject": "Task 2: Icons, the icon tile and the row that opens",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** `icons.tsx`, `IconTile` and `Disclosure` exist, tested, with `lucide-react` pinned at 1.63.0.\n\n**Files:**\n- Modify: `package.json`, `package-lock.json`\n- Create: `components/stanscribe/icons.tsx`, `components/stanscribe/IconTile.tsx`, `components/stanscribe/Disclosure.tsx`\n- Test: `__tests__/stanscribe/Disclosure.test.tsx`\n\n**Acceptance Criteria:**\n- [ ] `package.json` lists `\"lucide-react\": \"1.63.0\"` exactly (no caret).\n- [ ] `Disclosure` renders a `<details>` whose `<summary>` holds the label as an `h3` and a chevron; it is closed unless `open` is passed; the icon is optional and comes before the label.\n- [ ] `IconTile` renders an `aria-hidden` 48px tile; `tone=\"start\"` and `tone=\"stop\"` paint the app's green and red.\n- [ ] Every icon name exported from `icons.tsx` renders an `<svg>`.\n\n**Verify:** `npx jest --ci __tests__/stanscribe/Disclosure.test.tsx` → all pass\n\n```json:metadata\n{\"files\":[\"package.json\",\"package-lock.json\",\"components/stanscribe/icons.tsx\",\"components/stanscribe/IconTile.tsx\",\"components/stanscribe/Disclosure.tsx\",\"__tests__/stanscribe/Disclosure.test.tsx\"],\"verifyCommand\":\"npx jest --ci __tests__/stanscribe/Disclosure.test.tsx\",\"acceptanceCriteria\":[\"`package.json` lists `\\\"lucide-react\\\": \\\"1.63.0\\\"` exactly (no caret).\",\"`Disclosure` renders a `<details>` whose `<summary>` holds the label as an `h3` and a chevron; it is closed unless `open` is passed; the icon is optional and comes before the label.\",\"`IconTile` renders an `aria-hidden` 48px tile; `tone=\\\"start\\\"` and `tone=\\\"stop\\\"` paint the app's green and red.\",\"Every icon name exported from `icons.tsx` renders an `<svg>`.\"],\"modelTier\":\"standard\"}\n```"
     },
     {
       "id": 3,
       "subject": "Task 3: App icons, the shared lines and the framed comparison table",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** The app icons are in `public/`, `lib/stanscribe.ts` holds the new shared values, `AppIcon` exists, the comparison table has four rows with a frame and column rules, and `Section` and `HelpBlock` accept a `className`.\n\n**Files:**\n- Create: `public/images/stanscribe/app-icon.png`, `app-icon-light.png`, `app-icon-180.png`, `app-icon-32.png`\n- Create: `components/stanscribe/AppIcon.tsx`\n- Modify: `lib/stanscribe.ts`, `components/stanscribe/ComparisonTable.tsx`, `components/stanscribe/Section.tsx`, `components/stanscribe/HelpBlock.tsx`, `components/stanscribe/PhoneShot.tsx`\n- Test: `__tests__/stanscribe/lib.test.ts`, `__tests__/stanscribe/HelpBlock.test.tsx`\n\n**Acceptance Criteria:**\n- [ ] The four icon files exist at 512, 512, 180 and 32 pixels square.\n- [ ] `lib/stanscribe.ts` exports `SITE_NAME`, `APP_ICONS`, `FAVICONS`, and the new `BOTH_APPS_SHARE`, `LIGHT_NOT_SURE`, `LIGHT_SUMMARY` and `SOCIAL_IMAGE.alt` given below.\n- [ ] `ComparisonTable` has exactly four row headers (Price, Speech models, Looks, Download), a 2px frame, a rule on the left of each app column, a filled header row, and each app's icon in its column header.\n- [ ] The table still has real `th scope` headers, and the icons add no `<img>`.\n- [ ] `Section` and `HelpBlock` pass a `className` to the `<section>`, and `PhoneShot` passes a `style` to its image.\n\n**Verify:** `npx jest --ci __tests__/stanscribe/lib.test.ts __tests__/stanscribe/HelpBlock.test.tsx` → all pass\n\n```json:metadata\n{\"files\":[\"public/images/stanscribe/app-icon.png\",\"app-icon-light.png\",\"app-icon-180.png\",\"app-icon-32.png\",\"components/stanscribe/AppIcon.tsx\",\"lib/stanscribe.ts\",\"components/stanscribe/ComparisonTable.tsx\",\"components/stanscribe/Section.tsx\",\"components/stanscribe/HelpBlock.tsx\",\"components/stanscribe/PhoneShot.tsx\",\"__tests__/stanscribe/lib.test.ts\",\"__tests__/stanscribe/HelpBlock.test.tsx\"],\"verifyCommand\":\"npx jest --ci __tests__/stanscribe/lib.test.ts __tests__/stanscribe/HelpBlock.test.tsx\",\"acceptanceCriteria\":[\"The four icon files exist at 512, 512, 180 and 32 pixels square.\",\"`lib/stanscribe.ts` exports `SITE_NAME`, `APP_ICONS`, `FAVICONS`, and the new `BOTH_APPS_SHARE`, `LIGHT_NOT_SURE`, `LIGHT_SUMMARY` and `SOCIAL_IMAGE.alt` given below.\",\"`ComparisonTable` has exactly four row headers (Price, Speech models, Looks, Download), a 2px frame, a rule on the left of each app column, a filled header row, and each app's icon in its column header.\",\"The table still has real `th scope` headers, and the icons add no `<img>`.\",\"`Section` and `HelpBlock` pass a `className` to the `<section>`, and `PhoneShot` passes a `style` to its image.\"],\"modelTier\":\"standard\"}\n```"
     },
     {
       "id": 4,
       "subject": "Task 4: The caption demo",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** `CaptionDemo` shows a scripted three-speaker conversation that plays once when scrolled into view, with a Pause and Play again button, and shows the whole conversation with no motion when motion is reduced or scripts are off.\n\n**Files:**\n- Create: `lib/stanscribe-demo.ts`, `components/stanscribe/CaptionDemo.tsx`, `test-utils/contrast.ts`\n- Test: `__tests__/stanscribe/CaptionDemo.test.tsx`\n\n**Acceptance Criteria:**\n- [ ] The server render contains every speaker name and word, with nothing hidden.\n- [ ] With reduced motion, nothing is hidden and there is no button.\n- [ ] With motion allowed, words are hidden until the demo is half on screen, then appear in order; the button reads \"Pause\" while playing, \"Play\" when paused and \"Play again\" when finished.\n- [ ] Hidden words keep their space (opacity only), so the layout does not shift, and stay in the accessibility tree.\n- [ ] Each speaker colour clears 7:1 on the demo's ground.\n- [ ] The drawn Smaller, Larger, Save and Stop bar is `aria-hidden` and holds no `<button>`.\n- [ ] The script's words pass `findCopyViolations`.\n\n**Verify:** `npx jest --ci __tests__/stanscribe/CaptionDemo.test.tsx` → all pass\n\n```json:metadata\n{\"files\":[\"lib/stanscribe-demo.ts\",\"components/stanscribe/CaptionDemo.tsx\",\"test-utils/contrast.ts\",\"__tests__/stanscribe/CaptionDemo.test.tsx\"],\"verifyCommand\":\"npx jest --ci __tests__/stanscribe/CaptionDemo.test.tsx\",\"acceptanceCriteria\":[\"The server render contains every speaker name and word, with nothing hidden.\",\"With reduced motion, nothing is hidden and there is no button.\",\"With motion allowed, words are hidden until the demo is half on screen, then appear in order; the button reads \\\"Pause\\\" while playing, \\\"Play\\\" when paused and \\\"Play again\\\" when finished.\",\"Hidden words keep their space (opacity only), so the layout does not shift, and stay in the accessibility tree.\",\"Each speaker colour clears 7:1 on the demo's ground.\",\"The drawn Smaller, Larger, Save and Stop bar is `aria-hidden` and holds no `<button>`.\",\"The script's words pass `findCopyViolations`.\"],\"modelTier\":\"standard\"}\n```"
     },
     {
       "id": 5,
       "subject": "Task 5: Questions and answers as rows that open",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [
         2
       ],
@@ -37,7 +37,7 @@
     {
       "id": 6,
       "subject": "Task 6: The main page",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [
         2,
         3,
@@ -49,7 +49,7 @@
     {
       "id": 7,
       "subject": "Task 7: The Light page",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [
         2,
         3,
@@ -60,7 +60,7 @@
     {
       "id": 8,
       "subject": "Task 8: The share card, the site name and the app's own tab icon",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [
         2,
         3
@@ -70,25 +70,25 @@
     {
       "id": 9,
       "subject": "Task 9: The Stan Scribe line on devinhunt.com",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** The `stan-scribe` entry's `summary` is line X.\n\n**Files:**\n- Modify: `lib/portfolio-data.ts` (the `stan-scribe` entry, about line 300)\n- Test: `__tests__/site/work.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `summary` is exactly: `An iPhone and iPad app I built for my grandpa Stan, who is hard of hearing: live captions of the conversation at the table, a color for each speaker, with no internet and no subscription.`\n- [ ] The entry's `content`, `meta`, `readout` and `href` are unchanged.\n\n**Verify:** `npx jest --ci __tests__/site/work.test.ts __tests__/site/HomePage.test.tsx` → all pass\n\n```json:metadata\n{\"files\":[\"lib/portfolio-data.ts\",\"__tests__/site/work.test.ts\"],\"verifyCommand\":\"npx jest --ci __tests__/site/work.test.ts __tests__/site/HomePage.test.tsx\",\"acceptanceCriteria\":[\"`summary` is exactly: `An iPhone and iPad app I built for my grandpa Stan, who is hard of hearing: live captions of the conversation at the table, a color for each speaker, with no internet and no subscription.`\",\"The entry's `content`, `meta`, `readout` and `href` are unchanged.\"],\"modelTier\":\"mechanical\"}\n```"
     },
     {
       "id": 10,
       "subject": "Task 10: Keep the scroll trace harness",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** `scripts/scroll-trace.mjs` scrolls a page with real wheel input in a headed Chromium browser and prints, per run, the frames presented and dropped.\n\n**Files:**\n- Create: `scripts/scroll-trace.mjs`\n\n**Acceptance Criteria:**\n- [ ] `node scripts/scroll-trace.mjs https://stanscribe.devinhunt.com/ 1 shipped` prints one `env` line and one JSON line whose `scrolled` equals its `distance` and whose `presented` is greater than 300.\n- [ ] The script exits and closes the browser it opened.\n- [ ] With no arguments it prints a usage line and exits with code 2.\n\n**Verify:** `node scripts/scroll-trace.mjs https://stanscribe.devinhunt.com/ 1 shipped` → an `env` line, then one JSON line with `\"scrolled\"` equal to `\"distance\"`\n\n```json:metadata\n{\"files\":[\"scripts/scroll-trace.mjs\"],\"verifyCommand\":\"node scripts/scroll-trace.mjs https://stanscribe.devinhunt.com/ 1 shipped\",\"acceptanceCriteria\":[\"`node scripts/scroll-trace.mjs https://stanscribe.devinhunt.com/ 1 shipped` prints one `env` line and one JSON line whose `scrolled` equals its `distance` and whose `presented` is greater than 300.\",\"The script exits and closes the browser it opened.\",\"With no arguments it prints a usage line and exits with code 2.\"],\"modelTier\":\"mechanical\"}\n```"
     },
     {
       "id": 11,
       "subject": "Task 11: The screenshot request in the app repo",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** `transcript_stan` holds a request for new screenshots with a script for each image, committed on its `main` branch and not pushed.\n\n**Files:**\n- Create: `/Users/dhunt/dev/transcript_stan/docs/marketing/stanscribe-page/screenshot-request.md`\n\n**Acceptance Criteria:**\n- [ ] The file exists with the content below, word for word.\n- [ ] It is committed in `transcript_stan` on `main` with only that file in the commit.\n- [ ] Nothing is pushed, and nothing else in that repo changes.\n\n**Verify:** `git -C /Users/dhunt/dev/transcript_stan log -1 --stat --format=%s` → the commit subject below and one file changed\n\n```json:metadata\n{\"files\":[\"/Users/dhunt/dev/transcript_stan/docs/marketing/stanscribe-page/screenshot-request.md\"],\"verifyCommand\":\"git -C /Users/dhunt/dev/transcript_stan log -1 --stat --format=%s\",\"acceptanceCriteria\":[\"The file exists with the content below, word for word.\",\"It is committed in `transcript_stan` on `main` with only that file in the commit.\",\"Nothing is pushed, and nothing else in that repo changes.\"],\"modelTier\":\"mechanical\"}\n```"
     },
     {
       "id": 12,
       "subject": "Task 12: Record the change in DESIGN.md and the October spec",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [
         6,
         7,
@@ -117,5 +117,5 @@
       "description": "**Goal:** The full suite and the build pass, the built pages carry the right tags, and both pages look right at 1440 and 390 wide in both themes.\n\n**Files:**\n- No source changes expected. Fix what the checks find, in the file that owns it.\n\n**Acceptance Criteria:**\n- [ ] `npx jest --ci` passes with no failing suite.\n- [ ] `npm run build` exits 0.\n- [ ] `out/stanscribe/index.html` contains `og:site_name\" content=\"Stan Scribe\"`, `app-icon-32.png`, `Live captions for every voice.` and no `favicon.svg`; `out/index.html` contains `favicon.svg` and no `app-icon-32.png`.\n- [ ] Screenshots of `/stanscribe/` and `/stanscribe-light/` at 1440 and 390 wide, in the day and night themes, show: the hero on the contours, the picture across the card's edge, no sideways scroll, readable rows, the framed table.\n- [ ] At 320px wide neither page scrolls sideways.\n- [ ] The scroll trace shows the new build presents no fewer frames than the live page, five rounds a side.\n\n**Verify:** `npx jest --ci && npm run build && grep -c 'og:site_name\" content=\"Stan Scribe\"' out/stanscribe/index.html` → jest green, build exit 0, count 1\n\n```json:metadata\n{\"files\":[],\"verifyCommand\":\"npx jest --ci && npm run build && grep -c 'og:site_name\\\" content=\\\"Stan Scribe\\\"' out/stanscribe/index.html\",\"acceptanceCriteria\":[\"`npx jest --ci` passes with no failing suite.\",\"`npm run build` exits 0.\",\"`out/stanscribe/index.html` contains `og:site_name\\\" content=\\\"Stan Scribe\\\"`, `app-icon-32.png`, `Live captions for every voice.` and no `favicon.svg`; `out/index.html` contains `favicon.svg` and no `app-icon-32.png`.\",\"Screenshots of `/stanscribe/` and `/stanscribe-light/` at 1440 and 390 wide, in the day and night themes, show: the hero on the contours, the picture across the card's edge, no sideways scroll, readable rows, the framed table.\",\"At 320px wide neither page scrolls sideways.\",\"The scroll trace shows the new build presents no fewer frames than the live page, five rounds a side.\"],\"modelTier\":\"standard\"}\n```"
     }
   ],
-  "lastUpdated": "2026-11-13T07:40:36.783Z"
+  "lastUpdated": "2026-11-13T08:02:49.828Z"
 }

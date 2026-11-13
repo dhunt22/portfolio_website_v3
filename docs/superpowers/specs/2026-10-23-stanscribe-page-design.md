@@ -226,3 +226,22 @@ side edges of the first hero to run down every section, in place of bands the fu
   the footer. The footer (`band-foot`) blends from white to the ground.
 - The header row is as wide as a band's column, so the name lines up with the words below it.
 - Checked at 320, 390, 768, 1440 and 1920 wide in both themes: no sideways scroll.
+
+## The listing-style page (2026-11-12)
+
+The owner asked for the pages to read as an extension of the App Store listing, and for one full-width
+card in place of the bands with faded sides. `2026-11-12-stanscribe-listing-design.md` is the spec. It
+replaces these parts of this file:
+
+- "Bands in place of the sheet (2026-11-12)": the bands are plain see-through backgrounds on one card,
+  with no masks and no side fades.
+- The section list under "`/stanscribe/` sections" and the layout notes after it: the order is hero, How
+  it works, the story, Features, Privacy, the comparison, Questions and answers, Help.
+- "every answer open" under "Questions and answers, with structured data": each question is a row that
+  opens, and only the accuracy answer starts open.
+- "Visible: 'captions can be wrong' (FAQ, always open) and 'Ask before you caption people'": the first
+  is in the answer that starts open, and the second is the label of a Privacy row.
+- "A legal page is one white band (`band-only`)": a legal page sets its title and the line under it on
+  the contours, and the rest of its words on the card, as the other pages do (owner, 2026-11-12).
+
+The copy rules, the required links and the accessibility rules in this file all stand.

@@ -253,7 +253,7 @@ simpler: one speech model, a black or a white page, and a smaller download."), t
 its two-phone image across the card's edge. Then Help, the comparison with the new table, and its seven
 questions as rows.
 
-**The legal pages** change only in their band, which is now full width.
+**The legal pages.** The owner asked mid-build for the other pages to take the same card style. A legal page now sets its title and the line under it (the effective date, or the Acknowledgements' first line) on the contours, and the rest of its words on the card. `legalParts` in `lib/stanscribe-legal.ts` splits the words and changes none of them.
 
 ## 5. The caption demo
 
