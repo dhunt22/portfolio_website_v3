@@ -62,6 +62,14 @@ test('the hero is the listing’s header: icon, name, tagline, four facts and th
   expect(hero.className).toMatch(/\bz-10\b/);
 });
 
+test('the hang length is set once, on the card, and the picture and the band under it both read it', () => {
+  const bands = renderPage().querySelector<HTMLElement>('.bands')!;
+  expect(bands.style.getPropertyValue('--hang')).not.toBe('');
+  const [hero, next] = Array.from(bands.querySelectorAll(':scope > section'));
+  expect(hero.querySelector('img')!.getAttribute('style')).toMatch(/margin-bottom:\s*calc\(-1 \* var\(--hang\)\)/);
+  expect(next.className).toContain('pt-[calc(var(--hang)_+_3rem)]');
+});
+
 test('the four facts go to one row only from xl, where the row fits without breaking a label', () => {
   // The row needs about 1007px. At lg (1024px) the column is 944px, so every label broke in two up to 1086px.
   const facts = renderPage().querySelector('section ul')!;

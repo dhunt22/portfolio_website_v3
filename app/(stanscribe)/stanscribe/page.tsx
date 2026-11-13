@@ -6,7 +6,7 @@
 // prices, no model names, privacy wording) are in the app repo's docs/marketing/stanscribe-page/README.md.
 
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { AppIcon } from '@/components/stanscribe/AppIcon';
 import { CaptionDemo } from '@/components/stanscribe/CaptionDemo';
 import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
@@ -57,8 +57,9 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
 };
 
-/** How far the hero's picture hangs into the first band of the card. */
-const HANG = 'clamp(8rem,22vw,17rem)';
+/** How far the hero's picture hangs into the first band of the card. The card carries it as `--hang`, which
+ *  the picture's margin and that band's padding both read. */
+const HANG: CSSProperties & { '--hang': string } = { '--hang': 'clamp(8rem,22vw,17rem)' };
 
 interface Row {
   icon: ReactNode;
@@ -136,7 +137,7 @@ export default function StanScribePage() {
     <div className="relative min-h-svh">
       <ContourBackdrop page="interests" quiet />
 
-      <div className={BANDS}>
+      <div className={BANDS} style={HANG}>
         {/* Hero: the listing's header, on the contours with no fill. `relative z-10` keeps the picture that
             hangs into the next band above that band's fill. */}
         <section aria-labelledby="stanscribe-title" className={cn(BAND, 'relative z-10 pb-0 pt-8 text-center md:pt-12')}>
@@ -161,11 +162,11 @@ export default function StanScribePage() {
                 <DownloadBlock app="light" />
               </div>
             </HeroLoadIn>
-            <PhoneShot image={SHOTS.hero} priority className="mx-auto mt-12 max-w-xl" style={{ marginBottom: `calc(-1 * ${HANG})` }} />
+            <PhoneShot image={SHOTS.hero} priority className="mx-auto mt-12 max-w-xl" style={{ marginBottom: 'calc(-1 * var(--hang))' }} />
           </div>
         </section>
 
-        <Section id="how-it-works" title="How it works" className="pt-[calc(clamp(8rem,22vw,17rem)_+_3rem)]">
+        <Section id="how-it-works" title="How it works" className="pt-[calc(var(--hang)_+_3rem)]">
           <div className="mx-auto grid max-w-208 items-center gap-12 md:grid-cols-[minmax(0,1fr)_18rem] md:gap-16">
             <ol role="list" className="space-y-7">
               {STEPS.map((step) => (

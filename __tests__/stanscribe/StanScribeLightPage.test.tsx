@@ -67,6 +67,15 @@ test('the hero is the listing’s header: Light’s icon, its name, the tagline 
   expect(hero.className).toMatch(/\bz-10\b/);
 });
 
+test('the hang length is set once, on the card, and the picture and Help under it both read it', () => {
+  const bands = renderPage().querySelector<HTMLElement>('.bands')!;
+  expect(bands.style.getPropertyValue('--hang')).not.toBe('');
+  const [hero, next] = Array.from(bands.querySelectorAll(':scope > section'));
+  expect(hero.querySelector('img')!.getAttribute('style')).toMatch(/margin-bottom:\s*calc\(-1 \* var\(--hang\)\)/);
+  expect(next.id).toBe('help');
+  expect(next.className).toContain('pt-[calc(var(--hang)_+_3rem)]');
+});
+
 test('the comparison: one line, the table, and where to go if unsure', () => {
   const page = renderPage();
   const compare = page.querySelector<HTMLElement>('#compare')!;

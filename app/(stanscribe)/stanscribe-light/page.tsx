@@ -4,6 +4,7 @@
 // for a contact, so Help sits directly under the hero. The hero is the listing's header, as on the main page.
 
 import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
 import { AppIcon } from '@/components/stanscribe/AppIcon';
 import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
 import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
@@ -31,15 +32,16 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
 };
 
-/** How far the hero's picture hangs into the first band of the card. */
-const HANG = 'clamp(6rem,16vw,12rem)';
+/** How far the hero's picture hangs into the first band of the card. The card carries it as `--hang`, which
+ *  the picture's margin and that band's padding both read. */
+const HANG: CSSProperties & { '--hang': string } = { '--hang': 'clamp(6rem,16vw,12rem)' };
 
 export default function StanScribeLightPage() {
   return (
     <div className="relative min-h-svh">
       <ContourBackdrop page="interests" quiet />
 
-      <div className={BANDS}>
+      <div className={BANDS} style={HANG}>
         {/* `relative z-10` keeps the picture that hangs into the next band above that band's fill. */}
         <section aria-labelledby="light-page-title" className={cn(BAND, 'relative z-10 pb-0 pt-8 text-center md:pt-12')}>
           <div className={BAND_COLUMN}>
@@ -52,11 +54,11 @@ export default function StanScribeLightPage() {
               <p className={cn(TYPE.lead, INTRO)}>{LIGHT_SUMMARY}</p>
               <DownloadBlock app="light" withName={false} className="mt-8" />
             </HeroLoadIn>
-            <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-104" style={{ marginBottom: `calc(-1 * ${HANG})` }} />
+            <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-104" style={{ marginBottom: 'calc(-1 * var(--hang))' }} />
           </div>
         </section>
 
-        <HelpBlock apps={['light']} className="pt-[calc(clamp(6rem,16vw,12rem)_+_3rem)]" />
+        <HelpBlock apps={['light']} className="pt-[calc(var(--hang)_+_3rem)]" />
 
         <Section id="compare" title="Which one is for you?">
           <div className={COLUMN}>
