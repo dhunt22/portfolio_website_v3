@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { render, screen } from '@testing-library/react';
 import { Disclosure } from '@/components/stanscribe/Disclosure';
 import { IconTile } from '@/components/stanscribe/IconTile';
@@ -49,4 +51,16 @@ test('every icon the pages use renders', () => {
     expect([name, container.querySelector('svg') !== null]).toEqual([name, true]);
     unmount();
   }
+});
+
+test('the chevron takes the class it is given, so it turns when its row opens', () => {
+  const { container } = render(<Disclosure label="Turns">words</Disclosure>);
+  expect(container.querySelector('summary svg')!.getAttribute('class')).toMatch(/\bgroup-open:rotate-180\b/);
+});
+
+test('the icons are drawn in the file as static SVG: no icon library ships to the browser', () => {
+  const source = fs.readFileSync(path.join(process.cwd(), 'components/stanscribe/icons.tsx'), 'utf8');
+  expect(source).not.toMatch(/['"]lucide-react['"]/);
+  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+  expect({ ...pkg.dependencies, ...pkg.devDependencies }).not.toHaveProperty(['lucide-react']);
 });
