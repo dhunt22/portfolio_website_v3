@@ -1,9 +1,10 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // app/(stanscribe)/stanscribe-light/page.tsx
 // Stan Scribe Light's Support and Marketing URL in App Store Connect. App Review opens it looking
-// for a contact, so Help sits directly under the hero. Copy is copy.md's Light section.
+// for a contact, so Help sits directly under the hero. The hero is the listing's header, as on the main page.
 
 import type { Metadata } from 'next';
+import { AppIcon } from '@/components/stanscribe/AppIcon';
 import { ComparisonTable } from '@/components/stanscribe/ComparisonTable';
 import { DownloadBlock } from '@/components/stanscribe/DownloadBlock';
 import { Faq } from '@/components/stanscribe/Faq';
@@ -13,7 +14,7 @@ import { BAND, BAND_COLUMN, BANDS, COLUMN, INTRO, Section } from '@/components/s
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { HeroLoadIn } from '@/components/ui/HeroLoadIn';
-import { BOTH_APPS_SHARE, LIGHT_NOT_SURE, LIGHT_SUMMARY, SHOTS, SOCIAL_IMAGE, pageHref, pageUrl } from '@/lib/stanscribe';
+import { BOTH_APPS_SHARE, LIGHT_NOT_SURE, LIGHT_SUMMARY, SHOTS, SITE_NAME, SOCIAL_IMAGE, pageHref, pageUrl } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
 const TITLE = 'Stan Scribe Light: live captions, the simple edition';
@@ -26,9 +27,12 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   keywords: null,
   alternates: { canonical: PAGE_URL },
-  openGraph: { type: 'website', locale: 'en_US', url: PAGE_URL, siteName: 'Devin Hunt', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
+  openGraph: { type: 'website', locale: 'en_US', url: PAGE_URL, siteName: SITE_NAME, title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: [SOCIAL_IMAGE] },
 };
+
+/** How far the hero's picture hangs into the first band of the card. */
+const HANG = 'clamp(6rem,16vw,12rem)';
 
 export default function StanScribeLightPage() {
   return (
@@ -36,21 +40,23 @@ export default function StanScribeLightPage() {
       <ContourBackdrop page="interests" quiet />
 
       <div className={BANDS}>
-        <section aria-labelledby="light-page-title" className={cn(BAND, 'pt-8 text-center md:pt-12')}>
+        {/* `relative z-10` keeps the picture that hangs into the next band above that band's fill. */}
+        <section aria-labelledby="light-page-title" className={cn(BAND, 'relative z-10 pb-0 pt-8 text-center md:pt-12')}>
           <div className={BAND_COLUMN}>
             <HeroLoadIn>
-              <h1 id="light-page-title" className={TYPE.display}>
+              <AppIcon app="light" className="h-26 w-26 shadow-lg" />
+              <h1 id="light-page-title" className={cn(TYPE.display, 'mt-5')}>
                 Stan Scribe Light
               </h1>
               <p className={cn(TYPE.title, 'mt-3')}>The simple edition. Free.</p>
               <p className={cn(TYPE.lead, INTRO)}>{LIGHT_SUMMARY}</p>
               <DownloadBlock app="light" withName={false} className="mt-8" />
             </HeroLoadIn>
-            <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-104" />
+            <PhoneShot image={SHOTS.lightBlackAndWhite} priority className="mx-auto mt-12 max-w-104" style={{ marginBottom: `calc(-1 * ${HANG})` }} />
           </div>
         </section>
 
-        <HelpBlock apps={['light']} />
+        <HelpBlock apps={['light']} className="pt-[calc(clamp(6rem,16vw,12rem)_+_3rem)]" />
 
         <Section id="compare" title="Which one is for you?">
           <div className={COLUMN}>

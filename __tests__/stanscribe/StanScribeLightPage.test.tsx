@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import StanScribeLightPage, { metadata } from '@/app/(stanscribe)/stanscribe-light/page';
 import { legalLinks } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
@@ -52,4 +52,29 @@ test('the hero says the name and offer once: the download line adds only the sta
   expect(screen.getAllByText('Stan Scribe Light', { selector: 'h1, p' })).toHaveLength(1);
   expect(screen.queryByText('Free. The simple edition.')).toBeNull();
   expect(screen.getByText('Coming soon to the App Store')).toBeInTheDocument();
+});
+
+test('the hero is the listing’s header: Light’s icon, its name, the tagline and one line', () => {
+  const page = renderPage();
+  const hero = page.querySelector('section')!;
+  expect(hero.querySelector('span[aria-hidden="true"][style*="app-icon-light.png"]')).not.toBeNull();
+  expect(within(hero).getByText('The simple edition. Free.')).toBeInTheDocument();
+  expect(
+    within(hero).getByText('The same live captions and speaker colors as Stan Scribe, made simpler: one speech model, a black or a white page, and a smaller download.'),
+  ).toBeInTheDocument();
+  expect(hero.querySelectorAll('p')).toHaveLength(3);
+  expect(hero.className).toMatch(/\brelative\b/);
+  expect(hero.className).toMatch(/\bz-10\b/);
+});
+
+test('the comparison: one line, the table, and where to go if unsure', () => {
+  const page = renderPage();
+  const compare = page.querySelector<HTMLElement>('#compare')!;
+  expect(compare.textContent).toMatch(/Both caption offline, with speaker colors and names, in 25 languages\. Neither has in-app purchases\./);
+  expect(within(compare).getByRole('table')).toBeInTheDocument();
+  expect(compare.textContent).toMatch(/Not sure\? Start with Light\./);
+});
+
+test('link previews name the site Stan Scribe', () => {
+  expect(metadata.openGraph).toMatchObject({ siteName: 'Stan Scribe' });
 });
