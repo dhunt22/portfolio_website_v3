@@ -35,6 +35,16 @@ test('ComparisonTable draws its columns: a frame, a filled header row and a rule
   }
 });
 
+test('ComparisonTable sets both apps’ icons at the top of the header row, so they stay level when a name wraps', () => {
+  render(<ComparisonTable />);
+  const headers = screen.getAllByRole('columnheader');
+  expect(headers.map((th) => th.textContent)).toEqual(['Stan Scribe', 'Stan Scribe Light']);
+  for (const th of headers) {
+    expect(th.className).toMatch(/\balign-top\b/);
+    expect(th.className).not.toMatch(/\balign-bottom\b/);
+  }
+});
+
 test('HelpBlock and Section pass a class to their section', () => {
   const { container } = render(<HelpBlock apps={['light']} className="pt-40" />);
   expect(container.querySelector('section#help')!.className).toMatch(/\bpt-40\b/);

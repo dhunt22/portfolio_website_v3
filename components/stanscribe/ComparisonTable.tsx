@@ -36,11 +36,11 @@ export function ComparisonTable({ className }: { className?: string }) {
         <thead>
           <tr className="border-b-2 border-ink-strong bg-muted">
             <td className={CELL} />
-            <th scope="col" className={cn(CELL, HEADER, COLUMN, 'align-bottom')}>
+            <th scope="col" className={cn(CELL, HEADER, COLUMN)}>
               <AppIcon app="scribe" className="mb-2 block h-10 w-10" />
               Stan Scribe
             </th>
-            <th scope="col" className={cn(CELL, HEADER, COLUMN, 'align-bottom')}>
+            <th scope="col" className={cn(CELL, HEADER, COLUMN)}>
               <AppIcon app="light" className="mb-2 block h-10 w-10" />
               Stan Scribe Light
             </th>
