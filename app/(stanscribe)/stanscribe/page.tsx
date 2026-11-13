@@ -147,8 +147,8 @@ export default function StanScribePage() {
                 Stan Scribe
               </h1>
               <p className={cn(TYPE.title, 'mt-3')}>Live captions for every voice.</p>
-              {/* One aligned column on a phone, two by two on a tablet, one row on a desktop. */}
-              <ul role="list" className="mx-auto mt-8 grid w-fit gap-x-10 gap-y-4 sm:grid-cols-2 lg:flex lg:gap-x-8">
+              {/* One aligned column on a phone, two by two up to 1279px, one row from 1280px, where it fits. */}
+              <ul role="list" className="mx-auto mt-8 grid w-fit gap-x-10 gap-y-4 sm:grid-cols-2 xl:flex xl:gap-x-8">
                 {FACTS.map(({ icon, label }) => (
                   <li key={label} className={cn(TYPE.body, 'flex items-center gap-3 text-left font-semibold text-ink-strong')}>
                     <IconTile>{icon}</IconTile>

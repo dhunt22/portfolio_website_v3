@@ -62,6 +62,14 @@ test('the hero is the listing’s header: icon, name, tagline, four facts and th
   expect(hero.className).toMatch(/\bz-10\b/);
 });
 
+test('the four facts go to one row only from xl, where the row fits without breaking a label', () => {
+  // The row needs about 1007px. At lg (1024px) the column is 944px, so every label broke in two up to 1086px.
+  const facts = renderPage().querySelector('section ul')!;
+  expect(facts.className).toMatch(/\bsm:grid-cols-2\b/);
+  expect(facts.className).toMatch(/\bxl:flex\b/);
+  expect(facts.className).not.toMatch(/\blg:/);
+});
+
 test('how it works: four steps ending on your saved conversations, beside the caption demo', () => {
   const page = renderPage();
   const how = page.querySelector<HTMLElement>('#how-it-works')!;
