@@ -45,6 +45,9 @@ test('the tools', () => {
   expect(zbudget.summary).toBe('A fast, powerful IWFM model diagnostic and results viewing dashboard with interactive map and charts. Streamlining model review and report generation.');
   const stan = tools[4];
   expect(stan.href).toBe('/stanscribe');
+  expect(stan.summary).toBe(
+    'An iPhone and iPad app I built for my grandpa Stan, who is hard of hearing: live captions of the conversation at the table, a color for each speaker, with no internet and no subscription.',
+  );
   expect(findCopyViolations([stan.summary, ...stan.content].join(' '))).toEqual([]);
 });
 
