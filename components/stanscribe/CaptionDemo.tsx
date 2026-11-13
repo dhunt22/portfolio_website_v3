@@ -98,7 +98,9 @@ export function CaptionDemo() {
         <p className="sr-only">An example of live captions:</p>
         <div className="mt-4 space-y-4">
           {TURNS.map((turn, i) => {
-            const named = shown > STARTS[i];
+            // The name comes first: it shows once the word before its turn has, so it is there through the pause
+            // before its own first word. The first name waits for the start, as no word comes before it.
+            const named = shown >= STARTS[i] && (shown > 0 || playing);
             return (
               <p key={turn.speaker} className={cn('text-2xl font-semibold leading-snug', i === current ? 'text-white' : 'text-[#b4bbc0]')}>
                 <span

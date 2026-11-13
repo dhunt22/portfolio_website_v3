@@ -36,6 +36,7 @@ afterEach(() => {
 });
 
 const shown = (container: HTMLElement) => container.querySelectorAll('[data-word][data-shown="true"]').length;
+const names = (container: HTMLElement) => Array.from(container.querySelectorAll('[data-speaker]')).map((name) => name.getAttribute('data-shown'));
 const scrollIntoView = () => act(() => intersect(true));
 const advance = (ms: number) => act(() => { jest.advanceTimersByTime(ms); });
 
@@ -66,6 +67,7 @@ test('with reduced motion nothing is hidden and there is no button', () => {
   scrollIntoView();
   advance(20000);
   expect(shown(container)).toBe(WORDS.length);
+  expect(names(container)).toEqual(['true', 'true', 'true']);
   expect(screen.queryByRole('button')).toBeNull();
 });
 
@@ -91,7 +93,31 @@ test('it waits off screen, then the words arrive in order', () => {
   expect(words.slice(early).every((word) => word.getAttribute('data-shown') === 'false')).toBe(true);
   advance(20000);
   expect(shown(container)).toBe(WORDS.length);
+  expect(names(container)).toEqual(['true', 'true', 'true']);
   expect(screen.getByRole('button', { name: 'Play again' })).toBeInTheDocument();
+});
+
+test('before it starts, no name shows', () => {
+  const { container } = render(<CaptionDemo />);
+  expect(names(container)).toEqual(['false', 'false', 'false']);
+  advance(5000);
+  expect(names(container)).toEqual(['false', 'false', 'false']);
+});
+
+test('the first name shows as soon as it starts, before the first word', () => {
+  const { container } = render(<CaptionDemo />);
+  scrollIntoView();
+  expect(shown(container)).toBe(0);
+  expect(names(container)).toEqual(['true', 'false', 'false']);
+});
+
+test('the next name shows in the pause after the last word before it, ahead of that speaker’s words', () => {
+  const { container } = render(<CaptionDemo />);
+  scrollIntoView();
+  // Alex's turn, "Are we still on for Saturday?", is six words.
+  for (let ms = 0; shown(container) < 6 && ms < 10000; ms += 10) advance(10);
+  expect(shown(container)).toBe(6);
+  expect(names(container)).toEqual(['true', 'true', 'false']);
 });
 
 test('hidden words keep their space and stay readable to a screen reader', () => {
