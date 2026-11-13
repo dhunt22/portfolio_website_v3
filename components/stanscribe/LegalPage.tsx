@@ -46,14 +46,18 @@ export async function LegalPage({ app, params }: LegalRouteProps & { app: AppKey
       <ContourBackdrop page="interests" quiet />
       <div className={BANDS}>
         {/* The first section of .bands has no fill, so the title sits on the contours. */}
-        <section className={cn(BAND, 'pb-10 pt-8 md:pb-12 md:pt-12')}>
+        {head && (
+          <section className={cn(BAND, 'pb-10 pt-8 md:pb-12 md:pt-12')}>
+            <div className={BAND_COLUMN}>
+              <div className={cn('legal', COLUMN)} dangerouslySetInnerHTML={{ __html: head }} />
+            </div>
+          </section>
+        )}
+        {/* Words that open without a title have no hero, so the card is the only section and starts where the
+            hero would. */}
+        <section className={cn(BAND, 'min-h-svh', !head && 'pt-8 md:pt-12')}>
           <div className={BAND_COLUMN}>
-            <div className={cn('legal', COLUMN)} dangerouslySetInnerHTML={{ __html: head }} />
-          </div>
-        </section>
-        <section className={cn(BAND, 'min-h-svh')}>
-          <div className={BAND_COLUMN}>
-            <article className={cn('legal *:first:mt-0', COLUMN)} dangerouslySetInnerHTML={{ __html: body }} />
+            <div className={cn('legal *:first:mt-0', COLUMN)} dangerouslySetInnerHTML={{ __html: body }} />
             <div className={cn(TYPE.small, COLUMN, 'mt-16')}>
               <LegalLinks app={app} />
             </div>

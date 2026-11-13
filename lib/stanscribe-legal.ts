@@ -10,14 +10,27 @@ export function legalWords(app: AppKey, slug: LegalSlug): string {
   return fs.readFileSync(path.join(process.cwd(), 'content/stanscribe-legal', APPS[app].route, `${slug}.html`), 'utf8');
 }
 
+export interface LegalParts {
+  head: string;
+  body: string;
+}
+
+/** The h1 that opens the words, and the one paragraph directly under it when there is one. */
+const HEAD = /^<h1>[\s\S]*?<\/h1>\s*(?:<p>[\s\S]*?<\/p>\s*)?/;
+
 /**
- * A legal page's words in two parts, so the page can set the title on the contours and the rest on the card:
- * `head` is the h1 and the one paragraph under it (the effective date, or the Acknowledgements' first line),
- * and `body` is everything after. No word is changed or dropped: head + body is the file.
+ * Legal words in two parts, so the page can set the title on the contours and the rest on the card: `head` is
+ * the h1 and the one paragraph directly under it (the effective date, or the Acknowledgements' first line), or
+ * the h1 alone when no paragraph follows it, and `body` is everything after. Words that do not open with an h1
+ * have an empty head, so a sync that changes how a page opens never stops the build. No word is changed or
+ * dropped: head + body is always the words.
  */
-export function legalParts(app: AppKey, slug: LegalSlug): { head: string; body: string } {
-  const words = legalWords(app, slug);
-  const head = words.match(/^<h1>[\s\S]*?<\/h1>\s*<p>[\s\S]*?<\/p>\s*/)?.[0];
-  if (!head) throw new Error(`${APPS[app].route}/${slug}.html does not open with an h1 and a paragraph.`);
+export function splitLegal(words: string): LegalParts {
+  const head = words.match(HEAD)?.[0] ?? '';
   return { head, body: words.slice(head.length) };
+}
+
+/** One legal page's words, split by splitLegal. */
+export function legalParts(app: AppKey, slug: LegalSlug): LegalParts {
+  return splitLegal(legalWords(app, slug));
 }
