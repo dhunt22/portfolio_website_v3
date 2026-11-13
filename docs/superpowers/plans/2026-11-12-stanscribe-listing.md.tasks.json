@@ -99,7 +99,7 @@
     {
       "id": 13,
       "subject": "Task 13: Verify the whole change",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [
         1,
         2,
@@ -117,5 +117,5 @@
       "description": "**Goal:** The full suite and the build pass, the built pages carry the right tags, and both pages look right at 1440 and 390 wide in both themes.\n\n**Files:**\n- No source changes expected. Fix what the checks find, in the file that owns it.\n\n**Acceptance Criteria:**\n- [ ] `npx jest --ci` passes with no failing suite.\n- [ ] `npm run build` exits 0.\n- [ ] `out/stanscribe/index.html` contains `og:site_name\" content=\"Stan Scribe\"`, `app-icon-32.png`, `Live captions for every voice.` and no `favicon.svg`; `out/index.html` contains `favicon.svg` and no `app-icon-32.png`.\n- [ ] Screenshots of `/stanscribe/` and `/stanscribe-light/` at 1440 and 390 wide, in the day and night themes, show: the hero on the contours, the picture across the card's edge, no sideways scroll, readable rows, the framed table.\n- [ ] At 320px wide neither page scrolls sideways.\n- [ ] The scroll trace shows the new build presents no fewer frames than the live page, five rounds a side.\n\n**Verify:** `npx jest --ci && npm run build && grep -c 'og:site_name\" content=\"Stan Scribe\"' out/stanscribe/index.html` → jest green, build exit 0, count 1\n\n```json:metadata\n{\"files\":[],\"verifyCommand\":\"npx jest --ci && npm run build && grep -c 'og:site_name\\\" content=\\\"Stan Scribe\\\"' out/stanscribe/index.html\",\"acceptanceCriteria\":[\"`npx jest --ci` passes with no failing suite.\",\"`npm run build` exits 0.\",\"`out/stanscribe/index.html` contains `og:site_name\\\" content=\\\"Stan Scribe\\\"`, `app-icon-32.png`, `Live captions for every voice.` and no `favicon.svg`; `out/index.html` contains `favicon.svg` and no `app-icon-32.png`.\",\"Screenshots of `/stanscribe/` and `/stanscribe-light/` at 1440 and 390 wide, in the day and night themes, show: the hero on the contours, the picture across the card's edge, no sideways scroll, readable rows, the framed table.\",\"At 320px wide neither page scrolls sideways.\",\"The scroll trace shows the new build presents no fewer frames than the live page, five rounds a side.\"],\"modelTier\":\"standard\"}\n```"
     }
   ],
-  "lastUpdated": "2026-11-13T08:02:49.828Z"
+  "lastUpdated": "2026-11-13T08:09:28.895Z"
 }
