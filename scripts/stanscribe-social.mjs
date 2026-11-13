@@ -3,12 +3,14 @@
 // scripts/stanscribe-social.mjs
 // Draws Stan Scribe's link-preview card (1200 x 630): fills scripts/stanscribe-social/card.html, photographs it
 // in a headless Chromium browser over the DevTools protocol, and writes public/images/stanscribe/stan-scribe-social.jpg.
-// Run it after `npm run build` (it reads the page's fonts from out/) and again whenever the hero image changes:
+// Run it after `npm run build` (it reads the page's fonts from out/) and again whenever the hero image or
+// card.html changes, then raise the ?v= number on SOCIAL_IMAGE.url in lib/stanscribe.ts:
 //   npm run build:stanscribe-social
 // Set CHROME_PATH if no Chromium browser is found. The JPEG is committed; the Netlify build does not run this.
 
 import { spawn } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { once } from 'node:events';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -64,61 +66,100 @@ const html = template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
 
 const work = mkdtempSync(join(tmpdir(), 'stanscribe-social-'));
 const page = join(work, 'card.html');
-const shot = join(work, 'card.png');
+const profile = join(work, 'profile');
 writeFileSync(page, html);
 
 // Brave's headless mode does not exit after a command-line --screenshot, so the page is photographed over
-// the DevTools protocol and the browser is closed here.
-const PORT = 9338;
+// the DevTools protocol and the browser is closed here. Port 0 lets the browser pick a free port, which it
+// writes to DevToolsActivePort in its own profile, so the script never talks to another browser.
 const chrome = spawn(browser, [
   '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-first-run', '--no-default-browser-check',
-  `--user-data-dir=${join(work, 'profile')}`, `--remote-debugging-port=${PORT}`, 'about:blank',
+  `--user-data-dir=${profile}`, '--remote-debugging-port=0', 'about:blank',
 ], { stdio: 'ignore' });
+const exited = once(chrome, 'exit');
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+/** How long the browser has to answer a command or send an event. */
+const TIMEOUT_MS = 30_000;
+
+/** The port this browser chose, once it has written it: the file's first line. */
+function activePort() {
+  try {
+    const port = Number(readFileSync(join(profile, 'DevToolsActivePort'), 'utf8').split('\n')[0]);
+    return Number.isInteger(port) && port > 0 ? port : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+let png;
+let ws;
 try {
   let socketUrl;
   for (let attempt = 0; attempt < 50 && !socketUrl; attempt++) {
-    try {
-      const targets = await (await fetch(`http://127.0.0.1:${PORT}/json/list`)).json();
-      socketUrl = targets.find((target) => target.type === 'page')?.webSocketDebuggerUrl;
-    } catch {
-      // The browser is still starting.
+    const port = activePort();
+    if (port) {
+      try {
+        const targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
+        socketUrl = targets.find((target) => target.type === 'page')?.webSocketDebuggerUrl;
+      } catch {
+        // The browser has a port but is not answering on it yet.
+      }
     }
     if (!socketUrl) await sleep(200);
   }
   if (!socketUrl) throw new Error(`${browser} did not start.`);
-  const ws = new WebSocket(socketUrl);
+  ws = new WebSocket(socketUrl);
   await new Promise((resolve) => ws.addEventListener('open', resolve, { once: true }));
-  let nextId = 0;
-  const pending = new Map();
-  ws.addEventListener('message', (message) => {
-    const msg = JSON.parse(message.data);
-    const waiter = pending.get(msg.id);
-    if (!waiter) return;
-    pending.delete(msg.id);
-    if (msg.error) waiter.reject(new Error(JSON.stringify(msg.error)));
-    else waiter.resolve(msg.result);
+
+  // A message is a command's answer, keyed by the command's id, or an event, keyed by its name.
+  const waiting = new Map();
+  ws.addEventListener('message', ({ data }) => {
+    const msg = JSON.parse(data);
+    const key = msg.id ?? msg.method;
+    const settle = waiting.get(key);
+    if (!settle) return;
+    waiting.delete(key);
+    settle(msg);
   });
-  const send = (method, params = {}) =>
+  /** The message `key` names, or an error once TIMEOUT_MS passes without it. */
+  const message = (key, what) =>
     new Promise((resolve, reject) => {
-      pending.set(++nextId, { resolve, reject });
-      ws.send(JSON.stringify({ id: nextId, method, params }));
+      const timer = setTimeout(() => {
+        waiting.delete(key);
+        reject(new Error(`${browser} sent no ${what} in ${TIMEOUT_MS / 1000} s.`));
+      }, TIMEOUT_MS);
+      waiting.set(key, (msg) => {
+        clearTimeout(timer);
+        if (msg.error) reject(new Error(`${what}: ${JSON.stringify(msg.error)}`));
+        else resolve(msg.result ?? msg.params);
+      });
     });
+  let nextId = 0;
+  const send = (method, params = {}) => {
+    const id = ++nextId;
+    const answer = message(id, `answer to ${method}`);
+    ws.send(JSON.stringify({ id, method, params }));
+    return answer;
+  };
+
   await send('Emulation.setDeviceMetricsOverride', { width: WIDTH, height: HEIGHT, deviceScaleFactor: 1, mobile: false });
   await send('Page.enable');
-  await send('Page.navigate', { url: pathToFileURL(page).href });
-  await sleep(1500);
+  const [, navigation] = await Promise.all([message('Page.loadEventFired', 'load event'), send('Page.navigate', { url: pathToFileURL(page).href })]);
+  if (navigation.errorText) throw new Error(`${browser} could not open the card: ${navigation.errorText}.`);
   // The fonts and the pictures are data URIs; wait until the page has decoded them.
   await send('Runtime.evaluate', { expression: 'document.fonts.ready.then(() => new Promise((done) => setTimeout(done, 500)))', awaitPromise: true });
   const { data } = await send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT, scale: 1 } });
-  writeFileSync(shot, Buffer.from(data, 'base64'));
-  ws.close();
+  png = Buffer.from(data, 'base64');
 } finally {
-  chrome.kill();
+  ws?.close();
+  if (chrome.exitCode === null && chrome.signalCode === null) {
+    chrome.kill();
+    await exited;
+  }
+  rmSync(work, { recursive: true, force: true });
 }
 
-if (!existsSync(shot)) throw new Error(`${browser} wrote no screenshot.`);
-await sharp(shot).resize(WIDTH, HEIGHT, { fit: 'cover', position: 'top' }).jpeg({ quality: 88, mozjpeg: true }).toFile(OUT);
+await sharp(png).resize(WIDTH, HEIGHT, { fit: 'cover', position: 'top' }).jpeg({ quality: 88, mozjpeg: true }).toFile(OUT);
 const meta = await sharp(OUT).metadata();
 if (meta.width !== WIDTH || meta.height !== HEIGHT) throw new Error(`The card is ${meta.width} x ${meta.height}, not ${WIDTH} x ${HEIGHT}.`);
 console.log(`${OUT} (${WIDTH} x ${HEIGHT})`);

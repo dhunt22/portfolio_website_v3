@@ -23,8 +23,8 @@ describe('lib/stanscribe', () => {
     expect(findCopyViolations(`${SOCIAL_IMAGE.alt} ${SOCIAL_IMAGE.url}`)).toEqual([]);
   });
 
-  test('the social card is on Stan Scribe’s own address', () => {
-    expect(SOCIAL_IMAGE.url).toBe('https://stanscribe.devinhunt.com/images/stanscribe/stan-scribe-social.jpg');
+  test('the social card is on Stan Scribe’s own address, with a version so previews fetch the redrawn card', () => {
+    expect(SOCIAL_IMAGE.url).toBe('https://stanscribe.devinhunt.com/images/stanscribe/stan-scribe-social.jpg?v=2');
   });
 
   test('the social card is 1200×630', async () => {

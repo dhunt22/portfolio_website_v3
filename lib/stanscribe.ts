@@ -139,9 +139,12 @@ export const SHOTS = {
   lightBlackAndWhite: shot('light-black-and-white', 1600, 1690, 'Stan Scribe Light on two iPhones, one with a black page and one with a white page, both showing live captions with colored speaker names.'),
 } satisfies Record<string, ShotImage>;
 
-/** Link-preview card (absolute URL: the root layout sets no metadataBase). */
+/**
+ * Link-preview card (absolute URL: the root layout sets no metadataBase). Previews cache a card by its address,
+ * so raise the ?v= number whenever scripts/stanscribe-social.mjs redraws the card.
+ */
 export const SOCIAL_IMAGE = {
-  url: `${STANSCRIBE_ORIGIN}/images/stanscribe/stan-scribe-social.jpg`,
+  url: `${STANSCRIBE_ORIGIN}/images/stanscribe/stan-scribe-social.jpg?v=2`,
   width: 1200,
   height: 630,
   alt: 'The name Stan Scribe and its tagline beside three iPhones showing live captions in color.',
