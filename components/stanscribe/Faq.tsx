@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 
-import { Section } from '@/components/stanscribe/Section';
+import { Disclosure } from '@/components/stanscribe/Disclosure';
+import { COLUMN, Section } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { type AppKey } from '@/lib/stanscribe';
-import { answerText, faq } from '@/lib/stanscribe-faq';
-import { cn } from '@/lib/utils';
+import { ACCURACY_QUESTION, answerText, faq } from '@/lib/stanscribe-faq';
 
 export function Faq({ app }: { app: AppKey }) {
   const items = faq(app);
@@ -19,11 +19,10 @@ export function Faq({ app }: { app: AppKey }) {
   };
   return (
     <Section id="questions" title="Questions and answers">
-      <ul role="list" className="grid gap-x-12 gap-y-8 md:grid-cols-2">
+      <div className={COLUMN}>
         {items.map(({ question, answer }) => (
-          <li key={question}>
-            <h3 className={TYPE.heading}>{question}</h3>
-            <p className={cn(TYPE.body, 'mt-2')}>
+          <Disclosure key={question} label={question} open={question === ACCURACY_QUESTION}>
+            <p>
               {answer.map((part, index) =>
                 typeof part === 'string' ? (
                   part
@@ -34,9 +33,9 @@ export function Faq({ app }: { app: AppKey }) {
                 ),
               )}
             </p>
-          </li>
+          </Disclosure>
         ))}
-      </ul>
+      </div>
       {/* "<" is escaped so no answer can close the script element. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structured).replace(/</g, '\\u003c') }} />
     </Section>

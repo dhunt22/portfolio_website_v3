@@ -12,9 +12,10 @@ export interface FaqItem {
 
 export const answerText = (answer: AnswerPart[]): string => answer.map((part) => (typeof part === 'string' ? part : part.text)).join('');
 
-const ACCURACY = 'How accurate are the captions?';
+/** The one answer that starts open: the brief says "captions can be wrong" is never hidden. */
+export const ACCURACY_QUESTION = 'How accurate are the captions?';
 const accuracy = (app: AppKey): FaqItem => ({
-  question: ACCURACY,
+  question: ACCURACY_QUESTION,
   answer: [
     `The captions come from ${app === 'light' ? 'an open speech model that runs' : 'open speech models that run'} on your iPhone or iPad, credited by name on the `,
     { text: 'Acknowledgements page', href: pageHref(app, 'acknowledgements') },
