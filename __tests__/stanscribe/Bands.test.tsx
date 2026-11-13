@@ -68,21 +68,31 @@ test('the footer closes the page on a band, so the contours do not come back und
 });
 
 describe('the band rules in globals.css', () => {
-  const css = fs.readFileSync(path.join(process.cwd(), 'app/globals.css'), 'utf8');
+  const css = fs.readFileSync(path.join(process.cwd(), 'app/globals.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  // Every rule whose selector names .bands, .band-foot or .band-only (the portfolio's .site .band is not one).
+  const bandRules = (css.match(/[^{}]*\.band(?:s|-foot|-only)[^{}]*\{[^}]*\}/g) ?? []).join('\n');
 
-  test('two tones take turns: the sheet’s colour and the page’s, which the palette test holds to 7:1', () => {
-    expect(css).toMatch(/--band-a:\s*var\(--surface-card\)/);
-    expect(css).toMatch(/--band-b:\s*var\(--surface-page\)/);
+  test('two tones take turns: the card’s colour and the page’s, both slightly see-through', () => {
+    expect(bandRules).toMatch(/--band-a:\s*color-mix\(in srgb, var\(--surface-card\) 92%, transparent\)/);
+    expect(bandRules).toMatch(/--band-b:\s*color-mix\(in srgb, var\(--surface-page\) 92%, transparent\)/);
+    expect(bandRules).toMatch(/\.dark \.bands, \.dark \.band-foot \{[^}]*--band-a:\s*color-mix\(in srgb, var\(--surface-card\) 90%, transparent\)/);
+    expect(bandRules).toMatch(/\.dark \.bands, \.dark \.band-foot \{[^}]*--band-b:\s*color-mix\(in srgb, var\(--surface-page\) 90%, transparent\)/);
   });
 
-  test('every band, the hero included, is solid behind the words and fades out toward the window’s edges', () => {
-    expect(css).toMatch(/--band-solid:\s*72rem/);
-    expect(css).toMatch(/--band-fade:\s*12rem/);
-    expect(css).toMatch(/\.bands > section::before, \.band-foot::before \{[^}]*mask-image: linear-gradient\(to right, transparent/);
-    expect(css).not.toMatch(/\.bands > section:first-of-type \{ background: none/);
+  test('each band is one plain background: no mask, no pseudo-element layer, no stacking context', () => {
+    expect(bandRules).toMatch(/\.bands > section, \.band-foot \{[^}]*background: linear-gradient\(to bottom, var\(--band-from\) 0, var\(--band-to\) var\(--band-blend\)\)/);
+    expect(bandRules).not.toMatch(/mask-image/);
+    expect(bandRules).not.toMatch(/::before/);
+    expect(bandRules).not.toMatch(/isolation/);
+    expect(bandRules).not.toMatch(/--band-solid|--band-fade/);
+  });
+
+  test('the hero has no fill, and the card under it blends in from nothing', () => {
+    expect(bandRules).toMatch(/\.bands > section:first-of-type \{ background: none; \}/);
+    expect(bandRules).toMatch(/\.bands > section:nth-of-type\(2\) \{ --band-from: transparent; \}/);
   });
 
   test('each break is an 80px blend, the height the owner chose', () => {
-    expect(css).toMatch(/--band-blend:\s*80px/);
+    expect(bandRules).toMatch(/--band-blend:\s*80px/);
   });
 });
