@@ -8,7 +8,7 @@ import { LegalLinks } from '@/components/stanscribe/LegalLinks';
 import { BAND, BAND_COLUMN, BANDS, COLUMN } from '@/components/stanscribe/Section';
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
-import { APPS, LEGAL_PAGES, SOCIAL_IMAGE, pageUrl, type AppKey, type LegalSlug } from '@/lib/stanscribe';
+import { APPS, LEGAL_PAGES, SITE_NAME, SOCIAL_IMAGE, pageUrl, type AppKey, type LegalSlug } from '@/lib/stanscribe';
 import { legalWords } from '@/lib/stanscribe-legal';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +31,7 @@ export async function legalMetadata(app: AppKey, { params }: LegalRouteProps): P
     description,
     keywords: null,
     alternates: { canonical: url },
-    openGraph: { type: 'website', locale: 'en_US', url, siteName: 'Devin Hunt', title, description, images: [SOCIAL_IMAGE] },
+    openGraph: { type: 'website', locale: 'en_US', url, siteName: SITE_NAME, title, description, images: [SOCIAL_IMAGE] },
     twitter: { card: 'summary_large_image', title, description, images: [SOCIAL_IMAGE] },
   };
 }
