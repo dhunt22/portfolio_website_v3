@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/Section.tsx
-// A Stan Scribe page is a run of bands, each the full width of the window, in two solid tones that take
-// turns (text keeps its 7:1 contrast on both). The contours show behind the header and the hero only.
+// A Stan Scribe page is a hero on the contours, then one card the full width of the window. The card's
+// sections are bands in two slightly see-through tones that take turns (text keeps its 7:1 contrast on both).
 // Each section opens on a centred serif h2 that also labels it for screen readers.
 
 import type { ReactNode } from 'react';
@@ -25,12 +25,14 @@ export const INTRO = 'mx-auto mt-6 max-w-2xl text-left md:text-center';
 interface SectionProps {
   id: string;
   title: string;
+  /** Extra classes for the band, such as more top padding under a picture that hangs into it. */
+  className?: string;
   children: ReactNode;
 }
 
-export function Section({ id, title, children }: SectionProps) {
+export function Section({ id, title, className, children }: SectionProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={cn(BAND, 'scroll-mt-8')}>
+    <section id={id} aria-labelledby={`${id}-title`} className={cn(BAND, 'scroll-mt-8', className)}>
       <div className={BAND_COLUMN}>
         <h2 id={`${id}-title`} className={cn(TYPE.title, 'text-center')}>
           {title}

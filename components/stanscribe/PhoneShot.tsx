@@ -3,6 +3,7 @@
 // A framed app screenshot at its intrinsic size (no layout shift), scaled to its container.
 
 import Image from 'next/image';
+import type { CSSProperties } from 'react';
 import type { ShotImage } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
@@ -11,9 +12,11 @@ interface PhoneShotProps {
   className?: string;
   /** Only the hero loads eagerly; every other shot is lazy. */
   priority?: boolean;
+  /** For a picture that hangs into the next band (a negative bottom margin). */
+  style?: CSSProperties;
 }
 
-export function PhoneShot({ image, className, priority = false }: PhoneShotProps) {
+export function PhoneShot({ image, className, priority = false, style }: PhoneShotProps) {
   return (
     <Image
       src={image.src}
@@ -22,6 +25,7 @@ export function PhoneShot({ image, className, priority = false }: PhoneShotProps
       height={image.height}
       preload={priority}
       className={cn('h-auto w-full', className)}
+      style={style}
     />
   );
 }

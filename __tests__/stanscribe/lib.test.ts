@@ -2,7 +2,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import { APP_STORE_BADGE, LANGUAGES, RELEASED, SHOTS, SOCIAL_IMAGE } from '@/lib/stanscribe';
+import { APP_ICONS, APP_STORE_BADGE, BOTH_APPS_SHARE, FAVICONS, LANGUAGES, LIGHT_NOT_SURE, LIGHT_SUMMARY, RELEASED, SHOTS, SITE_NAME, SOCIAL_IMAGE } from '@/lib/stanscribe';
 import { findCopyViolations } from '@/test-utils/stanscribe';
 
 const PUBLIC = join(__dirname, '..', '..', 'public');
@@ -31,6 +31,28 @@ describe('lib/stanscribe', () => {
     const file = join(PUBLIC, new URL(SOCIAL_IMAGE.url).pathname);
     const meta = await sharp(file).metadata();
     expect([meta.width, meta.height]).toEqual([1200, 630]);
+  });
+
+  test('link previews name the site Stan Scribe, and the card’s alt text says what it shows', () => {
+    expect(SITE_NAME).toBe('Stan Scribe');
+    expect(SOCIAL_IMAGE.alt).toBe('The name Stan Scribe and its tagline beside three iPhones showing live captions in color.');
+  });
+
+  test.each([
+    [APP_ICONS.scribe.src, 512],
+    [APP_ICONS.light.src, 512],
+    [FAVICONS.apple, 180],
+    [FAVICONS.icon, 32],
+  ])('%s is a square icon of %i pixels', async (src, size) => {
+    const meta = await sharp(join(PUBLIC, src)).metadata();
+    expect([meta.width, meta.height]).toEqual([size, size]);
+  });
+
+  test('the shared lines are short and follow the brief', () => {
+    expect(BOTH_APPS_SHARE).toBe('Both caption offline, with speaker colors and names, in 25 languages. Neither has in-app purchases.');
+    expect(LIGHT_NOT_SURE).toBe('Start with Light.');
+    expect(LIGHT_SUMMARY).toBe('The same live captions and speaker colors as Stan Scribe, made simpler: one speech model, a black or a white page, and a smaller download.');
+    expect(findCopyViolations(`${BOTH_APPS_SHARE} ${LIGHT_NOT_SURE} ${LIGHT_SUMMARY}`)).toEqual([]);
   });
 
   test('25 caption languages', () => {

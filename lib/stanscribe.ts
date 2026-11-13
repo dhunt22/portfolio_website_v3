@@ -17,6 +17,9 @@ export const RELEASED = false;
 
 export const SUPPORT_EMAIL = 'stanscribe@devinhunt.com';
 
+/** The site's name in link previews (og:site_name). */
+export const SITE_NAME = 'Stan Scribe';
+
 /** Apple's badge, used as supplied (no recoloring); 40px tall is Apple's on-screen minimum. */
 export const APP_STORE_BADGE = { src: '/images/stanscribe/app-store-badge.svg', width: 120, height: 40 };
 
@@ -100,6 +103,15 @@ export const APPS: Record<AppKey, AppInfo> = {
   },
 };
 
+/** Each app's own icon, copied from the app repo's AppIcon.png. */
+export const APP_ICONS: Record<AppKey, { src: string; size: number }> = {
+  scribe: { src: '/images/stanscribe/app-icon.png', size: 512 },
+  light: { src: '/images/stanscribe/app-icon-light.png', size: 512 },
+};
+
+/** The tab icon and the touch icon on every Stan Scribe page. */
+export const FAVICONS = { icon: '/images/stanscribe/app-icon-32.png', apple: '/images/stanscribe/app-icon-180.png' } as const;
+
 export interface ShotImage {
   src: string;
   width: number;
@@ -132,20 +144,18 @@ export const SOCIAL_IMAGE = {
   url: `${STANSCRIBE_ORIGIN}/images/stanscribe/stan-scribe-social.jpg`,
   width: 1200,
   height: 630,
-  alt: 'Stan Scribe and Stan Scribe Light on two iPhones, showing live captions in color.',
+  alt: 'The name Stan Scribe and its tagline beside three iPhones showing live captions in color.',
 };
 
-/** The /stanscribe-light/ page's intro. */
+/** The Light page's one line under its tagline. */
 export const LIGHT_SUMMARY =
-  'Stan Scribe Light has the same live captions and speaker colors as Stan Scribe. With their permission, you can teach it the voices of the people you talk with. It is simpler: one speech model, a black or a white page, and calm motion. That also makes it a smaller download. If you want plain captions, turn speaker colors off.';
+  'The same live captions and speaker colors as Stan Scribe, made simpler: one speech model, a black or a white page, and a smaller download.';
 
 /** Above the comparison table, which lists only the differences. */
-export const BOTH_APPS_SHARE =
-  'Both apps have live captions that work offline, speaker colors and names, voices it knows, 25 languages, big text, and saved conversations you can search and export. Neither has in-app purchases.';
+export const BOTH_APPS_SHARE = 'Both caption offline, with speaker colors and names, in 25 languages. Neither has in-app purchases.';
 
 /** Follows a bold "Not sure?". */
-export const LIGHT_NOT_SURE =
-  'Start with Light. If you want the Advanced speech model, the painted themes or themes from your own photos, choose Stan Scribe.';
+export const LIGHT_NOT_SURE = 'Start with Light.';
 
 export const LANGUAGES = [
   'Bulgarian', 'Croatian', 'Czech', 'Danish', 'Dutch', 'English', 'Estonian', 'Finnish', 'French',
