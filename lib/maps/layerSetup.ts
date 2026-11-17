@@ -5,6 +5,7 @@
 import * as maplibregl from 'maplibre-gl';
 import { MapConfig } from './mapConfigurations';
 import { createRiskColorScale, createEnhancedColorScale, createDynamicPaintProperties, ZOOM_OPACITY_CONFIG, fitMapToGeoJSON } from './mapUtils';
+import { startCompactAttributionClosed } from './attribution';
 
 // Define RiskAttribute locally to avoid circular imports (using actual geojson column names)
 type RiskAttribute = 'final_risk_score_pcntl' | 'climate_score' | 'effects_score' | 'exposure_score';
@@ -180,4 +181,5 @@ export const addMapControls = (map: maplibregl.Map) => {
   map.addControl(new maplibregl.AttributionControl({
     customAttribution: 'Map data &copy; OpenStreetMap contributors'
   }));
+  startCompactAttributionClosed(map);
 };
