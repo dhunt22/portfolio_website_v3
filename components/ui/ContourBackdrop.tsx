@@ -5,7 +5,7 @@ import {
   useThemeBackground,
   type PlatePage,
 } from '@/hooks/useThemeBackground';
-import { AnimatedContourBackground } from '@/components/ui/AnimatedContourBackground';
+import { AnimatedContourBackground, BACKDROP_HEIGHT } from '@/components/ui/AnimatedContourBackground';
 
 interface ContourBackdropProps {
   /** Which page's landscape plate to render. */
@@ -41,7 +41,7 @@ export function ContourBackdrop({ page, quiet = false }: ContourBackdropProps) {
         <div
           aria-hidden="true"
           className="pointer-events-none fixed left-0 right-0 top-0 -z-10 bg-background opacity-60 print:hidden"
-          style={{ height: 'var(--backdrop-h, 100lvh)' }}
+          style={{ height: BACKDROP_HEIGHT }}
         />
       )}
     </>

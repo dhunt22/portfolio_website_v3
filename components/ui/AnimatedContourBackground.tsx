@@ -57,6 +57,16 @@ interface AnimatedContourBackgroundProps {
 }
 
 /**
+ * The fixed backdrop's height, shared with the veil in ContourBackdrop. On touch devices the head
+ * bootstrap pins --backdrop-h in px from screen.height, so the plate's cover scale never changes as the
+ * URL bar moves. That pin can be shorter than the window: Brave's fingerprinting protection reports a
+ * smaller screen, and the contours then stopped above the bottom edge. The large viewport height is the
+ * floor. On iOS, where 100lvh changes frame by frame, it never exceeds the pin, so the pin still wins.
+ * With no pin (desktop, no JS) the height is 100lvh.
+ */
+export const BACKDROP_HEIGHT = 'max(var(--backdrop-h, 0px), 100lvh)';
+
+/**
  * Backdrop engine v3 — fixed full-viewport contour plate (two-layer model).
  *
  * A single fixed layer (`fixed inset-0 -z-10`) so the backdrop covers the
@@ -469,9 +479,7 @@ export function AnimatedContourBackground({
       data-dark-src={darkPlate}
       data-glow={shouldAnimate ? glowSrc : undefined}
       className="fixed top-0 left-0 right-0 -z-10 overflow-hidden"
-      // Pre-paint pinned px height on touch devices (head bootstrap sets the
-      // var); 100lvh fallback for desktop / no-JS.
-      style={{ height: 'var(--backdrop-h, 100lvh)' }}
+      style={{ height: BACKDROP_HEIGHT }}
       aria-hidden="true"
     >
       {hasMobilePlates ? (
