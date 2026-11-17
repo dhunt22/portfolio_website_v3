@@ -27,7 +27,6 @@ function renderControls(overrides: Record<string, unknown> = {}) {
     setPercentileThreshold: jest.fn(),
     facilityTypes: ['STATE', 'FEDERAL'],
     setFacilityTypes: jest.fn(),
-    onResetView: jest.fn(),
     ...overrides,
   };
   const view = render(<MapControls {...(props as any)} />);
@@ -137,13 +136,14 @@ test('desktop inline segment still renders and drives the filter (no regression)
   expect(setPercentileThreshold).toHaveBeenCalledWith(75);
 });
 
-test('reset and facility toggles still render and fire their callbacks', () => {
-  const onResetView = jest.fn();
-  const setFacilityTypes = jest.fn();
-  renderControls({ onResetView, setFacilityTypes });
+test('the toolbar has no reset button, even for a caller that still passes the old handler', () => {
+  renderControls({ onResetView: jest.fn() });
+  expect(screen.queryByRole('button', { name: /reset/i })).toBeNull();
+});
 
-  fireEvent.click(screen.getByRole('button', { name: /reset map view/i }));
-  expect(onResetView).toHaveBeenCalled();
+test('the facility toggles render and fire their callback', () => {
+  const setFacilityTypes = jest.fn();
+  renderControls({ setFacilityTypes });
 
   // STATE is active by default; toggling it off should drop it from the set.
   fireEvent.click(screen.getByRole('button', { name: 'State' }));

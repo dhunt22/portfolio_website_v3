@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/maps/MapControls.tsx
-// Legend + percentile/type/view toolbar floating on the map edge, in the site's type roles (DESIGN.md ›
+// Legend + percentile/type toolbar floating on the map edge, in the site's type roles (DESIGN.md ›
 // Elevation: map controls float, so they alone carry the float shadow; square, no outlines).
 
 'use client';
@@ -32,7 +32,6 @@ interface MapControlsProps {
   setPercentileThreshold?: (t: PercentileThreshold) => void;
   facilityTypes?: FacilityType[];
   setFacilityTypes?: (types: FacilityType[]) => void;
-  onResetView?: () => void;
 }
 
 // Segmented control option
@@ -61,7 +60,6 @@ const MapControls: React.FC<MapControlsProps> = ({
   setPercentileThreshold,
   facilityTypes = ['STATE', 'FEDERAL'],
   setFacilityTypes,
-  onResetView,
 }) => {
   // Mobile-only collapsing percentile disclosure. The inline 4-button segment
   // overflows a narrow mobile map pane, so below `sm` it is replaced by one
@@ -227,22 +225,6 @@ const MapControls: React.FC<MapControlsProps> = ({
           })}
         </div>
 
-        {/* Reset view button */}
-        {onResetView && (
-          <button
-            type="button"
-            onClick={onResetView}
-            title="Reset map view to US extent"
-            aria-label="Reset map view"
-            className={cn(CONTROL, 'flex items-center gap-1.5')}
-          >
-            {/* Home/reset icon */}
-            <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M1.5 6.5L8 1.5L14.5 6.5V14H10V10H6V14H1.5V6.5Z" />
-            </svg>
-            <span>Reset view</span>
-          </button>
-        )}
       </div>
 
       {/* ── Legend: overlaid top-right, collapsible ── */}
