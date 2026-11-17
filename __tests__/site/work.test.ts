@@ -48,6 +48,10 @@ test('the tools', () => {
   expect(stan.summary).toBe(
     'An iPhone and iPad app I built for my grandpa Stan, who is hard of hearing: live captions of the conversation at the table, a color for each speaker, with no internet and no subscription.',
   );
+  // The same claim as the story on Stan Scribe's own page: the other app needed the internet for its best captions.
+  expect(stan.content).toEqual([
+    'My grandpa Stan is hard of hearing. With live captions at dinner he could keep up and answer, but the app my parents found charged a monthly fee and needed the internet for its best captions. So I used AI to build one that works offline and costs as little as I could manage: a free edition, and a full one you pay for once.',
+  ]);
   expect(findCopyViolations([stan.summary, ...stan.content].join(' '))).toEqual([]);
 });
 

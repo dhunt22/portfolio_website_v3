@@ -224,14 +224,14 @@ as text, Find any conversation, 25 languages. They are a grid, five across on a 
 across on a phone. They are not a sideways scroller, which older readers often miss. Then the line
 "Something you use every day should not look clinical."
 
-**Amended 2026-11-16.** The app repo's session passed on three decisions the owner made that day. This
-session has not heard them from him directly.
+**Amended 2026-11-16.** The app repo's session passed on three decisions the owner made that day. He then
+approved the built change in review.
 
 - Five themes (Forest, Mallards, Birches, Windmill, Seashell) do not ship until their artists give
   permission, so the app has 23 themes, not 28. The features row, the comparison table and the two FAQ
   answers say 23. Stan and Betty are paintings and stay, so "painted ones" still holds.
-- The story says the other app "needed the internet for its best captions". The Stan Scribe sentence in
-  `lib/portfolio-data.ts` still has the shorter wording until the owner rules on it.
+- The story says the other app "needed the internet for its best captions". The owner confirmed the same
+  wording for the Stan Scribe entry's `content` in `lib/portfolio-data.ts`.
 - The five-phone picture of painted themes is gone, with its file and its `SHOTS` entry, because four of
   its phones showed themes that do not ship. The line above it stays. The hero already shows the Stan
   and Betty themes.
