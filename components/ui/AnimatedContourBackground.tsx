@@ -59,9 +59,10 @@ interface AnimatedContourBackgroundProps {
 /**
  * The fixed backdrop's height, shared with the veil in ContourBackdrop. On touch devices the head
  * bootstrap pins --backdrop-h in px from screen.height, so the plate's cover scale never changes as the
- * URL bar moves. That pin can be shorter than the window: Brave's fingerprinting protection reports a
- * smaller screen, and the contours then stopped above the bottom edge. The large viewport height is the
- * floor. On iOS, where 100lvh changes frame by frame, it never exceeds the pin, so the pin still wins.
+ * URL bar moves. If a browser ever reports a screen shorter than the window, that pin would stop the
+ * contours above the bottom edge, so the large viewport height is the floor. No such browser has been
+ * seen; this is a guard. On iOS, where 100lvh changes frame by frame, it never exceeds the pin, so the
+ * pin still wins.
  * With no pin (desktop, no JS) the height is 100lvh.
  */
 export const BACKDROP_HEIGHT = 'max(var(--backdrop-h, 0px), 100lvh)';

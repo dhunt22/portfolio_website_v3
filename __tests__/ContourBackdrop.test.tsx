@@ -14,9 +14,9 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-// The phone pin (--backdrop-h) comes from screen.height, which a browser may report shorter than the window
-// (Brave's fingerprinting protection does). The large viewport height is the floor, so the contours never
-// stop above the bottom edge. On iOS 100lvh never exceeds the pin, so the pin still holds the plate steady.
+// The phone pin (--backdrop-h) comes from screen.height. Should a browser report a screen shorter than the
+// window, the large viewport height is the floor, so the contours never stop above the bottom edge. On iOS
+// 100lvh never exceeds the pin, so the pin still holds the plate steady.
 const HEIGHT = 'height: max(var(--backdrop-h, 0px), 100lvh)';
 
 test('the plate is at least as tall as the window, whatever height the phone pin holds', () => {
