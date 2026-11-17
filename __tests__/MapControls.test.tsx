@@ -159,3 +159,16 @@ test('the controls use the site type roles: square, no outlines, no mono or trac
   const legacy = '.eyebrow, .panel, .uppercase, .font-mono, .font-sans, .rounded, .rounded-sm, .border, [class*="tracking-"], [class*="text-xs"], [class*="text-sm"], .backdrop-blur-sm';
   expect(container.querySelector(legacy)).toBeNull();
 });
+
+test('the toolbar hugs its controls: 4px of card around them, and on a phone only as wide as they are', () => {
+  renderControls();
+  const toolbar = trigger().closest('.bg-card')!;
+  expect(toolbar).toHaveClass('p-1');
+  expect(toolbar.className).not.toMatch(/(^|\s)(px-2|py-1\.5|right-12)(\s|$)/);
+  // It still stops short of the attribution button in the map's corner.
+  expect(toolbar).toHaveClass('max-w-[calc(100%-3.5rem)]');
+  // One height for the phone's three controls, so the bar is 44px tall where it was 56.
+  expect(trigger()).toHaveClass('min-h-9');
+  expect(trigger().className).not.toMatch(/min-h-\[44px\]/);
+  for (const name of ['State', 'Federal']) expect(screen.getByRole('button', { name })).toHaveClass('min-h-9');
+});

@@ -238,7 +238,10 @@ hyphenates rather than pushing the page sideways.
   and 8px gaps. Space separates things, not lines.
 - **The clearing:** the fixed backdrop is masked so contours fade out behind the hero text. Desktop,
   left under the hero words: `radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%)`.
-  Phones (≤860px): `linear-gradient(to bottom, transparent 0 34%, #000 62%)`.
+  Phones (≤860px): `linear-gradient(to bottom, transparent 0 14svh, #000 46svh)`, so the contours come in
+  under the header and are at full strength by the end of the title, which wears the halo. Until
+  2026-11-16 the stops were 34% and 62% of the plate; the owner asked for contours beneath more of the
+  title, and the stops are in `svh` because the plate can be far taller than the window (see Decision log).
 - **Breakpoints:** 860px (two columns collapse to one, list meta moves under the name, readout drops its
   wide fields), 520px (the header's Email button hides; email stays in the footer and actions).
 
@@ -380,7 +383,7 @@ no labels.
 | `lib/site/geo.ts`, `glyphs.ts`, `reading.ts` | Pure, safe on the client. `geo.ts`: the projection at 37.5°N, point-in-polygon, `fitTo`, `pathData`. `glyphs.ts`: `outlineGlyph`, `pointsGlyph`, `meshGlyph`, `calibrationGlyph`, `captionsGlyph`, `boreholesGlyph`, `wellsGlyph`, `householdsGlyph`. `reading.ts`: `Reading`, `placeReading`, `labelReading`, `plateReading`, `PLATES`, `HOME`, `HOME_BASE`, `formatLat`, `formatLon`. |
 | `app/(site)/page.tsx` | The home blueprint: hero, then `LeadProject` and `HighlightList`. `HeroLoadIn` and the panels are gone from home. |
 | `app/(site)/portfolio/page.tsx` | `ProjectsIndex` over `projectEntries()`, then a `WorkList` of `toolEntries()`. No map on the index. |
-| `app/(site)/portfolio/environmental-justice-prisons/page.tsx`, `IndicatorBrowser`, `LazyProjectMap`, `ProjectMap`, `MapControls` | The EEJ page keeps its MapLibre map (`IndicatorBrowser` → `LazyProjectMap` → `ProjectMap` with `MapControls`), restyled to the six roles; the controls carry the one float shadow. It is the only MapLibre map on the site. The four categories are a row of tabs at every width, wrapping to a second row on a narrow phone; under them sit the active tab's full name and its indicators, as a rail with descriptions at `lg` and a wrapping row of names below it. Since 2026-11-16 the toolbar has no Reset view button (the owner's call). |
+| `app/(site)/portfolio/environmental-justice-prisons/page.tsx`, `IndicatorBrowser`, `LazyProjectMap`, `ProjectMap`, `MapControls` | The EEJ page keeps its MapLibre map (`IndicatorBrowser` → `LazyProjectMap` → `ProjectMap` with `MapControls`), restyled to the six roles; the controls carry the one float shadow. It is the only MapLibre map on the site. The four categories are a row of tabs at every width, wrapping to a second row on a narrow phone; under them sit the active tab's full name and its indicators, as a rail with descriptions at `lg` and a wrapping row of names below it. Since 2026-11-16 the toolbar has no Reset view button (the owner's call), is only as wide as its controls, and keeps 4px of card around them. |
 | `app/(site)/resume/page.tsx`, `components/resume/*` | The résumé opening beside `WatershedMap` (fed by `resumeMap()`), then the rest on a band. `ResumeSection`, `ExperienceItem` and `SkillsList` are restyled to entries. |
 | `app/(site)/interests/page.tsx`, `InterestSection` | Restyled to bands; photos stay. The nav label is Outdoors; the URL stays `/interests`. |
 | `ContourBackdrop`, `AnimatedContourBackground`, plates, `useThemeBackground` | Kept unchanged; each page passes its plate. The clearing mask and the bands live in `globals.css` under `.site`. |
@@ -415,7 +418,7 @@ ignore; its remaining findings are listed here.
 | Map focus ring drawn inside the edge | EEJ map surface | The map sits in a clipping frame, so its 2px Water Blue ring is drawn 4px inside the edge instead of 3px outside; every other stop keeps the 3px offset. |
 | Lead project meta under the name | Home | The C3 prototype set the lead's meta above its name. That is an eyebrow, so the lead now uses the entry order (name, meta, paragraph, link). |
 | Stan Scribe link stays a plain link | Home highlights | Portfolio routes navigate in place; Stan Scribe is its own product with its own frame and fonts (PRODUCT.md › Brand Commitments), so it loads as a page of its own. |
-| Phone plate position | Inspector shots at 390 | Not a defect: headless Chrome reports the host screen (1440x900), so the phone height pin makes the plate 1440px tall and the clearing sits low. With a phone-sized screen the plate sits where C3 put it. |
+| Phone plate scale | Inspector shots at 390, and any narrow desktop window | Headless Chrome and a narrow desktop window report the host screen (1440x900, say), so the phone height pin makes the plate 1440px tall and its lines are drawn larger than on a phone. The clearing no longer sits low there: since 2026-11-16 its stops are in `svh`, measured against the window. |
 | Serif fallback after `--font-display` | `.site` | Not a defect: `--font-site` already carries next/font's metric-matched fallback, so the serif names after it are never reached, and no element inside `.site` uses `font-display`, `font-sans` or `font-mono` (tests guard the EEJ components). |
 | Wordmark at 1.125rem | `SiteHeader` | The one named size outside the six roles; Navigation sets it (700, 1.125rem). It is a logotype, not text in a role. |
 | EEJ map popups keep pre-redesign styling | `lib/maps/mapUtils.ts` | The popups keep their inline sizes and greys. They are out of scope for this redesign and listed for a later pass. |
