@@ -69,7 +69,7 @@ const scribe = (): FaqItem[] => [
   },
   {
     question: 'What is the difference between Stan Scribe and Stan Scribe Light?',
-    answer: ['Both have live captions that work offline, speaker colors and names, 25 languages and big text. Stan Scribe adds the Advanced speech model, 28 color themes including painted ones, and themes from your own photos. Stan Scribe Light has one speech model and a black or a white page, and it is a smaller download.'],
+    answer: ['Both have live captions that work offline, speaker colors and names, 25 languages and big text. Stan Scribe adds the Advanced speech model, 23 color themes including painted ones, and themes from your own photos. Stan Scribe Light has one speech model and a black or a white page, and it is a smaller download.'],
   },
   WHAT_YOU_NEED,
   {
@@ -98,7 +98,7 @@ const light = (): FaqItem[] => [
   },
   {
     question: 'How is it different from Stan Scribe?',
-    answer: ['Light has one speech model and a black or a white page, and it is a smaller download. Stan Scribe adds the Advanced speech model, 28 color themes including painted ones, and themes from your own photos. Both have the same live captions, speaker colors and 25 languages.'],
+    answer: ['Light has one speech model and a black or a white page, and it is a smaller download. Stan Scribe adds the Advanced speech model, 23 color themes including painted ones, and themes from your own photos. Both have the same live captions, speaker colors and 25 languages.'],
   },
   {
     question: 'Does it need the internet?',

@@ -100,7 +100,8 @@ test('presents both apps, with the comparison at #light', () => {
 
 test('images have alt text and headings are in order', () => {
   const page = renderPage();
-  expect(page.querySelectorAll('img').length).toBeGreaterThanOrEqual(7);
+  // The hero and the five screens.
+  expect(page.querySelectorAll('img').length).toBeGreaterThanOrEqual(6);
   for (const img of Array.from(page.querySelectorAll('img:not([alt=""])'))) expect(img.getAttribute('alt')?.trim()).toBeTruthy();
   for (const img of Array.from(page.querySelectorAll('img[alt=""]'))) expect(img.closest('a[aria-label]')).not.toBeNull();
   const levels = headingLevels(page);
@@ -120,7 +121,7 @@ test('the story is three short paragraphs, with the rest one click away', () => 
   const always = Array.from(story.querySelectorAll('p')).filter((p) => !more.contains(p)).map((p) => p.textContent);
   expect(always).toEqual([
     'My grandpa Stan is hard of hearing. At the table, the conversation moves faster than he can catch it.',
-    'With live captions he could keep up and answer, instead of pretending he had heard. The app my parents tried charged a monthly fee and needed the internet, so I built this one. Stan uses it every day at dinner.',
+    'With live captions he could keep up and answer, instead of pretending he had heard. The app my parents tried charged a monthly fee and needed the internet for its best captions, so I built this one. Stan uses it every day at dinner.',
     'Devin',
   ]);
   const rest = more.textContent ?? '';
@@ -142,8 +143,10 @@ test('features: six rows with icons, five screens with labels, and why the theme
     'Conversations you keep',
     'Choose how it looks',
   ]);
-  expect(features.textContent).toMatch(/28 themes I curated, or make your own from your photos\./);
+  expect(features.textContent).toMatch(/23 themes I curated, or make your own from your photos\./);
   expect(features.textContent).toMatch(/Something you use every day should not look clinical\./);
+  // The five screens are the only pictures here. The five-phone picture of painted themes showed four that do not ship.
+  expect(features.querySelectorAll('img')).toHaveLength(5);
   const screens = features.querySelector('ul[data-screens]')!;
   expect(Array.from(screens.querySelectorAll('li')).map((li) => li.querySelector('p')!.textContent)).toEqual([
     'Speakers in color',
@@ -155,6 +158,12 @@ test('features: six rows with icons, five screens with labels, and why the theme
   expect(screens.querySelectorAll('img')).toHaveLength(5);
   // A grid, not a sideways scroller.
   expect(screens.className).not.toMatch(/overflow-x/);
+});
+
+test('every count of themes on the page is 23, the number that ships', () => {
+  // The features row, the comparison table, the FAQ answer and the FAQ's structured data.
+  const counts = Array.from((renderPage().textContent ?? '').matchAll(/(\d+) (?:color )?themes/g), (match) => match[1]);
+  expect(counts).toEqual(['23', '23', '23', '23']);
 });
 
 test('privacy: five rows in the tour’s style, each label visible and each opening to its words', () => {

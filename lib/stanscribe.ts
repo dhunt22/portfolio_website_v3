@@ -134,7 +134,6 @@ export const SHOTS = {
   liveLarge: shot('stan-scribe-live-large', 900, 1679, 'Captions in very large text, two short lines filling the screen.'),
   conversation: shot('stan-scribe-conversation', 900, 1679, "A saved conversation titled Dinner with Alex at Rosa's Cafe, with a short summary, its topic and place, and one highlighted line."),
   library: shot('stan-scribe-library', 900, 1679, 'Saved conversations, with a calendar of October and a search field.'),
-  paintedThemes: shot('stan-scribe-painted-themes', 2000, 1411, 'Five iPhones showing captions over painted landscapes: ducks over a marsh, birch trees, a fisherman at a lake, a windmill and a forest.'),
   languages: shot('stan-scribe-languages', 900, 1679, 'Live captions in German, Polish, Czech, Maltese, Russian and Greek, one line each, from three speakers.'),
   lightBlackAndWhite: shot('light-black-and-white', 1600, 1690, 'Stan Scribe Light on two iPhones, one with a black page and one with a white page, both showing live captions with colored speaker names.'),
 } satisfies Record<string, ShotImage>;

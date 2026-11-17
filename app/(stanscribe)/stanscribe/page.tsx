@@ -84,7 +84,7 @@ const STEPS: (Row & { tone?: 'start' | 'stop' })[] = [
 
 const STORY = [
   'My grandpa Stan is hard of hearing. At the table, the conversation moves faster than he can catch it.',
-  'With live captions he could keep up and answer, instead of pretending he had heard. The app my parents tried charged a monthly fee and needed the internet, so I built this one. Stan uses it every day at dinner.',
+  'With live captions he could keep up and answer, instead of pretending he had heard. The app my parents tried charged a monthly fee and needed the internet for its best captions, so I built this one. Stan uses it every day at dinner.',
 ];
 
 const STORY_MORE = [
@@ -99,7 +99,7 @@ const FEATURES: Row[] = [
   { icon: <TextSizeIcon />, title: 'Big text, clear buttons', body: 'Every button says what it does: Smaller, Larger, Save, Stop.' },
   { icon: <LockIcon />, title: 'Keeps listening', body: 'Lock your iPhone and captions keep going until you tap Stop.' },
   { icon: <SearchIcon />, title: 'Conversations you keep', body: 'Find any one by date, person or word. Export it, or back it up to your own iCloud.' },
-  { icon: <LooksIcon />, title: 'Choose how it looks', body: '28 themes I curated, or make your own from your photos.' },
+  { icon: <LooksIcon />, title: 'Choose how it looks', body: '23 themes I curated, or make your own from your photos.' },
 ];
 
 /** Five screens in a row, as a store listing shows them. */
@@ -217,7 +217,6 @@ export default function StanScribePage() {
             ))}
           </ul>
           <p className={cn(TYPE.heading, 'mt-16 text-center')}>Something you use every day should not look clinical.</p>
-          <PhoneShot image={SHOTS.paintedThemes} className="mx-auto mt-6 max-w-3xl" />
         </Section>
 
         <Section id="privacy" title="Privacy">

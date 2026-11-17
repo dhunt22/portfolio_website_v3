@@ -200,8 +200,8 @@ there today.
 > My grandpa Stan is hard of hearing. At the table, the conversation moves faster than he can catch it.
 >
 > With live captions he could keep up and answer, instead of pretending he had heard. The app my parents
-> tried charged a monthly fee and needed the internet, so I built this one. Stan uses it every day at
-> dinner.
+> tried charged a monthly fee and needed the internet for its best captions, so I built this one. Stan
+> uses it every day at dinner.
 >
 > Devin
 
@@ -217,12 +217,24 @@ doctor's appointment, and what comes next.
 | Big text, clear buttons | Every button says what it does: Smaller, Larger, Save, Stop. |
 | Keeps listening | Lock your iPhone and captions keep going until you tap Stop. |
 | Conversations you keep | Find any one by date, person or word. Export it, or back it up to your own iCloud. |
-| Choose how it looks | 28 themes I curated, or make your own from your photos. |
+| Choose how it looks | 23 themes I curated, or make your own from your photos. |
 
 Then five screens in a row, each with a short label: Speakers in color, Text as big as you need, Saved
 as text, Find any conversation, 25 languages. They are a grid, five across on a wide window and two
-across on a phone. They are not a sideways scroller, which older readers often miss. Then the painted
-themes image under the line "Something you use every day should not look clinical."
+across on a phone. They are not a sideways scroller, which older readers often miss. Then the line
+"Something you use every day should not look clinical."
+
+**Amended 2026-11-16.** The app repo's session passed on three decisions the owner made that day. This
+session has not heard them from him directly.
+
+- Five themes (Forest, Mallards, Birches, Windmill, Seashell) do not ship until their artists give
+  permission, so the app has 23 themes, not 28. The features row, the comparison table and the two FAQ
+  answers say 23. Stan and Betty are paintings and stay, so "painted ones" still holds.
+- The story says the other app "needed the internet for its best captions". The Stan Scribe sentence in
+  `lib/portfolio-data.ts` still has the shorter wording until the owner rules on it.
+- The five-phone picture of painted themes is gone, with its file and its `SHOTS` entry, because four of
+  its phones showed themes that do not ship. The line above it stays. The hero already shows the Stan
+  and Betty themes.
 
 **Privacy** (`#privacy`). Five rows in the tour's style. The label is always visible. A click opens the
 words that are on the page today.
@@ -322,7 +334,6 @@ code change. It gives a script for each:
 | `hero-stan-scribe`, `both-apps`, `light-black-and-white` | Heroes, share card | The Saturday plan from the caption demo, continued for a full screen. |
 | `stan-scribe-live-large` | "Text as big as you need" | Two short lines at the largest size: "Dinner is ready. / Come and sit down." |
 | `stan-scribe-live-graphite` | "Speakers in color" | Three speakers, two of them named, about who is driving on Saturday. |
-| `stan-scribe-painted-themes` | "Should not look clinical" | The Saturday plan. |
 | `stan-scribe-conversation`, `stan-scribe-library`, `stan-scribe-languages` | Features | No change. They already show their feature. |
 
 One rule for every script: the speakers talk about dinner, plans and each other, and never about the

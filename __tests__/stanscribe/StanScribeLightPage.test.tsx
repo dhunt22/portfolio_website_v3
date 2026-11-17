@@ -87,3 +87,9 @@ test('the comparison: one line, the table, and where to go if unsure', () => {
 test('link previews name the site Stan Scribe', () => {
   expect(metadata.openGraph).toMatchObject({ siteName: 'Stan Scribe' });
 });
+
+test('every count of the full app’s themes is 23, the number that ships', () => {
+  const counts = Array.from((renderPage().textContent ?? '').matchAll(/(\d+) (?:color )?themes/g), (match) => match[1]);
+  expect(counts.length).toBeGreaterThan(0);
+  expect(new Set(counts)).toEqual(new Set(['23']));
+});

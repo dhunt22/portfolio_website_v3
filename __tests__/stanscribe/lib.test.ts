@@ -15,6 +15,11 @@ describe('lib/stanscribe', () => {
     expect([meta.width, meta.height]).toEqual([shot.width, shot.height]);
   });
 
+  test('no picture shows the painted themes that do not ship', () => {
+    expect(Object.keys(SHOTS)).not.toContain('paintedThemes');
+    expect(existsSync(join(PUBLIC, 'images', 'stanscribe', 'stan-scribe-painted-themes.webp'))).toBe(false);
+  });
+
   test('alt text and file names follow the brief', () => {
     for (const shot of Object.values(SHOTS)) {
       expect(shot.alt.length).toBeGreaterThan(20);

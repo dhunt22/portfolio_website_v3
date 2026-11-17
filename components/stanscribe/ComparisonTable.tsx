@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 const ROWS: [feature: string, scribe: string, light: string][] = [
   ['Price', 'Pay once', 'Free'],
   ['Speech models', 'Advanced and Basic', 'Basic'],
-  ['Looks', '28 themes, painted ones, and your own photos', 'Black or white'],
+  ['Looks', '23 themes, painted ones, and your own photos', 'Black or white'],
   ['Download', 'Larger', 'Smaller'],
 ];
 
