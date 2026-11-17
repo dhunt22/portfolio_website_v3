@@ -111,18 +111,20 @@ have their own header and footer (`StanScribeHeader`, `StanScribeFooter`: the na
 main Stan Scribe page, then Stan Scribe Light, Help, Devin Hunt, which leads to the portfolio, and the
 theme toggle; "Made by Devin Hunt") instead of the June 2026 portfolio chrome. Since 2026-11-12 each
 page is a hero on the contours, then one card the full width of the window (`BANDS`, `BAND` and
-`BAND_COLUMN` in `components/stanscribe/Section.tsx`; `.bands` in `globals.css`). The card is slightly
-see-through, as the portfolio's band is (92% by day, 90% at night), and its sections take turns between
-two tones, the card colour and the page ground, each blending in from the tone above it over 80px. The
-bands that faded out at the sides, built that morning with masks, are gone. The owner asked for the
+`BAND_COLUMN` in `components/stanscribe/Section.tsx`; `.bands` in `globals.css`). The card is one flat
+tone, the page ground, slightly see-through, as the portfolio's band is (92% by day, 90% at night). It
+starts at a hard edge under the hero, as that band does. Until 2026-11-16 its sections took turns between
+two tones with an 80px blend at each break; the owner asked for one colour and a solid line. The
+bands that faded out at the sides, built on the morning of 2026-11-12 with masks, are gone. The owner asked for the
 full-width card to match the portfolio. Traces in Brave on his Mac showed the same 120 frames a second
 with and without the masks, so the change is one of look, not a measured gain in speed. The pages read
 as an extension of the App Store listing: an icon, a name and one line where there were paragraphs, and
 Privacy and Questions as rows that open on a click. The six legal pages (`/stanscribe/privacy/` and so
 on) follow the same pattern: the title and the line under it sit on the contours, and the rest of the
-words sit on the card, set by `.legal`. Over a contour line under the 40% veil, text measures 7.06:1 at
-worst (a link by day) and `palette.test.ts` holds it there. Help sits on the lighter tone and every page
-ends on it, where the footer blends to the ground. Each band's words sit in a centred 64rem column;
+words sit on the card, set by `.legal`. The veil over the contours is 60% (it was 40% from 2026-11-12 to 2026-11-16; the owner asked for
+fainter contours behind the hero). Over a contour line under it, text measures 7.97:1 at worst (a link
+by day) and `palette.test.ts` holds it above 7:1. Small print sits on the card only, where it measures
+6.2:1 at worst, inside its own 4.5:1 rule. The footer is the same tone as the card. Each band's words sit in a centred 64rem column;
 prose sits in a centred 42rem column with its lines set left. Sections open on centred serif h2s. The
 spec is `docs/superpowers/specs/2026-11-12-stanscribe-listing-design.md`.
 
@@ -386,7 +388,7 @@ no labels.
 | `public/data/` | `cuyama_subbasin.geojson` and `yuba_subbasins.geojson` (B118) restored from git history. |
 | `__tests__/site/` | Tests for the chrome, each portfolio page, the readout, geometry, glyphs, entries, the map, `cn()` and the tokens; `tokens.test.ts` reads `globals.css` and `app/fonts/site.ts`. |
 | Stan Scribe legal pages | `app/(stanscribe)/stanscribe/[page]/` and `stanscribe-light/[page]/` render `LegalPage` (`components/stanscribe/LegalPage.tsx`), which reads the words from `content/stanscribe-legal/<app>/<page>.html` (`lib/stanscribe-legal.ts`, build time) in two parts: `legalParts` (through `splitLegal`) gives the h1 with the one paragraph under it, which the page sets on the contours, and the rest, which it sets on the card. An h1 with no paragraph under it goes on the contours alone. Words that do not open with an h1 have no hero, and the card is the only section. No word changes. `.legal` in `globals.css` sets them, since they carry no classes. `npm run sync:stanscribe-legal` pulls the words from the app repo's `origin/main`, dropping each generated page's styles and nav; `-- --check` reports stale pages and writes nothing. `scripts/stanscribe-index.mjs` moves each to `<page>/index.html`, which keeps its slash URL with no Netlify rewrite. Never edit the words here. |
-| Stan Scribe pages and components | Their own system (Scope). `Section.tsx` exports `BANDS`, `BAND`, `BAND_COLUMN`, `COLUMN` and `INTRO`, and `Section` takes a `className` for a band under a picture that hangs into it. `Disclosure` is a native `<details>` row: a label that is always visible, an optional `IconTile`, and words that show on a click. `IconTile` is a 48px tile for one icon; `icons.tsx` holds Lucide's drawings as static SVG, so the pages ship no icon library (the app's SF Symbols are not licensed for websites). `AppIcon` shows an app's own icon as decoration. `CaptionDemo` plays a short scripted conversation once when scrolled into view, by changing word opacity only, with a Pause button, and shows it whole under reduced motion. `ComparisonTable` has a frame, a filled header row and a rule beside each app's column. `DownloadBlock` has no box. `ContourBackdrop`'s `quiet` veil is 40%, the lightest that keeps a link over a contour line at 7:1. `scripts/stanscribe-social.mjs` draws the share card through a headless Chromium browser, and `scripts/scroll-trace.mjs` counts the frames a scroll presents. |
+| Stan Scribe pages and components | Their own system (Scope). `Section.tsx` exports `BANDS`, `BAND`, `BAND_COLUMN`, `COLUMN` and `INTRO`, and `Section` takes a `className` for a band under a picture that hangs into it. `Disclosure` is a native `<details>` row: a label that is always visible, an optional `IconTile`, and words that show on a click. `IconTile` is a 48px tile for one icon; `icons.tsx` holds Lucide's drawings as static SVG, so the pages ship no icon library (the app's SF Symbols are not licensed for websites). `AppIcon` shows an app's own icon as decoration. `CaptionDemo` plays a short scripted conversation once when scrolled into view, by changing word opacity only, with a Pause button, and shows it whole under reduced motion. `ComparisonTable` has a frame, a filled header row and a rule beside each app's column. `DownloadBlock` has no box. `ContourBackdrop`'s `quiet` veil is 60%. `scripts/stanscribe-social.mjs` draws the share card through a headless Chromium browser, and `scripts/scroll-trace.mjs` counts the frames a scroll presents. |
 
 ## Decision log
 
@@ -403,7 +405,6 @@ ignore; its remaining findings are listed here.
 | Inspector `off-centre` | Every page | Resolved 2026-10-28: the owner disliked the strong left-anchoring, so the pages share one centred 75rem column (Layout › Frame). The first screens were centred in it too until 2026-11-01, when the owner set them left in the column so they work with the contours. What remains is a WARN on home at 1440 (120px left, 140px right): the right highlight's text ends at its 56ch measure short of the column edge. |
 | Inspector `off-centre` (FAIL) | Stan Scribe Light at 1440 | A reading artifact: the inspector takes the 2nd and 98th percentiles of text edges, and on a page of centred text in a 42rem column the header's right-hand links are the only text near the right. Measured: the sheet sits 144px from each edge and the h1's midpoint is 720 of 1440. |
 | Inspector `hairline` (WARN) | Stan Scribe pages | The rules are the rows of real lists and a real table: between the rows that open in Privacy and Questions, in the comparison table, and above the legal fine print. |
-| Inspector `gradient` (FAIL) | Stan Scribe pages | The owner's choice, 2026-11-12: each band blends in from the tone above it over 80px, top to bottom, so sections read as separate without a line. There is no side fade since the full-width card. Both ends of every blend are tones that body text clears at 7:1, over a contour line too (`palette.test.ts`). The portfolio keeps its no-gradient rule. |
 | Inspector `first-action`, `headline-lines` | Stan Scribe pages | Pre-launch there is no App Store button, only "Coming soon" and the TestFlight link. On the main page at 390, `headline-lines` reads three of the questions in Questions and answers as headlines that run to three lines. Each is the label of a row that opens, and its words are the approved copy. |
 | Inspector `first-action` (WARN at 390) | Portfolio, Outdoors, EEJ | The header's Email me button hides under 520px (Navigation); these pages have no hero action. Email stays in the footer. |
 | Inspector `shadow` (FAIL) | EEJ map: MapLibre control group, toolbar, legend, percentile menu | They float over the map, so they carry the one float shadow (Elevation & Depth). Nothing at rest has one. |

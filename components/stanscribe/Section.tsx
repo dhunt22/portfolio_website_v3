@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/Section.tsx
 // A Stan Scribe page is a hero on the contours, then one card the full width of the window. The card's
-// sections are bands in two slightly see-through tones that take turns (text keeps its 7:1 contrast on both).
+// sections are bands in one slightly see-through tone, the page ground (text keeps its 7:1 contrast on it).
 // Each section opens on a centred serif h2 that also labels it for screen readers.
 
 import type { ReactNode } from 'react';
 import { TYPE } from '@/components/stanscribe/type';
 import { cn } from '@/lib/utils';
 
-/** A page's bands. Every <section> directly inside is one: `.bands` in globals.css sets the tones and the blends. */
+/** A page's bands. Every <section> directly inside is one: `.bands` in globals.css gives them all one tone. */
 export const BANDS = 'bands relative z-10';
 
 /** A band's own padding. Its words sit in BAND_COLUMN, centred. */

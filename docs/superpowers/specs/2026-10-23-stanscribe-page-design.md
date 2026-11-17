@@ -234,7 +234,8 @@ card in place of the bands with faded sides. `2026-11-12-stanscribe-listing-desi
 replaces these parts of this file:
 
 - "Bands in place of the sheet (2026-11-12)": the bands are plain see-through backgrounds on one card,
-  with no masks and no side fades.
+  with no masks and no side fades. Since 2026-11-16 the card is one flat tone with a hard top edge, so
+  the two tones, the blends and the white-band rules for Help and the page's end are gone too.
 - The section list under "`/stanscribe/` sections" and the layout notes after it: the order is hero, How
   it works, the story, Features, Privacy, the comparison, Questions and answers, Help.
 - "every answer open" under "Questions and answers, with structured data": each question is a row that

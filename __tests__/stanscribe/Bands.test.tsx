@@ -37,17 +37,6 @@ describe.each([
       expect(section.firstElementChild?.className).toMatch(/\bmax-w-5xl\b/);
     }
   });
-
-  test('Help sits on a white band, where its fine print reads best', () => {
-    // globals.css gives the even bands the lighter tone.
-    const position = sectionsOf(renderPage()).findIndex((section) => section.id === 'help') + 1;
-    expect(position).toBeGreaterThan(0);
-    expect(position % 2).toBe(0);
-  });
-
-  test('ends on a white band, the tone the footer blends from', () => {
-    expect(sectionsOf(renderPage()).length % 2).toBe(0);
-  });
 });
 
 test('a legal page is a title on the contours, then the card, as the portfolio and the app pages are', async () => {
@@ -61,8 +50,8 @@ test('a legal page is a title on the contours, then the card, as the portfolio a
   expect(hero.querySelector('h1')?.textContent).toBe('Privacy Policy');
   expect(hero.textContent).toMatch(/^Privacy Policy\s*Effective /);
   expect(hero.querySelectorAll('p')).toHaveLength(1);
-  // The second section is the card, on the lighter tone. It fills the window on a short page, so no contours
-  // show between it and the footer.
+  // The second section is the card. It fills the window on a short page, so no contours show between it and
+  // the footer.
   expect(card.className).toMatch(/\bmin-h-svh\b/);
   expect(card.querySelector('h1')).toBeNull();
   expect(card.textContent).toMatch(/The short version/);
@@ -83,31 +72,27 @@ describe('the band rules in globals.css', () => {
   // Every rule whose selector names .bands or .band-foot (the portfolio's .site .band is not one).
   const bandRules = (css.match(/[^{}]*\.band(?:s|-foot)[^{}]*\{[^}]*\}/g) ?? []).join('\n');
 
-  test('two tones take turns: the card’s colour and the page’s, both slightly see-through', () => {
-    expect(bandRules).toMatch(/--band-a:\s*color-mix\(in srgb, var\(--surface-card\) 92%, transparent\)/);
-    expect(bandRules).toMatch(/--band-b:\s*color-mix\(in srgb, var\(--surface-page\) 92%, transparent\)/);
-    expect(bandRules).toMatch(/\.dark \.bands, \.dark \.band-foot \{[^}]*--band-a:\s*color-mix\(in srgb, var\(--surface-card\) 90%, transparent\)/);
-    expect(bandRules).toMatch(/\.dark \.bands, \.dark \.band-foot \{[^}]*--band-b:\s*color-mix\(in srgb, var\(--surface-page\) 90%, transparent\)/);
+  test('one tone: the page ground, slightly see-through, at the portfolio band’s strengths', () => {
+    expect(bandRules).toMatch(/\.bands, \.band-foot \{ --band: color-mix\(in srgb, var\(--surface-page\) 92%, transparent\); \}/);
+    expect(bandRules).toMatch(/\.dark \.bands, \.dark \.band-foot \{ --band: color-mix\(in srgb, var\(--surface-page\) 90%, transparent\); \}/);
+    expect(bandRules).not.toMatch(/surface-card/);
   });
 
-  test('each band is one plain background: no mask, no pseudo-element layer, no stacking context', () => {
-    expect(bandRules).toMatch(/\.bands > section, \.band-foot \{[^}]*background: linear-gradient\(to bottom, var\(--band-from\) 0, var\(--band-to\) var\(--band-blend\)\)/);
+  test('each band is one flat fill: no gradient, no mask, no pseudo-element layer, no stacking context', () => {
+    expect(bandRules).toMatch(/\.bands > section, \.band-foot \{ background: var\(--band\); \}/);
+    expect(bandRules).not.toMatch(/gradient/);
     expect(bandRules).not.toMatch(/mask-image/);
     expect(bandRules).not.toMatch(/::before/);
     expect(bandRules).not.toMatch(/isolation/);
-    expect(bandRules).not.toMatch(/--band-solid|--band-fade/);
+    expect(bandRules).not.toMatch(/--band-/);
   });
 
-  test('the hero has no fill, and the card under it blends in from nothing', () => {
+  test('the hero has no fill, so the card under it starts at a hard edge, as the portfolio’s band does', () => {
     expect(bandRules).toMatch(/\.bands > section:first-of-type \{ background: none; \}/);
-    expect(bandRules).toMatch(/\.bands > section:nth-of-type\(2\) \{ --band-from: transparent; \}/);
+    expect(bandRules).not.toMatch(/nth-of-type/);
   });
 
   test('no page is a single band any more: the legal pages have a hero too', () => {
     expect(css).not.toMatch(/band-only/);
-  });
-
-  test('each break is an 80px blend, the height the owner chose', () => {
-    expect(bandRules).toMatch(/--band-blend:\s*80px/);
   });
 });

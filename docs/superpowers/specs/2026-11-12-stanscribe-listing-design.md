@@ -95,6 +95,26 @@ This replaces "Bands in place of the sheet (2026-11-12)" in the October spec.
   6.9:1 at night, under the 7:1 rule. At 40% the worst cases are 7.06:1 and 7.5:1. The lines are the plate's own cream (night) and
   brown (day), not the blue the mockup tinted them.
 
+**Amended 2026-11-16, at the owner's request.** Three things in this section changed after he saw it
+built:
+
+- The card is one flat tone, the page ground at the same strengths. The two tones, the 80px blends, the
+  tone order and the rule that Help sits on the lighter tone are gone.
+- The card starts at a hard edge under the hero, as the portfolio's band does.
+- The veil is back at 60%, so the contours are fainter behind the hero. A link over a contour line now
+  measures 7.97:1 at worst.
+
+The band rules are now:
+
+```css
+.bands, .band-foot { --band: color-mix(in srgb, var(--surface-page) 92%, transparent); }
+.dark .bands, .dark .band-foot { --band: color-mix(in srgb, var(--surface-page) 90%, transparent); }
+.bands > section, .band-foot { background: var(--band); }
+.bands > section:first-of-type { background: none; }
+```
+
+The rest of this section is the design as first approved.
+
 **How it is built.** Today each section and the footer paints its fill on a `::before` layer with a
 `mask-image`, inside its own stacking context. The new rule is one plain background per section:
 
@@ -336,7 +356,7 @@ images.
 | File | Change |
 |---|---|
 | `app/globals.css` | `.bands`, `.band-foot`: plain backgrounds, see-through tones, no masks; `.band-only` removed |
-| `components/ui/ContourBackdrop.tsx` | the `quiet` veil at 40% |
+| `components/ui/ContourBackdrop.tsx` | the `quiet` veil at 40% (60% since 2026-11-16) |
 | `components/stanscribe/Section.tsx` | `Section` takes a `className`, for a band under a picture that hangs into it; the names stay |
 | `components/stanscribe/Disclosure.tsx`, `IconTile.tsx`, `CaptionDemo.tsx`, `icons.tsx` | new |
 | `components/stanscribe/Faq.tsx`, `ComparisonTable.tsx` | rows that open; the framed table |
@@ -357,10 +377,11 @@ images.
 
 Tests come first, as the repo's TDD rule asks.
 
-- `Bands.test.tsx`: no `mask-image`, no `::before` fill and no `isolation` in the band rules; the two
-  tones are see-through; the blend is 80px; the hero has no fill; the tone order and the Help rule hold.
-- `palette.test.ts`: 7:1 for body text and links on each see-through tone, composited over the ground
-  and over a contour line under the 40% veil, in both themes; 7:1 for the demo's speaker names.
+- `Bands.test.tsx`: no `mask-image`, no `::before` fill and no `isolation` in the band rules; the hero
+  has no fill. Since 2026-11-16: one see-through tone, no gradient.
+- `palette.test.ts`: 7:1 for body text and links on the see-through tone, composited over the ground
+  and over a contour line under the veil (60% since 2026-11-16), in both themes; 4.5:1 for small print
+  there; 7:1 for the demo's speaker names.
 - `StanScribePage.test.tsx` and `StanScribeLightPage.test.tsx`: the four facts; four steps; "Features";
   six feature rows; five privacy rows whose labels are visible with the row closed; "Ask before you
   caption people" visible; the accuracy answer open; the story's three paragraphs with the rest inside

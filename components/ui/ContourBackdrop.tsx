@@ -40,7 +40,7 @@ export function ContourBackdrop({ page, quiet = false }: ContourBackdropProps) {
       {quiet && (
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed left-0 right-0 top-0 -z-10 bg-background opacity-40 print:hidden"
+          className="pointer-events-none fixed left-0 right-0 top-0 -z-10 bg-background opacity-60 print:hidden"
           style={{ height: 'var(--backdrop-h, 100lvh)' }}
         />
       )}

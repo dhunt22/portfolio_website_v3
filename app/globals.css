@@ -233,25 +233,13 @@
 
 @layer components {
   /* Stan Scribe: the hero sits on the contours, and everything under it is one card the full width of the
-     window. The card's sections are bands in two slightly see-through tones that take turns, each blending in
-     from the tone above it over --band-blend, so no break is a line. Each band is one plain background. */
-  .bands, .band-foot {
-    --band-a: color-mix(in srgb, var(--surface-card) 92%, transparent);
-    --band-b: color-mix(in srgb, var(--surface-page) 92%, transparent);
-    --band-blend: 80px;
-  }
-  .dark .bands, .dark .band-foot {
-    --band-a: color-mix(in srgb, var(--surface-card) 90%, transparent);
-    --band-b: color-mix(in srgb, var(--surface-page) 90%, transparent);
-  }
-  .bands > section, .band-foot { --band-from: var(--band-a); --band-to: var(--band-b); background: linear-gradient(to bottom, var(--band-from) 0, var(--band-to) var(--band-blend)); }
-  .bands > section:nth-of-type(even) { --band-from: var(--band-b); --band-to: var(--band-a); }
+     window, in one flat tone: the page ground, slightly see-through, at the strengths of the portfolio's band
+     (--site-band). The card starts at a hard edge under the hero, as that band does. */
+  .bands, .band-foot { --band: color-mix(in srgb, var(--surface-page) 92%, transparent); }
+  .dark .bands, .dark .band-foot { --band: color-mix(in srgb, var(--surface-page) 90%, transparent); }
+  .bands > section, .band-foot { background: var(--band); }
   /* The hero is the first section. It has no fill, so the contours show behind its words. */
   .bands > section:first-of-type { background: none; }
-  /* The card starts at the second section and blends in from nothing. */
-  .bands > section:nth-of-type(2) { --band-from: transparent; }
-  /* Every page ends on the lighter tone, and the footer, which takes the shared rule above, blends from it to
-     the ground. */
 
   /* A Stan Scribe legal page's words (content/stanscribe-legal/). They arrive with no classes, so the roles in
      components/stanscribe/type.ts are set here. License text is fine print, in the page's own face. */
