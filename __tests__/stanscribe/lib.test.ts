@@ -15,9 +15,16 @@ describe('lib/stanscribe', () => {
     expect([meta.width, meta.height]).toEqual([shot.width, shot.height]);
   });
 
-  test('no picture shows the painted themes that do not ship', () => {
-    expect(Object.keys(SHOTS)).not.toContain('paintedThemes');
-    expect(existsSync(join(PUBLIC, 'images', 'stanscribe', 'stan-scribe-painted-themes.webp'))).toBe(false);
+  test('the themes picture says what it shows: five themes, two of them paintings', () => {
+    expect(SHOTS.themes.src).toBe('/images/stanscribe/stan-scribe-painted-themes.webp');
+    expect(SHOTS.themes.alt).toBe(
+      "Five iPhones showing Stan Scribe's live captions in five themes, two of them paintings. Each shows the same conversation, Alex, Rosa and a third speaker planning dinner on Saturday.",
+    );
+  });
+
+  test('no alt text describes a theme that does not ship', () => {
+    // Forest, Mallards, Birches, Windmill and Seashell wait on their artists' permission.
+    for (const shot of Object.values(SHOTS)) expect(shot.alt).not.toMatch(/forest|mallard|duck|birch|windmill|seashell/i);
   });
 
   test('alt text and file names follow the brief', () => {

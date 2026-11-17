@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import StanScribePage, { metadata } from '@/app/(stanscribe)/stanscribe/page';
-import { APPS, legalLinks } from '@/lib/stanscribe';
+import { APPS, SHOTS, legalLinks } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 
 // The backdrop fetches SVG and GSAP needs matchMedia; neither matters to the page's content.
@@ -100,8 +100,8 @@ test('presents both apps, with the comparison at #light', () => {
 
 test('images have alt text and headings are in order', () => {
   const page = renderPage();
-  // The hero and the five screens.
-  expect(page.querySelectorAll('img').length).toBeGreaterThanOrEqual(6);
+  // The hero, the five screens and the themes picture.
+  expect(page.querySelectorAll('img').length).toBeGreaterThanOrEqual(7);
   for (const img of Array.from(page.querySelectorAll('img:not([alt=""])'))) expect(img.getAttribute('alt')?.trim()).toBeTruthy();
   for (const img of Array.from(page.querySelectorAll('img[alt=""]'))) expect(img.closest('a[aria-label]')).not.toBeNull();
   const levels = headingLevels(page);
@@ -145,8 +145,12 @@ test('features: six rows with icons, five screens with labels, and why the theme
   ]);
   expect(features.textContent).toMatch(/23 themes I curated, or make your own from your photos\./);
   expect(features.textContent).toMatch(/Something you use every day should not look clinical\./);
-  // The five screens are the only pictures here. The five-phone picture of painted themes showed four that do not ship.
-  expect(features.querySelectorAll('img')).toHaveLength(5);
+  // The five screens, then one picture of five themes under the line that says why the themes are there.
+  const pictures = Array.from(features.querySelectorAll('img'));
+  expect(pictures).toHaveLength(6);
+  const line = Array.from(features.querySelectorAll('p')).find((p) => p.textContent === 'Something you use every day should not look clinical.')!;
+  expect(pictures[5].getAttribute('alt')).toBe(SHOTS.themes.alt);
+  expect(line.compareDocumentPosition(pictures[5]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   const screens = features.querySelector('ul[data-screens]')!;
   expect(Array.from(screens.querySelectorAll('li')).map((li) => li.querySelector('p')!.textContent)).toEqual([
     'Speakers in color',

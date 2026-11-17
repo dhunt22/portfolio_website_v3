@@ -203,8 +203,8 @@ TestFlight link them.
 
 The themes feature says why it is there again, in the owner's words for the App Store listing: "Something
 you use every day should not look clinical."
-Since 2026-11-16 the line stands without the `stan-scribe-painted-themes` picture, and the page counts 23
-themes. `2026-11-12-stanscribe-listing-design.md` says why.
+Since 2026-11-16 the page counts 23 themes, and since 2026-11-17 `stan-scribe-painted-themes` is a new
+picture of five themes that ship. `2026-11-12-stanscribe-listing-design.md` says why.
 
 ## Bands in place of the sheet (2026-11-12)
 

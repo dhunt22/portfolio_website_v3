@@ -221,8 +221,8 @@ doctor's appointment, and what comes next.
 
 Then five screens in a row, each with a short label: Speakers in color, Text as big as you need, Saved
 as text, Find any conversation, 25 languages. They are a grid, five across on a wide window and two
-across on a phone. They are not a sideways scroller, which older readers often miss. Then the line
-"Something you use every day should not look clinical."
+across on a phone. They are not a sideways scroller, which older readers often miss. Then the themes
+picture under the line "Something you use every day should not look clinical."
 
 **Amended 2026-11-16.** The app repo's session passed on three decisions the owner made that day. He then
 approved the built change in review.
@@ -232,9 +232,11 @@ approved the built change in review.
   answers say 23. Stan and Betty are paintings and stay, so "painted ones" still holds.
 - The story says the other app "needed the internet for its best captions". The owner confirmed the same
   wording for the Stan Scribe entry's `content` in `lib/portfolio-data.ts`.
-- The five-phone picture of painted themes is gone, with its file and its `SHOTS` entry, because four of
-  its phones showed themes that do not ship. The line above it stays. The hero already shows the Stan
-  and Betty themes.
+- The five-phone picture of painted themes showed four themes that do not ship, so it came out. On
+  2026-11-17 the app repo made a new one at the owner's request, with the same file name and size:
+  Paisley, Ironwood, Stan, Brocade and Betty, each showing the nine-line Saturday plan. Three are the
+  owner's photos and two are paintings, and the alt text says so. It sits under the line again, as
+  `SHOTS.themes`.
 
 **Privacy** (`#privacy`). Five rows in the tour's style. The label is always visible. A click opens the
 words that are on the page today.
@@ -334,6 +336,7 @@ code change. It gives a script for each:
 | `hero-stan-scribe`, `both-apps`, `light-black-and-white` | Heroes, share card | The Saturday plan from the caption demo, continued for a full screen. |
 | `stan-scribe-live-large` | "Text as big as you need" | Two short lines at the largest size: "Dinner is ready. / Come and sit down." |
 | `stan-scribe-live-graphite` | "Speakers in color" | Three speakers, two of them named, about who is driving on Saturday. |
+| `stan-scribe-painted-themes` | "Should not look clinical" | The Saturday plan, all nine lines, on five themes that ship. |
 | `stan-scribe-conversation`, `stan-scribe-library`, `stan-scribe-languages` | Features | No change. They already show their feature. |
 
 One rule for every script: the speakers talk about dinner, plans and each other, and never about the

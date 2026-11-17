@@ -217,6 +217,7 @@ export default function StanScribePage() {
             ))}
           </ul>
           <p className={cn(TYPE.heading, 'mt-16 text-center')}>Something you use every day should not look clinical.</p>
+          <PhoneShot image={SHOTS.themes} className="mx-auto mt-6 max-w-3xl" />
         </Section>
 
         <Section id="privacy" title="Privacy">
