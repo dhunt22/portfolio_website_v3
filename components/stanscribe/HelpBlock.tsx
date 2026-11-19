@@ -9,9 +9,9 @@ import { TYPE } from '@/components/stanscribe/type';
 import { SUPPORT_EMAIL, type AppKey } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
 
-export function HelpBlock({ apps }: { apps: AppKey[] }) {
+export function HelpBlock({ apps, className }: { apps: AppKey[]; className?: string }) {
   return (
-    <Section id="help" title="Help">
+    <Section id="help" title="Help" className={className}>
       <div className="text-center">
         <p className={TYPE.lead}>Questions, problems or ideas? Email</p>
         <a

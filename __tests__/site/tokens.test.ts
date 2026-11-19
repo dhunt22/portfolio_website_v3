@@ -86,6 +86,21 @@ test('the plate clears behind words set left', () => {
   expect(block('.site [data-contour-plate]')).toContain('radial-gradient(50% 78% at 18% 40%, transparent 30%, #000 74%)');
 });
 
+test('on phones the contours come in under the header and reach full strength by the end of the title', () => {
+  const phone = css.slice(css.indexOf('@media (max-width: 860px)'));
+  const mask = phone.slice(0, phone.indexOf('}')).match(/mask-image: (linear-gradient\([^;]*\));/g) ?? [];
+  // Both the prefixed and the plain property, and the same gradient in each.
+  expect(mask).toHaveLength(2);
+  for (const rule of mask) expect(rule).toContain('linear-gradient(to bottom, transparent 0 14svh, #000 46svh)');
+});
+
+test('the phone clearing is measured against the window, never as a share of the plate', () => {
+  // The plate is pinned to the screen's height on phones, and in a narrow desktop window that is far taller
+  // than the window: a percentage pushed the clearing down until only a strip of contours showed.
+  const phone = css.slice(css.indexOf('@media (max-width: 860px)'));
+  expect(phone.slice(0, phone.indexOf('}'))).not.toMatch(/linear-gradient\([^)]*%/);
+});
+
 test('a page title too wide for a narrow phone hyphenates rather than overflowing', () => {
   expect(css).toMatch(/@media \(max-width: 380px\) \{\s*\.site h1 \{ -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 12 6 6; overflow-wrap: anywhere; \}/);
 });

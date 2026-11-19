@@ -2,11 +2,21 @@
 // app/(stanscribe)/layout.tsx
 // The Stan Scribe pages' frame: their own header and footer, not the portfolio's.
 
+import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { newsreader, hanken } from '@/app/fonts/stanscribe';
 import { StanScribeFooter } from '@/components/stanscribe/StanScribeFooter';
 import { StanScribeHeader } from '@/components/stanscribe/StanScribeHeader';
+import { FAVICONS } from '@/lib/stanscribe';
 import { cn } from '@/lib/utils';
+
+// The app's own icon in the tab and as the touch icon. Each page sets the rest of its metadata.
+export const metadata: Metadata = {
+  icons: {
+    icon: [{ url: FAVICONS.icon, type: 'image/png', sizes: '32x32' }],
+    apple: [{ url: FAVICONS.apple, sizes: '180x180' }],
+  },
+};
 
 export default function StanScribeLayout({ children }: { children: ReactNode }) {
   return (

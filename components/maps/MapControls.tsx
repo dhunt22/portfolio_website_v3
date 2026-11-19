@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/maps/MapControls.tsx
-// Legend + percentile/type/view toolbar floating on the map edge, in the site's type roles (DESIGN.md ›
+// Legend + percentile/type toolbar floating on the map edge, in the site's type roles (DESIGN.md ›
 // Elevation: map controls float, so they alone carry the float shadow; square, no outlines).
 
 'use client';
@@ -32,7 +32,6 @@ interface MapControlsProps {
   setPercentileThreshold?: (t: PercentileThreshold) => void;
   facilityTypes?: FacilityType[];
   setFacilityTypes?: (types: FacilityType[]) => void;
-  onResetView?: () => void;
 }
 
 // Segmented control option
@@ -61,7 +60,6 @@ const MapControls: React.FC<MapControlsProps> = ({
   setPercentileThreshold,
   facilityTypes = ['STATE', 'FEDERAL'],
   setFacilityTypes,
-  onResetView,
 }) => {
   // Mobile-only collapsing percentile disclosure. The inline 4-button segment
   // overflows a narrow mobile map pane, so below `sm` it is replaced by one
@@ -121,11 +119,11 @@ const MapControls: React.FC<MapControlsProps> = ({
 
   return (
     <>
-      {/* ── Toolbar row: compact control group at the bottom-left of the map. It leaves the map's
-            attribution readable: on phones it stops short of the attribution button in the corner;
-            wider, it sits above the one-line attribution. ── */}
+      {/* ── Toolbar row: compact control group at the bottom-left of the map, only as wide as its controls
+            with 4px of card around them. It leaves the map's attribution readable: on phones it stops
+            short of the attribution button in the corner; wider, it sits above the one-line attribution. ── */}
       {/* A solid fill: anything translucent lets map labels and the attribution ghost through the controls. */}
-      <div className={cn('absolute bottom-2 left-2 right-12 sm:bottom-9 sm:right-auto z-30 flex flex-wrap items-center gap-x-4 gap-y-1 bg-card px-2 py-1.5', FLOAT)}>
+      <div className={cn('absolute bottom-2 left-2 z-30 flex max-w-[calc(100%-3.5rem)] flex-wrap items-center gap-x-3 gap-y-1 bg-card p-1 sm:bottom-9 sm:max-w-none', FLOAT)}>
         {/* Percentile segmented control (desktop+) — plain buttons with aria-pressed.
             Hidden below `sm`, where the collapsing disclosure below takes over. */}
         <div
@@ -162,7 +160,7 @@ const MapControls: React.FC<MapControlsProps> = ({
             onClick={() => setPercentileMenuOpen((open) => !open)}
             // Transparent over the toolbar (matches the sibling toggles); the toolbar's solid fill gives
             // the trigger's state text its contrast floor over the map.
-            className={cn(CONTROL, 'flex min-h-[44px] items-center gap-1.5 px-1')}
+            className={cn(CONTROL, 'flex min-h-9 items-center gap-1.5 px-1.5 py-0')}
           >
             <span>Percentile:</span>
             <span className="text-ink-strong">{currentPercentileLabel}</span>
@@ -219,7 +217,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => handleTypeToggle(ft.value)}
-                className={cn(CONTROL, isActive && PRESSED_FILL)}
+                className={cn(CONTROL, 'inline-flex min-h-9 items-center sm:min-h-0', isActive && PRESSED_FILL)}
               >
                 {ft.label}
               </button>
@@ -227,22 +225,6 @@ const MapControls: React.FC<MapControlsProps> = ({
           })}
         </div>
 
-        {/* Reset view button */}
-        {onResetView && (
-          <button
-            type="button"
-            onClick={onResetView}
-            title="Reset map view to US extent"
-            aria-label="Reset map view"
-            className={cn(CONTROL, 'flex items-center gap-1.5')}
-          >
-            {/* Home/reset icon */}
-            <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M1.5 6.5L8 1.5L14.5 6.5V14H10V10H6V14H1.5V6.5Z" />
-            </svg>
-            <span>Reset view</span>
-          </button>
-        )}
       </div>
 
       {/* ── Legend: overlaid top-right, collapsible ── */}

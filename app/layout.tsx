@@ -33,6 +33,8 @@ export const metadata: Metadata = {
   keywords: ['hydrologist', 'water resources', 'engineer', 'IWFM', 'geospatial', 'exploration', 'fishing', 'mycology'],
   authors: [{ name: 'Devin Hunt', url: 'https://devinhunt.com' }],
   creator: 'Devin Hunt',
+  // In metadata, not as <link> tags in <head>, so the Stan Scribe route group can show the app's own icon.
+  icons: { icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }], apple: [{ url: '/favicon.svg' }] },
 };
 
 /**
@@ -59,8 +61,6 @@ export default function RootLayout({
                lvh resolves small until the URL bar first collapses). screen.* are
                CSS px; min/max normalizes iOS (orientation-fixed) vs Android. */}
         <script dangerouslySetInnerHTML={{ __html: "(function(){var d=document.documentElement;d.classList.add('js');try{var w=innerWidth,c=matchMedia('(pointer: coarse)').matches;if(w<768||c){var p=innerHeight>=w?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);d.style.setProperty('--backdrop-h',p+'px');}}catch(e){}})()" }} />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
       <body className="font-sans overflow-x-hidden bg-background text-foreground antialiased">
         <ThemeProvider

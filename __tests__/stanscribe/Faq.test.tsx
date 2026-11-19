@@ -16,10 +16,10 @@ interface FaqEntity {
 
 const faqOf = (page: HTMLElement) => {
   const section = page.querySelector<HTMLElement>('#questions')!;
-  const items = Array.from(section.querySelectorAll('li')).map((li) => ({
-    question: li.querySelector('h3')!.textContent ?? '',
-    answer: li.querySelector('p')!.textContent ?? '',
-    li,
+  const items = Array.from(section.querySelectorAll('details')).map((row) => ({
+    question: row.querySelector('summary h3')!.textContent ?? '',
+    answer: row.querySelector('summary + div p')!.textContent ?? '',
+    row,
   }));
   const scripts = page.querySelectorAll('script[type="application/ld+json"]');
   const data = JSON.parse(scripts[0]?.textContent ?? '{}') as { '@context'?: string; '@type'?: string; mainEntity?: FaqEntity[] };
@@ -32,13 +32,15 @@ describe.each([
 ] as const)('%s', (name, Page, count, first, credits, source) => {
   const renderPage = () => render(<Page />).container;
 
-  test('its questions are the last section but Help, with every answer open', () => {
+  test('its questions are the last section but Help, each a row that opens, with only the accuracy answer open', () => {
     const page = renderPage();
     const { section, items } = faqOf(page);
     expect(within(section).getByRole('heading', { level: 2, name: 'Questions and answers' })).toBeInTheDocument();
     expect(items).toHaveLength(count);
     expect(items[0].question).toBe(first);
-    expect(section.querySelector('details')).toBeNull();
+    // "Captions can be wrong" must never be hidden, and this answer is where the line is.
+    expect(items.filter(({ row }) => row.open).map(({ question }) => question)).toEqual(['How accurate are the captions?']);
+    expect(items[0].row.parentElement?.className).toMatch(/\bmax-w-2xl\b/);
     const after = Array.from(page.querySelectorAll('section')).filter((other) => section.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING);
     expect(after.map((other) => other.id).filter((id) => id !== 'help')).toEqual([]);
     expect(page.querySelector('#help')).not.toBeNull();
@@ -60,7 +62,7 @@ describe.each([
     expect(accuracy.answer).toMatch(source);
     expect(accuracy.answer).toMatch(/they can be wrong/);
     expect(accuracy.answer).toMatch(new RegExp(`${name} is not a medical device`));
-    expect(within(accuracy.li).getByRole('link', { name: 'Acknowledgements page' })).toHaveAttribute('href', credits);
+    expect(within(accuracy.row).getByRole('link', { name: 'Acknowledgements page' })).toHaveAttribute('href', credits);
   });
 
   test('says to ask people before starting captions', () => {

@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/Section.tsx
-// A Stan Scribe page is a run of bands, each the full width of the window, in two solid tones that take
-// turns (text keeps its 7:1 contrast on both). The contours show behind the header and the hero only.
+// A Stan Scribe page is a hero on the contours, then one card the full width of the window. The card's
+// sections are bands in one slightly see-through tone, the page ground (text keeps its 7:1 contrast on it).
 // Each section opens on a centred serif h2 that also labels it for screen readers.
 
 import type { ReactNode } from 'react';
 import { TYPE } from '@/components/stanscribe/type';
 import { cn } from '@/lib/utils';
 
-/** A page's bands. Every <section> directly inside is one: `.bands` in globals.css sets the tones and the blends. */
+/** A page's bands. Every <section> directly inside is one: `.bands` in globals.css gives them all one tone. */
 export const BANDS = 'bands relative z-10';
 
 /** A band's own padding. Its words sit in BAND_COLUMN, centred. */
@@ -25,12 +25,14 @@ export const INTRO = 'mx-auto mt-6 max-w-2xl text-left md:text-center';
 interface SectionProps {
   id: string;
   title: string;
+  /** Extra classes for the band, such as more top padding under a picture that hangs into it. */
+  className?: string;
   children: ReactNode;
 }
 
-export function Section({ id, title, children }: SectionProps) {
+export function Section({ id, title, className, children }: SectionProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={cn(BAND, 'scroll-mt-8')}>
+    <section id={id} aria-labelledby={`${id}-title`} className={cn(BAND, 'scroll-mt-8', className)}>
       <div className={BAND_COLUMN}>
         <h2 id={`${id}-title`} className={cn(TYPE.title, 'text-center')}>
           {title}

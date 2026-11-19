@@ -47,11 +47,6 @@ const getCurrentComponentName = (componentId: string): string => {
   return componentNames[componentId] || componentId;
 };
 
-const US_BOUNDS: maplibregl.LngLatBoundsLike = [
-  [-167.276413, 15.875834],
-  [-52.233040, 72.553967]
-];
-
 const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, componentColor }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -90,12 +85,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
 
   // Use custom hook for popup management
   const { setupPopupHandlers } = useMapPopup(map, projectId, selectedAttribute, selectedComponent, instanceId);
-
-  // Reset view to US extent
-  const handleResetView = () => {
-    if (!map.current) return;
-    map.current.fitBounds(US_BOUNDS, { padding: 20, duration: 600 });
-  };
 
   // Initialize map
   useEffect(() => {
@@ -427,7 +416,6 @@ const ProjectMap: React.FC<ProjectMapProps> = ({ projectId, selectedComponent, c
         setPercentileThreshold={setPercentileThreshold}
         facilityTypes={facilityTypes}
         setFacilityTypes={setFacilityTypes}
-        onResetView={handleResetView}
       />
     </div>
   );

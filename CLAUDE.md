@@ -25,6 +25,9 @@ Next.js 16 App Router (Turbopack) with static export, React 19, Tailwind 4, Jest
 - Build Stan Scribe links with `pageHref` and canonical URLs with `pageUrl` (`lib/stanscribe.ts`), in plain
   `<a>`, never `Link`. Only the production build links to the subdomain. A new portfolio route needs a
   redirect off the subdomain in `netlify.toml`; a test says so.
+- Whenever the Stan Scribe hero image or the share card's template (`scripts/stanscribe-social/card.html`)
+  changes, run `npm run build:stanscribe-social` after `npm run build`, raise the `?v=` number on
+  `SOCIAL_IMAGE.url` (`lib/stanscribe.ts`), and commit the JPEG.
 - Do not invent claims, metrics or testimonials. Use what PRODUCT.md › Evidence on Hand lists.
 
 ## Verify

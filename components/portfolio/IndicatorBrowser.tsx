@@ -1,6 +1,7 @@
 // Copyright (c) 2025 Devin Hunt contact@devinhunt.com
 // components/portfolio/IndicatorBrowser.tsx
-// Quiet client island: tab filters + indicator rail + map + detail panel for the EJ-prisons deep dive
+// Quiet client island: category tabs + the active category's indicators + map + detail panel for the
+// EJ-prisons deep dive
 
 'use client';
 
@@ -166,13 +167,6 @@ const COMPONENT_CONFIGS: ComponentConfig[] = [
   }
 ];
 
-const TAB_LABELS: Record<TabType, string> = {
-  overall: 'Overall',
-  climate: 'Climate Risk',
-  exposure: 'Exposure',
-  effects: 'Proximity',
-};
-
 const TAB_PANEL_LABELS: Record<TabType, string> = {
   overall: 'Overall Risk',
   climate: 'Climate Risk Indicators',
@@ -220,7 +214,7 @@ function IndicatorButton({ component, isActive, onClick }: IndicatorButtonProps)
   );
 }
 
-// ── Mobile indicator button ─────────────────────────────────────────────────
+// ── Phone and tablet indicator button: a thumb-sized target ─────────────────
 interface MobileChipProps {
   component: ComponentConfig;
   isActive: boolean;
@@ -235,7 +229,7 @@ function MobileChip({ component, isActive, onClick }: MobileChipProps) {
       aria-pressed={isActive}
       aria-label={`View ${component.name} on map`}
       style={isActive ? { textDecorationColor: component.color } : undefined}
-      className={cn(SITE_TYPE.label, 'whitespace-nowrap py-1.5 hover:text-ink-strong', PRESSED)}
+      className={cn(SITE_TYPE.label, 'inline-flex min-h-11 items-center text-left hover:text-ink-strong', PRESSED)}
     >
       {component.name}
     </button>
@@ -266,10 +260,11 @@ export function IndicatorBrowser(): JSX.Element {
 
   return (
     <div className="max-w-304">
-      {/* ── Desktop category row (phones and tablets use the grouped list below) ── */}
+      {/* ── Category tabs, at every width. On a phone the row wraps to a second line before it runs off
+            the edge, and each tab is a thumb-sized target. ── */}
       <nav
         aria-label="Environmental risk indicator categories"
-        className="mb-6 hidden gap-x-7 lg:flex"
+        className="mb-4 flex flex-wrap gap-x-7 lg:mb-6"
       >
         {tabs.map((tab) => (
           <button
@@ -277,19 +272,25 @@ export function IndicatorBrowser(): JSX.Element {
             type="button"
             onClick={() => handleTabChange(tab.value)}
             aria-pressed={activeTab === tab.value}
-            className={cn(SITE_TYPE.label, 'whitespace-nowrap py-1.5 hover:text-ink-strong', PRESSED)}
+            className={cn(SITE_TYPE.label, 'inline-flex min-h-11 items-center whitespace-nowrap hover:text-ink-strong lg:min-h-0 lg:py-1.5', PRESSED)}
           >
             {tab.label}
           </button>
         ))}
       </nav>
 
-      {/* ── Phones and tablets: every indicator, grouped by category, wrapping (nothing hides past the edge) ── */}
-      <div className="mb-6 grid gap-2 lg:hidden" role="group" aria-label="Select an indicator">
-        {tabs.map((tab) => (
-          <div key={tab.value} className="flex flex-wrap items-baseline gap-x-5">
-            <span className={cn(SITE_TYPE.label, 'font-semibold text-ink-strong')}>{TAB_LABELS[tab.value]}</span>
-            {COMPONENT_CONFIGS.filter(c => c.category === tab.value).map((component) => (
+      {/* ── Two-column dashboard at lg — FIXED height so the map never resizes
+            when the explanatory text below changes length. The rail scrolls
+            internally if a category has more indicators than fit. ── */}
+      <div className="lg:grid lg:h-160 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-x-10">
+
+        {/* LEFT at lg, on top below it: the active tab's indicators under the tab's full name. A rail with
+            descriptions on desktop; a wrapping row of names on phones and tablets. */}
+        <div className="mb-6 lg:mb-0 lg:flex lg:h-full lg:min-h-0 lg:flex-col">
+          <h3 className={cn(SITE_TYPE.body, 'mb-1 font-semibold text-ink-strong')}>{TAB_PANEL_LABELS[activeTab]}</h3>
+
+          <div role="group" aria-label="Select an indicator" className="flex flex-wrap gap-x-6 lg:hidden">
+            {COMPONENT_CONFIGS.filter(c => c.category === activeTab).map((component) => (
               <MobileChip
                 key={component.id}
                 component={component}
@@ -298,20 +299,8 @@ export function IndicatorBrowser(): JSX.Element {
               />
             ))}
           </div>
-        ))}
-      </div>
 
-      {/* ── Two-column dashboard at lg — FIXED height so the map never resizes
-            when the explanatory text below changes length. The rail scrolls
-            internally if a category has more indicators than fit. ── */}
-      <div className="lg:grid lg:h-160 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-x-10">
-
-        {/* LEFT: indicator rail — shown only on desktop (the grouped list above serves smaller screens) */}
-        <div className="hidden lg:flex lg:h-full lg:min-h-0 lg:flex-col">
-          <h3 className={cn(SITE_TYPE.body, 'mb-1 font-semibold text-ink-strong')}>{TAB_PANEL_LABELS[activeTab]}</h3>
-
-          {/* Indicator list for the active category (category switching lives in the row above) */}
-          <ul className="min-h-0 overflow-y-auto">
+          <ul className="hidden min-h-0 overflow-y-auto lg:block">
             {COMPONENT_CONFIGS.filter(c => c.category === activeTab).map((component) => (
               <IndicatorButton
                 key={component.id}
@@ -325,9 +314,6 @@ export function IndicatorBrowser(): JSX.Element {
 
         {/* RIGHT: map — fills the fixed dashboard height */}
         <div className="lg:flex lg:h-full lg:flex-col">
-          {/* Phone and tablet indicator title */}
-          <p className={cn(SITE_TYPE.body, 'mb-3 font-semibold text-ink-strong lg:hidden')}>{currentComponent.name}</p>
-
           {/* isolate: the map's floating controls stack inside this frame, never over the sticky strip */}
           <div className="isolate h-[60svh] min-h-[320px] md:h-[500px] lg:h-full">
             <LazyProjectMap
