@@ -13,12 +13,17 @@ import { parseArgs } from 'node:util';
 
 const ROUTES = ['stanscribe', 'stanscribe-light'];
 const LEGAL_PAGES = ['privacy', 'terms', 'acknowledgements'];
+// Pages one app holds for both, moved the same way: Labels and Markings is at /labels/ alone.
+const SHARED_PAGES = ['stanscribe/labels'];
 
 const { values } = parseArgs({ options: { out: { type: 'string', default: 'out' } } });
 const out = resolve(values.out);
 
 // Check everything first, so a failed build never leaves out/ half moved.
-const needed = ROUTES.flatMap((route) => [`${route}.html`, ...LEGAL_PAGES.map((legal) => `${route}/${legal}.html`)]);
+const needed = [
+  ...ROUTES.flatMap((route) => [`${route}.html`, ...LEGAL_PAGES.map((legal) => `${route}/${legal}.html`)]),
+  ...SHARED_PAGES.map((page) => `${page}.html`),
+];
 const missing = needed.filter((file) => !existsSync(join(out, file)));
 if (missing.length > 0) {
   console.error(`stanscribe-index: not found in ${out}. Did next build export them?\n  ${missing.join('\n  ')}`);
@@ -42,4 +47,9 @@ for (const route of ROUTES) {
     renameSync(join(out, route, `${legal}.html`), join(out, route, legal, 'index.html'));
     console.log(`${route}/${legal}.html -> ${route}/${legal}/index.html`);
   }
+}
+for (const page of SHARED_PAGES) {
+  mkdirSync(join(out, page), { recursive: true });
+  renameSync(join(out, `${page}.html`), join(out, page, 'index.html'));
+  console.log(`${page}.html -> ${page}/index.html`);
 }

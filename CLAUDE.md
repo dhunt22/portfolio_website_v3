@@ -12,6 +12,10 @@ Next.js 16 App Router (Turbopack) with static export, React 19, Tailwind 4, Jest
 - The Stan Scribe legal pages are routes here, but their words are written in the app repo, which bundles the same
   text. To pull updates, run `npm run sync:stanscribe-legal` (it fetches `transcript_stan`'s `origin/main`), then
   review and commit `content/stanscribe-legal/`. Never edit those files by hand.
+- The Labels and Markings page (`/labels/` on the subdomain, the URL App Store Connect asks for under the EU's
+  Digital Services Act) is the exception: the apps do not show it, so its words are written here, in
+  `content/stanscribe-site/labels.html`. One page covers both apps, and Light's address is `/labels/#light`.
+  Every sentence on it is a public claim the owner approved, so change its words only when he says so.
 - Stan Scribe must not pick up portfolio styles: no `.site`, `components/site/` or `text-site-*` there.
   It shares only the colours, through the root tokens in `app/globals.css`.
 - Route groups do not change URLs. The 404 (`app/not-found.tsx`) wraps itself in `SiteChrome`.

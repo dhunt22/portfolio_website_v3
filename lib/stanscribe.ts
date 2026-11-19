@@ -65,6 +65,12 @@ const PLACES: Record<AppKey, Pick<AppInfo, 'route' | 'path'>> = {
 /** A page's address on stanscribe.devinhunt.com: an app's main page, or one of its legal pages. */
 export const pageUrl = (app: AppKey, legal?: LegalSlug): string => `${STANSCRIBE_ORIGIN}${PLACES[app].path}${legal ? `${legal}/` : ''}`;
 
+/**
+ * The Labels and Markings page, which App Store Connect asks for under the EU's Digital Services Act. Both apps
+ * share the one page, so Light's address is the same page scrolled to Light's heading.
+ */
+export const labelsUrl = (app: AppKey): string => `${STANSCRIBE_ORIGIN}/labels/${app === 'light' ? '#light' : ''}`;
+
 /** What a link to that page says in this build. */
 export const pageHref = (app: AppKey, legal?: LegalSlug): string =>
   onSubdomain() ? pageUrl(app, legal) : `/${PLACES[app].route}${legal ? `/${legal}/` : ''}`;

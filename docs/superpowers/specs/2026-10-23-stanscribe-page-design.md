@@ -248,3 +248,30 @@ replaces these parts of this file:
   the contours, and the rest of its words on the card, as the other pages do (owner, 2026-11-12).
 
 The copy rules, the required links and the accessibility rules in this file all stand.
+
+## Labels and Markings page (2026-11-19)
+
+The owner is putting both apps in the European Union's App Store. App Store Connect has an optional field under
+the Digital Services Act, the Labels and Markings URL, for "labels or markings required by European Union law".
+Apple shows the link on the product page of an app whose developer is a trader. The owner asked for a page to
+put there "just in case for coverage", and approved the plan and its words on 2026-11-19.
+
+| App | Address to enter in App Store Connect |
+|---|---|
+| Stan Scribe | `https://stanscribe.devinhunt.com/labels/` |
+| Stan Scribe Light | `https://stanscribe.devinhunt.com/labels/#light` |
+
+- One page covers both apps (the owner's choice). Light's address scrolls to the heading with `id="light"`.
+  There is no `/light/labels/`.
+- The page says three things about each app: it is software available only as a download, with no packaging
+  and no physical parts; no label or marking required by European Union law applies to it, and it carries no
+  CE marking; it is not a medical device. Questions go to stanscribe@devinhunt.com. The trader's address is
+  not on the page, because Apple shows it on the listing.
+- Whether a captioning app is a medical device under EU rules is a legal question this spec does not settle.
+  The owner was told so, and that the third statement is the one to check with a lawyer.
+- The words are written in this repo, in `content/stanscribe-site/labels.html`, because the apps do not show
+  them. `npm run sync:stanscribe-legal` never touches that folder.
+- The page uses the legal page's layout (`LegalWords` in `components/stanscribe/LegalPage.tsx`) and links
+  Stan Scribe's three legal pages under its words. No page links to it: the App Store listing does.
+- `scripts/stanscribe-index.mjs` moves the exported page to `stanscribe/labels/index.html`, and `netlify.toml`
+  has one host-scoped rewrite for `/labels/`.

@@ -3,7 +3,8 @@
 // One legal page, laid out as the portfolio's pages and the app's own are: its title and the line under it on
 // the contours, then the rest of its words on the card, then the way to the app's other two. The words come
 // from the app repo through scripts/sync-stanscribe-legal.mjs, are set by .legal in globals.css, and are never
-// edited here: the page only chooses where each part sits.
+// edited here: the page only chooses where each part sits. The Labels and Markings page uses the same layout
+// for words this repo writes.
 
 import type { Metadata } from 'next';
 import { LegalLinks } from '@/components/stanscribe/LegalLinks';
@@ -11,7 +12,7 @@ import { BAND, BAND_COLUMN, BANDS, COLUMN } from '@/components/stanscribe/Sectio
 import { TYPE } from '@/components/stanscribe/type';
 import { ContourBackdrop } from '@/components/ui/ContourBackdrop';
 import { APPS, LEGAL_PAGES, SITE_NAME, SOCIAL_IMAGE, pageUrl, type AppKey, type LegalSlug } from '@/lib/stanscribe';
-import { legalParts } from '@/lib/stanscribe-legal';
+import { legalParts, type LegalParts } from '@/lib/stanscribe-legal';
 import { cn } from '@/lib/utils';
 
 export interface LegalRouteProps {
@@ -25,9 +26,11 @@ export async function legalMetadata(app: AppKey, { params }: LegalRouteProps): P
   const { name } = APPS[app];
   const legal = LEGAL_PAGES.find(({ slug }) => slug === page);
   if (!legal) throw new Error(`No Stan Scribe legal page is named "${page}".`);
-  const title = `${legal.label} · ${name}`;
-  const description = `${legal.label} for ${name}.`;
-  const url = pageUrl(app, legal.slug);
+  return legalPageMetadata({ title: `${legal.label} · ${name}`, description: `${legal.label} for ${name}.`, url: pageUrl(app, legal.slug) });
+}
+
+/** What every page in this layout tells browsers and link previews: its name, one line, and its one address. */
+export function legalPageMetadata({ title, description, url }: { title: string; description: string; url: string }): Metadata {
   return {
     title,
     description,
@@ -40,7 +43,11 @@ export async function legalMetadata(app: AppKey, { params }: LegalRouteProps): P
 
 export async function LegalPage({ app, params }: LegalRouteProps & { app: AppKey }) {
   const { page } = await params;
-  const { head, body } = legalParts(app, page as LegalSlug);
+  return <LegalWords app={app} {...legalParts(app, page as LegalSlug)} />;
+}
+
+/** The layout alone, for words already split: `app` picks whose legal pages are linked under them. */
+export function LegalWords({ app, head, body }: LegalParts & { app: AppKey }) {
   return (
     <div className="relative">
       <ContourBackdrop page="interests" quiet />

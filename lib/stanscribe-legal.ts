@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // lib/stanscribe-legal.ts
-// Server only: reads a legal page's words at build time. scripts/sync-stanscribe-legal.mjs writes them.
+// Server only: reads a legal page's words at build time. scripts/sync-stanscribe-legal.mjs writes them, except
+// the Labels and Markings page, which the apps do not show and so is written here, in content/stanscribe-site/.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -33,4 +34,9 @@ export function splitLegal(words: string): LegalParts {
 /** One legal page's words, split by splitLegal. */
 export function legalParts(app: AppKey, slug: LegalSlug): LegalParts {
   return splitLegal(legalWords(app, slug));
+}
+
+/** The Labels and Markings page's words, split by splitLegal. One page covers both apps. */
+export function labelsParts(): LegalParts {
+  return splitLegal(fs.readFileSync(path.join(process.cwd(), 'content/stanscribe-site/labels.html'), 'utf8'));
 }
