@@ -247,6 +247,8 @@
   /* The title role, with a lower floor: "Acknowledgements" is one word and has to fit whole at 320px. */
   .legal h1 { @apply font-display text-[clamp(1.75rem,8.75vw,2.75rem)] leading-tight font-medium tracking-display text-ink-strong; }
   .legal h2 { @apply mt-12 font-display text-2xl leading-snug font-medium text-ink-strong; }
+  /* A heading with an id is one an address scrolls to (/labels/#light), so it stops below the window's top. */
+  .legal h2[id] { @apply scroll-mt-8; }
   .legal :is(p, ul, details) { @apply mt-5; }
   .legal ul { @apply list-disc space-y-2 pl-6; }
   .legal strong { @apply font-semibold text-ink-strong; }

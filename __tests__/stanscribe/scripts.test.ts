@@ -146,6 +146,7 @@ describe('stanscribe-index', () => {
         if (`${app}/${page}` !== skip) writeFileSync(join(out, app, `${page}.html`), `${app} ${page}`);
       }
     }
+    if (skip !== 'stanscribe/labels') writeFileSync(join(out, 'stanscribe', 'labels.html'), 'labels page');
     return out;
   };
 
@@ -166,6 +167,22 @@ describe('stanscribe-index', () => {
         expect(existsSync(join(out, app, `${page}.html`))).toBe(false);
       }
     }
+  });
+
+  test('moves the one Labels and Markings page, which both apps share, to labels/index.html', () => {
+    const out = exported();
+    expect(run('stanscribe-index.mjs', ['--out', out]).status).toBe(0);
+    expect(readFileSync(join(out, 'stanscribe', 'labels', 'index.html'), 'utf8')).toBe('labels page');
+    expect(existsSync(join(out, 'stanscribe', 'labels.html'))).toBe(false);
+    expect(existsSync(join(out, 'stanscribe-light', 'labels'))).toBe(false);
+  });
+
+  test('fails the build when the Labels and Markings page was not exported, and moves nothing', () => {
+    const out = exported('stanscribe/labels');
+    const result = run('stanscribe-index.mjs', ['--out', out]);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/stanscribe\/labels\.html/);
+    expect(existsSync(join(out, 'stanscribe', 'privacy.html'))).toBe(true);
   });
 
   test('fails the build when a legal page was not exported', () => {
@@ -220,6 +237,13 @@ describe('Netlify routing', () => {
     for (const page of PAGES) {
       expect(rules).toContainEqual({ from: `${SUBDOMAIN}${path}${page}/`, to: `/${app}/${page}/index.html`, status: '200', force: 'true' });
     }
+  });
+
+  test('the subdomain serves the one Labels and Markings page at /labels/, and Light has none of its own', () => {
+    expect(rules).toContainEqual({ from: `${SUBDOMAIN}/labels/`, to: '/stanscribe/labels/index.html', status: '200', force: 'true' });
+    expect(indexOf(`${SUBDOMAIN}/light/labels/`)).toBe(-1);
+    // The rule has to come before the one that sends old /stanscribe/ addresses to the subdomain.
+    expect(indexOf(`${SUBDOMAIN}/labels/`)).toBeLessThan(indexOf(`${SUBDOMAIN}/stanscribe/*`));
   });
 
   test.each(PLACES)('the old /%s/ addresses move to the subdomain for good, on both domains', (app, path) => {

@@ -44,6 +44,13 @@
   status = 200
   force = true
 
+# One Labels and Markings page covers both apps. Light's address is this page at #light.
+[[redirects]]
+  from = "https://stanscribe.devinhunt.com/labels/"
+  to = "/stanscribe/labels/index.html"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "https://stanscribe.devinhunt.com/light/"
   to = "/stanscribe-light/index.html"
