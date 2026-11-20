@@ -44,7 +44,7 @@ test('the address App Store Connect is given for Light scrolls to Light’s part
 test.each(['Stan Scribe', 'Stan Scribe Light'])('%s’s part says what the owner approved, and names that app', (name) => {
   render(<LabelsPage />);
   const part = partUnder(screen.getByRole('heading', { level: 2, name }));
-  expect(part).toContain(`${name} is software for iPhone. It is available only as a download on the App Store, and it has no packaging and no physical parts.`);
+  expect(part).toContain(`${name} is software for iOS. It is available only as a download on the App Store, and it has no packaging and no physical parts.`);
   expect(part).toContain(`No label or marking required by European Union law applies to ${name}. It carries no CE marking.`);
   expect(part).toContain(`${name} is not a medical device. It shows captions of speech and does not diagnose, treat or monitor any condition.`);
 });
