@@ -299,7 +299,7 @@ wordmark and the theme toggle, still on one line; the button hides under 520px.
 A row spanning the page: 72px glyph (52px on phones) · name in Title · meta in Label (place · years,
 right-aligned on desktop, under the name on phones) · one line of Body, max 56ch. Hover or focus
 underlines the name (2px) and fills the glyph with Water Blue at 45%, and updates the strip. Coming-soon
-entries carry a Water Blue "Coming soon" label after the name and no link target until they launch. On the portfolio each entry is a disclosure: the row is its summary, and opening it shows the full description, any figure and the links. On the home page the highlights are links to their entries, and their glyphs are half again the size, 108px (78px on phones), since home shows only four (owner, 2026-10-28). A "Coming soon" label is an inline-block, so a narrow line breaks before it.
+entries carry a Water Blue "Coming soon" label after the name and no link target until they launch. On the portfolio each entry is a disclosure: the row is its summary, and opening it shows the full description, any figure and the links. On the home page the highlights are links to their entries, and their glyphs are half again the size, 108px (78px on phones), since home shows only four (owner, 2026-10-28). Stan Scribe shows its own app icon there in place of its glyph, rounded as iOS rounds it (owner, 2026-11-26); the portfolio keeps the glyph. A "Coming soon" label is an inline-block, so a narrow line breaks before it.
 
 ### Glyphs
 Each project is drawn from its own geometry or from the thing it measured, in a 72×72 box:

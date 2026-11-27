@@ -3,7 +3,8 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/site/Highlights.tsx
 // The home page's Selected work (DESIGN.md › Lead project, Project entry): the lead drawn large beside
-// its text, then the highlights as glyph entries. Pointing at one puts it in the readout.
+// its text, then the highlights as glyph entries, or an app's own icon where it has one. Pointing at one puts
+// it in the readout.
 
 import { EntryLink } from '@/components/site/EntryLink';
 import { Glyph } from '@/components/site/Glyph';
@@ -34,13 +35,19 @@ export function LeadProject({ entry, figure, description }: { entry: Omit<WorkEn
 }
 
 // Home shows four, so its glyphs are half again the portfolio's: 78px on phones, 108px from 861px.
+const MARK = 'h-[78px] w-[78px] min-[861px]:h-[108px] min-[861px]:w-[108px]';
 const ITEM = 'glyph-host grid grid-cols-[78px_minmax(0,1fr)] items-start gap-x-5 py-[22px] text-inherit no-underline min-[861px]:grid-cols-[108px_minmax(0,1fr)] min-[861px]:gap-x-8';
 
 function Highlight({ entry }: { entry: WorkEntry }) {
   const handlers = useReadingHandlers(entry.reading);
   const body = (
     <>
-      <Glyph shape={entry.glyph} className="h-[78px] w-[78px] min-[861px]:h-[108px] min-[861px]:w-[108px]" />
+      {entry.icon ? (
+        // An app's own icon, rounded as iOS rounds it. Decoration: the name beside it says what it is.
+        <span aria-hidden="true" className={cn(MARK, 'block rounded-[22%] bg-cover bg-center')} style={{ backgroundImage: `url(${entry.icon})` }} />
+      ) : (
+        <Glyph shape={entry.glyph} className={MARK} />
+      )}
       {/* One text block beside the glyph, so a glyph taller than the text never spreads its lines apart. */}
       <span className="grid gap-y-1">
         <span className={cn(SITE_TYPE.title, 'entry-name')}>

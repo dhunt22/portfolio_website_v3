@@ -2,7 +2,7 @@
 // lib/portfolio-data.ts
 // Portfolio project data separated for better maintainability
 
-import { pageHref } from '@/lib/stanscribe';
+import { APP_ICONS, pageHref } from '@/lib/stanscribe';
 
 /** How a project or tool is drawn (DESIGN.md › Glyphs). */
 export type GlyphSpec =
@@ -247,6 +247,8 @@ export interface Tool {
   summary: string;
   content: string[];
   glyph: GlyphSpec;
+  /** An app's own icon. The home page shows it in place of the glyph. */
+  icon?: string;
   readout: { label: string; value: string };
   href?: string;
   soon?: boolean;
@@ -300,6 +302,7 @@ export const TOOLS: Tool[] = [
     summary: 'An iPhone and iPad app I built for my grandpa Stan, who is hard of hearing: live captions of the conversation at the table, a color for each speaker, with no internet and no subscription.',
     content: ['My grandpa Stan is hard of hearing. With live captions at dinner he could keep up and answer, but the app my parents found charged a monthly fee and needed the internet for its best captions. So I used AI to build one that works offline and costs as little as I could manage: a free edition, and a full one you pay for once.'],
     glyph: { kind: 'captions' },
+    icon: APP_ICONS.scribe.src,
     readout: { label: 'App', value: 'Stan Scribe, on its own site' },
     href: pageHref('scribe'),
   },

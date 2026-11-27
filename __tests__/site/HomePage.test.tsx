@@ -31,6 +31,18 @@ test('selected work: the lead, then four highlights in order', () => {
   expect(findCopyViolations(items[3].textContent ?? '')).toEqual([]);
 });
 
+test('Stan Scribe shows its own app icon, where the other highlights show a drawn glyph', () => {
+  render(<Home />);
+  const section = screen.getByRole('heading', { level: 2, name: 'Selected work' }).closest('section')!;
+  const items = within(section).getAllByRole('listitem');
+  const stanScribe = items[3];
+  expect(stanScribe.querySelector('svg.glyph')).toBeNull();
+  const icon = stanScribe.querySelector<HTMLElement>('span[aria-hidden="true"][style*="background-image"]')!;
+  expect(icon.style.backgroundImage).toContain('/images/stanscribe/app-icon.png');
+  expect(icon.className).toMatch(/\bh-\[78px\].*\bmin-\[861px\]:h-\[108px\]/);
+  for (const item of items.slice(0, 3)) expect(item.querySelector('svg.glyph')).not.toBeNull();
+});
+
 test('no map, no expertise columns, no photos', () => {
   const { container } = render(<Home />);
   expect(screen.queryByRole('heading', { name: 'Professional Expertise' })).toBeNull();
@@ -63,9 +75,9 @@ test('the hero is set left in the frame, its actions too', () => {
   expect(hero.querySelector('.justify-center')).toBeNull();
 });
 
-test('the four highlights draw their glyphs half again the portfolio size', () => {
+test('the four highlights draw their glyphs, or the app’s icon, half again the portfolio size', () => {
   const { container } = render(<Home />);
-  const glyphs = container.querySelectorAll('.glyph-host svg');
-  expect(glyphs).toHaveLength(4);
-  for (const g of Array.from(glyphs)) expect(g).toHaveClass('h-[78px]', 'w-[78px]', 'min-[861px]:h-[108px]', 'min-[861px]:w-[108px]');
+  const marks = Array.from(container.querySelectorAll('.glyph-host')).map((host) => host.firstElementChild!);
+  expect(marks).toHaveLength(4);
+  for (const mark of marks) expect(mark).toHaveClass('h-[78px]', 'w-[78px]', 'min-[861px]:h-[108px]', 'min-[861px]:w-[108px]');
 });
