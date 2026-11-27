@@ -159,7 +159,18 @@ test('the app’s bar is a picture: hidden from screen readers, with no controls
   const bar = container.querySelector('[data-demo-bar]')!;
   expect(bar.getAttribute('aria-hidden')).toBe('true');
   expect(bar.querySelector('button, a, [tabindex]')).toBeNull();
-  expect(bar.textContent).toBe('SmallerLargerSaveStop');
+  expect(bar.textContent).toBe('A−SmallerA+LargerSaveStop');
+});
+
+test('each button in the bar has its glyph over its word, as the app’s bar does: A−, A+, a star and a solid square', () => {
+  const { container } = render(<CaptionDemo />);
+  const tiles = Array.from(container.querySelectorAll('[data-demo-bar] > span'));
+  expect(tiles.map((tile) => tile.lastElementChild!.textContent)).toEqual(['Smaller', 'Larger', 'Save', 'Stop']);
+  expect(tiles[0].firstElementChild!.textContent).toBe('A−');
+  expect(tiles[1].firstElementChild!.textContent).toBe('A+');
+  expect(tiles[2].querySelector('svg')).not.toBeNull();
+  expect(tiles[2].querySelector('[fill="currentColor"]')).toBeNull();
+  expect(tiles[3].querySelector('svg rect[fill="currentColor"]')).not.toBeNull();
 });
 
 test('pressing Play before it scrolls into view counts as the start: scrolling in later does not replay it', () => {

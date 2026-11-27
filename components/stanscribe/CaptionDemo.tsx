@@ -7,7 +7,8 @@
 // shifts and a screen reader reads the whole conversation at any moment. With reduced motion, or with no
 // script, nothing moves. One timer, about twenty updates: no video, no GIF, no canvas.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { SaveIcon, StopIcon } from '@/components/stanscribe/icons';
 import { TYPE } from '@/components/stanscribe/type';
 import { DEMO_GROUND, DEMO_TURNS } from '@/lib/stanscribe-demo';
 import { cn } from '@/lib/utils';
@@ -21,7 +22,13 @@ const TOTAL = TURNS.reduce((count, turn) => count + turn.list.length, 0);
 const WORD_MS = 280;
 const TURN_MS = 700;
 
-const BAR = ['Smaller', 'Larger', 'Save', 'Stop'];
+/** The app's live bar: each button's glyph over its word, A− and A+ set as letters as the app sets them. */
+const BAR: { glyph: ReactNode; label: string }[] = [
+  { glyph: 'A\u2212', label: 'Smaller' },
+  { glyph: 'A+', label: 'Larger' },
+  { glyph: <SaveIcon />, label: 'Save' },
+  { glyph: <StopIcon />, label: 'Stop' },
+];
 
 export function CaptionDemo() {
   const panel = useRef<HTMLDivElement>(null);
@@ -124,9 +131,10 @@ export function CaptionDemo() {
           })}
         </div>
         <div data-demo-bar aria-hidden="true" className="mt-6 grid grid-cols-4 gap-2 text-center text-sm font-semibold text-white">
-          {BAR.map((label) => (
-            <span key={label} className={cn('rounded-xl border border-[#3a4046] py-2', label === 'Stop' && 'border-transparent bg-[#c0352b]')}>
-              {label}
+          {BAR.map(({ glyph, label }) => (
+            <span key={label} className={cn('flex flex-col items-center gap-0.5 rounded-xl border border-[#3a4046] py-2', label === 'Stop' && 'border-transparent bg-[#c0352b]')}>
+              <span className="grid h-5 place-items-center text-base font-bold leading-none [&>svg]:h-5 [&>svg]:w-5">{glyph}</span>
+              <span>{label}</span>
             </span>
           ))}
         </div>
