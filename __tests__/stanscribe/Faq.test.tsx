@@ -6,7 +6,6 @@ import { findCopyViolations } from '@/test-utils/stanscribe';
 
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
 jest.mock('@/components/ui/HeroLoadIn', () => ({ HeroLoadIn: ({ children }: { children: unknown }) => children }));
-jest.mock('@/lib/stanscribe', () => ({ ...jest.requireActual('@/lib/stanscribe'), RELEASED: false }));
 
 interface FaqEntity {
   '@type': string;

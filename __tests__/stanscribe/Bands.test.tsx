@@ -9,7 +9,6 @@ import StanScribePage from '@/app/(stanscribe)/stanscribe/page';
 jest.mock('next/navigation', () => ({ usePathname: () => '/stanscribe' }));
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
 jest.mock('@/components/ui/HeroLoadIn', () => ({ HeroLoadIn: ({ children }: { children: unknown }) => children }));
-jest.mock('@/lib/stanscribe', () => ({ ...jest.requireActual('@/lib/stanscribe'), RELEASED: false }));
 
 const sectionsOf = (page: HTMLElement) => Array.from(page.querySelectorAll('section'));
 
