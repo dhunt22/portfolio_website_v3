@@ -2,13 +2,11 @@
 // components/stanscribe/icons.tsx
 // The one place the Stan Scribe pages draw their icons. The app uses Apple's SF Symbols, which Apple licenses
 // for apps on its platforms and not for websites, so each icon here is the Lucide drawing nearest the symbol
-// the app shows in the same place, named above each one. Where the app's symbol is solid (mic.fill, stop.fill,
-// lock.fill), the Lucide shape is filled to match.
+// the app shows in the same place, named above each one.
 // The drawings are from Lucide (https://lucide.dev), ISC licence, copyright Lucide Icons and Contributors; the
 // chevron, circle, lock, search, share, phone and square are Lucide's from Feather, MIT licence, copyright Cole
-// Bemis. They are copied from lucide-static 1.63.0 as static SVG, so the pages ship no icon library and no
-// script for their icons. Both licences are in full in icons.LICENSE.txt beside this file. The speaker dots
-// are drawn here, in the app's colours.
+// Bemis. They are copied from lucide-static 1.63.0. Both licences are in full in icons.LICENSE.txt beside this
+// file. The speaker dots are drawn here.
 
 import type { SVGProps } from 'react';
 

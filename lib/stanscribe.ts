@@ -1,6 +1,5 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // lib/stanscribe.ts
-// One source for the Stan Scribe pages: links, screenshots and the copy both pages share.
 // Words come from transcript_stan/docs/marketing/stanscribe-page/copy.md; README.md beside it has the rules.
 
 export const SUPPORT_EMAIL = 'stanscribe@devinhunt.com';
@@ -10,8 +9,7 @@ export const SITE_NAME = 'Stan Scribe';
 
 /**
  * Apple's black "Download on the App Store" badge, used as supplied (no recoloring), from Apple's marketing tools
- * (https://developer.apple.com/app-store/marketing/guidelines/). 40px tall is Apple's on-screen minimum. The
- * Apple trademark line in components/stanscribe/HelpBlock.tsx credits Apple and the Apple logo, as Apple asks.
+ * (https://developer.apple.com/app-store/marketing/guidelines/). 40px tall is Apple's on-screen minimum.
  */
 export const APP_STORE_BADGE = { src: '/images/stanscribe/app-store-badge.svg', width: 120, height: 40 };
 
@@ -30,7 +28,6 @@ export interface AppInfo {
   path: string;
   /** The line under the name in its download tile. */
   offer: string;
-  /** Its App Store page, as App Store Connect gives it. */
   appStoreUrl: string;
 }
 

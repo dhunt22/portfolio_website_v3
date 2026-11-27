@@ -22,7 +22,6 @@ const TOTAL = TURNS.reduce((count, turn) => count + turn.list.length, 0);
 const WORD_MS = 280;
 const TURN_MS = 700;
 
-/** The app's live bar: each button's glyph over its word, A− and A+ set as letters as the app sets them. */
 const BAR: { glyph: ReactNode; label: string }[] = [
   { glyph: 'A\u2212', label: 'Smaller' },
   { glyph: 'A+', label: 'Larger' },

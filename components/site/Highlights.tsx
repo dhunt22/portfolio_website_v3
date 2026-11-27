@@ -3,8 +3,7 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/site/Highlights.tsx
 // The home page's Selected work (DESIGN.md › Lead project, Project entry): the lead drawn large beside
-// its text, then the highlights as glyph entries, or an app's own icon where it has one. Pointing at one puts
-// it in the readout.
+// its text, then the highlights as glyph entries. Pointing at one puts it in the readout.
 
 import { EntryLink } from '@/components/site/EntryLink';
 import { Glyph } from '@/components/site/Glyph';
@@ -43,7 +42,6 @@ function Highlight({ entry }: { entry: WorkEntry }) {
   const body = (
     <>
       {entry.icon ? (
-        // An app's own icon, rounded as iOS rounds it. Decoration: the name beside it says what it is.
         <span aria-hidden="true" className={cn(MARK, 'block rounded-[22%] bg-cover bg-center')} style={{ backgroundImage: `url(${entry.icon})` }} />
       ) : (
         <Glyph shape={entry.glyph} className={MARK} />

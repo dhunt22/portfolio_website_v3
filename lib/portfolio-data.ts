@@ -247,7 +247,6 @@ export interface Tool {
   summary: string;
   content: string[];
   glyph: GlyphSpec;
-  /** An app's own icon. The home page shows it in place of the glyph. */
   icon?: string;
   readout: { label: string; value: string };
   href?: string;

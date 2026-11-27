@@ -1,7 +1,5 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/DownloadBlock.tsx
-// One app's download block, set centred in a hero with no box of its own: name and offer, then Apple's badge
-// linking to the app's App Store page.
 
 import { TYPE } from '@/components/stanscribe/type';
 import { APPS, APP_STORE_BADGE, type AppKey } from '@/lib/stanscribe';

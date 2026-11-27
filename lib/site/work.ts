@@ -18,7 +18,6 @@ export interface WorkEntry {
   meta: string;
   summary: string;
   glyph: GlyphShape;
-  /** An app's own icon, which the home page shows in place of the glyph. */
   icon?: string;
   reading: Reading;
   categories: string[];
