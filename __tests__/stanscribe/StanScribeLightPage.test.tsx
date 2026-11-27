@@ -3,7 +3,6 @@ import StanScribeLightPage, { metadata } from '@/app/(stanscribe)/stanscribe-lig
 import { legalLinks } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 
-jest.mock('@/lib/stanscribe', () => ({ ...jest.requireActual('@/lib/stanscribe'), RELEASED: false }));
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
 jest.mock('@/components/ui/HeroLoadIn', () => ({ HeroLoadIn: ({ children }: { children: unknown }) => children }));
 
@@ -47,11 +46,15 @@ test('words follow the brief, metadata included', () => {
   expect(metadata.alternates?.canonical).toBe('https://stanscribe.devinhunt.com/light/');
 });
 
-test('the hero says the name and offer once: the download line adds only the status', () => {
+test('the hero says the name and offer once: the download adds only Apple’s badge', () => {
   renderPage();
   expect(screen.getAllByText('Stan Scribe Light', { selector: 'h1, p' })).toHaveLength(1);
   expect(screen.queryByText('Free. The simple edition.')).toBeNull();
-  expect(screen.getByText('Coming soon to the App Store')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Download Stan Scribe Light on the App Store' })).toHaveAttribute(
+    'href',
+    'https://apps.apple.com/us/app/stan-scribe-light/id6824796578',
+  );
+  expect(screen.queryByText(/coming soon/i)).toBeNull();
 });
 
 test('the hero is the listing’s header: Light’s icon, its name, the tagline and one line', () => {
@@ -62,7 +65,7 @@ test('the hero is the listing’s header: Light’s icon, its name, the tagline 
   expect(
     within(hero).getByText('The same live captions and speaker colors as Stan Scribe, made simpler: one speech model, a black or a white page, and a smaller download.'),
   ).toBeInTheDocument();
-  expect(hero.querySelectorAll('p')).toHaveLength(3);
+  expect(hero.querySelectorAll('p')).toHaveLength(2);
   expect(hero.className).toMatch(/\brelative\b/);
   expect(hero.className).toMatch(/\bz-10\b/);
 });
@@ -71,7 +74,7 @@ test('the hang length is set once, on the card, and the picture and Help under i
   const bands = renderPage().querySelector<HTMLElement>('.bands')!;
   expect(bands.style.getPropertyValue('--hang')).not.toBe('');
   const [hero, next] = Array.from(bands.querySelectorAll(':scope > section'));
-  expect(hero.querySelector('img')!.getAttribute('style')).toMatch(/margin-bottom:\s*calc\(-1 \* var\(--hang\)\)/);
+  expect(hero.querySelector('img[alt]:not([alt=""])')!.getAttribute('style')).toMatch(/margin-bottom:\s*calc\(-1 \* var\(--hang\)\)/);
   expect(next.id).toBe('help');
   expect(next.className).toContain('pt-[calc(var(--hang)_+_3rem)]');
 });

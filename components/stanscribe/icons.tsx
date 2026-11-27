@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // components/stanscribe/icons.tsx
-// The one place the Stan Scribe pages draw their icons. The app's tour uses Apple's SF Symbols, which Apple
-// licenses for apps on its platforms and not for websites, so each icon here is the nearest Lucide drawing.
+// The one place the Stan Scribe pages draw their icons. The app uses Apple's SF Symbols, which Apple licenses
+// for apps on its platforms and not for websites, so each icon here is the Lucide drawing nearest the symbol
+// the app shows in the same place, named above each one.
 // The drawings are from Lucide (https://lucide.dev), ISC licence, copyright Lucide Icons and Contributors; the
-// chevron, lock, search, share, phone and square are Lucide's from Feather, MIT licence, copyright Cole Bemis.
-// They are copied from lucide-react 1.63.0 as static SVG, so the pages ship no icon library and no script for
-// their icons. Both licences are in full in icons.LICENSE.txt beside this file. The speaker dots are drawn
-// here, in the app's colours.
+// chevron, circle, lock, search, share, phone and square are Lucide's from Feather, MIT licence, copyright Cole
+// Bemis. They are copied from lucide-static 1.63.0. Both licences are in full in icons.LICENSE.txt beside this
+// file. The speaker dots are drawn here.
 
 import type { SVGProps } from 'react';
 
@@ -31,17 +31,17 @@ function Svg(props: IconProps) {
   );
 }
 
-/** Lucide's captions. */
+/** The app's captions.bubble: Lucide's message-square holding the lines of Lucide's captions. */
 export function CaptionsIcon(props: IconProps) {
   return (
     <Svg {...props}>
-      <rect width="18" height="14" x="3" y="5" rx="2" ry="2" />
-      <path d="M7 15h4M15 15h2M7 11h2M13 11h4" />
+      <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+      <path d="M7 13h4M15 13h2M7 9h2M13 9h4" />
     </Svg>
   );
 }
 
-/** Lucide's wifi-off. */
+/** The app's wifi.slash: Lucide's wifi-off. */
 export function OfflineIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -56,29 +56,32 @@ export function OfflineIcon(props: IconProps) {
   );
 }
 
-/** Lucide's user-round-x. */
+/**
+ * The app's person.crop.circle.badge.xmark: Lucide's circle-user-round, opened at the lower left as clock-plus is
+ * opened at the lower right, with user-round-x's cross in the gap.
+ */
 export function NoAccountIcon(props: IconProps) {
   return (
     <Svg {...props}>
-      <path d="m16.5 16.5 5 5" />
-      <path d="M2 21a8 8 0 0 1 11.531-7.18" />
-      <path d="m21.5 16.5-5 5" />
-      <circle cx="10" cy="8" r="5" />
+      <path d="M2.08 13.267a10 10 0 1 1 8.653 8.653" />
+      <path d="M17.926 20.057a6 6 0 0 0-7.926-4.717" />
+      <circle cx="12" cy="11" r="4" />
+      <path d="m2.5 16.5 5 5" />
+      <path d="m7.5 16.5-5 5" />
     </Svg>
   );
 }
 
-/** Lucide's smartphone. */
+/** The app's iphone: Lucide's smartphone, without the home button. */
 export function DeviceIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
-      <path d="M12 18h.01" />
     </Svg>
   );
 }
 
-/** Lucide's eye-off. */
+/** The app's eye.slash: Lucide's eye-off. */
 export function NoTrackingIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -90,21 +93,24 @@ export function NoTrackingIcon(props: IconProps) {
   );
 }
 
-/** Lucide's mic-off. */
+/** The app's waveform.slash: Lucide's audio-lines-off. */
 export function NoAudioIcon(props: IconProps) {
   return (
     <Svg {...props}>
-      <path d="M12 19v3" />
-      <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" />
-      <path d="M16.95 16.95A7 7 0 0 1 5 12v-2" />
-      <path d="M18.89 13.23A7 7 0 0 0 19 12v-2" />
+      <path d="M10 10v11" />
+      <path d="M10 3v1.35" />
+      <path d="M14 14v1" />
+      <path d="M14 8v.35" />
+      <path d="M18 5v7.35" />
+      <path d="M2 10v3" />
       <path d="m2 2 20 20" />
-      <path d="M9 9v3a3 3 0 0 0 5.12 2.12" />
+      <path d="M22 10v3" />
+      <path d="M6 6v11" />
     </Svg>
   );
 }
 
-/** Lucide's share. */
+/** The app's square.and.arrow.up: Lucide's share. */
 export function SendIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -115,7 +121,7 @@ export function SendIcon(props: IconProps) {
   );
 }
 
-/** Lucide's hand. */
+/** The app's hand.raised: Lucide's hand. */
 export function AskIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -127,7 +133,7 @@ export function AskIcon(props: IconProps) {
   );
 }
 
-/** Lucide's audio-lines. */
+/** The app's waveform: Lucide's audio-lines. */
 export function VoicesIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -141,7 +147,7 @@ export function VoicesIcon(props: IconProps) {
   );
 }
 
-/** Lucide's a-large-small. */
+/** The app's A− and A+ buttons, as one drawing: Lucide's a-large-small. */
 export function TextSizeIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -153,17 +159,17 @@ export function TextSizeIcon(props: IconProps) {
   );
 }
 
-/** Lucide's lock. */
+/** The app's lock.fill: Lucide's lock, its body filled. */
 export function LockIcon(props: IconProps) {
   return (
     <Svg {...props}>
-      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" fill="currentColor" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </Svg>
   );
 }
 
-/** Lucide's search. */
+/** The app's magnifyingglass: Lucide's search. */
 export function SearchIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -173,40 +179,46 @@ export function SearchIcon(props: IconProps) {
   );
 }
 
-/** Lucide's palette. */
+/** The app's circle.lefthalf.filled, its symbol for themes: Lucide's circle, its left half filled. */
 export function LooksIcon(props: IconProps) {
   return (
     <Svg {...props}>
-      <path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" />
-      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
-      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2a10 10 0 0 0 0 20z" fill="currentColor" />
     </Svg>
   );
 }
 
-/** Lucide's mic. */
+/** The app's mic.fill, on its Start button: Lucide's mic, its head filled. */
 export function StartIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <path d="M12 19v3" />
       <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-      <rect x="9" y="2" width="6" height="13" rx="3" />
+      <rect x="9" y="2" width="6" height="13" rx="3" fill="currentColor" />
     </Svg>
   );
 }
 
-/** Lucide's square. */
+/** The app's stop.fill, on its Stop button: Lucide's square, filled. */
 export function StopIcon(props: IconProps) {
   return (
     <Svg {...props}>
-      <rect width="18" height="18" x="3" y="3" rx="2" />
+      <rect width="18" height="18" x="3" y="3" rx="2" fill="currentColor" />
     </Svg>
   );
 }
 
-/** Lucide's list. */
+/** The app's star, on its Save button: Lucide's star. */
+export function SaveIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+    </Svg>
+  );
+}
+
+/** The app's list.bullet, on its Saved button: Lucide's list. */
 export function ConversationsIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -220,7 +232,7 @@ export function ConversationsIcon(props: IconProps) {
   );
 }
 
-/** Lucide's chevron-down. */
+/** The app's chevron.down: Lucide's chevron-down. */
 export function ChevronIcon(props: IconProps) {
   return (
     <Svg {...props}>

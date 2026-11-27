@@ -18,6 +18,7 @@ export interface WorkEntry {
   meta: string;
   summary: string;
   glyph: GlyphShape;
+  icon?: string;
   reading: Reading;
   categories: string[];
   content: string[];
@@ -100,6 +101,7 @@ function toolEntry(t: Tool): WorkEntry {
     meta: t.meta,
     summary: t.summary,
     glyph: glyphFor(t.glyph),
+    icon: t.icon,
     reading: labelReading(t.readout.label, t.readout.value),
     categories: [],
     content: t.content,

@@ -4,7 +4,6 @@ import { APPS, SHOTS, legalLinks } from '@/lib/stanscribe';
 import { findCopyViolations, findTypeViolations, headingLevels, pageText } from '@/test-utils/stanscribe';
 
 // The backdrop fetches SVG and GSAP needs matchMedia; neither matters to the page's content.
-jest.mock('@/lib/stanscribe', () => ({ ...jest.requireActual('@/lib/stanscribe'), RELEASED: false }));
 jest.mock('@/components/ui/ContourBackdrop', () => ({ ContourBackdrop: () => null }));
 jest.mock('@/components/ui/HeroLoadIn', () => ({ HeroLoadIn: ({ children }: { children: unknown }) => children }));
 
@@ -52,8 +51,9 @@ test('the hero is the listing’s header: icon, name, tagline, four facts and th
     'No account needed',
   ]);
   expect(hero.querySelectorAll('li span[aria-hidden="true"] svg')).toHaveLength(4);
-  expect(within(hero).getAllByText('Coming soon to the App Store')).toHaveLength(2);
-  expect(within(hero).getByRole('link', { name: /public beta/i })).toHaveAttribute('href', APPS.scribe.betaUrl);
+  expect(within(hero).getByRole('link', { name: 'Download Stan Scribe on the App Store' })).toHaveAttribute('href', APPS.scribe.appStoreUrl);
+  expect(within(hero).getByRole('link', { name: 'Download Stan Scribe Light on the App Store' })).toHaveAttribute('href', APPS.light.appStoreUrl);
+  expect(hero.textContent).not.toMatch(/coming soon|beta/i);
   // No intro paragraph and no row of jump links.
   expect(hero.textContent).not.toMatch(/Put your iPhone on the table/);
   expect(hero.querySelector('nav')).toBeNull();
@@ -66,7 +66,7 @@ test('the hang length is set once, on the card, and the picture and the band und
   const bands = renderPage().querySelector<HTMLElement>('.bands')!;
   expect(bands.style.getPropertyValue('--hang')).not.toBe('');
   const [hero, next] = Array.from(bands.querySelectorAll(':scope > section'));
-  expect(hero.querySelector('img')!.getAttribute('style')).toMatch(/margin-bottom:\s*calc\(-1 \* var\(--hang\)\)/);
+  expect(hero.querySelector('img[alt]:not([alt=""])')!.getAttribute('style')).toMatch(/margin-bottom:\s*calc\(-1 \* var\(--hang\)\)/);
   expect(next.className).toContain('pt-[calc(var(--hang)_+_3rem)]');
 });
 

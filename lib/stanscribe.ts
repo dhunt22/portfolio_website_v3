@@ -1,26 +1,16 @@
 // Copyright (c) 2026 Devin Hunt contact@devinhunt.com
 // lib/stanscribe.ts
-// One source for the Stan Scribe pages: launch state, links, screenshots and the copy both pages share.
 // Words come from transcript_stan/docs/marketing/stanscribe-page/copy.md; README.md beside it has the rules.
-
-/**
- * Launch switch. Both apps release the same day. To launch:
- * 1. Download Apple's black "Download on the App Store" badge (SVG) from
- *    https://developer.apple.com/app-store/marketing/guidelines/ and save it as
- *    public/images/stanscribe/app-store-badge.svg.
- * 2. Check the Apple trademark line in components/stanscribe/HelpBlock.tsx against the wording on
- *    Apple's badge page.
- * 3. Set RELEASED to true. Every download tile becomes a badge link to the App Store, and the
- *    TestFlight link goes away.
- */
-export const RELEASED = false;
 
 export const SUPPORT_EMAIL = 'stanscribe@devinhunt.com';
 
 /** The site's name in link previews (og:site_name). */
 export const SITE_NAME = 'Stan Scribe';
 
-/** Apple's badge, used as supplied (no recoloring); 40px tall is Apple's on-screen minimum. */
+/**
+ * Apple's black "Download on the App Store" badge, used as supplied (no recoloring), from Apple's marketing tools
+ * (https://developer.apple.com/app-store/marketing/guidelines/). 40px tall is Apple's on-screen minimum.
+ */
 export const APP_STORE_BADGE = { src: '/images/stanscribe/app-store-badge.svg', width: 120, height: 40 };
 
 export type AppKey = 'scribe' | 'light';
@@ -39,8 +29,6 @@ export interface AppInfo {
   /** The line under the name in its download tile. */
   offer: string;
   appStoreUrl: string;
-  /** Public TestFlight link, shown before release. Light's is not live yet. */
-  betaUrl?: string;
 }
 
 export const LEGAL_PAGES = [
@@ -98,14 +86,13 @@ export const APPS: Record<AppKey, AppInfo> = {
     name: 'Stan Scribe',
     ...PLACES.scribe,
     offer: 'Pay once. No subscription.',
-    appStoreUrl: 'https://apps.apple.com/app/id6822377139',
-    betaUrl: 'https://testflight.apple.com/join/ejNyaGqJ',
+    appStoreUrl: 'https://apps.apple.com/us/app/stan-scribe/id6822377139',
   },
   light: {
     name: 'Stan Scribe Light',
     ...PLACES.light,
     offer: 'Free. The simple edition.',
-    appStoreUrl: 'https://apps.apple.com/app/id6824796578',
+    appStoreUrl: 'https://apps.apple.com/us/app/stan-scribe-light/id6824796578',
   },
 };
 

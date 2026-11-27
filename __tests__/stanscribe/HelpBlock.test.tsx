@@ -11,6 +11,12 @@ test('HelpBlock shows the support email and only the named apps’ legal links',
   for (const { href } of legalLinks('scribe')) expect(container.querySelector(`a[href="${href}"]`)).toBeNull();
 });
 
+test('HelpBlock credits Apple and the Apple logo, as Apple asks of every page that shows its App Store badge', () => {
+  const { container } = render(<HelpBlock apps={['scribe', 'light']} />);
+  expect(container.textContent).toMatch(/Apple, the Apple logo, iPhone, iPad and iCloud are trademarks of Apple Inc\., registered in the U\.S\. and other\s+countries and regions\./);
+  expect(container.textContent).toContain('App Store is a service mark of Apple Inc.');
+});
+
 test('ComparisonTable has real headers and four rows, one per difference a buyer weighs', () => {
   const { container } = render(<ComparisonTable />);
   const table = screen.getByRole('table');

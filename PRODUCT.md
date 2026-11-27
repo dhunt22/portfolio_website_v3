@@ -92,7 +92,7 @@ it (AIIWFM, tested Python automation for IWFM workflows, the firm's AI Innovator
   vacancy fee, Sacramento water purveyors, Cuyama Valley SRTM (`public/images/`).
 - Real data: NASA EEJ prison points and polygons, California HUC8 watersheds (`public/data/`).
 - Contour plates generated from real terrain (`public/images/plates/`, `scripts/build-plates.mjs`).
-- Stan Scribe: real app screenshots (`public/images/stanscribe/`), a public TestFlight link, legal pages
+- Stan Scribe: real app screenshots (`public/images/stanscribe/`), both apps' App Store pages, legal pages
   rendered here from `content/stanscribe-legal/`, whose words are pulled from the app repo
   (`npm run sync:stanscribe-legal`).
 - Absent, and not to be invented: testimonials, client logos, metrics, press, awards.

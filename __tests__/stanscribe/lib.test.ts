@@ -1,8 +1,8 @@
 /** @jest-environment node */
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import { APP_ICONS, APP_STORE_BADGE, BOTH_APPS_SHARE, FAVICONS, LANGUAGES, LIGHT_NOT_SURE, LIGHT_SUMMARY, RELEASED, SHOTS, SITE_NAME, SOCIAL_IMAGE } from '@/lib/stanscribe';
+import { APP_ICONS, APP_STORE_BADGE, BOTH_APPS_SHARE, FAVICONS, LANGUAGES, LIGHT_NOT_SURE, LIGHT_SUMMARY, SHOTS, SITE_NAME, SOCIAL_IMAGE } from '@/lib/stanscribe';
 import { findCopyViolations } from '@/test-utils/stanscribe';
 
 const PUBLIC = join(__dirname, '..', '..', 'public');
@@ -71,8 +71,11 @@ describe('lib/stanscribe', () => {
     expect(LANGUAGES).toHaveLength(25);
   });
 
-  test('a released build has the App Store badge to show', () => {
-    if (RELEASED) expect(existsSync(join(PUBLIC, APP_STORE_BADGE.src))).toBe(true);
+  test('Apple’s badge ships at its stated size', () => {
+    const svg = readFileSync(join(PUBLIC, APP_STORE_BADGE.src), 'utf8');
+    expect(svg).toMatch(/Download_on_the_App_Store_Badge/);
+    expect(svg).toMatch(/viewBox="0 0 119\.66407 40"/);
+    expect([APP_STORE_BADGE.width, APP_STORE_BADGE.height]).toEqual([120, 40]);
   });
 });
 
